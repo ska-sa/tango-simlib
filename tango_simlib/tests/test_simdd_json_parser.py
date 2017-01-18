@@ -12,7 +12,7 @@ from katcp.testutils import start_thread_with_cleanup
 from tango_simlib import simdd_json_parser
 from tango_simlib import sim_xmi_parser
 from tango_simlib import tango_sim_generator
-from tango_simlib.examples import override_class
+from examples import override_class
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 
 
@@ -102,7 +102,7 @@ class GenericSetup(unittest.TestCase):
     def setUp(self):
         super(GenericSetup, self).setUp()
         self.simdd_json_file = [pkg_resources.resource_filename(
-            'mkat_tango.simlib.tests', 'weather_SIMDD.json')]
+            'tango_simlib.tests', 'weather_SIMDD.json')]
         self.simdd_parser = simdd_json_parser.SimddParser()
         self.simdd_parser.parse(self.simdd_json_file[0])
 
@@ -274,7 +274,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
     @classmethod
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
-        cls.data_descr_file = [pkg_resources.resource_filename('mkat_tango.simlib.tests',
+        cls.data_descr_file = [pkg_resources.resource_filename('tango_simlib.tests',
                                                                'weather_SIMDD.json')]
         # Since the sim_xmi_parser gets the simdd file from the device properties
         # in the tango database, here the method is mocked to return the simdd
