@@ -22,12 +22,12 @@ from PyTango import DevState
 from PyTango.server import Device, DeviceMeta, server_run, device_property, command
 
 
-from mkat_tango.simlib.model import Model
-from mkat_tango.simlib.simdd_json_parser import SimddParser
-from mkat_tango.simlib.sim_sdd_xml_parser import SDDParser
-from mkat_tango.simlib.sim_xmi_parser import (XmiParser, PopulateModelQuantities,
-                                              PopulateModelActions)
-from mkat_tango import helper_module
+from tango_simlib.model import Model
+from tango_simlib.simdd_json_parser import SimddParser
+from tango_simlib.sim_sdd_xml_parser import SDDParser
+from tango_simlib.sim_xmi_parser import (XmiParser, PopulateModelQuantities,
+                                         PopulateModelActions)
+from tango_simlib import helper_module
 
 MODULE_LOGGER = logging.getLogger(__name__)
 

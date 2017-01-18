@@ -24,8 +24,8 @@ from functools import partial
 from PyTango import (DevBoolean, DevString, DevEnum, AttrDataFormat,
                      CmdArgType, DevDouble, DevFloat, DevLong, DevVoid)
 
-from mkat_tango.simlib import quantities
-from mkat_tango.simlib import model
+from tango_simlib import quantities
+from tango_simlib import model
 
 MODULE_LOGGER = logging.getLogger(__name__)
 

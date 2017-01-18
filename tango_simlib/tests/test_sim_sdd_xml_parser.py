@@ -4,8 +4,8 @@ import pkg_resources
 
 from PyTango import DevDouble
 
-from mkat_tango.simlib import sim_sdd_xml_parser
-from mkat_tango.simlib import sim_xmi_parser
+from tango_simlib import sim_sdd_xml_parser
+from tango_simlib import sim_xmi_parser
 
 LOGGER = logging.getLogger(__name__)
 

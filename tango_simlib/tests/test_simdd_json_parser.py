@@ -9,11 +9,11 @@ from devicetest import TangoTestContext
 
 from katcore.testutils import cleanup_tempfile
 from katcp.testutils import start_thread_with_cleanup
-from mkat_tango.simlib import simdd_json_parser
-from mkat_tango.simlib import sim_xmi_parser
-from mkat_tango.simlib import tango_sim_generator
-from mkat_tango.simlib.examples import override_class
-from mkat_tango.testutils import ClassCleanupUnittestMixin
+from tango_simlib import simdd_json_parser
+from tango_simlib import sim_xmi_parser
+from tango_simlib import tango_sim_generator
+from tango_simlib.examples import override_class
+from tango_simlib.testutils import ClassCleanupUnittestMixin
 
 
 MODULE_LOGGER = logging.getLogger(__name__)

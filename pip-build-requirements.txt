@@ -1,0 +1,7 @@
+enum
+numpy
+nose_xunitmp
+git+https://katpull:katpull4git@github.com/ska-sa/katcp-python#egg=katcp
+git+https://katpull:katpull4git@github.com/ska-sa/katcore#egg=katcore
+git+https://katpull:katpull4git@github.com/ska-sa/katproxy#egg=katproxy
+git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest

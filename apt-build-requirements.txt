@@ -1,0 +1,13 @@
+mysql-client-core-5.6
+mysql-server-core-5.6
+mysql-common-5.6
+mysql-client-5.6
+mysql-server-5.6
+libboost-python-dev
+dbconfig-common
+libtango-dev
+liblog4tango5v5
+tango-starter
+tango-test
+tango-common
+tango-db
