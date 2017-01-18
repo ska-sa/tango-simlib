@@ -223,8 +223,8 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
 
     Parameters
     ----------
-    sim_datafile : str
-        A direct path to the xmi/xml/json file.
+    sim_datafile : list
+        A list of direct paths to either xmi/xml/json files.
     test_device_name : str
         A TANGO device name. This is used for running tests as we want the model
         instance and the device name to have the same name.
@@ -260,7 +260,6 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         parsers.append(get_parser_instance(file_descriptor))
 
     # In case there is more than one parser instance for each file
-    #if len(parsers) > 1:
     model = Model(dev_name)
     for parser in parsers:
         model_quantity_populator = PopulateModelQuantities(parser, dev_name, model)

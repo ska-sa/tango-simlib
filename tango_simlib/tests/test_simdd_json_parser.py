@@ -12,7 +12,7 @@ from katcp.testutils import start_thread_with_cleanup
 from tango_simlib import simdd_json_parser
 from tango_simlib import sim_xmi_parser
 from tango_simlib import tango_sim_generator
-from examples import override_class
+from tango_simlib.examples import override_class
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 
 
@@ -282,7 +282,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         # test module
         with mock.patch(tango_sim_generator.__name__ + '.get_data_description_file_name'
                         ) as mock_get_description_file_name:
-            mock_get_description_file_name.return_value = cls.data_descr_file[0]
+            mock_get_description_file_name.return_value = cls.data_descr_file
             cls.properties = dict(sim_data_description_file=cls.data_descr_file[0])
             cls.device_name = 'test/nodb/tangodeviceserver'
             model = tango_sim_generator.configure_device_model(cls.data_descr_file,
