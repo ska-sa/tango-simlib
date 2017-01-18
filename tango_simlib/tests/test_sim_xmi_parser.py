@@ -298,7 +298,7 @@ class GenericSetup(unittest.TestCase):
 
     def setUp(self):
         super(GenericSetup, self).setUp()
-        self.xmi_file = [pkg_resources.resource_filename('mkat_tango.simlib.tests',
+        self.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
                                                          'weather_sim.xmi')]
         self.xmi_parser = sim_xmi_parser.XmiParser()
         self.xmi_parser.parse(self.xmi_file[0])
