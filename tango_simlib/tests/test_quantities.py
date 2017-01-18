@@ -3,7 +3,7 @@ import unittest
 
 import mock
 
-from mkat_tango.simlib import quantities
+from tango_simlib import quantities
 
 class test_Quantity(unittest.TestCase):
 

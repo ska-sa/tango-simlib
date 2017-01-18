@@ -15,7 +15,8 @@ import threading
 
 from PyTango.server import server_run
 
-from mkat_tango.simlib.sim_test_interface import SimControl
+from tango_simlib.sim_test_interface import SimControl
+
 
 def simulator_main(sim_class, sim_control_class=SimControl):
     """Main function for a simulator with class sim_class
@@ -29,7 +30,7 @@ def simulator_main(sim_class, sim_control_class=SimControl):
         sys.argv.remove('--ipython')
         def start_ipython(sim_class):
             IPython.embed()
-        t = threading.Thread(target=start_ipython, args=(sim_class,) )
+        t = threading.Thread(target=start_ipython, args=(sim_class,))
         t.setDaemon(True)
         t.start()
 

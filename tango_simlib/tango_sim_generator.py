@@ -22,12 +22,12 @@ from PyTango import DevState
 from PyTango.server import Device, DeviceMeta, server_run, device_property, command
 
 
-from mkat_tango.simlib.model import Model
-from mkat_tango.simlib.simdd_json_parser import SimddParser
-from mkat_tango.simlib.sim_sdd_xml_parser import SDDParser
-from mkat_tango.simlib.sim_xmi_parser import (XmiParser, PopulateModelQuantities,
-                                              PopulateModelActions)
-from mkat_tango import helper_module
+from tango_simlib.model import Model
+from tango_simlib.simdd_json_parser import SimddParser
+from tango_simlib.sim_sdd_xml_parser import SDDParser
+from tango_simlib.sim_xmi_parser import (XmiParser, PopulateModelQuantities,
+                                         PopulateModelActions)
+from tango_simlib import helper_module
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -223,8 +223,8 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
 
     Parameters
     ----------
-    sim_datafile : str
-        A direct path to the xmi/xml/json file.
+    sim_datafile : list
+        A list of direct paths to either xmi/xml/json files.
     test_device_name : str
         A TANGO device name. This is used for running tests as we want the model
         instance and the device name to have the same name.
@@ -260,7 +260,6 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         parsers.append(get_parser_instance(file_descriptor))
 
     # In case there is more than one parser instance for each file
-    #if len(parsers) > 1:
     model = Model(dev_name)
     for parser in parsers:
         model_quantity_populator = PopulateModelQuantities(parser, dev_name, model)

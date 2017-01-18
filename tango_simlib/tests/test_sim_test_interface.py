@@ -5,7 +5,7 @@ from functools import partial
 
 from devicetest import DeviceTestCase
 
-from mkat_tango.simlib import sim_test_interface, model, quantities
+from tango_simlib import sim_test_interface, model, quantities
 
 class FixtureModel(model.Model):
 

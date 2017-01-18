@@ -4,8 +4,8 @@ import pkg_resources
 
 from PyTango import DevDouble
 
-from mkat_tango.simlib import sim_sdd_xml_parser
-from mkat_tango.simlib import sim_xmi_parser
+from tango_simlib import sim_sdd_xml_parser
+from tango_simlib import sim_xmi_parser
 
 LOGGER = logging.getLogger(__name__)
 
@@ -67,7 +67,7 @@ class GenericSetup(unittest.TestCase):
 
     def setUp(self):
         super(GenericSetup, self).setUp()
-        self.xml_file = [pkg_resources.resource_filename('mkat_tango.simlib.tests',
+        self.xml_file = [pkg_resources.resource_filename('tango_simlib.tests',
                                                          'WeatherSimulator_CN.xml')]
         self.xml_parser = sim_sdd_xml_parser.SDDParser()
         self.xml_parser.parse(self.xml_file[0])
