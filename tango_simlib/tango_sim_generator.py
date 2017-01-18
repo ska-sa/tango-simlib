@@ -131,7 +131,7 @@ def get_tango_device_server(model):
         pass
 
     def generate_cmd_handler(action_name, action_handler):
-        def cmd_handler(tango_device, *input_parameters):
+        def cmd_handler(tango_device, input_parameters=None):
             return action_handler(tango_dev=tango_device, data_input=input_parameters)
 
         cmd_handler.__name__ = action_name

@@ -266,6 +266,15 @@ class test_PopulateModelActions(GenericSetup):
         action_on = model.sim_actions['On']
         self.assertEqual(action_on.func.im_class, override_class.OverrideWeather)
 
+    def test_model_action_behaviour(self):
+        device_name = 'tango/device/instance'
+        pmq = sim_xmi_parser.PopulateModelQuantities(self.simdd_parser, device_name)
+        model = pmq.sim_model
+        sim_xmi_parser.PopulateModelActions(self.simdd_parser, device_name, model)
+        action_set_temperature = model.sim_actions['SetTemperature']
+        data_in = 25.00
+        self.assertEqual(action_set_temperature(data_in), data_in)
+
 
 class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
@@ -315,7 +324,6 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
                          "Actual tango device attribute list differs from expected "
                          "list!")
 
-
     def test_command_list(self):
         """Testing that the command list in the Tango device matches with the one
         specified in the SIMDD data description file.
@@ -363,7 +371,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.assertEqual(self.device.command_inout(command_name),
                          expected_result)
         self.assertEqual(getattr(self.device.read_attribute('State'), 'value'),
-                                 PyTango.DevState.ON)
+                         PyTango.DevState.ON)
 
     def test_StopRainfall_command(self):
         """Testing that the Tango device weather simulator 'detects' no rainfall when
@@ -390,14 +398,20 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.assertEqual(self.device.command_inout(command_name),
                          expected_result)
         self.assertEqual(getattr(self.device.read_attribute('State'), 'value'),
-                                 PyTango.DevState.OFF)
+                         PyTango.DevState.OFF)
 
-
-    def test_model_action_behaviour(self):
-        device_name = 'tango/device/instance'
-        pmq = sim_xmi_parser.PopulateModelQuantities(self.simdd_json_parser, device_name)
-        model = pmq.sim_model
-        sim_xmi_parser.PopulateModelActions(self.simdd_json_parser, device_name, model)
-        action_set_temperature = model.sim_actions['SetTemperature']
+    def test_set_temperature_command(self):
+        """Testing that the SetTemperature command changes the temperature
+        attribute's value of the Tango device to the specified input parameter.
+        """
+        command_name = 'SetTemperature'
         data_in = 25.0
-        self.assertEqual(action_set_temperature(data_in), data_in)
+        expected_result = data_in
+        self.assertEqual(self.device.command_inout(command_name, data_in),
+                         expected_result)
+        self.instance.model.last_update_time = 0
+        # The tango device temperature attribute value return a floating number
+        # thus it is rounded to two decimal places before checking if it's the
+        # same as the `data_in` value
+        self.assertEqual(round(getattr(self.device.read_attribute('Temperature'),
+                               'value'), 2), data_in)

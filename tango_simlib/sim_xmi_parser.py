@@ -741,7 +741,7 @@ class PopulateModelActions(object):
         if actions is None:
             actions = []
 
-        def action_handler(model, data_in=None):
+        def action_handler(model, data_input=None, tango_dev=None):
             """Action handler taking command input arguments
 
             Parameters
@@ -762,12 +762,12 @@ class PopulateModelActions(object):
             temp_variables = {}
             for action in actions:
                 if action['behaviour'] == 'input_transform':
-                    temp_variables[action['destination_variable']] = data_in
+                    temp_variables[action['destination_variable']] = data_input
                 if action['behaviour'] == 'side_effect':
                     quantity = action['destination_quantity']
-                    temp_variables[action['source_variable']] = data_in
+                    temp_variables[action['source_variable']] = data_input
                     model_quantity = model.sim_quantities[quantity]
-                    model_quantity.set_val(data_in, model.time_func())
+                    model_quantity.set_val(data_input, model.time_func())
                 if action['behaviour'] == 'output_return':
                     if 'source_variable' in action and 'source_quantity' in action:
                         raise ValueError(
