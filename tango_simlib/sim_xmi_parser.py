@@ -756,9 +756,9 @@ class PopulateModelActions(object):
             return_value: float, string, int, etc.
                 Output value of an executed tango command
             """
-            # args contains the model instance and tango device instance
-            # whereby the third item is a value in the case of commands with
-            # input parameters.
+            # TODO (KM 18-01-2016): Need to remove the tango_dev parameter from
+            # action hanlder, currently used for testing functionality of the
+            # override class actions.
             temp_variables = {}
             for action in actions:
                 if action['behaviour'] == 'input_transform':
