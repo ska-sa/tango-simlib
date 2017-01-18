@@ -124,7 +124,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
     @classmethod
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
-        cls.xmi_file = [pkg_resources.resource_filename('mkat_tango.simlib.tests',
+        cls.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
                                                         'weather_sim.xmi')]
 
         # Since the sim_xmi_parser gets the xmi file from the device properties
