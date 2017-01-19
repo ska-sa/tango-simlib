@@ -232,7 +232,8 @@ class test_PopulateModelActions(GenericSetup):
         sim_xmi_parser.PopulateModelActions(self.simdd_parser, device_name, model)
 
         actual_actions_list = model.sim_actions.keys()
-        expected_actions_list = ['On', 'Off', 'StopRainfall', 'SetTemperature']
+        expected_actions_list = ['On', 'Off', 'StopRainfall', 'SetTemperature', 'Add',
+                                 'StopQuantitySimulation', 'MultiplyStringBy3']
         self.assertEqual(set(actual_actions_list), set(expected_actions_list),
                          "There are actions missing in the model")
 
@@ -388,6 +389,47 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.assertEqual(expected_result,
                          getattr(self.device.read_attribute('Rainfall'), 'value'),
                          "The value override action didn't execute successfully")
+
+    def test_StopQuantitySimulation_command(self):
+        """Testing that the Tango device weather simulation of quantities can be halted.
+        """
+        command_name = 'StopQuantitySimulation'
+        expected_result = {'temperature': 0.0,
+                           'insolation': 0.0}
+        self.device.command_inout(command_name, expected_result.keys())
+        # The model needs 'dt' to be greater than the min_update_period for it to update
+        # the model.quantity_state dictionary, so by manipulating the value of the last
+        # update time of the model it will  ensure that the model.quantity_state
+        # dictionary will be updated before reading the attribute value.
+        self.instance.model.last_update_time = 0
+        for quantity_name, quantity_value in expected_result.items():
+            self.assertEqual(quantity_value,
+                             getattr(self.device.read_attribute(quantity_name), 'value'),
+                             "The {} quantity value in the model does not match with the"
+                             " value read from the device attribute.".format(
+                                 quantity_name))
+
+    def test_Add_command(self):
+        """Testing that the Tango device command can take input of an array type and
+        return a output value of type double.
+        """
+        command_name = 'Add'
+        command_args = [12, 45, 53, 32, 2.1, 0.452]
+        expected_return_value = 144.552
+        actual_return_value = self.device.command_inout(command_name, command_args)
+        self.assertEqual(expected_return_value, actual_return_value, "The actual return"
+                         "value does not match with the expected return value.")
+
+    def test_MultiplyStringBy3_command(self):
+        """Testing that the Tango device command can take input of type string and
+        return an output value of type string.
+        """
+        command_name = 'MultiplyStringBy3'
+        command_args = 'LMC'
+        expected_return_value = 'LMCLMCLMC'
+        actual_return_value = self.device.command_inout(command_name, command_args)
+        self.assertEqual(expected_return_value, actual_return_value, "The actual return"
+                         "value does not match with the expected return value.")
 
     def test_Off_command(self):
         """Testing that the Off command changes the State attribute's value of the Tango
