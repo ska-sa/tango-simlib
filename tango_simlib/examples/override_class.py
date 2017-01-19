@@ -64,7 +64,7 @@ class OverrideWeather(object):
             except KeyError:
                 MODULE_LOGGER.debug("Quantity %s not in the model", quantity)
             else:
-                if isinstance(simulated_quantity, GaussianSlewLimited):
+                if hasattr(simulated_quantity, 'max_bound'):
                     simulated_quantity.max_bound = 0.0
                 else:
                     MODULE_LOGGER.debug("Quantity %s is not a GaussianSlewLimited"
