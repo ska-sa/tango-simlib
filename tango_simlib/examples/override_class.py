@@ -15,7 +15,6 @@ An example of the user-defined override class.
 import logging
 
 from PyTango import DevState
-from tango_simlib.quantities import GaussianSlewLimited
 
 MODULE_LOGGER = logging.getLogger(__name__)
 

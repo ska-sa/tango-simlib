@@ -296,7 +296,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
             cls.properties = dict(sim_data_description_file=cls.data_descr_file[0])
             cls.device_name = 'test/nodb/tangodeviceserver'
             model = tango_sim_generator.configure_device_model(cls.data_descr_file,
-                                                               cls.device_name)
+                                                                   cls.device_name)
             cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(model)
             cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
                                                  device_name=cls.device_name,
@@ -310,6 +310,20 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.instance = self.TangoDeviceServer.instances[self.device.name()]
         self.simdd_json_parser = simdd_json_parser.SimddParser()
         self.simdd_json_parser.parse(self.data_descr_file[0])
+
+        default_metadata_values = {}
+        for quantity in self.instance.model.sim_quantities.keys():
+            if hasattr(self.instance.model.sim_quantities[quantity], 'max_bound'):
+                default_metadata_values[quantity] = (
+                    self.instance.model.sim_quantities[quantity].max_bound)
+
+        self.addCleanup(self._restore_model, default_metadata_values)
+
+    def _restore_model(self, default_metadata_values):
+        for quantity in self.instance.model.sim_quantities.keys():
+            if hasattr(self.instance.model.sim_quantities[quantity], 'max_bound'):
+                self.instance.model.sim_quantities[quantity].max_bound = (
+                    default_metadata_values[quantity])
 
     def test_attribute_list(self):
         """ Testing whether the attributes specified in the POGO generated xmi file
@@ -385,8 +399,8 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         # is used by the tests, so we need to store some of the simulated quantities
         # metadata so that we can be able to restore it to its default state before the
         # next test case runs.
-        rainfall_max_bound_value = (
-            self.instance.model.sim_quantities['rainfall'].max_bound)
+        #rainfall_max_bound_value = (
+         #   self.instance.model.sim_quantities['rainfall'].max_bound)
         self.device.command_inout(command_name)
         # The model needs 'dt' to be greater than the min_update_period for it to update
         # the model.quantity_state dictionary, so by manipulating the value of the last
@@ -398,8 +412,8 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
                          "The value override action didn't execute successfully")
 
         # Restore the model's metadata to its default values.
-        self.instance.model.sim_quantities['rainfall'].max_bound = (
-            rainfall_max_bound_value)
+        #self.instance.model.sim_quantities['rainfall'].max_bound = (
+         #   rainfall_max_bound_value)
 
     def test_StopQuantitySimulation_command(self):
         """Testing that the Tango device weather simulation of quantities can be halted.
@@ -412,10 +426,10 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         # instance that is used by the tests, so we need to store some of the simulated
         # quantities metadata so that we can be able to restore it to its default state
         # before the next test case runs.
-        default_metadata_values = {}
-        for quant_to_modify in expected_result.keys():
-            default_metadata_values[quant_to_modify] = (
-                self.instance.model.sim_quantities[quant_to_modify].max_bound)
+       # default_metadata_values = {}
+        #for quant_to_modify in expected_result.keys():
+         #   default_metadata_values[quant_to_modify] = (
+          #      self.instance.model.sim_quantities[quant_to_modify].max_bound)
 
         self.device.command_inout(command_name, expected_result.keys())
         # The model needs 'dt' to be greater than the min_update_period for it to update
@@ -431,9 +445,9 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
                                  quantity_name))
 
         # Restore the model's metadata to its default values.
-        for quant_to_restore in expected_result.keys():
-            self.instance.model.sim_quantities[quant_to_restore].max_bound = (
-                default_metadata_values[quant_to_restore])
+        #for quant_to_restore in expected_result.keys():
+         #   self.instance.model.sim_quantities[quant_to_restore].max_bound = (
+          #      default_metadata_values[quant_to_restore])
 
     def test_Add_command(self):
         """Testing that the Tango device command can take input of an array type and
