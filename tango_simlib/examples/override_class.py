@@ -13,6 +13,7 @@ An example of the user-defined override class.
 """
 
 import logging
+
 from PyTango import DevState
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -42,5 +43,28 @@ class OverrideWeather(object):
         else:
             quant_rainfall.max_bound = 0.0
 
-# TODO(KM 15-12-2016) Will need to define action methods that take in inputs and returns
-# some values that correspond to the dtype_out of the TANGO command.
+    def action_add(self, model, tango_dev=None, data_input=None):
+        """Add two or more numbers together and return their sum.
+        """
+        total = sum(data_input)
+        return total
+
+    def action_multiplystringby3(self, model, tango_dev=None, data_input=None):
+        """Takes a string and multiplies it by a constant integer value of 3.
+        """
+        return 3 * data_input
+
+    def action_stopquantitysimulation(self, model, tango_dev=None, data_input=None):
+        """Totally sets the simulated quantities` values to a constant value of zero.
+        """
+        for quantity in data_input:
+            try:
+                simulated_quantity = model.sim_quantities[quantity]
+            except KeyError:
+                MODULE_LOGGER.debug("Quantity %s not in the model", quantity)
+            else:
+                if hasattr(simulated_quantity, 'max_bound'):
+                    simulated_quantity.max_bound = 0.0
+                else:
+                    MODULE_LOGGER.debug("Quantity %s is not a GaussianSlewLimited"
+                                        " instance.", simulated_quantity)
