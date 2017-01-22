@@ -394,13 +394,6 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         """
         command_name = 'StopRainfall'
         expected_result = 0.0
-
-        # When the StopRainfall command executes, it modifies the one model instance that
-        # is used by the tests, so we need to store some of the simulated quantities
-        # metadata so that we can be able to restore it to its default state before the
-        # next test case runs.
-        #rainfall_max_bound_value = (
-         #   self.instance.model.sim_quantities['rainfall'].max_bound)
         self.device.command_inout(command_name)
         # The model needs 'dt' to be greater than the min_update_period for it to update
         # the model.quantity_state dictionary, so by manipulating the value of the last
@@ -443,11 +436,6 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
                              "The {} quantity value in the model does not match with the"
                              " value read from the device attribute.".format(
                                  quantity_name))
-
-        # Restore the model's metadata to its default values.
-        #for quant_to_restore in expected_result.keys():
-         #   self.instance.model.sim_quantities[quant_to_restore].max_bound = (
-          #      default_metadata_values[quant_to_restore])
 
     def test_Add_command(self):
         """Testing that the Tango device command can take input of an array type and
