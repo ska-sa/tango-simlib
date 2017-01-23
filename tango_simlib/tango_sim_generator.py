@@ -122,6 +122,13 @@ def get_tango_device_server(model, sim_data_files):
     """Declares a tango device class that inherits the Device class and then
     adds tango commands.
 
+    Parameters
+    ----------
+    model: model.Model instance
+        Device model instance
+    sim_data_files: list
+        A list of direct paths to either xmi/xml/json data files.
+
     Returns
     -------
     TangoDeviceServer : PyTango.Device
@@ -284,6 +291,8 @@ def generate_device_server(server_name, sim_data_files):
     ---------
     server_name: str
         Tango device server name
+    sim_data_files: list
+        A list of direct paths to either xmi/xml/json data files.
 
     """
     lines = ['from PyTango.server import server_run',
@@ -306,7 +315,7 @@ def get_device_class(sim_data_files):
     Parameters
     ----------
     sim_data_files: list
-        List of simulator description data files
+        A list of direct paths to either xmi/xml/json data files.
 
     Return
     ------
