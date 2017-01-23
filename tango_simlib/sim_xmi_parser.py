@@ -33,9 +33,9 @@ DEFAULT_TANGO_COMMANDS = ['State', 'Status', 'Init']
 CONSTANT_DATA_TYPES = [DevBoolean, DevEnum, DevString]
 MAX_NUM_OF_CLASS_ATTR_OCCURENCE = 1
 POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP = {
-        'Image': AttrDataFormat.IMAGE,
-        'Scalar': AttrDataFormat.SCALAR,
-        'Spectrum': AttrDataFormat.SPECTRUM}
+    'Image': AttrDataFormat.IMAGE,
+    'Scalar': AttrDataFormat.SCALAR,
+    'Spectrum': AttrDataFormat.SPECTRUM}
 
 ARBITRARY_DATA_TYPE_RETURN_VALUES = {
     DevString: 'Ok!',
@@ -48,45 +48,45 @@ ARBITRARY_DATA_TYPE_RETURN_VALUES = {
 # TODO(KM 31-10-2016): Need to add xmi attributes' properties that are currently
 # not being handled by the parser e.g. [displayLevel, enumLabels] etc.
 POGO_USER_DEFAULT_ATTR_PROP_MAP = {
-        'dynamicAttributes': {
-            'name': 'name',
-            'dataType': 'data_type',
-            'rwType': 'writable',
-            'polledPeriod': 'period',
-            'attType': 'data_format',
-            'maxX': 'max_dim_x',
-            'maxY': 'max_dim_y'},
-        'eventArchiveCriteria': {
-            'absChange': 'archive_abs_change',
-            'period': 'archive_period',
-            'relChange': 'archive_rel_change'},
-        'eventCriteria': {
-            'absChange': 'abs_change',
-            'period': 'event_period',
-            'relChange': 'rel_change'},
-        'properties': {
-            'maxAlarm': 'max_alarm',
-            'maxValue': 'max_value',
-            'maxWarning': 'max_warning',
-            'minAlarm': 'min_alarm',
-            'deltaTime': 'delta_t',
-            'minValue': 'min_value',
-            'deltaValue': 'delta_val',
-            'minWarning': 'min_warning',
-            'description': 'description',
-            'displayUnit': 'display_unit',
-            'standardUnit': 'standard_unit',
-            'format': 'format',
-            'label': 'label',
-            'unit': 'unit'}
-        }
+    'dynamicAttributes': {
+        'name': 'name',
+        'dataType': 'data_type',
+        'rwType': 'writable',
+        'polledPeriod': 'period',
+        'attType': 'data_format',
+        'maxX': 'max_dim_x',
+        'maxY': 'max_dim_y'},
+    'eventArchiveCriteria': {
+        'absChange': 'archive_abs_change',
+        'period': 'archive_period',
+        'relChange': 'archive_rel_change'},
+    'eventCriteria': {
+        'absChange': 'abs_change',
+        'period': 'event_period',
+        'relChange': 'rel_change'},
+    'properties': {
+        'maxAlarm': 'max_alarm',
+        'maxValue': 'max_value',
+        'maxWarning': 'max_warning',
+        'minAlarm': 'min_alarm',
+        'deltaTime': 'delta_t',
+        'minValue': 'min_value',
+        'deltaValue': 'delta_val',
+        'minWarning': 'min_warning',
+        'description': 'description',
+        'displayUnit': 'display_unit',
+        'standardUnit': 'standard_unit',
+        'format': 'format',
+        'label': 'label',
+        'unit': 'unit'}
+    }
 
 POGO_USER_DEFAULT_CMD_PROP_MAP = {
-        'name': 'name',
-        'arginDescription': 'doc_in',
-        'arginType': 'dtype_in',
-        'argoutDescription': 'doc_out',
-        'argoutType': 'dtype_out'}
+    'name': 'name',
+    'arginDescription': 'doc_in',
+    'arginType': 'dtype_in',
+    'argoutDescription': 'doc_out',
+    'argoutType': 'dtype_out'}
 
 class XmiParser(object):
 
@@ -172,11 +172,25 @@ class XmiParser(object):
                 "type": DevString,
                 "mandatory": "true",
                 "description": "Path to the pogo generate xmi file",
-                "name": "sim_xmi_description_file"
+                "name": "sim_xmi_description_file",
+                "DefaultPropValue": "<any object>"
             }
         }]
         """
-        # TODO(KM 31-10-2016): Need to also parse the class properties.
+        self.class_properties = []
+        """Data structure format is a list containing class property info in a dict
+
+        e.g.
+        [{
+            "classProperties": {
+                "type": DevString,
+                "mandatory": "true",
+                "description": "Path to the pogo generate xmi file",
+                "name": "sim_xmi_description_file",
+                "DefaultPropValue": "<any object>"
+            }
+        }]
+        """
 
     def parse(self, sim_xmi_file):
         """
@@ -211,12 +225,16 @@ class XmiParser(object):
                 self.device_commands.append(command_info)
             elif class_description_data.tag in ['dynamicAttributes', 'attributes']:
                 attribute_info = self.extract_attributes_description_data(
-                                            class_description_data)
+                    class_description_data)
                 self.device_attributes.append(attribute_info)
             elif class_description_data.tag in ['deviceProperties']:
-                device_property_info = self.extract_device_property_description_data(
-                                                       class_description_data)
+                device_property_info = self.extract_property_description_data(
+                    class_description_data, class_description_data.tag)
                 self.device_properties.append(device_property_info)
+            elif class_description_data.tag in ['classProperties']:
+                class_property_info = self.extract_property_description_data(
+                    class_description_data, class_description_data.tag)
+                self.class_properties.append(class_property_info)
 
     def extract_command_description_data(self, description_data):
         """Extract command description data from the xmi tree element.
@@ -324,7 +342,7 @@ class XmiParser(object):
         attType = attribute_data['dynamicAttributes']['attType']
         if attType in POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP.keys():
             attribute_data['dynamicAttributes']['attType'] = (
-                    POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP[attType])
+                POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP[attType])
 
         attribute_data['dynamicAttributes']['maxX'] = (1
                 if attribute_data['dynamicAttributes']['maxX'] == ''
@@ -336,17 +354,25 @@ class XmiParser(object):
         attribute_data['dynamicAttributes']['dataType'] = (
             self._get_arg_type(description_data))
         attribute_data['properties'] = description_data.find('properties').attrib
-        # TODO(KM 31-10-2016): Events information is not mandatory for attributes, need
-        # to handle this properly as it raises an AttributeError error when trying to
-        # parse an xmi file with an attribute with not event information specified.
-        attribute_data['eventCriteria'] = description_data.find(
+
+        try:
+            attribute_data['eventCriteria'] = description_data.find(
                 'eventCriteria').attrib
-        attribute_data['eventArchiveCriteria'] = description_data.find(
+        except AttributeError:
+            MODULE_LOGGER.info(
+                "No periodic/change event(s) information was captured in the XMI file")
+
+        try:
+            attribute_data['eventArchiveCriteria'] = description_data.find(
                 'evArchiveCriteria').attrib
+        except AttributeError:
+            MODULE_LOGGER.info(
+                "No archive event(s) information was captured in the XMI file.")
+
         return attribute_data
 
-    def extract_device_property_description_data(self, description_data):
-        """Extract device property description data from the xmi tree element.
+    def extract_property_description_data(self, description_data, property_group):
+        """Extract device/class property description data from the xmi tree element.
 
         Parameters
         ----------
@@ -359,7 +385,8 @@ class XmiParser(object):
             description_data.attrib contains
             {
                 'description': '',
-                'name': 'katcp_address'
+                'name': 'katcp_address',
+                'type': ''
             }
 
         Returns
@@ -369,14 +396,19 @@ class XmiParser(object):
             to create a tango device property
 
         """
-        device_property_data = dict()
-        device_property_data['deviceProperties'] = description_data.attrib
-        device_property_data['deviceProperties']['type'] = (
+        property_data = dict()
+        property_data[property_group] = description_data.attrib
+        property_data[property_group]['type'] = (
                 self._get_arg_type(description_data))
-        if description_data.find('defaultPropValue'):
-            device_property_data['deviceProperties']['defaultPropValue'] = (
-                 description_data.find('defaultPropValue').text)
-        return device_property_data
+        try:
+            property_data[property_group]['DefaultPropValue'] = (
+                description_data.find('DefaultPropValue').text)
+        except KeyError:
+            MODULE_LOGGER.info("%s has no default value(s) specified", property_group)
+        except AttributeError:
+            MODULE_LOGGER.info("The 'DefaultPropValue' element is not specified in the"
+                               " description file for the %s tag", property_group)
+        return property_data
 
     def _get_arg_type(self, description_data):
         """Extract argument data type from the xmi tree element.
@@ -463,8 +495,12 @@ class XmiParser(object):
             for (prop_group, default_attr_props) in (
                     POGO_USER_DEFAULT_ATTR_PROP_MAP.items()):
                 for pogo_prop, user_default_prop in default_attr_props.items():
-                    attribute_meta[user_default_prop] = (
+                    try:
+                        attribute_meta[user_default_prop] = (
                             pogo_attribute_data[prop_group][pogo_prop])
+                    except KeyError:
+                        MODULE_LOGGER.debug("{} information is not captured in the XMI"
+                                            " file".format(pogo_prop))
             attributes[attribute_meta['name']] = attribute_meta
         return attributes
 
@@ -582,8 +618,19 @@ class PopulateModelQuantities(object):
             quantities.ConstantQuantity, start_time=start_time)
         attributes = self.parser_instance.get_reformatted_device_attr_metadata()
 
+        if hasattr(self.parser_instance, 'get_reformatted_properties_metadata'):
+            properties = self.parser_instance.get_reformatted_properties_metadata()
+        else:
+            properties = {}
+
+        simulated_attrs = []
+        try:
+            simulated_attrs = properties['simulated_values']['DefaultPropValue']
+        except KeyError:
+            MODULE_LOGGER.info('Default props not present')
+
         for attr_name, attr_props in attributes.items():
-            if attr_props['data_type'] in CONSTANT_DATA_TYPES:
+            if attr_name not in simulated_attrs:
                 self.sim_model.sim_quantities[attr_name] = ConstantQuantity(
                     meta=attr_props, start_value=True)
             else:
@@ -760,6 +807,7 @@ class PopulateModelActions(object):
             # action hanlder, currently used for testing functionality of the
             # override class actions.
             temp_variables = {}
+            return_value = None
             for action in actions:
                 if action['behaviour'] == 'input_transform':
                     temp_variables[action['destination_variable']] = data_input

@@ -18,7 +18,7 @@ from tango_simlib.testutils import ClassCleanupUnittestMixin
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
-DEFAULT_TANGO_COMMANDS = ['State', 'Status', 'Init']
+DEFAULT_TANGO_COMMANDS = frozenset(['State', 'Status', 'Init'])
 
 TANGO_CMD_PARAMS_NAME_MAP = {
     'name': 'cmd_name',
@@ -404,26 +404,12 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
                          getattr(self.device.read_attribute('Rainfall'), 'value'),
                          "The value override action didn't execute successfully")
 
-        # Restore the model's metadata to its default values.
-        #self.instance.model.sim_quantities['rainfall'].max_bound = (
-         #   rainfall_max_bound_value)
-
     def test_StopQuantitySimulation_command(self):
         """Testing that the Tango device weather simulation of quantities can be halted.
         """
         command_name = 'StopQuantitySimulation'
         expected_result = {'temperature': 0.0,
                            'insolation': 0.0}
-
-        # When the StopQuantitySimulation command executes, it modifies the one model
-        # instance that is used by the tests, so we need to store some of the simulated
-        # quantities metadata so that we can be able to restore it to its default state
-        # before the next test case runs.
-       # default_metadata_values = {}
-        #for quant_to_modify in expected_result.keys():
-         #   default_metadata_values[quant_to_modify] = (
-          #      self.instance.model.sim_quantities[quant_to_modify].max_bound)
-
         self.device.command_inout(command_name, expected_result.keys())
         # The model needs 'dt' to be greater than the min_update_period for it to update
         # the model.quantity_state dictionary, so by manipulating the value of the last
@@ -485,3 +471,68 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         # same as the `data_in` value
         self.assertEqual(round(getattr(self.device.read_attribute('Temperature'),
                                'value'), 2), data_in)
+
+MKAT_VDS_ATTRIBUTE_LIST = frozenset(['camera_power_on', 'device_status',
+                                     'flood_lights_on', 'focus_position',
+                                     'pan_position', 'pdu_connected',
+                                     'ptz_controller_connected', 'snmpd_trap_running',
+                                     'tilt_position', 'zoom_position'])
+MKAT_VDS_COMMAND_LIST = frozenset(['CameraPowerOn', 'FloodLightOn', 'Focus', 'Pan',
+                                   'PresetClear', 'PresetGoto', 'PresetSet', 'Stop',
+                                   'Tilt', 'TrapUpdate', 'Zoom'])
+
+class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
+
+    longMessage = True
+
+    @classmethod
+    def setUpClassWithCleanup(cls):
+        cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
+        cls.data_descr_files = []
+        cls.data_descr_files.append(pkg_resources.resource_filename('tango_simlib.tests',
+                                                                    'MkatVds.xmi'))
+        cls.data_descr_files.append(pkg_resources.resource_filename(
+            'tango_simlib.tests', 'MkatVds_SIMDD.json'))
+        # Since the sim_xmi_parser gets the simdd file from the device properties
+        # in the tango database, here the method is mocked to return the simdd
+        # file that found using the pkg_resources since it is included in the
+        # test module
+        with mock.patch(tango_sim_generator.__name__ + '.get_data_description_file_name'
+                        ) as mock_get_description_file_name:
+            mock_get_description_file_name.return_value = cls.data_descr_files
+            cls.properties = dict(sim_data_description_file=cls.data_descr_files)
+            cls.device_name = 'test/nodb/tangodeviceserver'
+            model = tango_sim_generator.configure_device_model(cls.data_descr_files,
+                                                               cls.device_name)
+            cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(model)
+            cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
+                                                 device_name=cls.device_name,
+                                                 db=cls.tango_db,
+                                                properties=cls.properties)
+            start_thread_with_cleanup(cls, cls.tango_context)
+
+    def setUp(self):
+        super(test_XmiSimddDeviceIntegration, self).setUp()
+        self.device = self.tango_context.device
+        self.instance = self.TangoDeviceServer.instances[self.device.name()]
+
+    def test_attribute_list(self):
+        """ Testing whether the attributes specified in the POGO generated xmi file
+        are added to the TANGO device
+        """
+        attributes = set(self.device.get_attribute_list())
+        default_attributes = {'State', 'Status'}
+        self.assertEqual(MKAT_VDS_ATTRIBUTE_LIST, attributes - default_attributes,
+                         "Actual tango device attribute list differs from expected "
+                         "list! \n\n Missing attributes: \n {}".format(
+                         MKAT_VDS_ATTRIBUTE_LIST - attributes))
+
+    def test_command_list(self):
+        """Testing that the command list in the Tango device matches with the one
+        specified in the SIMDD data description file.
+        """
+        actual_device_commands = set(self.device.get_command_list())
+        self.assertEquals(actual_device_commands - DEFAULT_TANGO_COMMANDS,
+                          MKAT_VDS_COMMAND_LIST,
+                          "The commands specified in the SIMDD file are not present in"
+                          " the device")

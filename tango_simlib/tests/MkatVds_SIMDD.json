@@ -5,7 +5,7 @@
                 "name": "CameraPowerOn",
                 "description": "Switch camera electronics on or off",
                 "input_parameters": {
-                    "dtype_in": "Enum",
+                    "dtype_in": "String",
                     "doc_in": "on_off_value: string; indicates if its on or off",
                     "dformat_in": "Scalar"
                 },
@@ -26,8 +26,8 @@
                 "name": "Pan",
                 "description": "Drive camera to a pan direction (left or right) or to specified position.",
                 "input_parameters": {
-                    "dtype_in": "VarStringArray",
-                    "doc_in": "pan_position : int; pan to the specified position. pan_direction : string; pan to the specified direction.",
+                    "dtype_in": "Void",
+                    "doc_in": "",
                     "dformat_in": "Scalar"
                 },
                 "output_parameters": {
@@ -47,8 +47,8 @@
                 "name": "Tilt",
                 "description": "Drive camera to a tilt direction or specified position.",
                 "input_parameters": {
-                    "dtype_in": "VarStringArray",
-                    "doc_in": "tilt_direction : string; tilt to the specific direction. tilt_position : int; tilt tot the specific position.",
+                    "dtype_in": "Void",
+                    "doc_in": "",
                     "dformat_in": "Scalar"
                 },
                 "output_parameters": {
@@ -68,8 +68,8 @@
                 "name": "Zoom",
                 "description": "Zoom camera to a specified direction or specified position.",
                 "input_parameters": {
-                    "dtype_in": "VarStringArray",
-                    "doc_in": "zoom_direction : string; zoom to the specific direction. zoom_position : int; zoom to the specific position.",
+                    "dtype_in": "Void",
+                    "doc_in": "",
                     "dformat_in": "Scalar"
                 },
                 "output_parameters": {
@@ -159,7 +159,7 @@
                 "description": "Stop camera.",
                 "input_parameters": {
                     "dtype_in": "Void",
-                    "doc_in": "No input parameter",
+                    "doc_in": "",
                     "dformat_in": "Scalar"
                 },
                 "output_parameters": {
@@ -190,8 +190,8 @@
                 "name": "Focus",
                 "description": "Focuses camera to a specified direction or specified position.",
                 "input_parameters": {
-                    "dtype_in": "VarStringArray",
-                    "doc_in": "focus_direction : string; focus to the specified direction. focus_position : int; focus to the specific position.",
+                    "dtype_in": "Void",
+                    "doc_in": "",
                     "dformat_in": "Spectrum"
                 },
                 "output_parameters": {

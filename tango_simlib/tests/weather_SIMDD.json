@@ -560,11 +560,12 @@
     "deviceProperties": [
         {
             "propertyData": {
-                "name": "sim_data_description_file",
-                "type": "string",
-                "default_value": ""
+                "name": "simulated_values",
+                "type": "VarStringArray",
+                "DefaultPropValue": "temperature, insolation, pressure, rainfall, relative_humidity, wind_direction, wind_speed"
             }
         }
+
     ],
     "class_overrides": [
         {
