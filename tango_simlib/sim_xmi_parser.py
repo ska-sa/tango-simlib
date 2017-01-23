@@ -29,8 +29,8 @@ from tango_simlib import model
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
-DEFAULT_TANGO_COMMANDS = ['State', 'Status', 'Init']
-CONSTANT_DATA_TYPES = [DevBoolean, DevEnum, DevString]
+DEFAULT_TANGO_COMMANDS = frozenset(['State', 'Status', 'Init'])
+CONSTANT_DATA_TYPES = frozenset([DevBoolean, DevEnum, DevString])
 MAX_NUM_OF_CLASS_ATTR_OCCURENCE = 1
 POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP = {
     'Image': AttrDataFormat.IMAGE,
@@ -389,6 +389,10 @@ class XmiParser(object):
                 'type': ''
             }
 
+        property_group: str
+            A string representing a group to which the property belongs to, either
+            device properties or class properties.
+
         Returns
         -------
         device_property_data: dict
@@ -618,32 +622,29 @@ class PopulateModelQuantities(object):
             quantities.ConstantQuantity, start_time=start_time)
         attributes = self.parser_instance.get_reformatted_device_attr_metadata()
 
-        if hasattr(self.parser_instance, 'get_reformatted_properties_metadata'):
-            properties = self.parser_instance.get_reformatted_properties_metadata()
-        else:
-            properties = {}
-
-        simulated_attrs = []
-        try:
-            simulated_attrs = properties['simulated_values']['DefaultPropValue']
-        except KeyError:
-            MODULE_LOGGER.info('Default props not present')
-
         for attr_name, attr_props in attributes.items():
-            if attr_name not in simulated_attrs:
-                self.sim_model.sim_quantities[attr_name] = ConstantQuantity(
-                    meta=attr_props, start_value=True)
-            else:
-                try:
-                    sim_attr_quantities = self.sim_attribute_quantities(
+            if attr_props.has_key('quantity_type'):
+                if attr_props['quantity_type'] in ['ConstantQuantity']:
+                    self.sim_model.sim_quantities[attr_name] = (
+                        partial(quantities.registry[attr_props['quantity_type']],
+                                start_time=start_time)(meta=attr_props,
+                                                       start_value=True))
+                else:
+                    try:
+                        sim_attr_quantities = self.sim_attribute_quantities(
                             float(attr_props['min_value']),
                             float(attr_props['max_value']))
-                except ValueError:
-                    raise NotImplementedError(
+                    except KeyError:
+                        raise NotImplementedError(
                             'Attribute min or max not specified')
-                self.sim_model.sim_quantities[
-                        attr_props['name']] = GaussianSlewLimited(
-                                meta=attr_props, **sim_attr_quantities)
+                    self.sim_model.sim_quantities[attr_name] = (
+                        partial(quantities.registry[attr_props['quantity_type']],
+                                start_time=start_time)(meta=attr_props,
+                                                       **sim_attr_quantities))
+            else:
+                self.sim_model.sim_quantities[attr_name] = (
+                    partial(quantities.ConstantQuantity, start_time=start_time)
+                    (meta=attr_props, start_value=True))
 
     def sim_attribute_quantities(self, min_value, max_value, slew_rate=None):
         """Simulate attribute quantities with a Guassian value distribution

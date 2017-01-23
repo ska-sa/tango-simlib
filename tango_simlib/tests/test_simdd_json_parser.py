@@ -164,7 +164,6 @@ class test_PopulateModelQuantities(GenericSetup):
         """
         device_name = 'tango/device/instance'
         pmq = sim_xmi_parser.PopulateModelQuantities(self.simdd_parser, device_name)
-
         self.assertEqual(device_name, pmq.sim_model.name,
                          "The device name and the model name do not match.")
         expected_quantities_list = ['insolation', 'temperature',
@@ -472,6 +471,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.assertEqual(round(getattr(self.device.read_attribute('Temperature'),
                                'value'), 2), data_in)
 
+
 MKAT_VDS_ATTRIBUTE_LIST = frozenset(['camera_power_on', 'device_status',
                                      'flood_lights_on', 'focus_position',
                                      'pan_position', 'pdu_connected',
@@ -536,3 +536,8 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
                           MKAT_VDS_COMMAND_LIST,
                           "The commands specified in the SIMDD file are not present in"
                           " the device")
+
+    def test_simulated_quantities_list(self):
+        """Test that none of the MKATVDS attributes have simulated values.
+        """
+        pass
