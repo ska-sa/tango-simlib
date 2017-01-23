@@ -349,8 +349,8 @@ def get_argparser():
     return parser
 
 def main():
-    parser = get_argparser()
-    opts = parser.parse_args()
+    arg_parser = get_argparser()
+    opts = arg_parser.parse_args()
     generate_device_server(opts.dserver_name, opts.sim_data_file)
 
 if __name__ == "__main__":
