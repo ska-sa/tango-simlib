@@ -176,9 +176,12 @@ def get_tango_device_server(model):
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerCommands):
         __metaclass__ = DeviceMeta
 
-        def initialize_dynamic_attributes(self):
+        def init_device(self):
+            TangoDeviceServerBase.init_device(self)
             self.model = model
-            model_sim_quants = model.sim_quantities
+
+        def initialize_dynamic_attributes(self):
+            model_sim_quants = self.model.sim_quantities
             attribute_list = set([attr for attr in model_sim_quants.keys()])
             for attribute_name in attribute_list:
                 MODULE_LOGGER.info("Added dynamic {} attribute"
