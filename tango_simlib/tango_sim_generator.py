@@ -337,7 +337,7 @@ def get_device_class(sim_data_files):
                              ' simulator data file')
     return klass_name
 
-def get_parser():
+def get_argparser():
     parser = argparse.ArgumentParser(
             description="Generate a tango data driven simulator, handling"
             "registration as needed. Supports multiple device per process.")
@@ -349,7 +349,7 @@ def get_parser():
     return parser
 
 def main():
-    parser = get_parser()
+    parser = get_argparser()
     opts = parser.parse_args()
     generate_device_server(opts.dserver_name, opts.sim_data_file)
 
