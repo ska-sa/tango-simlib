@@ -119,6 +119,7 @@ expected_sim_xmi_file_device_property_info = {
     'type': PyTango.CmdArgType.DevString}
 
 class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
+
     longMessage = True
 
     @classmethod
@@ -126,24 +127,25 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
                                                         'weather_sim.xmi')]
-
         # Since the sim_xmi_parser gets the xmi file from the device properties
         # in the tango database, here the method is mocked to return the xmi
         # file that found using the pkg_resources since it is included in the
         # test module
         with mock.patch(tango_sim_generator.__name__ + '.get_data_description_file_name'
                                          ) as mock_get_xmi_description_file_name:
-            mock_get_xmi_description_file_name.return_value = cls.xmi_file[0]
+            mock_get_xmi_description_file_name.return_value = cls.xmi_file
             cls.properties = dict(sim_data_description_file=cls.xmi_file[0])
             cls.device_name = 'test/nodb/tangodeviceserver'
             model = tango_sim_generator.configure_device_model(cls.xmi_file,
                                                                cls.device_name)
-            cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(model)
+            cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
+                    model, cls.xmi_file)[0]
             cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
                                                  device_name=cls.device_name,
                                                  db=cls.tango_db,
                                                  properties=cls.properties)
             start_thread_with_cleanup(cls, cls.tango_context)
+
 
     def setUp(self):
         super(test_SimXmiDeviceIntegration, self).setUp()
@@ -184,7 +186,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
                 if attr_parameter in ['writable']:
                     attr_prop_value = str(attr_prop_value)
 
-                if attr_prop_value == None:
+                if attr_prop_value is None:
                     # In the case where no attr_query data is not found it is
                     # further checked in the mentioned attribute object
                     # i.e. alarms and events

@@ -70,7 +70,7 @@ class OverrideWeather(object):
                                         " instance.", simulated_quantity)
 
 
-class OverriderVds(object):
+class OverrideVds(object):
     """An example of the override class for the TANGO device class 'MKATVDS'. It
     provides all the implementations of the command handler functions for the commands
     specified in the POGO generated XMI data description file.
@@ -108,7 +108,7 @@ class OverriderVds(object):
         except KeyError:
             raise Exception("Focus position quantity not found in the model")
         else:
-            quant_pan_position.set_val(pan_position)
+            quant_pan_position.set_val(pan_position, model.time_func())
 
     def action_camerapoweron(self, model, tango_dev=None, data_input=None):
         """Switch camera electronics on or off
@@ -125,7 +125,8 @@ class OverriderVds(object):
             MODULE_LOGGER.debug("'camera_power_on' model quantity not found")
         else:
             try:
-                quant_camera_power.set_val(camera_power_status[data_input.lower()])
+                quant_camera_power.set_val(camera_power_status[data_input.lower()],
+                                           model.time_func())
             except KeyError:
                 raise Exception("Invalid argument ({}) provided. Please provide a string"
                                 " of either 'on' or 'off' value.".format(data_input))
@@ -145,7 +146,8 @@ class OverriderVds(object):
             MODULE_LOGGER.debug("'flood_lights_on' model quantity not found")
         else:
             try:
-                quant_flood_lights.set_val(flood_lights_status[data_input.lower()])
+                quant_flood_lights.set_val(flood_lights_status[data_input.lower()],
+                                           model.time_func())
             except KeyError:
                 raise Exception("Invalid argument ({}) provided. Please provide a string"
                                 " of either 'on' or 'off'.".format(data_input))
@@ -183,7 +185,7 @@ class OverriderVds(object):
         except KeyError:
             raise Exception("Focus position quantity not found in the model")
         else:
-            quant_focus_position.set_val(focus_position)
+            quant_focus_position.set_val(focus_position, model.time_func())
 
     def action_presetclear(self, model, tango_dev=None, data_input=None):
         """Clear the specified preset.
@@ -221,7 +223,8 @@ class OverriderVds(object):
                     for position_id in range(len(model.presets_dict[preset_id])):
                         model_quant = model.sim_quantities[
                             '%s_position' % model.position_lst[position_id]]
-                        model_quant.set_val(model.presets_dict[preset_id][position_id])
+                        model_quant.set_val(model.presets_dict[preset_id][position_id],
+                                            model.time_func())
                 else:
                     MODULE_LOGGER.debug("No previous presets were setup")
             except AttributeError:
@@ -292,7 +295,7 @@ class OverriderVds(object):
         except KeyError:
             raise Exception("Tilt position quantity not found in the model")
         else:
-            quant_tilt_position.set_val(tilt_position)
+            quant_tilt_position.set_val(tilt_position, model.time_func())
 
     def action_zoom(self, model, tango_dev=None, data_input=None):
         """Zoom camera to a specified direction or specified position.
@@ -327,7 +330,7 @@ class OverriderVds(object):
         except KeyError:
             raise Exception("Zoom position quantity not found in the model")
         else:
-            quant_zoom_position.set_val(zoom_position)
+            quant_zoom_position.set_val(zoom_position, model.time_func())
 
     def action_trapupdate(self, model, tango_dev=None, data_input=None):
         """Update trap. this request is called by a script.

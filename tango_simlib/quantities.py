@@ -20,6 +20,13 @@ MODULE_LOGGER = logging.getLogger(__name__)
 inf = float('inf')
 ninf = float('-inf')
 
+registry = dict()
+def register_quantity_class(cls):
+    assert cls.__name__ not in registry
+    registry[cls.__name__] = cls
+    Quantity.register(cls)
+
+
 class Quantity(object):
     __metaclass__ = abc.ABCMeta
 
@@ -78,6 +85,7 @@ class Quantity(object):
         self.last_update_time = t
         self.last_val = val
 
+
 class GaussianSlewLimited(Quantity):
     """A Gaussian random variable a slew-rate limit and clipping
 
@@ -129,8 +137,14 @@ class GaussianSlewLimited(Quantity):
         self.last_update_time = t
         return val
 
+register_quantity_class(GaussianSlewLimited)
+
+
 class ConstantQuantity(Quantity):
     """A quantity that does not change unless explicitly set"""
 
     def next_val(self, t):
         return self.last_val
+
+
+register_quantity_class(ConstantQuantity)

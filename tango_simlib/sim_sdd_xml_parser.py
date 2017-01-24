@@ -40,6 +40,7 @@ class SDDParser(object):
     commands: dict
     """
     def __init__(self):
+        self.data_description_file_name = ''
         self.monitoring_points = {}
         self.commands = {}
         self._formatted_mnt_pts_info = {}
@@ -48,6 +49,7 @@ class SDDParser(object):
     def parse(self, sdd_xml_file):
         # TODO (KM 18-11-2016) Might make use of the libraries mentioned to parse XML
         # files in this URL http://docs.python-guide.org/en/latest/scenarios/xml/
+        self.data_description_file_name = sdd_xml_file
         tree = ET.parse(sdd_xml_file)
         root = tree.getroot()
         self.commands.update(self.extract_command_info(root.find(

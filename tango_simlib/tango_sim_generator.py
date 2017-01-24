@@ -16,15 +16,18 @@ TANGO device that exhibits the behaviour defined in the data description file.
 import os
 import weakref
 import logging
+import argparse
 
 from PyTango import Attr, AttrWriteType, UserDefaultAttrProp, AttrQuality, Database
 from PyTango import DevState
-from PyTango.server import Device, DeviceMeta, server_run, device_property, command
+from PyTango.server import Device, DeviceMeta, device_property, command
 
+from functools import partial
 
 from tango_simlib.model import Model
 from tango_simlib.simdd_json_parser import SimddParser
 from tango_simlib.sim_sdd_xml_parser import SDDParser
+from tango_simlib.sim_test_interface import SimControl
 from tango_simlib.sim_xmi_parser import (XmiParser, PopulateModelQuantities,
                                          PopulateModelActions)
 from tango_simlib import helper_module
@@ -115,9 +118,16 @@ def get_data_description_file_name():
     return sim_data_description_file_list
 
 
-def get_tango_device_server(model):
+def get_tango_device_server(model, sim_data_files):
     """Declares a tango device class that inherits the Device class and then
     adds tango commands.
+
+    Parameters
+    ----------
+    model: model.Model instance
+        Device model instance
+    sim_data_files: list
+        A list of direct paths to either xmi/xml/json data files.
 
     Returns
     -------
@@ -187,7 +197,12 @@ def get_tango_device_server(model):
                         MODULE_LOGGER.info("No setter function for " + prop + " property")
                 attr.set_default_properties(attr_props)
                 self.add_attribute(attr, self.read_attributes)
-    return TangoDeviceServer
+    klass_name = get_device_class(sim_data_files)
+    TangoDeviceServer.TangoClassName = klass_name
+    TangoDeviceServer.__name__ = klass_name
+    SimControl.TangoClassName = '%sSimControl' % klass_name
+    SimControl.__name__ = '%sSimControl' % klass_name
+    return [TangoDeviceServer, SimControl]
 
 
 def get_parser_instance(sim_datafile=None):
@@ -242,6 +257,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         data_file = sim_data_file
 
     server_name = helper_module.get_server_name()
+    klass_name = get_device_class(data_file)
 
     if test_device_name is None:
         db_instance = Database()
@@ -249,7 +265,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         # The name attribute represents the name of the device server and the
         # value_string attribute is a list of all the registered device instances in
         # that device server instance for the TANGO class 'TangoDeviceServer'.
-        db_datum = db_instance.get_device_name(server_name, 'TangoDeviceServer')
+        db_datum = db_instance.get_device_name(server_name, klass_name)
         # We assume that at least one device instance has been
         # registered for that class and device server.
         dev_name = getattr(db_datum, 'value_string')[0]
@@ -270,11 +286,79 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         PopulateModelActions(parser, dev_name, sim_model)
     return model
 
+def generate_device_server(server_name, sim_data_files):
+    """Create a tango device server python file
+
+    Parameters
+    ---------
+    server_name: str
+        Tango device server name
+    sim_data_files: list
+        A list of direct paths to either xmi/xml/json data files.
+
+    """
+    lines = ['from PyTango.server import server_run',
+             ('from tango_simlib.tango_sim_generator import ('
+              'configure_device_model, get_tango_device_server)'),
+             '\n\ndef main():',
+             '    sim_data_files = %s' % sim_data_files,
+             '    model = configure_device_model(sim_data_files)',
+             '    TangoDeviceServers = get_tango_device_server(model, sim_data_files)',
+             '    server_run(TangoDeviceServers)',
+             '\nif __name__ == "__main__":',
+             '    main()']
+
+    with open("%s.py" % server_name, 'w') as dserver:
+        dserver.write('\n'.join(lines))
+
+def get_device_class(sim_data_files):
+    """Get device class name from specified xmi description file
+
+    Parameters
+    ----------
+    sim_data_files: list
+        A list of direct paths to either xmi/xml/json data files.
+
+    Return
+    ------
+    klass_name: str
+        Tango device class name
+    """
+    if len(sim_data_files) < 1:
+        raise Exception('No simulator data file specified.')
+
+    parser_instance = None
+    klass_name = ''
+    for data_file in sim_data_files:
+        extension = os.path.splitext(data_file)[-1]
+        extension = extension.lower()
+        if extension in [".xmi"]:
+            parser_instance = get_parser_instance(data_file)
+    # Since at the current moment the class name of the tango simulator to be
+    # generated must be specified in the xmi data file, if no xmi if provided
+    # the simulator will be given a default name.
+    if parser_instance:
+        klass_name = parser_instance.device_class_name
+    else:
+        klass_name = 'TangoDeviceServer'
+
+    return klass_name
+
+def get_argparser():
+    parser = argparse.ArgumentParser(
+            description="Generate a tango data driven simulator, handling"
+            "registration as needed. Supports multiple device per process.")
+    required_argument = partial(parser.add_argument, required=True)
+    required_argument('--sim-data-file', action='append',
+                      help='Simulator description data files(s) '
+                      '.i.e. can specify multiple files')
+    required_argument('--dserver-name', help='TANGO server executable command')
+    return parser
+
 def main():
-    model = configure_device_model()
-    TangoDeviceServer = get_tango_device_server(model)
-    server_run([TangoDeviceServer])
+    arg_parser = get_argparser()
+    opts = arg_parser.parse_args()
+    generate_device_server(opts.dserver_name, opts.sim_data_file)
 
 if __name__ == "__main__":
     main()
-
