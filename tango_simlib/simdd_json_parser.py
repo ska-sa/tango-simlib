@@ -7,15 +7,15 @@
 # THIS SOFTWARE MAY NOT BE COPIED OR DISTRIBUTED IN ANY FORM WITHOUT THE      #
 # WRITTEN PERMISSION OF SKA SA.                                               #
 ###############################################################################
+"""This module performs the parsing of the Simulator Description Datafile,
+containing the information needed to instantiate a useful device simulator.
+@author MeerKAT CAM team <cam@ska.ac.za>
+"""
 
-
-import os
-import sys
 import logging
 
 import json
 
-from PyTango import DevState, DevDouble, DevString, DevBoolean, DevVoid
 from PyTango._PyTango import CmdArgType, AttrDataFormat
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -36,6 +36,7 @@ class SimddParser(object):
         :meth:`get_reformatted_override_metadata`.
 
         """
+        self.data_description_file_name = ''
         # Simulator decription datafile in json format
         self._device_attributes = {}
         """The Data structure format is a dict containing attribute info in a dict
@@ -98,7 +99,9 @@ class SimddParser(object):
 
         e.g.
         {'sim_data_description_file': {
-            'default_value': '',
+            'DefaultPropValue': '',          # The key was changed from 'default_value'
+                                             # so as to have the same data structures
+                                             # across all the three parsers.
             'name': 'sim_data_description_file',
             'type': 'string'},
         }
@@ -128,6 +131,7 @@ class SimddParser(object):
           element name and values must be the corresponding data value.
 
         """
+        self.data_description_file_name = simdd_json_file
         with open(simdd_json_file) as simdd_file:
             device_data = json.load(simdd_file)
         for data_component, elements in device_data.items():
@@ -313,7 +317,7 @@ class SimddParser(object):
             'writable': 'READ'
         }
         """
-        def expand(key, value):
+        def expand(value):
             """Method to expand values of a value if it is an instance of dict"""
             # Recursively call get_reformated_data if value is still a dict
             return [(param_name, param_val)
@@ -323,7 +327,7 @@ class SimddParser(object):
         formated_info = dict()
         for param_name, param_val in sim_device_info.items():
             if isinstance(param_val, dict):
-                for item in expand(param_name, param_val):
+                for item in expand(param_val):
                     property_key = str(item[0])
                     # Since the data type specified in the SIMDD is a string format
                     # e.g. String, it is require in Tango device as a CmdArgType
