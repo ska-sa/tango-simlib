@@ -36,6 +36,7 @@ class SimddParser(object):
         :meth:`get_reformatted_override_metadata`.
 
         """
+        self.data_description_file_name = ''
         # Simulator decription datafile in json format
         self._device_attributes = {}
         """The Data structure format is a dict containing attribute info in a dict
@@ -130,6 +131,7 @@ class SimddParser(object):
           element name and values must be the corresponding data value.
 
         """
+        self.data_description_file_name = simdd_json_file
         with open(simdd_json_file) as simdd_file:
             device_data = json.load(simdd_file)
         for data_component, elements in device_data.items():

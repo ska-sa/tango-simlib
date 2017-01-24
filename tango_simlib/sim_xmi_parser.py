@@ -103,6 +103,7 @@ class XmiParser(object):
         :meth:`get_reformatted_override_metadata`
 
         """
+        self.data_description_file_name = ''
         self.device_class_name = ''
         self.device_attributes = []
         """The Data structure format is a list containing attribute info in a dict
@@ -214,6 +215,7 @@ class XmiParser(object):
           description data and values must be the corresponding data value.
 
         """
+        self.data_description_file_name = sim_xmi_file
         tree = ET.parse(sim_xmi_file)
         root = tree.getroot()
         device_class = root.find('classes')
@@ -635,8 +637,11 @@ class PopulateModelQuantities(object):
                             float(attr_props['min_value']),
                             float(attr_props['max_value']))
                     except KeyError:
-                        raise NotImplementedError(
-                            'Attribute min or max not specified')
+                        raise ValueError(
+                            "Attribute with name '{}' specified in the configuration"
+                            " file [{}] has no mininum or maximum values set".format(
+                                attr_name,
+                                self.parser_instance.data_description_file_name))
                     self.sim_model.sim_quantities[attr_name] = (
                         partial(quantities.registry[attr_props['quantity_type']],
                                 start_time=start_time)(meta=attr_props,
