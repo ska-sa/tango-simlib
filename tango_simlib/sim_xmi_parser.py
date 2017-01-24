@@ -336,13 +336,21 @@ class XmiParser(object):
         attribute_data['dynamicAttributes']['dataType'] = (
             self._get_arg_type(description_data))
         attribute_data['properties'] = description_data.find('properties').attrib
-        # TODO(KM 31-10-2016): Events information is not mandatory for attributes, need
-        # to handle this properly as it raises an AttributeError error when trying to
-        # parse an xmi file with an attribute with not event information specified.
-        attribute_data['eventCriteria'] = description_data.find(
+
+        try:
+            attribute_data['eventCriteria'] = description_data.find(
                 'eventCriteria').attrib
-        attribute_data['eventArchiveCriteria'] = description_data.find(
+        except AttributeError:
+            MODULE_LOGGER.info(
+                "No periodic/change event(s) information was captured in the XMI file")
+
+        try:
+            attribute_data['eventArchiveCriteria'] = description_data.find(
                 'evArchiveCriteria').attrib
+        except AttributeError:
+            MODULE_LOGGER.info(
+                "No archive event(s) information was captured in the XMI file.")
+
         return attribute_data
 
     def extract_device_property_description_data(self, description_data):
@@ -411,7 +419,15 @@ class XmiParser(object):
         # instead of the default PyTango.utils.DevState
         if arg_type == 'State':
             return CmdArgType.DevState
-        arg_type = getattr(PyTango, 'Dev' + arg_type)
+
+        try:
+            arg_type = getattr(PyTango, 'Dev' + arg_type)
+        except AttributeError:
+            MODULE_LOGGER.debug("PyTango has no attribute 'Dev{}".format(arg_type))
+            raise AttributeError("PyTango has no attribute 'Dev{}.\n Try replacing"
+                                 " '{}' with 'Var{}' in the configuration file"
+                                 .format(*(3*(arg_type,))))
+
         return arg_type
 
 
@@ -463,8 +479,12 @@ class XmiParser(object):
             for (prop_group, default_attr_props) in (
                     POGO_USER_DEFAULT_ATTR_PROP_MAP.items()):
                 for pogo_prop, user_default_prop in default_attr_props.items():
-                    attribute_meta[user_default_prop] = (
+                    try:
+                        attribute_meta[user_default_prop] = (
                             pogo_attribute_data[prop_group][pogo_prop])
+                    except KeyError:
+                        MODULE_LOGGER.debug("{} information is not captured in the XMI"
+                                            " file".format(pogo_prop))
             attributes[attribute_meta['name']] = attribute_meta
         return attributes
 

@@ -5,7 +5,7 @@
                 "name": "CameraPowerOn",
                 "description": "Switch camera electronics on or off",
                 "input_parameters": {
-                    "dtype_in": "Enum",
+                    "dtype_in": "String",
                     "doc_in": "on_off_value: string; indicates if its on or off",
                     "dformat_in": "Scalar"
                 },
