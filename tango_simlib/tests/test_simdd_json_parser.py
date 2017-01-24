@@ -297,7 +297,8 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
             cls.device_name = 'test/nodb/tangodeviceserver'
             model = tango_sim_generator.configure_device_model(cls.data_descr_file,
                                                                    cls.device_name)
-            cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(model)
+            cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
+                    model, cls.data_descr_file)[0]
             cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
                                                  device_name=cls.device_name,
                                                  db=cls.tango_db,

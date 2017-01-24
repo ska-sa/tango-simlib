@@ -199,7 +199,9 @@ def get_tango_device_server(model, sim_data_files):
                 self.add_attribute(attr, self.read_attributes)
     klass_name = get_device_class(sim_data_files)
     TangoDeviceServer.TangoClassName = klass_name
+    TangoDeviceServer.__name__ = klass_name
     SimControl.TangoClassName = '%sSimControl' % klass_name
+    SimControl.__name__ = '%sSimControl' % klass_name
     return [TangoDeviceServer, SimControl]
 
 
@@ -322,6 +324,9 @@ def get_device_class(sim_data_files):
     klass_name: str
         Tango device class name
     """
+    if len(sim_data_files) < 1:
+        raise Exception('No simulator data file specified.')
+
     parser_instance = None
     klass_name = ''
     for data_file in sim_data_files:
@@ -329,12 +334,14 @@ def get_device_class(sim_data_files):
         extension = extension.lower()
         if extension in [".xmi"]:
             parser_instance = get_parser_instance(data_file)
-
-    try:
+    # Since at the current moment the class name of the tango simulator to be
+    # generated must be specified in the xmi data file, if no xmi if provided
+    # the simulator will be given a default name.
+    if parser_instance:
         klass_name = parser_instance.device_class_name
-    except AttributeError:
-        raise AttributeError('Parser not properly instantiated. Provide proper'
-                             ' simulator data file')
+    else:
+        klass_name = 'TangoDeviceServer'
+
     return klass_name
 
 def get_argparser():
