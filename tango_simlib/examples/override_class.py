@@ -259,7 +259,7 @@ class OverrideVds(object):
                     data_input))
         except AttributeError:
             raise VdsSimError(
-                "No preset position values set up previously for receptor {}."format(
+                "No preset position values set up previously for receptor {}.".format(
                     data_input))
 
         for position in presets.keys():
