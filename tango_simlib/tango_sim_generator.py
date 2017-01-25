@@ -205,7 +205,7 @@ def get_tango_device_server(model, sim_data_files):
     return [TangoDeviceServer, SimControl]
 
 
-def get_parser_instance(sim_datafile=None):
+def get_parser_instance(sim_datafile):
     """This method returns an appropriate parser instance to generate a Tango device
 
     Parameters
@@ -234,8 +234,7 @@ def get_parser_instance(sim_datafile=None):
         parser_instance.parse(sim_datafile)
     return parser_instance
 
-def configure_device_model(sim_data_file=None,
-        test_device_name='test/nodb/tangodeviceserver1'):
+def configure_device_model(sim_data_file=None, test_device_name=None):
     """In essence this function should get the xmi file, parse it,
     take the attribute and command information, populate the model quantities and
     actions to be simulated and return that model.
@@ -269,7 +268,13 @@ def configure_device_model(sim_data_file=None,
         db_datum = db_instance.get_device_name(server_name, klass_name)
         # We assume that at least one device instance has been
         # registered for that class and device server.
-        dev_name = getattr(db_datum, 'value_string')[0]
+        dev_names = getattr(db_datum, 'value_string')
+        if dev_names:
+            dev_name = dev_names[0]
+        else:
+            # In case a device name is not provided during testing a
+            # default name is assigned since it cannot be found in database.
+            dev_name = 'test/nodb/tangodeviceserver'
     else:
         dev_name = test_device_name
 

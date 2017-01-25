@@ -102,46 +102,40 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
 
     @classmethod
     def setUpClassWithCleanup(cls):
-        #cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.data_descr_file = [pkg_resources.resource_filename('tango_simlib.tests',
                                                         'weather_sim.xmi')]
+        cls.temp_dir = tempfile.mkdtemp()
         device_name = 'test/nodb/tangodeviceserver'
-        configured_model = tango_sim_generator.configure_device_model(
-                cls.data_descr_file, '%s1' % device_name)
-        with mock.patch(tango_sim_generator.__name__ + '.configure_device_model'
-                        ) as mock_configure_device_model:
-            cls.temp_dir = tempfile.mkdtemp()
-            server_name = 'weather_ds'
-            server_instance = 'test'
-            mock_configure_device_model.return_value = configured_model
-            tango_class = tango_sim_generator.get_device_class(cls.data_descr_file)
-            prop1 = dict(sim_data_description_file=cls.data_descr_file[0])
-            prop2 = dict(model_key='%s1' % device_name)
-            tango_sim_generator.generate_device_server(
-                    server_name, cls.data_descr_file, cls.temp_dir)
-            helper_module.generate_db_file(server_name, server_instance,
-                                           '%s1' % device_name, cls.temp_dir,
-                                           tango_class, prop1)
-            helper_module.generate_db_file(server_name, server_instance,
-                                           '%s2' % device_name, cls.temp_dir,
-                                           '%sSimControl' % tango_class,
-                                           prop2)
-            # To ensure that the tango device server process will be the only
-            # runnning process on port 12345, all process are killed on this port 
-            subprocess.call('fuser -k 12345/tcp', shell=True)
-            cls.sub_proc = subprocess.Popen('python %s/weather_ds.py test '
-                                            '-file=%s/weather_ds_tango.db '
-                                            '-ORBendPoint giop:tcp::12345' % (
-                                               cls.temp_dir, cls.temp_dir),
-                                            shell=True)
-            # Note that the connection request must be delayed by atleast 1000 ms
-            # of device server start up
-            time.sleep(1)
-            cls.sim_device = PyTango.DeviceProxy('localhost:12345/test/nodb/'
-                                                 'tangodeviceserver1#dbase=no')
-            cls.sim_test_device = PyTango.DeviceProxy('localhost:12345/test/nodb/'
-                                                      'tangodeviceserver2#dbase=no')
-            shutil.rmtree(cls.tempfile)
+        server_name = 'weather_ds'
+        server_instance = 'test'
+        tango_class = tango_sim_generator.get_device_class(cls.data_descr_file)
+        prop1 = dict(sim_data_description_file=cls.data_descr_file[0])
+        prop2 = dict(model_key=device_name)
+        tango_sim_generator.generate_device_server(
+                server_name, cls.data_descr_file, cls.temp_dir)
+        helper_module.generate_db_file(server_name, server_instance,
+                                       device_name, cls.temp_dir,
+                                       tango_class, prop1)
+        helper_module.generate_db_file(server_name, server_instance,
+                                       '%s1' % device_name, cls.temp_dir,
+                                       '%sSimControl' % tango_class,
+                                       prop2)
+        # To ensure that the tango device server process will be the only
+        # runnning process on port 12345, all process are killed on this port 
+        subprocess.call('fuser -k 12345/tcp', shell=True)
+        cls.sub_proc = subprocess.Popen('python %s/weather_ds.py test '
+                                        '-file=%s/weather_ds_tango.db '
+                                        '-ORBendPoint giop:tcp::12345' % (
+                                           cls.temp_dir, cls.temp_dir),
+                                        shell=True)
+        # Note that the connection request must be delayed by atleast 1000 ms
+        # of device server start up
+        time.sleep(1)
+        cls.sim_device = PyTango.DeviceProxy('localhost:12345/test/nodb/'
+                                             'tangodeviceserver#dbase=no')
+        cls.sim_test_device = PyTango.DeviceProxy('localhost:12345/test/nodb/'
+                                                  'tangodeviceserver1#dbase=no')
+        #shutil.rmtree(cls.tempfile)
 
     def setUp(self):
         super(test_TangoSimGenDeviceIntegration, self).setUp()
