@@ -1,5 +1,4 @@
 import os
-import mock
 import time
 import logging
 import unittest
@@ -10,10 +9,6 @@ import subprocess
 import PyTango
 import pkg_resources
 
-#from devicetest import TangoTestContext
-
-from katcore.testutils import cleanup_tempfile
-from katcp.testutils import start_thread_with_cleanup
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
 
@@ -103,23 +98,23 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
     @classmethod
     def setUpClassWithCleanup(cls):
         cls.data_descr_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                        'weather_sim.xmi')]
+                                                               'weather_sim.xmi')]
         cls.temp_dir = tempfile.mkdtemp()
         device_name = 'test/nodb/tangodeviceserver'
         server_name = 'weather_ds'
         server_instance = 'test'
         tango_class = tango_sim_generator.get_device_class(cls.data_descr_file)
-        prop1 = dict(sim_data_description_file=cls.data_descr_file[0])
-        prop2 = dict(model_key=device_name)
+        sim_device_prop = dict(sim_data_description_file=cls.data_descr_file[0])
+        sim_test_device_prop = dict(model_key=device_name)
         tango_sim_generator.generate_device_server(
                 server_name, cls.data_descr_file, cls.temp_dir)
         helper_module.generate_db_file(server_name, server_instance,
                                        device_name, cls.temp_dir,
-                                       tango_class, prop1)
+                                       tango_class, sim_device_prop)
         helper_module.generate_db_file(server_name, server_instance,
                                        '%s1' % device_name, cls.temp_dir,
                                        '%sSimControl' % tango_class,
-                                       prop2)
+                                       sim_test_device_prop)
         # To ensure that the tango device server process will be the only
         # runnning process on port 12345, all process are killed on this port 
         subprocess.call('fuser -k 12345/tcp', shell=True)
