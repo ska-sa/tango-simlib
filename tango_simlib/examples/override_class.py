@@ -18,6 +18,22 @@ from PyTango import DevState
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
+class WeatherSimError(Exception):
+    """Raised when a Weather simulator action could not be executed.
+    """
+
+    def __init__(self, message):
+        super(WeatherSimError, self).__init__(message)
+
+
+class VdsSimError(Exception):
+    """Raised when a Video Display System simulator action could not be executed.
+    """
+
+    def __init__(self, message):
+        super(VdsSimError, self).__init__(message)
+
+
 class OverrideWeather(object):
     """An example of the override class for the TANGO device class 'Weather'. It
     provides all the implementations of the command handler functions for the commands
@@ -90,14 +106,14 @@ class OverrideVds(object):
         try:
             quant_pan_position = model.sim_quantities['pan_position']
         except KeyError:
-            raise AttributeError("pan_position quantity not found in the VDS model.")
+            raise VdsSimError("pan_position quantity not found in the VDS model.")
 
+        valid_pan_directions = ('left', 'right', 'to')
         pan_direction = data_input[0]
-        try:
-            assert pan_direction in ['left', 'right', 'to']
-        except AssertionError:
-            raise VdsSimError("Invalid pan direction value ({}) provided.".format(
-                pan_direction))
+        if pan_direction not in valid_pan_directions:
+            raise VdsSimError("Invalid pan direction value ({}) provided. Valid "
+                              " pan directions are ({}).".format(pan_direction,
+                                                                 valid_pan_directions))
 
         if pan_direction == 'to':
             try:
@@ -124,21 +140,22 @@ class OverrideVds(object):
         data_input[0] : str
             'on' or 'off' value.
         """
-        camera_power_status = {'on': True, 'off': False}
+        camera_power_state = {'on': True, 'off': False}
         try:
             quant_camera_power_on = model.sim_quantities['camera_power_on']
         except KeyError:
-            raise AttributeError("'camera_power_on' quantity not found in the VDS model.")
+            raise VdsSimError("'camera_power_on' quantity not found in the VDS model.")
 
         try:
-            quant_camera_power_on.set_val(camera_power_status[data_input.lower()],
-                                          model.time_func())
+            camera_power_state_value = camera_power_state[data_input.lower()]
         except KeyError:
             raise VdsSimError(
-                "Invalid argument ({}) provided. Please provide a string  of either 'on'"
-                " or 'off' value.".format(data_input))
+                "Invalid argument ({}) provided. Please provide a string of either"
+                " {} value.".format(data_input, camera_power_state.keys()))
 
-        if camera_power_status[data_input.lower()]:
+        quant_camera_power_on.set_val(camera_power_state_value, model.time_func())
+
+        if camera_power_state[data_input.lower()]:
             tango_dev.set_state(DevState.ON)
         else:
             for quantity in model.sim_quantities.values():
@@ -153,19 +170,20 @@ class OverrideVds(object):
         data_input[0] : str
             'on' or 'off' value.
         """
-        flood_lights_status = {'on': True, 'off': False}
+        flood_lights_state = {'on': True, 'off': False}
         try:
             quant_flood_lights_on = model.sim_quantities['flood_lights_on']
         except KeyError:
-            raise AttributeError("'flood_lights_on' quantity not found in the VDS model.")
+            raise VdsSimError("'flood_lights_on' quantity not found in the VDS model.")
 
         try:
-            quant_flood_lights_on.set_val(flood_lights_status[data_input.lower()],
-                                          model.time_func())
+            flood_lights_state_value = flood_lights_state[data_input.lower()]
         except KeyError:
             raise VdsSimError(
-                "Invalid argument ({}) provided. Please provide a string of either 'on'"
-                " or 'off'.".format(data_input))
+                "Invalid argument ({}) provided. Please provide a string of either"
+                " {} value.".format(data_input, flood_lights_state.keys()))
+
+        quant_flood_lights_on.set_val(flood_lights_state_value, model.time_func())
 
     def action_focus(self, model, tango_dev=None, data_input=None):
         """Focuses camera to a specified direction or specified position.
@@ -180,14 +198,14 @@ class OverrideVds(object):
         try:
             quant_focus_position = model.sim_quantities['focus_position']
         except KeyError:
-            raise AttributeError("focus_position quantity not found in the VDS model.")
+            raise VdsSimError("focus_position quantity not found in the VDS model.")
 
+        valid_focus_directions = ('far', 'near', 'to')
         focus_direction = data_input[0]
-        try:
-            assert focus_direction in ['far', 'near', 'to']
-        except AssertionError:
-            raise VdsSimError("Invalid focus direction value ({}) provided.".format(
-                focus_direction))
+        if focus_direction not in valid_focus_directions:
+            raise VdsSimError("Invalid focus direction value ({}) provided. Valid focus"
+                              " directions are {}.".format(focus_direction,
+                                                           valid_focus_directions))
 
         if focus_direction == 'to':
             try:
@@ -243,11 +261,11 @@ class OverrideVds(object):
         for position_id in range(len(preset_position_value_list)):
             try:
                 model_quant = model.sim_quantities[
-                    '%s_position' % model.position_lst[position_id]]
+                    '%s_position' % model.position_list[position_id]]
             except KeyError:
                 MODULE_LOGGER.debug(
                     "%s_position quantity is not found in the VDS model.",
-                    model.position_lst[position_id])
+                    model.position_list[position_id])
             else:
                 model_quant.set_val(model.presets_dict[preset_id][position_id],
                                     model.time_func())
@@ -261,13 +279,13 @@ class OverrideVds(object):
             receptor name (from m000 to m063).
         """
         model.presets_dict = {}
-        model.preset_position_values_dict = {'pan': 0, 'tilt': 0, 'zoom': 0}
-        model.position_lst = ['pan', 'tilt', 'zoom']
+        model.preset_position_values_dict = {'pan': 0, 'tilt': 0, 'zoom': 0, 'focus': 0}
+        model.position_list = ['pan', 'tilt', 'zoom', 'focus']
 
         quantity_value_list = []
         tmp_presets_dict = {}
         preset_id = self._format_receptor_name(data_input)
-        for position in model.position_lst:
+        for position in model.position_list:
             try:
                 quant_position = model.sim_quantities['%s_position' % position]
             except KeyError:
@@ -297,14 +315,14 @@ class OverrideVds(object):
         try:
             quant_tilt_position = model.sim_quantities['tilt_position']
         except KeyError:
-            raise AttributeError("tilt_position quantity not found")
+            raise VdsSimError("tilt_position quantity not found in the VDS model.")
 
+        valid_tilt_directions = ('down', 'to', 'up')
         tilt_direction = data_input[0]
-        try:
-            assert tilt_direction in ['down', 'to', 'up']
-        except AssertionError:
+        if tilt_direction not in valid_tilt_directions:
             raise VdsSimError(
-                "Invalid tilt direction value ({}) provided.".format(tilt_direction))
+                "Invalid tilt direction value ({}) provided. Valid tilt directions are"
+                " {}.".format(tilt_direction, valid_tilt_directions))
 
         if tilt_direction == 'to':
             try:
@@ -336,14 +354,14 @@ class OverrideVds(object):
         try:
             quant_zoom_position = model.sim_quantities['zoom_position']
         except KeyError:
-            raise AttributeError("zoom_position quantity not found in the VDS model.")
+            raise VdsSimError("zoom_position quantity not found in the VDS model.")
 
+        valid_zoom_directions = ('tele', 'to', 'wide')
         zoom_direction = data_input[0]
-        try:
-            assert zoom_direction in ['tele', 'to', 'wide']
-        except AssertionError:
-            raise VdsSimError("Invalid zoom direction value ({}) provided.".format(
-                zoom_direction))
+        if zoom_direction not in valid_zoom_directions:
+            raise VdsSimError("Invalid zoom direction value ({}) provided. Valid"
+                              " zoom directions are {}.".format(zoom_direction,
+                                                                valid_zoom_directions))
 
         if zoom_direction == 'to':
             try:
@@ -384,20 +402,4 @@ class OverrideVds(object):
         else:
             receptor_number = int(receptor_name)
         return receptor_number
-
-
-class WeatherSimError(Exception):
-    """Raised when a Weather simulator action could not be executed.
-    """
-
-    def __init__(self, message):
-        super(WeatherSimError, self).__init__(message)
-
-
-class VdsSimError(Exception):
-    """Raised when a Video Display System simulator action could not be executed.
-    """
-
-    def __init__(self, message):
-        super(VdsSimError, self).__init__(message)
 
