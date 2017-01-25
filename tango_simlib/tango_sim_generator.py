@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#/usr/bin/env python
 ###############################################################################
 # SKA South Africa (http://ska.ac.za/)                                        #
 # Author: cam@ska.ac.za                                                       #
@@ -234,7 +234,8 @@ def get_parser_instance(sim_datafile=None):
         parser_instance.parse(sim_datafile)
     return parser_instance
 
-def configure_device_model(sim_data_file=None, test_device_name=None):
+def configure_device_model(sim_data_file=None,
+        test_device_name='test/nodb/tangodeviceserver1'):
     """In essence this function should get the xmi file, parse it,
     take the attribute and command information, populate the model quantities and
     actions to be simulated and return that model.
@@ -286,7 +287,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         PopulateModelActions(parser, dev_name, sim_model)
     return model
 
-def generate_device_server(server_name, sim_data_files):
+def generate_device_server(server_name, sim_data_files, directory=''):
     """Create a tango device server python file
 
     Parameters
@@ -297,7 +298,8 @@ def generate_device_server(server_name, sim_data_files):
         A list of direct paths to either xmi/xml/json data files.
 
     """
-    lines = ['from PyTango.server import server_run',
+    lines = ['#! /usr/bin/env python',
+             'from PyTango.server import server_run',
              ('from tango_simlib.tango_sim_generator import ('
               'configure_device_model, get_tango_device_server)'),
              '\n\ndef main():',
@@ -307,8 +309,7 @@ def generate_device_server(server_name, sim_data_files):
              '    server_run(TangoDeviceServers)',
              '\nif __name__ == "__main__":',
              '    main()']
-
-    with open("%s.py" % server_name, 'w') as dserver:
+    with open(os.path.join(directory, "%s.py" % server_name), 'w') as dserver:
         dserver.write('\n'.join(lines))
 
 def get_device_class(sim_data_files):
