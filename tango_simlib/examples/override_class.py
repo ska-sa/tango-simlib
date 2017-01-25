@@ -252,23 +252,26 @@ class OverrideVds(object):
         """
         preset_id = self._format_receptor_name(data_input)
         try:
-            preset_position_value_list = model.presets_dict[preset_id]
+            presets = model.presets_dict[preset_id]
         except KeyError:
             raise VdsSimError(
                 "There are no preset position values for receptor {}.".format(
                     data_input))
+        except AttributeError:
+            raise VdsSimError(
+                "No preset position values set up previously for receptor {}."format(
+                    data_input))
 
-        for position_id in range(len(preset_position_value_list)):
+        for position in presets.keys():
             try:
                 model_quant = model.sim_quantities[
-                    '%s_position' % model.position_list[position_id]]
+                    '%s_position' % position]
             except KeyError:
                 MODULE_LOGGER.debug(
                     "%s_position quantity is not found in the VDS model.",
-                    model.position_list[position_id])
+                    position)
             else:
-                model_quant.set_val(model.presets_dict[preset_id][position_id],
-                                    model.time_func())
+                model_quant.set_val(presets[position])
 
     def action_presetset(self, model, tango_dev=None, data_input=None):
         """Set the position which the camera is at currently as preset position.
@@ -278,14 +281,11 @@ class OverrideVds(object):
         data_input[0] : str
             receptor name (from m000 to m063).
         """
+        position_list = frozeset(['focus', 'pan', 'tilt', 'zoom'])
         model.presets_dict = {}
-        model.preset_position_values_dict = {'pan': 0, 'tilt': 0, 'zoom': 0, 'focus': 0}
-        model.position_list = ['pan', 'tilt', 'zoom', 'focus']
-
-        quantity_value_list = []
-        tmp_presets_dict = {}
+        tmp_presets = {}
         preset_id = self._format_receptor_name(data_input)
-        for position in model.position_list:
+        for position in position_list:
             try:
                 quant_position = model.sim_quantities['%s_position' % position]
             except KeyError:
@@ -293,9 +293,9 @@ class OverrideVds(object):
                     "%s_position quantity is not found in the VDS model.", position)
             else:
                 quant_position_value = quant_position.last_val
-                quantity_value_list.append(quant_position_value)
-        tmp_presets_dict[preset_id] = quantity_value_list
-        model.presets_dict.update(tmp_presets_dict)
+                tmp_presets[position] = quant_position_value
+        tmp_presets_dict[preset_id] = tmp_presets
+        model.presets_dict.update(tmp_presets)
 
     def action_stop(self, model, tango_dev=None, data_input=None):
         """Stop camera.
