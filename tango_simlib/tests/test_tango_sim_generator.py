@@ -115,9 +115,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                                        '%s1' % device_name, cls.temp_dir,
                                        '%sSimControl' % tango_class,
                                        sim_test_device_prop)
-        # To ensure that the tango device server process will be the only
-        # runnning process on port 12345, all process are killed on this port 
-        subprocess.call('fuser -k 12345/tcp', shell=True)
         cls.sub_proc = subprocess.Popen('python %s/weather_ds.py test '
                                         '-file=%s/weather_ds_tango.db '
                                         '-ORBendPoint giop:tcp::12345' % (
@@ -130,11 +127,9 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                                              'tangodeviceserver#dbase=no')
         cls.sim_test_device = PyTango.DeviceProxy('localhost:12345/test/nodb/'
                                                   'tangodeviceserver1#dbase=no')
-        #shutil.rmtree(cls.tempfile)
 
     def setUp(self):
         super(test_TangoSimGenDeviceIntegration, self).setUp()
-        # Reconnection to the device require atleast 1000 ms delay
         self.xmi_parser = sim_xmi_parser.XmiParser()
         self.xmi_parser.parse(self.data_descr_file[0])
 
