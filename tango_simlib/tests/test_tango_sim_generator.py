@@ -24,6 +24,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
     @classmethod
     def setUpClassWithCleanup(cls):
         cls.port = helper_module.get_port()
+        cls.host = helper_module.get_host_address()
         cls.data_descr_file = [pkg_resources.resource_filename(
             'tango_simlib.tests', 'weather_sim.xmi')]
         cls.temp_dir = tempfile.mkdtemp()
@@ -52,9 +53,11 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # by atleast 1000 ms of device server start up.
         time.sleep(1)
         cls.sim_device = PyTango.DeviceProxy(
-                'localhost:%s/test/nodb/tangodeviceserver#dbase=no' % cls.port)
+                'tango://%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
+                    cls.host, cls.port))
         cls.sim_control_device = PyTango.DeviceProxy(
-                'localhost:%s/test/nodb/tangodeviceservercontrol#dbase=no' % cls.port)
+                'tango://%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
+                    cls.host, cls.port))
         cls.addCleanupClass(subprocess.call, 'fuser -k %s/tcp' % cls.port, shell=True)
         cls.addCleanupClass(shutil.rmtree, cls.temp_dir)
 

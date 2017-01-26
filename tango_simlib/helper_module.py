@@ -1,11 +1,8 @@
 import os
 import sys
-import errno
-import shutil
-import tempfile
+import socket
 
 from PyTango import Database
-from socket import socket
 
 
 DEFAULT_TANGO_DEVICE_COMMANDS = frozenset(['State', 'Status', 'Init'])
@@ -59,8 +56,12 @@ def append_device_to_db_file(server, instance, device, db_file_name,
     return db
 
 def get_port():
-    sock = socket()
+    sock = socket.socket()
     sock.bind(('', 0))
     res = sock.getsockname()[1]
     del sock
     return res
+
+def get_host_address():
+    host_name = socket.gethostname()
+    return host_name
