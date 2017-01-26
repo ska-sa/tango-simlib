@@ -22,16 +22,10 @@ class WeatherSimError(Exception):
     """Raised when a Weather simulator action could not be executed.
     """
 
-    def __init__(self, message):
-        super(WeatherSimError, self).__init__(message)
-
 
 class VdsSimError(Exception):
     """Raised when a Video Display System simulator action could not be executed.
     """
-
-    def __init__(self, message):
-        super(VdsSimError, self).__init__(message)
 
 
 class OverrideWeather(object):
@@ -234,7 +228,7 @@ class OverrideVds(object):
         """
         preset_id = self._format_receptor_name(data_input)
         try:
-            del model.presets_dict[preset_id]
+            del model.presets[preset_id]
         except KeyError:
             raise VdsSimError(
                 "Receptor {} has no preset position values to clear.".format(data_input))
@@ -252,7 +246,7 @@ class OverrideVds(object):
         """
         preset_id = self._format_receptor_name(data_input)
         try:
-            presets = model.presets_dict[preset_id]
+            presets = model.presets[preset_id]
         except KeyError:
             raise VdsSimError(
                 "There are no preset position values for receptor {}.".format(
@@ -281,11 +275,11 @@ class OverrideVds(object):
         data_input[0] : str
             receptor name (from m000 to m063).
         """
-        position_list = frozeset(['focus', 'pan', 'tilt', 'zoom'])
-        model.presets_dict = {}
+        camera_positions = ('focus', 'pan', 'tilt', 'zoom')
+        model.presets = {}
         tmp_presets = {}
         preset_id = self._format_receptor_name(data_input)
-        for position in position_list:
+        for position in camera_positions:
             try:
                 quant_position = model.sim_quantities['%s_position' % position]
             except KeyError:
@@ -294,8 +288,8 @@ class OverrideVds(object):
             else:
                 quant_position_value = quant_position.last_val
                 tmp_presets[position] = quant_position_value
-        tmp_presets_dict[preset_id] = tmp_presets
-        model.presets_dict.update(tmp_presets)
+        tmp_presets[preset_id] = tmp_presets
+        model.presets.update(tmp_presets)
 
     def action_stop(self, model, tango_dev=None, data_input=None):
         """Stop camera.
