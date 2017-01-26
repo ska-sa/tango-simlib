@@ -96,7 +96,7 @@
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </commands>
     <commands name="Zoom" description="Zoom camera to a specified direction or specified position." execMethod="zoom" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
-      <argin description="zoom_direction : string&#xA;            zoom to the specific direction.&#xA;zoom_position (optional) : int&#xA;            zoom to the specific position.">
+      <argin description="zoom_direction : string (zoom to the specific direction), zoom_position (optional) : int (zoom to the specific position)">
         <type xsi:type="pogoDsl:VoidType"/>
       </argin>
       <argout description="">

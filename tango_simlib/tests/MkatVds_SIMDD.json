@@ -278,5 +278,15 @@
                 "default_value": ""
             }
         }
+    ],
+    "class_overrides": [
+        {
+	          "override_class": {
+		            "name": "Override_MKAT_VDS_Sim",
+		            "module_directory": "None",
+		            "module_name": "tango_simlib.examples.override_class",
+		            "class_name": "OverrideVds"
+	      }
+      }
     ]
 }

@@ -449,7 +449,15 @@ class XmiParser(object):
         # instead of the default PyTango.utils.DevState
         if arg_type == 'State':
             return CmdArgType.DevState
-        arg_type = getattr(PyTango, 'Dev' + arg_type)
+
+        try:
+            arg_type = getattr(PyTango, 'Dev' + arg_type)
+        except AttributeError:
+            MODULE_LOGGER.debug("PyTango has no attribute 'Dev{}".format(arg_type))
+            raise AttributeError("PyTango has no attribute 'Dev{}.\n Try replacing"
+                                 " '{}' with 'Var{}' in the configuration file"
+                                 .format(*(3*(arg_type,))))
+
         return arg_type
 
 

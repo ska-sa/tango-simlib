@@ -503,9 +503,10 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
             mock_get_description_file_name.return_value = cls.data_descr_files
             cls.properties = dict(sim_data_description_file=cls.data_descr_files)
             cls.device_name = 'test/nodb/tangodeviceserver'
-            model = tango_sim_generator.configure_device_model(cls.data_descr_files,
-                                                               cls.device_name)
-            cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(model)
+            model = tango_sim_generator.configure_device_model(
+                cls.data_descr_files, cls.device_name)
+            cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
+                model, cls.data_descr_files)[0]
             cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
                                                  device_name=cls.device_name,
                                                  db=cls.tango_db,

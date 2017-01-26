@@ -68,11 +68,12 @@ class TangoDeviceServerBase(Device):
             The attribute to read from.
 
         """
-        name = attr.get_name()
-        value, update_time = self.model.quantity_state[name]
-        quality = AttrQuality.ATTR_VALID
-        self.info_stream("Reading attribute %s", name)
-        attr.set_value_date_quality(value, update_time, quality)
+        if self.get_state() != DevState.OFF:
+            name = attr.get_name()
+            value, update_time = self.model.quantity_state[name]
+            quality = AttrQuality.ATTR_VALID
+            self.info_stream("Reading attribute %s", name)
+            attr.set_value_date_quality(value, update_time, quality)
 
 def get_data_description_file_name():
     """Gets the xmi/xml/json description file name from the tango-db device properties
