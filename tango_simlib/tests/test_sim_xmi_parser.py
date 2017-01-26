@@ -375,7 +375,8 @@ class test_XmiParser(GenericSetup):
         generating using POGO is parsed correctly with no data loss.
         """
         actual_parsed_dev_properties = (
-                self.xmi_parser.get_reformatted_properties_metadata())
+                self.xmi_parser.get_reformatted_properties_metadata('deviceProperties'))
+        print actual_parsed_dev_properties
         expected_device_properties_list = ['sim_xmi_description_file']
         actual_parsed_dev_props_list = actual_parsed_dev_properties.keys()
         self.assertEqual(set(expected_device_properties_list),

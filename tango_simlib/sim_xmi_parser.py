@@ -574,6 +574,9 @@ class XmiParser(object):
             e.g. { 'device_property_name' : {device_property_metadata}
 
                  }
+        property_group: str
+            A string representing a group to which the property belongs to, either
+            device properties or class properties.
 
         """
         properties = {}
@@ -584,8 +587,8 @@ class XmiParser(object):
         else:
             raise Exception("Wrong argument provided")
 
-        for properties_info in properties:
-            properties_info[property_group]['name'] = (
+        for properties_info in props:
+            properties[properties_info[property_group]['name']] = (
                     properties_info[property_group])
 
         return properties
