@@ -1,4 +1,4 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 ###############################################################################
 # SKA South Africa (http://ska.ac.za/)                                        #
 # Author: cam@ska.ac.za                                                       #
@@ -303,7 +303,7 @@ def generate_device_server(server_name, sim_data_files, directory=''):
         A list of direct paths to either xmi/xml/json data files.
 
     """
-    lines = ['#! /usr/bin/env python',
+    lines = ['#!/usr/bin/env python',
              'from PyTango.server import server_run',
              ('from tango_simlib.tango_sim_generator import ('
               'configure_device_model, get_tango_device_server)'),

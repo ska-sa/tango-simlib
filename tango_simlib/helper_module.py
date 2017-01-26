@@ -5,6 +5,19 @@ import shutil
 import tempfile
 
 from PyTango import Database
+from socket import socket
+
+
+DEFAULT_TANGO_DEVICE_COMMANDS = frozenset(['State', 'Status', 'Init'])
+DEFAULT_TANGO_DEVICE_ATTRIBUTES = frozenset(['State', 'Status'])
+SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR = set([
+    'Status',   # Tango library attribute
+    'State',    # Tango library attribute
+    'sensor_name',    # Attribute indentifier for sensor to be controlled
+    'pause_active',    # Flag for pausing the model updates
+    'control_sensor_list_names',  # List of sensors to control
+    ])
+
 
 def get_server_name():
     """Gets the TANGO server name from the command line arguments
@@ -27,21 +40,27 @@ def get_server_name():
     server_name = executable_name + '/' + sys.argv[1]
     return server_name
 
-def generate_db_file(server, instance, device, directory='',
-                     tangoclass=None, properties={}):
+def append_device_to_db_file(server, instance, device, db_file_name,
+                             tangoclass=None, properties={}):
     """Generate a database file corresponding to the given arguments."""
     if not tangoclass:
         tangoclass = server
     # Open the file
-    db_file = os.path.join(directory, '%s_tango.db' % server)
-    with open(db_file, 'a') as f:
+    with open(db_file_name, 'a') as f:
         f.write("/".join((server, instance, "DEVICE", tangoclass)))
         f.write(': "' + device + '"\n')
     # Create database
-    db = Database(db_file)
+    db = Database(db_file_name)
     # Patched the property dict to avoid a PyTango bug
     patched = dict((key, value if value != '' else ' ')
                    for key, value in properties.items())
     # Write properties
     db.put_device_property(device, patched)
     return db
+
+def get_port():
+    sock = socket()
+    sock.bind(('', 0))
+    res = sock.getsockname()[1]
+    del sock
+    return res
