@@ -1,18 +1,21 @@
 import os
 import time
+import mock
 import logging
 import unittest
 import shutil
 import tempfile
 import subprocess
 
-import PyTango
 import pkg_resources
 
-from tango_simlib.sim_test_interface import SimControl
+import PyTango
+dp_mock = PyTango.DeviceProxy
+
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
 
+from tango_simlib.tests import test_sim_test_interface
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -52,10 +55,10 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # Note that the connection request must be delayed
         # by atleast 1000 ms of device server start up.
         time.sleep(1)
-        cls.sim_device = PyTango.DeviceProxy(
+        cls.sim_device = dp_mock(
                 'tango://%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
                     cls.host, cls.port))
-        cls.sim_control_device = PyTango.DeviceProxy(
+        cls.sim_control_device = dp_mock(
                 'tango://%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
                     cls.host, cls.port))
         cls.addCleanupClass(subprocess.call, 'fuser -k %s/tcp' % cls.port, shell=True)
@@ -92,9 +95,11 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
 
     def test_sim_control_attribute_list(self):
         implemented_attr = helper_module.SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR
-
-    def test_sim_control_quantities(self):
+        control_attributes = test_sim_test_interface.control_attributes(
+                self.expected_model)
         attributes = set(self.sim_control_device.get_attribute_list())
+        self.assertEqual(attributes - implemented_attr,
+                set(control_attributes))
 
     def test_sim_control_change_device_attribute(self):
         pass

@@ -31,6 +31,23 @@ class FixtureModel(model.Model):
     def reset_model(self):
         self.setup_sim_quantities()
 
+def control_attributes(test_model):
+    """Function collects all the available models and gets all the
+    adjustable_attributes which will be control attributes on the
+    simulator test interface device.
+    Returns
+    =======
+    control_attributes : list
+        A list of all the adjustable attributes
+    """
+    control_attributes = []
+    models = set([quant.__class__
+            for quant in test_model.sim_quantities.values()])
+    for cls in models:
+        control_attributes += [attr for attr in cls.adjustable_attributes
+                if attr not in control_attributes]
+    return control_attributes
+
 class test_SimControl(DeviceTestCase):
     device = sim_test_interface.SimControl
     properties = dict(model_key='the_test_model')
@@ -43,28 +60,11 @@ class test_SimControl(DeviceTestCase):
     def setUp(self):
         super(test_SimControl, self).setUp()
         self.addCleanup(self.test_model.reset_model)
-        self.control_attributes = self._control_attributes(self.test_model)
+        self.control_attributes = control_attributes(self.test_model)
         self.device_instance = sim_test_interface.SimControl.instances[
                 self.device.name()]
         def cleanup_refs(): del self.device_instance
         self.addCleanup(cleanup_refs)
-
-    def _control_attributes(self, test_model):
-        """Function collects all the available models and gets all the
-        adjustable_attributes which will be control attributes on the
-        simulator test interface device.
-        Returns
-        =======
-        control_attributes : list
-            A list of all the adjustable attributes
-        """
-        control_attributes = []
-        models = set([quant.__class__
-                for quant in test_model.sim_quantities.values()])
-        for cls in models:
-            control_attributes += [attr for attr in cls.adjustable_attributes
-                    if attr not in control_attributes]
-        return control_attributes
 
     def test_attribute_list(self):
         ADDITIONAL_IMPLEMENTED_ATTR = set([
