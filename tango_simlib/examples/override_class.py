@@ -265,7 +265,7 @@ class OverrideVds(object):
                     "%s_position quantity is not found in the VDS model.",
                     position)
             else:
-                model_quant.set_val(presets[position])
+                model_quant.set_val(presets[position], model.time_func())
 
     def action_presetset(self, model, tango_dev=None, data_input=None):
         """Set the position which the camera is at currently as preset position.

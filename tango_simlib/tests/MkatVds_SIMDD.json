@@ -14,7 +14,7 @@
       },
       {
           "basicAttributeData": {
-              "name": "flood_light_on",
+              "name": "flood_lights_on",
               "quantity_type": "ConstantQuantity"
           }
       },
@@ -76,12 +76,7 @@
                     "dtype_out": "Void",
                     "doc_out": "",
                     "dformat_out": "Scalar"
-                },
-		"actions": [{"behaviour": "input_transform",
-		             "destination_variable": "temporary_variable"},
-		            {"behaviour": "side_effect",
-		             "destination_quantity": "camera_power_on",
-			     "source_variable": "temporary_variable"}]
+                }
 	    }
         },
         {
@@ -97,12 +92,7 @@
                     "dtype_out": "Void",
                     "doc_out": "",
                     "dformat_out": "Scalar"
-                },
-		"actions": [{"behaviour": "input_transform",
-		             "destination_variable": "temporary_variable"},
-		            {"behaviour": "side_effect",
-		             "destination_quantity": "pan_position",
-			     "source_variable": "temporary_variable"}]
+                }
 	    }
         },
         {
@@ -118,12 +108,7 @@
                     "dtype_out": "Void",
                     "doc_out": "",
                     "dformat_out": "Scalar"
-                },
-		"actions": [{"behaviour": "input_transform",
-		             "destination_variable": "temporary_variable"},
-		            {"behaviour": "side_effect",
-		             "destination_quantity": "tilt_position",
-			     "source_variable": "temporary_variable"}]
+                }
 	    }
         },
     	{
@@ -139,12 +124,7 @@
                     "dtype_out": "Void",
                     "doc_out": "",
                     "dformat_out": "Scalar"
-                },
-		"actions": [{"behaviour": "input_transform",
-		             "destination_variable": "temporary_variable"},
-		            {"behaviour": "side_effect",
-		             "destination_quantity": "zoom_position",
-			     "source_variable": "temporary_variable"}]
+                }
 	    }
         },
     	{
@@ -208,12 +188,7 @@
                     "dtype_out": "Void",
                     "doc_out": "",
                     "dformat_out": "Scalar"
-                },
-		"actions": [{"behaviour": "input_transform",
-		             "destination_variable": "temporary_variable"},
-		            {"behaviour": "side_effect",
-		             "destination_quantity": "flood_lights_on",
-			     "source_variable": "temporary_variable"}]
+                }
 	    }
         },
     	{
@@ -261,22 +236,8 @@
                     "dtype_out": "Void",
                     "doc_out": "",
                     "dformat_out": "Scalar"
-                },
-		"actions": [{"behaviour": "input_transform",
-		             "destination_variable": "temporary_variable"},
-		            {"behaviour": "side_effect",
-		             "destination_quantity": "focus_position",
-			     "source_variable": "temporary_variable"}]
+                }
 	    }
-        }
-    ],
-    "deviceProperties": [
-        {
-            "propertyData": {
-                "name": "sim_data_description_file",
-                "type": "string",
-                "default_value": ""
-            }
         }
     ],
     "class_overrides": [

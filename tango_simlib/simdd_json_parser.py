@@ -373,7 +373,7 @@ class SimddParser(object):
         """Returns a more formatted command data structure in a format of dict"""
         return self._device_commands
 
-    def get_reformatted_properties_metadata(self):
+    def get_reformatted_properties_metadata(self, property_group):
         """Returns a more formatted device prop data structure in a format of dict"""
         return self._device_properties
 
