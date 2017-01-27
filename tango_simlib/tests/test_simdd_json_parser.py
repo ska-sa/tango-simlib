@@ -539,12 +539,11 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
                           "The commands specified in the SIMDD file are not present in"
                           " the device")
 
-    def test_simulated_quantities_list(self):
-        """Test that none of the MKATVDS attributes have simulated values.
-        """
-        pass
 
 class test_SourceSimulatorInfo(unittest.TestCase):
+    """This class is not testing the code, but only testing that the test XMI and SIMDD
+    files are consistant with each other.
+    """
     longMessage = True
 
     def setUp(self):
