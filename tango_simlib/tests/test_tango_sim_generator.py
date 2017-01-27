@@ -6,9 +6,7 @@ import tempfile
 import subprocess
 
 import pkg_resources
-
-import PyTango
-device_proxy = PyTango.DeviceProxy
+import devicetest
 
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
@@ -36,6 +34,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         database_filename = '%s/%s_tango.db' % (cls.temp_dir, server_name)
         sim_device_prop = dict(sim_data_description_file=cls.data_descr_file[0])
         sim_test_device_prop = dict(model_key=device_name)
+        patcher = devicetest.patch.Patcher()
+        device_proxy = patcher.ActualDeviceProxy
         tango_sim_generator.generate_device_server(
                 server_name, cls.data_descr_file, cls.temp_dir)
         helper_module.append_device_to_db_file(
