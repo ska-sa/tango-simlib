@@ -554,8 +554,14 @@ class XmiParser(object):
             commands[cmd_name] = commands_metadata
         return commands
 
-    def get_reformatted_properties_metadata(self):
+    def get_reformatted_properties_metadata(self, property_group):
         """Creates a dictionary of the device properties and their metadata.
+
+        Parameter
+        ---------
+        property_group: str
+            A string representing a group to which the property belongs to, either
+            device properties or class properties (deviceProperties or classProperties).
 
         Returns
         -------
@@ -568,14 +574,24 @@ class XmiParser(object):
             e.g. { 'device_property_name' : {device_property_metadata}
 
                  }
+        property_group: str
+            A string representing a group to which the property belongs to, either
+            device properties or class properties.
 
         """
-        device_properties = {}
-        for properties_info in self.device_properties:
-            device_properties[properties_info['deviceProperties']['name']] = (
-                    properties_info['deviceProperties'])
+        properties = {}
+        if property_group == 'deviceProperties':
+            props = self.device_properties
+        elif property_group == 'classProperties':
+            props = self.class_properties
+        else:
+            raise Exception("Wrong argument provided")
 
-        return device_properties
+        for properties_info in props:
+            properties[properties_info[property_group]['name']] = (
+                    properties_info[property_group])
+
+        return properties
 
     def get_reformatted_override_metadata(self):
         # TODO(KM 15-12-2016) The PopulateModelQuantities and PopulateModelActions
@@ -626,24 +642,37 @@ class PopulateModelQuantities(object):
 
         """
         start_time = self.sim_model.start_time
-        GaussianSlewLimited = partial(
-            quantities.GaussianSlewLimited, start_time=start_time)
-        ConstantQuantity = partial(
-            quantities.ConstantQuantity, start_time=start_time)
         attributes = self.parser_instance.get_reformatted_device_attr_metadata()
 
         for attr_name, attr_props in attributes.items():
-            if attr_props.has_key('quantity_type'):
-                if attr_props['quantity_type'] in ['ConstantQuantity']:
+            # When using more than one config file, the attribute meta data can be
+            # overwritten, so we need to update it instead of reassigning a different
+            # object.
+            try:
+                model_attr_props = self.sim_model.sim_quantities[attr_name].meta
+            except KeyError:
+                MODULE_LOGGER.info(
+                    "Initializing '{}' quantity meta information using config file:"
+                    " '{}'.".format(attr_name,
+                                    self.parser_instance.data_description_file_name))
+                model_attr_props = attr_props
+            else:
+                model_attr_props.update(attr_props)
+                quantity = self.sim_model.sim_quantities[attr_name]
+                quantity.meta = model_attr_props
+                return
+
+            if model_attr_props.has_key('quantity_type'):
+                if model_attr_props['quantity_type'] in ['ConstantQuantity']:
                     self.sim_model.sim_quantities[attr_name] = (
                         partial(quantities.registry[attr_props['quantity_type']],
-                                start_time=start_time)(meta=attr_props,
+                                start_time=start_time)(meta=model_attr_props,
                                                        start_value=True))
                 else:
                     try:
                         sim_attr_quantities = self.sim_attribute_quantities(
-                            float(attr_props['min_value']),
-                            float(attr_props['max_value']))
+                            float(model_attr_props['min_value']),
+                            float(model_attr_props['max_value']))
                     except KeyError:
                         raise ValueError(
                             "Attribute with name '{}' specified in the configuration"
@@ -652,12 +681,12 @@ class PopulateModelQuantities(object):
                                 self.parser_instance.data_description_file_name))
                     self.sim_model.sim_quantities[attr_name] = (
                         partial(quantities.registry[attr_props['quantity_type']],
-                                start_time=start_time)(meta=attr_props,
+                                start_time=start_time)(meta=model_attr_props,
                                                        **sim_attr_quantities))
             else:
                 self.sim_model.sim_quantities[attr_name] = (
                     partial(quantities.ConstantQuantity, start_time=start_time)
-                    (meta=attr_props, start_value=True))
+                    (meta=model_attr_props, start_value=True))
 
     def sim_attribute_quantities(self, min_value, max_value, slew_rate=None):
         """Simulate attribute quantities with a Guassian value distribution

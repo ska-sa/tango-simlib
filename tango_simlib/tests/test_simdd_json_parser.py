@@ -539,7 +539,92 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
                           "The commands specified in the SIMDD file are not present in"
                           " the device")
 
-    def test_simulated_quantities_list(self):
-        """Test that none of the MKATVDS attributes have simulated values.
+
+class test_SourceSimulatorInfo(unittest.TestCase):
+    """This class is not testing the code, but only testing that the test XMI and SIMDD
+    files are consistant with each other.
+    """
+    longMessage = True
+
+    def setUp(self):
+        super(test_SourceSimulatorInfo, self).setUp()
+        self.sim_xmi_file = [pkg_resources.resource_filename(
+            'tango_simlib.tests', 'MkatVds.xmi')]
+        self.simdd_json_file = [pkg_resources.resource_filename(
+            'tango_simlib.tests', 'MkatVds_SIMDD.json')]
+        self.simdd_parser = simdd_json_parser.SimddParser()
+        self.xmi_parser = sim_xmi_parser.XmiParser()
+        self.xmi_parser.parse(self.sim_xmi_file[0])
+        self.simdd_parser.parse(self.simdd_json_file[0])
+
+
+    def test_source_data_attributes(self):
+        """Testing if the attribute information in the SIMDD is consistant with the"
+        information captured in the XMI file generated using POGO.
         """
-        pass
+        xmi_parser_attributes = (
+            self.xmi_parser.get_reformatted_device_attr_metadata())
+        simdd_parser_attributes = (
+            self.simdd_parser.get_reformatted_device_attr_metadata())
+
+        for attribute_name in MKAT_VDS_ATTRIBUTE_LIST:
+            self.assertIn(attribute_name, xmi_parser_attributes,
+                          "The attribute '{}' is missing from the file: '{}'.".
+                          format(attribute_name, self.sim_xmi_file[0]))
+
+        for attribute_name in simdd_parser_attributes:
+            self.assertIn(attribute_name, xmi_parser_attributes,
+                          "The attribute '{}' specified in the file: '{}' is not"
+                          " captured in the main config file: '{}'.".
+                          format(attribute_name, self.simdd_json_file[0],
+                                 self.sim_xmi_file[0]))
+
+    def test_source_data_commands(self):
+        """Testing if the commands information in the SIMDD is consistant with the"
+        information captured in the XMI file generated using POGO.
+        """
+        xmi_parser_commands = (
+            self.xmi_parser.get_reformatted_cmd_metadata())
+        simdd_parser_commands = (
+            self.simdd_parser.get_reformatted_cmd_metadata())
+
+        for command_name in MKAT_VDS_COMMAND_LIST:
+            self.assertIn(command_name, xmi_parser_commands,
+                          "The command '{}' is missing from the file: '{}'.".
+                          format(command_name, self.sim_xmi_file[0]))
+
+        for command_name in simdd_parser_commands:
+            self.assertIn(command_name, xmi_parser_commands,
+                         "The command '{}' specified in the file: '{}' is not captured"
+                         " in the main config file: '{}'.".format(
+                         command_name, self.simdd_json_file[0], self.sim_xmi_file[0]))
+
+    def test_source_data_device_properties(self):
+        """Testing if the device properties information in the SIMDD is consistant with the"
+        information captured in the XMI file generated using POGO.
+        """
+        xmi_parser_properties = (
+            self.xmi_parser.get_reformatted_properties_metadata('deviceProperties'))
+        simdd_parser_properties = (
+            self.simdd_parser.get_reformatted_properties_metadata('deviceProperties'))
+
+        for property_name in simdd_parser_properties:
+            self.assertIn(property_name, xmi_parser_properties,
+                         "The property '{}' specified in the file: '{}' is not captured"
+                         " in the main config file: '{}'.".format(
+                         property_name, self.simdd_json_file[0], self.sim_xmi_file[0]))
+
+    def test_source_data_class_properties(self):
+        """Testing if the class properties information in the SIMDD is consistant with the"
+        information captured in the XMI file generated using POGO.
+        """
+        xmi_parser_properties = (
+            self.xmi_parser.get_reformatted_properties_metadata('classProperties'))
+        simdd_parser_properties = (
+            self.simdd_parser.get_reformatted_properties_metadata('classProperties'))
+
+        for property_name in simdd_parser_properties:
+            self.assertIn(property_name, xmi_parser_properties,
+                         "The property '{}' specified in the file: '{}' is not captured"
+                         " in the main config file: '{}'.".format(
+                         property_name, self.simdd_json_file[0], self.sim_xmi_file[0]))
