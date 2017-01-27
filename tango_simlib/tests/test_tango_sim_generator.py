@@ -1,6 +1,4 @@
-import os
 import time
-import mock
 import logging
 import unittest
 import shutil
@@ -10,7 +8,7 @@ import subprocess
 import pkg_resources
 
 import PyTango
-dp_mock = PyTango.DeviceProxy
+device_proxy = PyTango.DeviceProxy
 
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
@@ -55,13 +53,14 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # Note that the connection request must be delayed
         # by atleast 1000 ms of device server start up.
         time.sleep(1)
-        cls.sim_device = dp_mock(
-                'tango://%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
+        cls.sim_device = device_proxy(
+                '%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
                     cls.host, cls.port))
-        cls.sim_control_device = dp_mock(
-                'tango://%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
+        cls.sim_control_device = device_proxy(
+                '%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
                     cls.host, cls.port))
         cls.addCleanupClass(subprocess.call, 'fuser -k %s/tcp' % cls.port, shell=True)
+        cls.addCleanupClass(cls.sub_proc.kill)
         cls.addCleanupClass(shutil.rmtree, cls.temp_dir)
 
     def setUp(self):
@@ -94,6 +93,9 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                           " the device")
 
     def test_sim_control_attribute_list(self):
+        """Testing whether the attributes quantities in the model are added to
+        the TANGO sim device controller
+        """
         implemented_attr = helper_module.SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR
         control_attributes = test_sim_test_interface.control_attributes(
                 self.expected_model)
@@ -101,5 +103,13 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         self.assertEqual(attributes - implemented_attr,
                 set(control_attributes))
 
-    def test_sim_control_change_device_attribute(self):
-        pass
+    def test_sim_control_device_attribute_change(self):
+        """Setting the desired attribute value for the device's attribute from
+        the simulator controller device
+        """
+        desired_sensor_name = 'temperature'
+        input_value = 100.0
+        self.sim_control_device.pause_active = True
+        self.sim_control_device.sensor_name = desired_sensor_name
+        setattr(self.sim_control_device, 'last_val', input_value)
+        self.assertEqual(self.sim_device.temperature, input_value)
