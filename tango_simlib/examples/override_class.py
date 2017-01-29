@@ -150,6 +150,8 @@ class OverrideVds(object):
         quant_camera_power_on.set_val(camera_power_state_value, model.time_func())
 
         if camera_power_state[data_input.lower()]:
+            for quantity in model.sim_quantities.values():
+                quantity.default_val(model.time_func())
             tango_dev.set_state(DevState.ON)
         else:
             for quantity in model.sim_quantities.values():

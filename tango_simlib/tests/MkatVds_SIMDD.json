@@ -8,12 +8,6 @@
       },
       {
           "basicAttributeData": {
-              "name": "device_status",
-              "quantity_type": "ConstantQuantity"
-          }
-      },
-      {
-          "basicAttributeData": {
               "name": "flood_lights_on",
               "quantity_type": "ConstantQuantity"
           }
@@ -198,22 +192,6 @@
                 "input_parameters": {
                     "dtype_in": "Void",
                     "doc_in": "",
-                    "dformat_in": "Scalar"
-                },
-                "output_parameters": {
-                    "dtype_out": "Void",
-                    "doc_out": "",
-                    "dformat_out": "Scalar"
-                }
-	    }
-        },
-    	{
-            "basicCommandData": {
-                "name": "TrapUpdate",
-                "description": "Update trap. This request is called by a script.",
-                "input_parameters": {
-                    "dtype_in": "String",
-                    "doc_in": "trap : tuple (trap update from a script (8, 'on'))",
                     "dformat_in": "Scalar"
                 },
                 "output_parameters": {

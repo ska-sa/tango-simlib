@@ -473,14 +473,13 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
                                'value'), 2), data_in)
 
 
-MKAT_VDS_ATTRIBUTE_LIST = frozenset(['camera_power_on', 'device_status',
-                                     'flood_lights_on', 'focus_position',
-                                     'pan_position', 'pdu_connected',
+MKAT_VDS_ATTRIBUTE_LIST = frozenset(['camera_power_on', 'flood_lights_on',
+                                     'focus_position', 'pan_position', 'pdu_connected',
                                      'ptz_controller_connected', 'snmpd_trap_running',
                                      'tilt_position', 'zoom_position'])
 MKAT_VDS_COMMAND_LIST = frozenset(['CameraPowerOn', 'FloodLightOn', 'Focus', 'Pan',
                                    'PresetClear', 'PresetGoto', 'PresetSet', 'Stop',
-                                   'Tilt', 'TrapUpdate', 'Zoom'])
+                                   'Tilt', 'Zoom'])
 
 class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
