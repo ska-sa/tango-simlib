@@ -658,9 +658,6 @@ class PopulateModelQuantities(object):
                 model_attr_props = attr_props
             else:
                 model_attr_props.update(attr_props)
-                quantity = self.sim_model.sim_quantities[attr_name]
-                quantity.meta = model_attr_props
-                return
 
             if model_attr_props.has_key('quantity_type'):
                 if model_attr_props['quantity_type'] in ['ConstantQuantity']:

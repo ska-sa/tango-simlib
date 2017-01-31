@@ -146,5 +146,8 @@ class ConstantQuantity(Quantity):
     def next_val(self, t):
         return self.last_val
 
+    def default_val(self, t):
+        self.last_val = True
+
 
 register_quantity_class(ConstantQuantity)
