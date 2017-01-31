@@ -45,11 +45,11 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                 server_name, server_instance, '%scontrol' % device_name,
                 database_filename, '%sSimControl' % cls.sim_device_class,
                 sim_test_device_prop)
-        cls.sub_proc = subprocess.Popen('python %s/%s.py %s -file=%s '
-                                        '-ORBendPoint giop:tcp::%s' % (
-                                           cls.temp_dir, server_name,
-                                           server_instance, database_filename,
-                                           cls.port), shell=True)
+        cls.sub_proc = subprocess.Popen(["bin/sh", "-c", "python %s/%s.py %s "
+                                        "-file=%s -ORBendPoint giop:tcp::%s" % (
+                                            cls.temp_dir, server_name,
+                                            server_instance, database_filename,
+                                            cls.port)], executable="/bin/bash")
         # Note that the connection request must be delayed
         # by atleast 1000 ms of device server start up.
         time.sleep(1)
