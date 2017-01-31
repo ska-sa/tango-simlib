@@ -59,7 +59,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         cls.sim_control_device = device_proxy(
                 '%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
                     cls.host, cls.port))
-        cls.addCleanupClass(subprocess.call, 'fuser -k %s/tcp' % cls.port, shell=True)
         cls.addCleanupClass(cls.sub_proc.kill)
         cls.addCleanupClass(shutil.rmtree, cls.temp_dir)
 
