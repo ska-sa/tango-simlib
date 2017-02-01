@@ -94,7 +94,7 @@
       <eventCriteria relChange="10" absChange="0.2" period="1000"/>
       <evArchiveCriteria relChange="10" absChange="0.2" period="1000"/>
     </dynamicAttributes>
-    <dynamicAttributes name="relativeHumidity" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+    <dynamicAttributes name="relative_humidity" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
       <dataType xsi:type="pogoDsl:DoubleType"/>
       <changeEvent fire="false" libCheckCriteria="false"/>
       <archiveEvent fire="false" libCheckCriteria="false"/>

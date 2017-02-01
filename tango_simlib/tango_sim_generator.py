@@ -319,7 +319,7 @@ def generate_device_server(server_name, sim_data_files, directory=''):
         dserver.write('\n'.join(lines))
 
 def get_device_class(sim_data_files):
-    """Get device class name from specified xmi description file
+    """Get device class name from specified xmi/simdd description file
 
     Parameters
     ----------
@@ -341,6 +341,9 @@ def get_device_class(sim_data_files):
         extension = extension.lower()
         if extension in [".xmi"]:
             parser_instance = get_parser_instance(data_file)
+        elif extension in [".json"] and len(sim_data_files) < 2:
+            parser_instance = get_parser_instance(data_file)
+
     # Since at the current moment the class name of the tango simulator to be
     # generated must be specified in the xmi data file, if no xmi if provided
     # the simulator will be given a default name.

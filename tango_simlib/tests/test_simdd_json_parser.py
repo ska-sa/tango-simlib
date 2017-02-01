@@ -75,7 +75,7 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
         'period': '1000',
         'rel_change': '10',
         'unit': 'Degrees Centrigrade',
-        'update_period': '1',
+        'update_period': '1000',
         'writable': 'READ'
     }
 
