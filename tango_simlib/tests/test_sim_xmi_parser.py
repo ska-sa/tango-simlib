@@ -312,7 +312,7 @@ class test_XmiParser(GenericSetup):
         """
         actual_parsed_attrs = self.xmi_parser.get_reformatted_device_attr_metadata()
         expected_attr_list = ['insolation', 'temperature', 'pressure', 'rainfall',
-                              'relativeHumidity', 'wind_direction', 'input_comms_ok',
+                              'relative_humidity', 'wind_direction', 'input_comms_ok',
                               'wind_speed']
         actual_parsed_attr_list = actual_parsed_attrs.keys()
         self.assertGreater(len(actual_parsed_attr_list), 0,
