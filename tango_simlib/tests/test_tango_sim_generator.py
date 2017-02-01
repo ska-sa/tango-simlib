@@ -45,13 +45,14 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                 server_name, server_instance, '%scontrol' % device_name,
                 database_filename, '%sSimControl' % cls.sim_device_class,
                 sim_test_device_prop)
-        cls.sub_proc = subprocess.Popen(["bin/sh", "-c", "python %s/%s.py %s "
-                                        "-file=%s -ORBendPoint giop:tcp::%s" % (
-                                            cls.temp_dir, server_name,
-                                            server_instance, database_filename,
-                                            cls.port)], executable="/bin/bash")
-        # Note that the connection request must be delayed
-        # by atleast 1000 ms of device server start up.
+        cls.sub_proc = subprocess.Popen(["python", "{}/{}.py".format(
+                                            cls.temp_dir, server_name),
+                                        server_instance, "-file={}".format(
+                                            database_filename),
+                                        "-ORBendPoint", "giop:tcp::{}".format(
+                                            cls.port)])
+        # Note that tango demands that connection to the server must
+        # be delayed by atleast 1000 ms of device server start up.
         time.sleep(1)
         cls.sim_device = device_proxy(
                 '%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
