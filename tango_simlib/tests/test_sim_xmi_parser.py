@@ -421,7 +421,7 @@ class test_PopModelQuantities(GenericSetup):
         self.assertEqual(device_name, pmq.sim_model.name,
                 "The device name and the model name do not match.")
         expected_quantities_list = ['insolation', 'temperature', 'pressure', 'rainfall',
-                                    'relativeHumidity', 'wind_direction',
+                                    'relative_humidity', 'wind_direction',
                                     'input_comms_ok', 'wind_speed']
         actual_quantities_list = pmq.sim_model.sim_quantities.keys()
         self.assertEqual(set(expected_quantities_list), set(actual_quantities_list),
