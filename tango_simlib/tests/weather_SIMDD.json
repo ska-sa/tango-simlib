@@ -1,4 +1,4 @@
-{
+{"class_name": "Weather",
     "dynamicAttributes": [
         {
             "basicAttributeData": {
@@ -33,7 +33,9 @@
                         "max_bound": "50",
                         "mean": "25",
                         "max_slew_rate": "1",
-                        "update_period": "1"
+                        "update_period": "1000",
+                        "std_dev": "5"
+
                     }
                 },
                 "attributeControlSystem": {
@@ -86,8 +88,9 @@
                         "min_bound": "0",
                         "max_bound": "1200",
                         "mean": "500",
-                        "slew_rate": "5",
-                        "update_period": "1000"
+                        "max_slew_rate": "5",
+                        "update_period": "1000",
+                        "std_dev": "100"
                     }
                 },
                 "attributeControlSystem": {
@@ -141,7 +144,8 @@
                         "max_bound": "1200",
                         "mean": "500",
                         "max_slew_rate": "5",
-                        "update_period": "1000"
+                        "update_period": "1000",
+                        "std_dev": "50"
                     }
                 },
                 "attributeControlSystem": {
@@ -195,7 +199,8 @@
                         "max_bound": "3.2",
                         "mean": "1.5",
                         "max_slew_rate": "0.2",
-                        "update_period": "1000"
+                        "update_period": "1000",
+                        "std_dev": "1"
                     }
                 },
                 "attributeControlSystem": {
@@ -249,7 +254,8 @@
                         "max_bound": "150",
                         "mean": "65",
                         "max_slew_rate": "10",
-                        "update_period": "1000"
+                        "update_period": "1000",
+                        "std_dev": "5"
                     }
                 },
                 "attributeControlSystem": {
@@ -264,7 +270,7 @@
                         "eventCrateria": {
                             "abs_change": "0.5",
                             "event_period": "1000",
-                            "rel_change": "10"
+                            "rel_change": "5"
                         }
                     }
                 }
@@ -303,7 +309,8 @@
                         "max_bound": "100",
                         "mean": "3",
                         "max_slew_rate": "3",
-                        "update_period": "1000"
+                        "update_period": "1000",
+                        "std_dev": "2"
                     }
                 },
                 "attributeControlSystem": {
@@ -357,7 +364,8 @@
                         "max_bound": "359.99",
                         "mean": "0",
                         "max_slew_rate": "60",
-                        "update_period": "1000"
+                        "update_period": "1000",
+                        "std_dev": "10"
                     }
                 },
                 "attributeControlSystem": {
@@ -411,7 +419,8 @@
                         "max_bound": "",
                         "mean": "",
                         "max_slew_rate": "",
-                        "update_period": ""
+                        "update_period": "",
+                        "std_dev": ""
                     }
                 },
                 "attributeControlSystem": {

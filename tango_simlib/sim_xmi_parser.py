@@ -668,8 +668,11 @@ class PopulateModelQuantities(object):
                 else:
                     try:
                         sim_attr_quantities = self.sim_attribute_quantities(
-                            float(model_attr_props['min_value']),
-                            float(model_attr_props['max_value']))
+                            float(model_attr_props['min_bound']),
+                            float(model_attr_props['max_bound']),
+                            float(model_attr_props['max_slew_rate']),
+                            float(model_attr_props['mean']),
+                            float(model_attr_props['std_dev']))
                     except KeyError:
                         raise ValueError(
                             "Attribute with name '{}' specified in the configuration"
@@ -685,7 +688,8 @@ class PopulateModelQuantities(object):
                     partial(quantities.ConstantQuantity, start_time=start_time)
                     (meta=model_attr_props, start_value=True))
 
-    def sim_attribute_quantities(self, min_value, max_value, slew_rate=None):
+    def sim_attribute_quantities(self, min_bound, max_bound, max_slew_rate,
+                                 mean, std_dev):
         """Simulate attribute quantities with a Guassian value distribution
 
         Parameters
@@ -694,34 +698,26 @@ class PopulateModelQuantities(object):
             minimum attribute value to be simulated
         max_value : float
             maximum attribute value to be simulated
-        slew_rate : float
+        max_slew_rate : float
             maximum changing rate of the simulated quantities between min
             and max values
+        mean : float
+            average value of the simulated quantity
+        std_dev : float
+            starndard deviation value of the simulated quantity
 
         Returns
         ======
         sim_attribute_quantities : dict
             Dict of Gaussian simulated quantities
 
-        Notes
-        =====
-        - Statistical simulation parameters (mean, std dev, slew rate) are
-          derived from the min/max values of the attribute.
-
         """
         sim_attribute_quantities = dict()
-        if slew_rate:
-            max_slew_rate = slew_rate
-        else:
-            # A hard coded value is computed as follows
-            max_slew_rate = (max_value + abs(min_value))/10.0
         sim_attribute_quantities['max_slew_rate'] = max_slew_rate
-        sim_attribute_quantities['min_bound'] = min_value
-        sim_attribute_quantities['max_bound'] = max_value
-        # TODO (AR) 2016-10-14: In the future we might define a way to specify
-        # simulation defaults or simulation bounds different from the XMI bounds
-        sim_attribute_quantities['mean'] = (max_value - min_value)/2
-        sim_attribute_quantities['std_dev'] = max_slew_rate/2
+        sim_attribute_quantities['min_bound'] = min_bound
+        sim_attribute_quantities['max_bound'] = max_bound
+        sim_attribute_quantities['mean'] = mean
+        sim_attribute_quantities['std_dev'] = std_dev
         return sim_attribute_quantities
 
 
