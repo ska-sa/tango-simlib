@@ -55,7 +55,7 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
         'format': '6.2f',
         'delta_t': '1000',
         'delta_val': '0.5',
-        'description': 'Current temperature outside near the telescope.',
+        'description': 'Current actual temperature outside near the telescope.',
         'display_level': 'OPERATOR',
         'event_period': '1000',
         'label': 'Outside Temperature',
@@ -64,11 +64,11 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
         'max_dim_x': '1',
         'max_dim_y': '0',
         'max_slew_rate': '1',
-        'max_value': '51',
+        'max_value': '53',
         'mean': '25',
         'min_alarm': '-9',
         'min_bound': '-10',
-        'min_value': '-10',
+        'min_value': '-12',
         "min_warning": "-8",
         "max_warning": "49",
         'name': 'temperature',
@@ -627,3 +627,60 @@ class test_SourceSimulatorInfo(unittest.TestCase):
                          "The property '{}' specified in the file: '{}' is not captured"
                          " in the main config file: '{}'.".format(
                          property_name, self.simdd_json_file[0], self.sim_xmi_file[0]))
+
+
+
+class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
+                                                  unittest.TestCase):
+    """A test class that tests the use of both the xmi and simdd to generate
+    a tango simulator ensuring that the specified parameters in the simdd
+    overrides that of the xmi."""
+
+    longMessage = True
+
+    @classmethod
+    def setUpClassWithCleanup(cls):
+        cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
+        cls.data_descr_files = []
+        cls.data_descr_files.append(pkg_resources.resource_filename('tango_simlib.tests',
+                                                                    'weather_sim.xmi'))
+        cls.data_descr_files.append(pkg_resources.resource_filename(
+            'tango_simlib.tests', 'weather_supplementary_SIMDD.json'))
+        # Since the sim_xmi_parser gets the simdd file from the device properties
+        # in the tango database, here the method is mocked to return the simdd
+        # file that found using the pkg_resources since it is included in the
+        # test module
+        with mock.patch(tango_sim_generator.__name__ + '.get_data_description_file_name'
+                        ) as mock_get_description_file_name:
+            mock_get_description_file_name.return_value = cls.data_descr_files
+            cls.properties = dict(sim_data_description_file=cls.data_descr_files)
+            cls.device_name = 'test/nodb/tangodeviceserver'
+            model = tango_sim_generator.configure_device_model(
+                cls.data_descr_files, cls.device_name)
+            cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
+                model, cls.data_descr_files)[0]
+            cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
+                                                 device_name=cls.device_name,
+                                                 db=cls.tango_db,
+                                                properties=cls.properties)
+            start_thread_with_cleanup(cls, cls.tango_context)
+
+    def setUp(self):
+        super(test_XmiSimddSupplementaryDeviceIntegration, self).setUp()
+        self.device = self.tango_context.device
+        self.instance = self.TangoDeviceServer.instances[self.device.name()]
+
+    def test_xmi_parameter_override_by_simdd(self):
+        """Testing whether the attribute parameters specified in the simdd
+        override that provided by the xmi file"""
+        # Using the made up temperature attribute expected results as we
+        # haven't generated the full test data for the other attributes.
+        sim_quantities = self.instance.model.sim_quantities
+        self.assertIn('temperature', sim_quantities,
+                "The attribute temperature is not in the parsed attribute list")
+        actual_device_temperature_attr_info = sim_quantities['temperature'].meta
+        for prop in EXPECTED_TEMPERATURE_ATTR_INFO:
+            self.assertEquals(actual_device_temperature_attr_info[prop],
+                              EXPECTED_TEMPERATURE_ATTR_INFO[prop],
+                              "The expected value for the parameter '%s' does "
+                              "not match with the actual value" % (prop))
