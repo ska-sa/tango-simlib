@@ -83,12 +83,12 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
 # json file is parsed by the SimddParser.
 EXPECTED_ON_CMD_INFO = {
         'description': 'Turns On Device',
-        'dformat_in': 'Scalar',
-        'dformat_out': 'Scalar',
-        'doc_in': 'No input parameter',
+        'dformat_in': PyTango._PyTango.AttrDataFormat.SCALAR,
+        'dformat_out': PyTango._PyTango.AttrDataFormat.SCALAR,
+        'doc_in': 'No input parameter required',
         'doc_out': 'Command responds',
-        'dtype_in': 'Void',
-        'dtype_out': 'String',
+        'dtype_in': PyTango._PyTango.CmdArgType.DevVoid,
+        'dtype_out': PyTango._PyTango.CmdArgType.DevVoid,
         'name': 'On',
         'actions': []
     }
@@ -670,9 +670,9 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
         self.device = self.tango_context.device
         self.instance = self.TangoDeviceServer.instances[self.device.name()]
 
-    def test_xmi_parameter_override_by_simdd(self):
-        """Testing whether the attribute parameters specified in the simdd
-        override that provided by the xmi file"""
+    def test_xmi_attribute_parameter_override_by_simdd(self):
+        """Testing whether the attribute parameters specified in
+        the simdd override that provided by the xmi file"""
         # Using the made up temperature attribute expected results as we
         # haven't generated the full test data for the other attributes.
         sim_quantities = self.instance.model.sim_quantities
@@ -682,5 +682,19 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
         for prop in EXPECTED_TEMPERATURE_ATTR_INFO:
             self.assertEquals(actual_device_temperature_attr_info[prop],
                               EXPECTED_TEMPERATURE_ATTR_INFO[prop],
+                              "The expected value for the parameter '%s' does "
+                              "not match with the actual value" % (prop))
+
+
+    def test_xmi_command_parameter_override_by_simdd(self):
+        """Testing whether the command parameters specified in
+        the simdd override that provided by the xmi file"""
+        sim_actions = self.instance.model.sim_actions_meta
+        self.assertIn('On', sim_actions.keys(),
+                "The command On is not in the parsed command list")
+        actual_device_on_cmd_info = sim_actions['On']
+        for prop in EXPECTED_ON_CMD_INFO:
+            self.assertEquals(actual_device_on_cmd_info[prop],
+                              EXPECTED_ON_CMD_INFO[prop],
                               "The expected value for the parameter '%s' does "
                               "not match with the actual value" % (prop))

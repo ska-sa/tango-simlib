@@ -177,7 +177,7 @@
                 "actions": [],
                 "input_parameters": {
                     "dtype_in": "Void",
-                    "doc_in": "No input parameter",
+                    "doc_in": "No input parameter required",
                     "dformat_in": "Scalar"
                 },
                 "output_parameters": {
