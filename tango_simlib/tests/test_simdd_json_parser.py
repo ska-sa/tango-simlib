@@ -619,7 +619,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
                                                   unittest.TestCase):
     """A test class that tests the use of both the xmi and simdd to generate
     a tango simulator ensuring that the specified parameters in the simdd
-    overrides that of the xmi."""
+    override that of the xmi."""
 
     longMessage = True
 
@@ -729,11 +729,11 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
                                 expected_device_cmd_xmi_info[expected_action][prop],
                                 actual_device_attr_info[prop],
                                 "The {} action expected value for the parameter "
-                                "'{}' does not match with the actual value in the"
+                                "'{}' does not match with the actual value in the "
                                 "device model".format(expected_action, prop))
                     self.assertEquals(
                             expected_device_cmd_xmi_overridden[expected_action][prop],
                             actual_device_attr_info[prop],
                             "The {} action expected value for the overridden "
                             "parameter '{}' does not match with the actual value "
-                            " in the device model".format(expected_action, prop))
+                            "in the device model".format(expected_action, prop))
