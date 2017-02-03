@@ -5,7 +5,7 @@
                 "name": "temperature",
                 "unit": "Degrees Centrigrade",
                 "label": "Outside Temperature",
-                "description": "Current temperature outside near the telescope.",
+                "description": "Current actual temperature outside near the telescope.",
                 "data_type": "Double",
                 "data_format": "Scalar",
                 "format": "6.2f",

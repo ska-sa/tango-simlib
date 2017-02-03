@@ -3,7 +3,12 @@
         {
             "basicAttributeData": {
                 "name": "temperature",
+                "description": "Current actual temperature outside near the telescope.",
                 "quantity_type": "GaussianSlewLimited",
+                "attributeErrorChecking": {
+                    "min_value": "-15",
+                    "max_value": "55"
+                },
                 "dataSimulationParameters": {
                     "randomlyVaryingNumber": {
                         "min_bound": "-10",
@@ -12,6 +17,7 @@
                         "max_slew_rate": "1",
                         "update_period": "1000",
                         "std_dev": "5"
+
                     }
                 }
             }
@@ -137,12 +143,12 @@
                 "actions": [],
                 "input_parameters": {
                     "dtype_in": "Void",
-                    "doc_in": "No input parameter",
+                    "doc_in": "No input parameter required",
                     "dformat_in": "Scalar"
                 },
                 "output_parameters": {
                     "dtype_out": "Void",
-                    "doc_out": "Command responds",
+                    "doc_out": "Command responds only",
                     "dformat_out": "Scalar"
                 }
             }
@@ -216,12 +222,12 @@
                 "actions": [],
                 "input_parameters": {
                     "dtype_in": "VarDoubleArray",
-                    "doc_in": "Takes an array of at least two numerals",
-                    "dformat_in": "Scalar"
+                    "doc_in": "Takes an array of at least two numerals.",
+                    "dformat_in": "Spectrum"
                 },
                 "output_parameters": {
                     "dtype_out": "Double",
-                    "doc_out": "Returns the sum of the values",
+                    "doc_out": "Returns the sum of the values.",
                     "dformat_out": "Scalar"
                 }
             }
