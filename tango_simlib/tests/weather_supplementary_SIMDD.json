@@ -293,7 +293,7 @@
             "name": "Override_Weather_SimControl",
             "module_directory": "None",
             "module_name": "tango_simlib.examples.override_class",
-            "class_name": "OverrideSimControl"
+            "class_name": "OverrideWeatherSimControl"
             }
         }
     ]
