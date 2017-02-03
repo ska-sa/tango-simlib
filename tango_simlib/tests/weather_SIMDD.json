@@ -17,8 +17,8 @@
                     "max_dim_y": "0"
                 },
                 "attributeErrorChecking": {
-                    "min_value": "-12",
-                    "max_value": "53",
+                    "min_value": "-10",
+                    "max_value": "51",
                     "min_alarm": "-9",
                     "max_alarm": "50",
                     "min_warning": "-8",

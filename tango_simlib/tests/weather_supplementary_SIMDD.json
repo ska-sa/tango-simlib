@@ -3,29 +3,11 @@
         {
             "basicAttributeData": {
                 "name": "temperature",
-                "unit": "Degrees Centrigrade",
-                "label": "Outside Temperature",
                 "description": "Current actual temperature outside near the telescope.",
-                "data_type": "Double",
-                "data_format": "Scalar",
-                "format": "6.2f",
-                "delta_t": "1000",
-                "delta_val": "0.5",
                 "quantity_type": "GaussianSlewLimited",
-                "data_shape": {
-                    "max_dim_x": "1",
-                    "max_dim_y": "0"
-                },
                 "attributeErrorChecking": {
-                    "min_value": "-12",
-                    "max_value": "53",
-                    "min_alarm": "-9",
-                    "max_alarm": "50",
-                    "min_warning": "-8",
-                    "max_warning": "49"
-                },
-                "attributeInterlocks": {
-                    "writable": "READ"
+                    "min_value": "-15",
+                    "max_value": "55"
                 },
                 "dataSimulationParameters": {
                     "randomlyVaryingNumber": {
@@ -36,22 +18,6 @@
                         "update_period": "1000",
                         "std_dev": "5"
 
-                    }
-                },
-                "attributeControlSystem": {
-                    "display_level": "OPERATOR",
-                    "period": "1000",
-                    "EventSettings": {
-                        "eventArchiveCriteria": {
-                            "archive_abs_change": "0.5",
-                            "archive_period": "1000",
-                            "archive_rel_change": "10"
-                        },
-                        "eventCrateria": {
-                            "abs_change": "0.5",
-                            "event_period": "1000",
-                            "rel_change": "10"
-                        }
                     }
                 }
             }
@@ -182,7 +148,7 @@
                 },
                 "output_parameters": {
                     "dtype_out": "Void",
-                    "doc_out": "Command responds",
+                    "doc_out": "Command responds only",
                     "dformat_out": "Scalar"
                 }
             }
@@ -255,13 +221,13 @@
                 "description": "Add two or more numbers together",
                 "actions": [],
                 "input_parameters": {
-                    "dtype_in": "VarDoubleArray",
-                    "doc_in": "Takes an array of at least two numerals",
-                    "dformat_in": "Scalar"
+                    "dtype_in": "Double",
+                    "doc_in": "Takes an array of at least two numerals.",
+                    "dformat_in": "Spectrum"
                 },
                 "output_parameters": {
                     "dtype_out": "Double",
-                    "doc_out": "Returns the sum of the values",
+                    "doc_out": "Returns the sum of the values.",
                     "dformat_out": "Scalar"
                 }
             }
