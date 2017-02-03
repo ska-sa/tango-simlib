@@ -399,3 +399,49 @@ class OverrideVds(object):
             receptor_number = int(receptor_name)
         return receptor_number
 
+
+class OverrideWeatherSimControl(object):
+    """An example of the override class for the TANGO device class 'SimControl'.
+    It provides all the implementations of the command handler functions for the
+    commands required to stimualte a running tango device in real time.
+    """
+
+    def sim_test_action_set_max_attribute_value(
+            self, model, tango_dev=None, data_input=None):
+        """This command sets an attribute value to it maximum value
+        to set its quality to Alarm state to warning."""
+        quantity_name = data_input
+        try:
+            simulated_quantity = model.sim_quantities[quantity_name]
+            maximum_val = model.max_bound
+        except KeyError:
+            raise WeatherSimError("Quantity {} not in the Weather model".format(
+                quantity_name))
+        else:
+            if hasattr(simulated_quantity, 'last_val'):
+                simulated_quantity.last_val = maximum_val
+            else:
+                MODULE_LOGGER.debug("Quantity %s is not a GaussianSlewLimited"
+                                    " instance.", simulated_quantity)
+
+    def sim_test_action_stimulate_attribute_configuration_error(
+            self, model, tango_dev=None, data_input=None):
+        """This command sets the attribute maximum allowed value to be the same
+        as that minimum allowed value"""
+        quantity_name = data_input
+        try:
+            model.sim_quantities[quantity_name]
+        except KeyError:
+            raise WeatherSimError("Quantity {} not in the Weather model".format(
+                quantity_name))
+        else:
+            tango_dev.get_attribute_config(quantity_name)[0].max_value = (
+                    tango_dev.get_attribute_config(quantity_name)[0].min_value)
+
+    def sim_test_action_simulate_fault_device_state(
+            self, model, tango_dev=None, data_input=None):
+        """This command sets the current device state to fault/on"""
+        if str(tango_dev.get_status()) in ['FAULT']:
+            tango_dev.set_state(DevState.ON)
+        else:
+            tango_dev.set_state(DevState.FAULT)
