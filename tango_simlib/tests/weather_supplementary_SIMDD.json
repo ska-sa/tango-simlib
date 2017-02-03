@@ -221,7 +221,7 @@
                 "description": "Add two or more numbers together",
                 "actions": [],
                 "input_parameters": {
-                    "dtype_in": "Double",
+                    "dtype_in": "VarDoubleArray",
                     "doc_in": "Takes an array of at least two numerals.",
                     "dformat_in": "Spectrum"
                 },

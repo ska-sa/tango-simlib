@@ -31,7 +31,7 @@
       <argin description="No input parameter">
         <type xsi:type="pogoDsl:VoidType"/>
       </argin>
-      <argout description="ok | Device ON">
+      <argout description="Command responds">
         <type xsi:type="pogoDsl:VoidType"/>
       </argout>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
@@ -47,7 +47,7 @@
     </commands>
     <commands name="Add" description="Add two or more numbers together." execMethod="add" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
       <argin description="Takes an array of at least two numerals.">
-        <type xsi:type="pogoDsl:DoubleType"/>
+        <type xsi:type="pogoDsl:VarDoubleArrayType"/>
       </argin>
       <argout description="Returns the sum of the values.">
         <type xsi:type="pogoDsl:DoubleType"/>

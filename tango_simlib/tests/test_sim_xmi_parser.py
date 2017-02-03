@@ -105,10 +105,10 @@ expected_pressure_attr_info = {
 # The desired information for the 'On' command when the weather_sim xmi file is parsed
 expected_on_cmd_info = {
     'name': 'On',
-    'doc_in': '',
+    'doc_in': 'No input parameter',
     'dtype_in': PyTango.CmdArgType.DevVoid,
-    'doc_out': 'ok | Device ON',
-    'dtype_out': PyTango.CmdArgType.DevString}
+    'doc_out': 'Command responds',
+    'dtype_out': PyTango.CmdArgType.DevVoid}
 
 # The expected information that would be obtained for the device property when the
 # weather_sim xmi file is parsed by the XmiParser.
