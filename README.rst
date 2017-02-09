@@ -30,7 +30,39 @@ Rationale
 ---------
 
 During the development of the control and monitoring (CAM) systems for the
-KAT-7_ (KAT-7-wiki_) and MeerKAT_ (MeerKAT-wiki_) at SKASA_
+KAT-7_ (KAT-7-wiki_) and MeerKAT_ (MeerKAT-wiki_) at SKASA_ it was found that
+having control-interface simulators available for all hardware and subsystems
+that CAM needs to control and monitor is an incredibly valuable resource. In
+early CAM development it:
+
+ - Makes it possible to start devloping the CAM system before hardware
+   or vendor-provided hardware simulators are available.
+ - Allows gaps to in interfaces to be identified early on in the development
+   process.
+
+As development progresses, The full, actual, MeerKAT/KAT-7 CAM is run against
+the simulated devices, allowing CAM functionality to be tested without the need
+of real telescope hardware. The simulators also expose a back-channel that can
+be using to modify the behaviour of the simulators during tests to e.g. simulate
+error conditions. This is exploited by CAM developers in their own development
+environments for day to day development tasks and also allows daily automated
+functional integration tests to be run. It was also found that initially having
+even a very simple simulator available is quite valuable, and that for many
+devices the simple simulator is always sufficient.
+
+
+The KAT-7 and MeerKAT telescopes use the Karoo Array Telescope Control Protocol
+KATCP_ for inter-device, subsystem and component communications. 
+In light of that a library was developed that makes it very easy to
+code a basic simulator, providing no-op command (KATCP request) handlers and
+randomly varying attribute (KATCP sensor) values along with the back-channel
+interface for "free".
+
+The planned SKA_ telescope project that the SKASA_ team is participating in has
+decided to standardise on the TANGO_ control systems framework. This library is
+an attempt to bring the same simulation approach used for the KAT-7 and MeerKAT
+telescope to the TANGO world.
+
 
 .. _TANGO: http://www.tango-controls.org/
 .. _POGO: http://www.esrf.eu/computing/cs/tango/tango_doc/tools_doc/pogo_doc/
@@ -40,12 +72,14 @@ KAT-7_ (KAT-7-wiki_) and MeerKAT_ (MeerKAT-wiki_) at SKASA_
 .. _MeerKAT: https://www.ska.ac.za/science-engineering/meerkat/
 .. _MeerKAT-wiki: https://en.wikipedia.org/wiki/MeerKAT
 .. _SKASA: http://www.ska.ac.za/
+.. _KATCP: http://pythonhosted.org/katcp/
+.. _SKA: https://www.skatelescope.org/
 
 aims to make it easy to generate basic
 simulators of devices with TANGO
 
 - [ ] Add basic Readme
-  - [ ] Introduction and purpose
+  - [X] Introduction and purpose
   - [ ] Basic examples of use. I.e. just how to start up a simulator using
     pre-existing example files
   - [ ] Get/generate example simulators in an example folder
