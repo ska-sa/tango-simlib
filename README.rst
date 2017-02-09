@@ -1,6 +1,6 @@
-=====================================================================
-tango-simlib: A library for easily generating TANGO device simulators
-=====================================================================
+=====================================================
+tango-simlib: Easily generate TANGO device simulators
+=====================================================
 
 Introduction
 ============
@@ -75,8 +75,20 @@ telescope to the TANGO world.
 .. _KATCP: http://pythonhosted.org/katcp/
 .. _SKA: https://www.skatelescope.org/
 
-aims to make it easy to generate basic
-simulators of devices with TANGO
+
+Basic Usage
+===========
+
+Installation
+------------
+
+Installation from source, working dir where source is checked out ::
+
+  pip install .
+
+In the neare future, this package should be available on PYPI, allowing ::
+
+  pip install tango-simlib
 
 - [ ] Add basic Readme
   - [X] Introduction and purpose
