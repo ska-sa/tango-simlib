@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="ASCII"?>
+<pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
+  <classes name="Weather" pogoRevision="9.1">
+    <description description="" title="" sourcePath="/home/athanaseus/Documents/SKA_Software_Engeneering/TANGO/pogo" language="Python" filestogenerate="XMI   file,Protected Regions" license="GPL" copyright="" hasMandatoryProperty="true" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
+      <inheritances classname="Device_Impl" sourcePath=""/>
+      <identification contact="at ska.ac.za - aramaila" author="aramaila" emailDomain="ska.ac.za" classFamily="Simulators" siteSpecific="" platform="Unix Like" bus="Ethernet" manufacturer="none" reference=""/>
+    </description>
+    <deviceProperties name="sim_xmi_description_file" mandatory="true" description="Path to the pogo generated xmi file">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </deviceProperties>
+    <commands name="State" description="This command gets the device state (stored in its device_state data member) and returns it to the caller." execMethod="dev_state" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="none">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="Device state">
+        <type xsi:type="pogoDsl:StateType"/>
+      </argout>
+      <status abstract="true" inherited="true" concrete="true"/>
+    </commands>
+    <commands name="Status" description="This command gets the device status (stored in its device_status data member) and returns it to the caller." execMethod="dev_status" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="none">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="Device status">
+        <type xsi:type="pogoDsl:ConstStringType"/>
+      </argout>
+      <status abstract="true" inherited="true" concrete="true"/>
+    </commands>
+    <commands name="On" description="Turn On Device" execMethod="on" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="No input parameter">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="Command responds">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </commands>
+    <commands name="Off" description="Turn Off Device" execMethod="off" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="No input parameter">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="Command responds">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </commands>
+    <commands name="Add" description="Add two or more numbers together." execMethod="add" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="Takes an array of at least two numerals.">
+        <type xsi:type="pogoDsl:VarDoubleArrayType"/>
+      </argin>
+      <argout description="Returns the sum of the values.">
+        <type xsi:type="pogoDsl:DoubleType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </commands>
+    <dynamicAttributes name="temperature" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="true" libCheckCriteria="false"/>
+      <archiveEvent fire="true" libCheckCriteria="false"/>
+      <dataReadyEvent fire="true" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Current temperature outside near the telescope." label="Outside Temperature" unit="Degrees Centrigrade" standardUnit="" displayUnit="" format="" maxValue="51" minValue="-10" maxAlarm="50" minAlarm="-9" maxWarning="45" minWarning="-5" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="10" absChange="0.5" period="1000"/>
+      <evArchiveCriteria relChange="10" absChange="0.5" period="1000"/>
+    </dynamicAttributes>
+    <dynamicAttributes name="insolation" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="true" libCheckCriteria="false"/>
+      <archiveEvent fire="true" libCheckCriteria="false"/>
+      <dataReadyEvent fire="true" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Sun intensity in central telescope area." label="Insolation" unit="W/m^2" standardUnit="" displayUnit="" format="" maxValue="1200" minValue="0" maxAlarm="1100" minAlarm="" maxWarning="1000" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="10" absChange="0.5" period="1000"/>
+      <evArchiveCriteria relChange="10" absChange="0.5" period="1000"/>
+    </dynamicAttributes>
+    <dynamicAttributes name="pressure" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="true" libCheckCriteria="false"/>
+      <archiveEvent fire="true" libCheckCriteria="false"/>
+      <dataReadyEvent fire="true" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Barometric pressure in central telescope area." label="Barometric pressure" unit="mbar" standardUnit="" displayUnit="" format="" maxValue="1100" minValue="500" maxAlarm="1000" minAlarm="" maxWarning="900" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="10" absChange="0.5" period="1000"/>
+      <evArchiveCriteria relChange="10" absChange="0.5" period="1000"/>
+    </dynamicAttributes>
+    <dynamicAttributes name="rainfall" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="true" libCheckCriteria="false"/>
+      <archiveEvent fire="true" libCheckCriteria="false"/>
+      <dataReadyEvent fire="true" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Rainfall in central telescope area." label="Rainfall" unit="mm" standardUnit="" displayUnit="" format="" maxValue="3.2" minValue="0" maxAlarm="3.1" minAlarm="" maxWarning="3.0" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="10" absChange="0.2" period="1000"/>
+      <evArchiveCriteria relChange="10" absChange="0.2" period="1000"/>
+    </dynamicAttributes>
+    <dynamicAttributes name="relative_humidity" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Relative humidity in central telescope area." label="Air humidity" unit="percent" standardUnit="" displayUnit="" format="" maxValue="100" minValue="0" maxAlarm="99" minAlarm="" maxWarning="98" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="10" absChange="0.5" period="1000"/>
+      <evArchiveCriteria relChange="10" absChange="0.5" period="1000"/>
+    </dynamicAttributes>
+    <dynamicAttributes name="wind_direction" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="true" libCheckCriteria="false"/>
+      <archiveEvent fire="true" libCheckCriteria="false"/>
+      <dataReadyEvent fire="true" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Wind direction in central telescope area." label="Wind direction" unit="Degrees" standardUnit="" displayUnit="" format="" maxValue="360" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="10" absChange="0.5" period="1000"/>
+      <evArchiveCriteria relChange="10" absChange="0.5" period="1000"/>
+    </dynamicAttributes>
+    <dynamicAttributes name="input_comms_ok" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+      <dataType xsi:type="pogoDsl:BooleanType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="true" libCheckCriteria="false"/>
+      <dataReadyEvent fire="true" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Communications with all weather sensors are nominal." label="Input communication OK" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="" period="1000"/>
+      <evArchiveCriteria relChange="" absChange="" period="1000"/>
+    </dynamicAttributes>
+    <dynamicAttributes name="wind_speed" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="true" libCheckCriteria="false"/>
+      <archiveEvent fire="true" libCheckCriteria="false"/>
+      <dataReadyEvent fire="true" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Wind speed in central telescope area." label="Wind speed" unit="m/s" standardUnit="" displayUnit="" format="" maxValue="30" minValue="0" maxAlarm="25" minAlarm="" maxWarning="15" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="10" absChange="0.5" period="1000"/>
+      <evArchiveCriteria relChange="10" absChange="0.5" period="1000"/>
+    </dynamicAttributes>
+    <preferences docHome="./doc_html" makefileHome="/usr/share/pogo/preferences"/>
+  </classes>
+</pogoDsl:PogoSystem>
