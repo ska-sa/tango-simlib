@@ -13,7 +13,6 @@ containing the information needed to instantiate a useful device simulator.
 """
 
 import logging
-
 import json
 
 from PyTango._PyTango import CmdArgType, AttrDataFormat
@@ -109,7 +108,6 @@ class SimddParser(object):
 
         """
         self._device_override_class = {}
-        self._device_override_test_class = {}
 
     def parse(self, simdd_json_file):
         """
@@ -151,9 +149,6 @@ class SimddParser(object):
             elif data_component in ['class_overrides']:
                 device_prop_info = self.get_device_data_components_dict(elements)
                 self._device_override_class.update(device_prop_info)
-            elif data_component in ['sim_control_class_overrides']:
-                device_prop_info = self.get_device_data_components_dict(elements)
-                self._device_override_test_class.update(device_prop_info)
 
     def get_device_data_components_dict(self, elements):
         """
@@ -390,8 +385,3 @@ class SimddParser(object):
         """
         return self._device_override_class
 
-    def get_reformatted_test_override_metadata(self):
-        """Returns a more formatted test device override info data structure in
-        a format of a dict.
-        """
-        return self._device_override_test_class

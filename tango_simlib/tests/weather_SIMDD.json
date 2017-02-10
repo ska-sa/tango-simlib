@@ -530,7 +530,7 @@
                 "input_parameters": {
                     "dtype_in": "VarDoubleArray",
                     "doc_in": "Takes an array of at least two numerals",
-                    "dformat_in": "Scalar"
+                    "dformat_in": "Spectrum"
                 },
                 "output_parameters": {
                     "dtype_out": "Double",
@@ -564,7 +564,7 @@
                 "input_parameters": {
                     "dtype_in": "VarStringArray",
                     "doc_in": "A list of attribute names",
-                    "dformat_in": "Scalar"
+                    "dformat_in": "Spectrum"
                 },
                 "output_parameters": {
                     "dtype_out": "Void",
@@ -587,7 +587,7 @@
     "class_overrides": [
         {
 	    "override_class": {
-		"name": "Override_Weather_Sim",
+		"name": "Sim_Weather_Override",
 		"module_directory": "None",
 		"module_name": "tango_simlib.examples.override_class",
 		"class_name": "OverrideWeather"
