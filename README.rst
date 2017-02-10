@@ -82,6 +82,13 @@ Basic Usage
 Installation
 ------------
 
+Note that installation requires the TANGO binary prerequisites to be
+installed. If you cannot install the PyTango_ package you will not be able to
+install `tango-simlib`.
+
+.. _PyTango: https://pypi.python.org/pypi/PyTango
+
+
 Installation from source, working dir where source is checked out ::
 
   pip install .
@@ -90,25 +97,33 @@ In the neare future, this package should be available on PYPI, allowing ::
 
   pip install tango-simlib
 
-- [ ] Add basic Readme
+
+- [-] Add basic Readme
+
   - [X] Introduction and purpose
   - [ ] Basic examples of use. I.e. just how to start up a simulator using
     pre-existing example files
   - [ ] Get/generate example simulators in an example folder
+
     - [ ] XMI only
     - [ ] XMI + SIMDD
     - [ ] SIMDD only
+
   - [ ] Screenshots of interfaces?
     - http://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository
-  - [ ] Link to SIMDD working document
+  - [X] Link to SIMDD working document
   - [ ] Link to full documentation
   - [ ] Link to our coding standard. (If you would like to contribute, please
     attempt to follow our coding standard)
-- [ ] Copy sphix toolflow from katcp
+
+ - [ ] Copy sphix toolflow from katcp
+
   - Or just install numpydoc package?
   - Optional deps that can be used for documentation stuff:
+
     - http://stackoverflow.com/questions/6237946/optional-dependencies-in-distutils-pip
     - http://peak.telecommunity.com/DevCenter/setuptools#declaring-extras-optional-features-with-their-own-dependencies
     - http://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-extras-optional-features-with-their-own-dependencies
+
 - [ ] Try an do some autodoc generation
 - [ ] Next? 

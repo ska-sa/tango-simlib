@@ -26,6 +26,11 @@ setup(name="tango_simlib",
           'numpy',
           'nose_xunitmp',
           'python-devicetest'],
+      extras_require = {
+          'docs': ["sphinx-pypi-upload",
+                   "numpydoc",
+                   "Sphinx"],
+          },
       zip_safe=False,
       dependency_links=[
           'git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
