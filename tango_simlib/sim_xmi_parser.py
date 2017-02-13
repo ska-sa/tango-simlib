@@ -45,6 +45,9 @@ ARBITRARY_DATA_TYPE_RETURN_VALUES = {
     DevLong: 3,
     DevVoid: None}
 
+# In the case where an attribute with contant quantity simulation type is
+# specified, this dict is used to convert the iniatial value if specified to
+# the data-type corresponding to the attribute data-type.
 INITIAL_CONTANT_VALUE = {
     DevString: str,
     DevDouble: float,
