@@ -52,7 +52,7 @@ devices the simple simulator is always sufficient.
 
 
 The KAT-7 and MeerKAT telescopes use the Karoo Array Telescope Control Protocol
-KATCP_ for inter-device, subsystem and component communications. 
+KATCP_ for inter-device, subsystem and component communications.
 In light of that a library was developed that makes it very easy to
 code a basic simulator, providing no-op command (KATCP request) handlers and
 randomly varying attribute (KATCP sensor) values along with the back-channel
@@ -98,6 +98,56 @@ In the neare future, this package should be available on PYPI, allowing ::
   pip install tango-simlib
 
 
+Simulators
+==========
+
+Generating Simulators
+---------------------
+
+Basic example of how to make use of the tango simulator generator module.
+Give it a path to the description files xmi or simdd or both ::
+
+ tango-simlib-tango-simulator-generator --sim-data-file filename\
+                                 --dserver-name server-name
+
+Weather simulators
+------------------
+
+Example of starting the weather simulator generated from the Weather.xmi file
+with a SimControl instance using tango_launcher ::
+
+ tango-simlib-tango-launcher --name mkat_sim/weather/1 --class Weather\
+                          --name mkat_simcontrol/weather/1\
+                          --class WeatherSimControl\
+                          --server-command tango-simlib-weather-xmi-DS --port 0\
+                          --server-instance tango-launched\
+ --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
+
+Example of starting the weather simulator generated from the Weather_SIMDD.json
+file with a SimControl instance using tango_launcher ::
+
+ tango-simlib-tango-launcher --name mkat_sim/weather/2 --class Weather\
+                           --name mkat_simcontrol/weather/2\
+                           --class WeatherSimControl\
+                           --server-command tango-simlib-weather-simdd-DS\
+                           --port 0\
+                           --server-instance tango-launched\
+  --put-device-property mkat_simcontrol/weather/2:model_key:mkat_sim/weather/2
+
+MeerKAT Video Display System simulator
+--------------------------------------
+
+Example of starting the VDS simulator generated from both the MkatVds.xmi and
+the MkatVds_SIMDD.json files with a SimControl instance using tango_launcher ::
+
+ tango-simlib-tango-launcher --name mkat_sim/vds/1 --class MkatVds\
+                          --name mkat_simcontrol/vds/1\
+                          --class MkatVdsSimControl\
+                          --server-command tango-simlib-vds-xmi-simdd-DS\
+                          --port 0\
+                          --server-instance tango-launched\
+ --put-device-property mkat_simcontrol/vds/1:model_key:mkat_sim/vds/1
+
 - [-] Add basic Readme
 
   - [X] Introduction and purpose
@@ -126,4 +176,4 @@ In the neare future, this package should be available on PYPI, allowing ::
     - http://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-extras-optional-features-with-their-own-dependencies
 
 - [ ] Try an do some autodoc generation
-- [ ] Next? 
+- [ ] Next?
