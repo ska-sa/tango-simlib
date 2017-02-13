@@ -107,8 +107,8 @@ Generating Simulators
 Basic example of how to make use of the tango simulator generator module.
 Give it a path to the description files xmi or simdd or both ::
 
- tango-simlib-tango-simulator-generator --sim-data-file filename\
-                                 --dserver-name server-name
+ tango-simlib-tango-simulator-generator --sim-data-file Weather.xmi\
+                                 --dserver-name tango_weather_xmi
 
 Weather simulators
 ------------------
