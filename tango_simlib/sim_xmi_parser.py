@@ -659,12 +659,13 @@ class PopulateModelQuantities(object):
             else:
                 model_attr_props.update(attr_props)
 
-            if model_attr_props.has_key('quantity_type'):
-                if model_attr_props['quantity_type'] in ['ConstantQuantity']:
+            if model_attr_props.has_key('quantity_simulation_type'):
+                if model_attr_props['quantity_simulation_type'] in ['ConstantQuantity']:
                     self.sim_model.sim_quantities[attr_name] = (
-                        partial(quantities.registry[attr_props['quantity_type']],
-                                start_time=start_time)(meta=model_attr_props,
-                                                       start_value=True))
+                        partial(
+                            quantities.registry[attr_props['quantity_simulation_type']],
+                            start_time=start_time)(meta=model_attr_props,
+                                                   start_value=True))
                 else:
                     try:
                         sim_attr_quantities = self.sim_attribute_quantities(
@@ -680,9 +681,10 @@ class PopulateModelQuantities(object):
                                 attr_name,
                                 self.parser_instance.data_description_file_name))
                     self.sim_model.sim_quantities[attr_name] = (
-                        partial(quantities.registry[attr_props['quantity_type']],
-                                start_time=start_time)(meta=model_attr_props,
-                                                       **sim_attr_quantities))
+                        partial(
+                            quantities.registry[attr_props['quantity_simulation_type']],
+                            start_time=start_time)(meta=model_attr_props,
+                                                   **sim_attr_quantities))
             else:
                 self.sim_model.sim_quantities[attr_name] = (
                     partial(quantities.ConstantQuantity, start_time=start_time)

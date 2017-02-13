@@ -70,6 +70,7 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
         "min_warning": '-8',
         "max_warning": '49',
         'name': 'temperature',
+        'quantity_simulation_type': 'GaussianSlewLimited',
         'period': '1000',
         'rel_change': '10',
         'unit': 'Degrees Centrigrade',
