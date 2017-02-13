@@ -169,15 +169,12 @@ def get_tango_device_server(model, sim_data_files):
         cmd_handler = generate_cmd_handler(action_name, action_handler)
         # You might need to turn cmd_handler into an unbound method before you add
         # it to the class
-        MODULE_LOGGER.info("***Adding commands for the sim device**")
         setattr(TangoDeviceServerCommands, action_name, cmd_handler)
 
     for action_name, action_handler in model.test_sim_actions.items():
         cmd_handler = generate_cmd_handler(action_name, action_handler)
         # You might need to turn cmd_handler into an unbound method before you add
         # it to the class
-        print "***Adding commands for the test interface***", action_name
-        MODULE_LOGGER.info("***Adding commands for the test interface***")
         setattr(TangoTestDeviceServerCommands, action_name, cmd_handler)
 
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerCommands):
@@ -227,8 +224,6 @@ def get_tango_device_server(model, sim_data_files):
     TangoDeviceServer.__name__ = klass_name
     SimControl.TangoClassName = '%sSimControl' % klass_name
     SimControl.__name__ = '%sSimControl' % klass_name
-    #print (dir(TangoDeviceServer))
-    #print (dir(SimControl))
     return [TangoDeviceServer, SimControl]
 
 

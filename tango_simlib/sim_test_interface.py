@@ -23,9 +23,6 @@ from PyTango.server import attribute, device_property
 
 from tango_simlib import model
 
-#class TangoTestDeviceServerCommands(object):
-#    pass
-
 
 class TangoTestDeviceServerBase(Device):
     instances = weakref.WeakValueDictionary()
@@ -72,7 +69,6 @@ class TangoTestDeviceServerBase(Device):
 
         # Add a list of float attributes from the list of Guassian variables
         for attribute_name in control_attributes:
-            print attribute_name
             model.MODULE_LOGGER.info(
                 "Added weather {} attribute control".format(attribute_name))
             attr_props = UserDefaultAttrProp()
