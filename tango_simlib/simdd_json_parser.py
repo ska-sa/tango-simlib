@@ -351,7 +351,7 @@ class SimddParser(object):
                                     EXPECTED_SIMULATION_PARAMETERS[sim_type])
                         except AssertionError:
                             raise ValueError("Attribute with name {} has "
-                                             "wrong simulation parameter {}"
+                                             "unexpected simulation parameter {}"
                                              .format(str(sim_device_info['name']),
                                                      str(sim_param)))
 
