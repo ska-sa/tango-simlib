@@ -3,56 +3,83 @@
       {
           "basicAttributeData": {
               "name": "camera_power_on",
-              "quantity_type": "ConstantQuantity"
-            }
+              "dataSimulationParameters": {
+                  "quantity_simulation_type": "ConstantQuantity",
+                  "initial_value": ""
+                  }
+           }
       },
       {
           "basicAttributeData": {
               "name": "flood_lights_on",
-              "quantity_type": "ConstantQuantity"
-          }
+              "dataSimulationParameters": {
+                  "quantity_simulation_type": "ConstantQuantity",
+                  "initial_value": ""
+                  }
+           }
       },
       {
           "basicAttributeData": {
               "name": "focus_position",
-              "quantity_type": "ConstantQuantity"
-          }
+              "dataSimulationParameters": {
+                  "quantity_simulation_type": "ConstantQuantity",
+                  "initial_value": ""
+                  }
+           }
       },
       {
           "basicAttributeData": {
               "name": "pan_position",
-              "quantity_type": "ConstantQuantity"
-          }
+              "dataSimulationParameters": {
+                  "quantity_simulation_type": "ConstantQuantity",
+                  "initial_value": ""
+                  }
+           }
       },
       {
           "basicAttributeData": {
               "name": "pdu_connected",
-              "quantity_type": "ConstantQuantity"
-          }
+              "dataSimulationParameters": {
+                  "quantity_simulation_type": "ConstantQuantity",
+                  "initial_value": ""
+                  }
+           }
       },
       {
           "basicAttributeData": {
               "name": "ptz_controller_connected",
-              "quantity_type": "ConstantQuantity"
-          }
+              "dataSimulationParameters": {
+                  "quantity_simulation_type": "ConstantQuantity",
+                  "initial_value": ""
+                  }
+           }
       },
       {
           "basicAttributeData": {
               "name": "snmpd_trap_running",
-              "quantity_type": "ConstantQuantity"
-          }
+              "dataSimulationParameters": {
+                  "quantity_simulation_type": "ConstantQuantity",
+                  "initial_value": ""
+                  }
+           }
       },
       {
           "basicAttributeData": {
               "name": "tilt_position",
-              "quantity_type": "ConstantQuantity"
-          }
+              "dataSimulationParameters": {
+                  "quantity_simulation_type": "ConstantQuantity",
+                  "initial_value": ""
+                  }
+           }
       },
       {
           "basicAttributeData": {
               "name": "zoom_position",
-              "quantity_type": "ConstantQuantity"
-          }
+              "dataSimulationParameters": {
+                  "quantity_simulation_type": "ConstantQuantity",
+                  "initial_value": ""
+                  }
+           }
       }
     ],
 
