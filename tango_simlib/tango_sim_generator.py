@@ -27,7 +27,7 @@ from functools import partial
 from tango_simlib.model import Model
 from tango_simlib.simdd_json_parser import SimddParser
 from tango_simlib.sim_sdd_xml_parser import SDDParser
-from tango_simlib.sim_test_interface import SimControl
+from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.sim_xmi_parser import (XmiParser, PopulateModelQuantities,
                                          PopulateModelActions)
 from tango_simlib import helper_module
@@ -141,6 +141,9 @@ def get_tango_device_server(model, sim_data_files):
     class TangoDeviceServerCommands(object):
         pass
 
+    class TangoTestDeviceServerCommands(object):
+        pass
+
     def generate_cmd_handler(action_name, action_handler):
         def cmd_handler(tango_device, input_parameters=None):
             return action_handler(tango_dev=tango_device, data_input=input_parameters)
@@ -166,7 +169,16 @@ def get_tango_device_server(model, sim_data_files):
         cmd_handler = generate_cmd_handler(action_name, action_handler)
         # You might need to turn cmd_handler into an unbound method before you add
         # it to the class
+        MODULE_LOGGER.info("***Adding commands for the sim device**")
         setattr(TangoDeviceServerCommands, action_name, cmd_handler)
+
+    for action_name, action_handler in model.test_sim_actions.items():
+        cmd_handler = generate_cmd_handler(action_name, action_handler)
+        # You might need to turn cmd_handler into an unbound method before you add
+        # it to the class
+        print "***Adding commands for the test interface***", action_name
+        MODULE_LOGGER.info("***Adding commands for the test interface***")
+        setattr(TangoTestDeviceServerCommands, action_name, cmd_handler)
 
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerCommands):
         __metaclass__ = DeviceMeta
@@ -198,11 +210,25 @@ def get_tango_device_server(model, sim_data_files):
                         MODULE_LOGGER.info("No setter function for " + prop + " property")
                 attr.set_default_properties(attr_props)
                 self.add_attribute(attr, self.read_attributes)
+
+    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerCommands):
+        __metaclass__ = DeviceMeta
+
+        instances = weakref.WeakValueDictionary()
+
+        def init_device(self):
+            TangoTestDeviceServerBase.init_device(self)
+
+            name = self.get_name()
+            self.instances[name] = self
+
     klass_name = get_device_class(sim_data_files)
     TangoDeviceServer.TangoClassName = klass_name
     TangoDeviceServer.__name__ = klass_name
     SimControl.TangoClassName = '%sSimControl' % klass_name
     SimControl.__name__ = '%sSimControl' % klass_name
+    #print (dir(TangoDeviceServer))
+    #print (dir(SimControl))
     return [TangoDeviceServer, SimControl]
 
 

@@ -752,15 +752,7 @@ class PopulateModelActions(object):
         override_info = self.parser_instance.get_reformatted_override_metadata()
         instances = {}
         if override_info != {}:
-            for klass_info in override_info.values():
-                if klass_info['module_directory'] == 'None':
-                    module = importlib.import_module(klass_info['module_name'])
-                else:
-                    module = imp.load_source(klass_info['module_name'].split('.')[-1],
-                                             klass_info['module_directory'])
-                klass = getattr(module, klass_info['class_name'])
-                instance = klass()
-                instances[klass_info['name']] = instance
+            instances = self._get_class_instances(override_info)
 
         for cmd_name, cmd_meta in command_info.items():
             # Exclude the TANGO default commands as they have their own built in handlers
@@ -782,11 +774,12 @@ class PopulateModelActions(object):
                 for instance_ in instances:
                     if instance_.startswith('SimControl'):
                         instance = instances[instance_]
-                self._check_override_action_presence(cmd_name, instance, 'test_action{}')
-                handler = getattr(instance, 'test_action{}'.format(cmd_name.lower()),
-                                  self.generate_action_handler(
-                                      cmd_name, cmd_meta['dtype_out'], actions))
-                self.sim_model.set_test_sim_action(cmd_name, handler)
+                self._check_override_action_presence(cmd_name, instance, 'test_action_{}')
+                handler = getattr(
+                    instance, 'test_action_{}'.format(cmd_name.split('test_')[1].lower()),
+                    self.generate_action_handler(cmd_name, cmd_meta['dtype_out'],
+                                                 actions))
+                self.sim_model.set_test_sim_action(cmd_name.split('test_')[1], handler)
             else:
                 for instance_ in instances:
                     if instance_.startswith('Sim'):
@@ -799,7 +792,24 @@ class PopulateModelActions(object):
                 self.sim_model.set_sim_action(cmd_name, handler)
             # Might store the action's metadata in the sim_actions dictionary
             # instead of creating a separate dict.
-            self.sim_model.sim_actions_meta[cmd_name] = cmd_meta
+            try:
+                self.sim_model.sim_actions_meta[cmd_name.split('test_')[1]] = cmd_meta
+            except IndexError:
+                self.sim_model.sim_actions_meta[cmd_name] = cmd_meta
+
+    def _get_class_instances(self, override_class_info):
+        instances = {}
+        for klass_info in override_class_info.values():
+            if klass_info['module_directory'] == 'None':
+                module = importlib.import_module(klass_info['module_name'])
+            else:
+                module = imp.load_source(klass_info['module_name'].split('.')[-1],
+                                         klass_info['module_directory'])
+            klass = getattr(module, klass_info['class_name'])
+            instance = klass()
+            instances[klass_info['name']] = instance
+
+        return instances
 
     def _check_override_action_presence(self, cmd_name, instance, action_type):
         instance_attributes = dir(instance)

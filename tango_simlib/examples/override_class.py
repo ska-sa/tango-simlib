@@ -399,14 +399,13 @@ class OverrideVds(object):
             receptor_number = int(receptor_name)
         return receptor_number
 
-
 class OverrideWeatherSimControl(object):
     """An example of the override class for the TANGO device class 'SimControl'.
     It provides all the implementations of the command handler functions for the
     commands required to stimulate a running TANGO device in real time.
     """
 
-    def test_action_set_attribute_max_value(
+    def test_action_setattributemaxvalue(
             self, model, tango_dev=None, data_input=None):
         """This command sets an attribute value to it maximum value to set its quality to
         Alarm state to warning.
@@ -426,7 +425,7 @@ class OverrideWeatherSimControl(object):
         else:
             simulated_quantity.last_val = maximum_value
 
-    def test_action_stimulate_attribute_configuration_error(
+    def test_action_stimulateattributeconfigurationerror(
             self, model, tango_dev=None, data_input=None):
         """This command sets the attribute maximum allowed value to be the same as that
         minimum allowed value.
@@ -441,7 +440,7 @@ class OverrideWeatherSimControl(object):
             tango_dev.get_attribute_config(quantity_name)[0].max_value = (
                     tango_dev.get_attribute_config(quantity_name)[0].min_value)
 
-    def test_action_simulate_fault_device_state(
+    def test_action_simulatefaultdevicestate(
             self, model, tango_dev=None, data_input=None):
         """This command sets the current device state to fault/on.
         """
@@ -484,7 +483,9 @@ class OverrideWeatherSimControl(object):
         except:
             raise WeatherSimError("Quantity 'wind_speed' is not in the Weather model.")
         else:
-            quant_wind_speed.max_bound = float(quant_wind_speed.meta['max_alarm'])
+            quant_wind_speed.max_bound = 1000.0 * float(
+                quant_wind_speed.meta['max_value'])
+            quant_wind_speed.mean = 1000.0 * float(quant_wind_speed.meta['max_value'])
 
     def test_action_stopwindstorm(self, model, tango_dev=None, data_input=None):
 
@@ -493,7 +494,8 @@ class OverrideWeatherSimControl(object):
         except:
             raise WeatherSimError("Quantity 'wind_speed' is not in the Weather model.")
         else:
-            quant_wind_speed.max_bound = float(quant_wind_speed.meta['max_value'])
+            quant_wind_speed.max_bound = float(quant_wind_speed.meta['max_bound'])
+            quant_wind_speed.mean = 1.00
 
     def test_action_setoffrainstorm(self, model, tango_dev=None, data_input=None):
 
@@ -502,7 +504,8 @@ class OverrideWeatherSimControl(object):
         except:
             raise WeatherSimError("Quantity 'rainfall' is not in the Weather model.")
         else:
-            quant_rainfall.max_bound = float(quant_rainfall.meta['max_alarm'])
+            quant_rainfall.max_bound = 1000.0 * float(quant_rainfall.meta['max_value'])
+            quant_rainfall.mean = 1000.0 * float(quant_rainfall.meta['max_value'])
 
     def test_action_stoprainstorm(self, model, tango_dev=None, data_input=None):
 
@@ -511,4 +514,5 @@ class OverrideWeatherSimControl(object):
         except:
             raise WeatherSimError("Quantity 'rainfall' is not in the Weather model.")
         else:
-            quant_rainfall.max_bound = float(quant_rainfall.meta['min_value'])
+            quant_rainfall.max_bound = float(quant_rainfall.meta['max_bound'])
+            quant_rainfall.mean = 1.00
