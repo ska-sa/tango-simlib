@@ -148,6 +148,7 @@ class ConstantQuantity(Quantity):
 
     def default_val(self, t):
         self.last_val = True
+        self.last_update_time = t
 
 
 register_quantity_class(ConstantQuantity)

@@ -23,7 +23,7 @@
               "name": "focus_position",
               "dataSimulationParameters": {
                   "quantity_simulation_type": "ConstantQuantity",
-                  "initial_value": ""
+                  "initial_value": "5"
                   }
            }
       },

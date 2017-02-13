@@ -45,6 +45,11 @@ ARBITRARY_DATA_TYPE_RETURN_VALUES = {
     DevLong: 3,
     DevVoid: None}
 
+INITIAL_CONTANT_VALUE = {
+    DevString: str,
+    DevDouble: float,
+    DevBoolean: bool}
+
 # TODO(KM 31-10-2016): Need to add xmi attributes' properties that are currently
 # not being handled by the parser e.g. [displayLevel, enumLabels] etc.
 POGO_USER_DEFAULT_ATTR_PROP_MAP = {
@@ -661,11 +666,21 @@ class PopulateModelQuantities(object):
 
             if model_attr_props.has_key('quantity_simulation_type'):
                 if model_attr_props['quantity_simulation_type'] in ['ConstantQuantity']:
+                    try:
+                        initial_value = model_attr_props['initial_value']
+                    except KeyError:
+                        initial_value = ""
+                        MODULE_LOGGER.info(
+                            "Parameter `initial_value` does not exist. Default "
+                            "of True will be used")
+                    init_val = initial_value if initial_value is not "" else True
+                    start_val = INITIAL_CONTANT_VALUE[model_attr_props['data_type']](
+                            init_val)
                     self.sim_model.sim_quantities[attr_name] = (
                         partial(
                             quantities.registry[attr_props['quantity_simulation_type']],
                             start_time=start_time)(meta=model_attr_props,
-                                                   start_value=True))
+                                                   start_value=start_val))
                 else:
                     try:
                         sim_attr_quantities = self.sim_attribute_quantities(
