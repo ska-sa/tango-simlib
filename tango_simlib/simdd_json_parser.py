@@ -13,7 +13,6 @@ containing the information needed to instantiate a useful device simulator.
 """
 
 import logging
-
 import json
 
 from PyTango._PyTango import CmdArgType, AttrDataFormat
@@ -385,3 +384,4 @@ class SimddParser(object):
         dict.
         """
         return self._device_override_class
+

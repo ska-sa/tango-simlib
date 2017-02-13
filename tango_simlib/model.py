@@ -31,6 +31,7 @@ class Model(object):
         self.last_update_time = self.start_time
         self.sim_quantities = {}
         self.sim_actions = {}
+        self.test_sim_actions = {}
         self.sim_actions_meta = {}
         self._sim_state = {}
         self.setup_sim_quantities()
@@ -81,10 +82,19 @@ class Model(object):
         name : str
             Name of the action
         handler : callable(model_instance, action_args)
-            Callable that handles action (name). Is called with the
-            model instance as the first parameter.
+            Callable that handles action (name). Is called with the model instance as
+            the first parameter.
         """
-        # Perhaps you need to check that the names are valid, or you need to escape
-        # stuff to underscores or something, since we need to generate python function
-        # names.
         self.sim_actions[name] = partial(handler, self)
+
+    def set_test_sim_action(self, name, handler):
+        """Add an action handler function
+        Parameters
+        ----------
+        name : str
+            Name of the action
+        handler : callable(model_instance, action_args)
+            Callable that handles action (name). Is called with the model instance as
+            the first parameter.
+        """
+        self.test_sim_actions[name] = partial(handler, self)
