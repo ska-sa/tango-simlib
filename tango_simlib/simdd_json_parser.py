@@ -191,14 +191,13 @@ class SimddParser(object):
                     "writable": "READ"
                 },
                 "dataSimulationParameters": {
-                        "quantity_simulation_type": "GaussianSlewLimited",
-                        "min_bound": "-10",
-                        "max_bound": "50",
-                        "mean": "25",
-                        "max_slew_rate": "1",
-                        "update_period": "1",
-                        "std_dev": "5"
-                    }
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": "-10",
+                    "max_bound": "50",
+                    "mean": "25",
+                    "max_slew_rate": "1",
+                    "update_period": "1",
+                    "std_dev": "5"
                 },
                 "attributeControlSystem": {
                     "display_level": "OPERATOR",
@@ -263,13 +262,12 @@ class SimddParser(object):
                     "writable": "READ"
                 },
                 "dataSimulationParameters": {
-                        'quantity_simulation_type': 'GaussianSlewLimited',
-                        "min_bound": "-10",
-                        "max_bound": "50",
-                        "mean": "25",
-                        "max_slew_rate": "1",
-                        "update_period": "1"
-                    }
+                    'quantity_simulation_type': 'GaussianSlewLimited',
+                    "min_bound": "-10",
+                    "max_bound": "50",
+                    "mean": "25",
+                    "max_slew_rate": "1",
+                    "update_period": "1"
                 },
                 "attributeControlSystem": {
                     "display_level": "OPERATOR",

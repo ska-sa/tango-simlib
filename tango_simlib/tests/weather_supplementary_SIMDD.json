@@ -9,42 +9,41 @@
                     "max_value": "55"
                 },
                 "dataSimulationParameters": {
-                        "quantity_simulation_type": "GaussianSlewLimited",
-                        "min_bound": "-10",
-                        "max_bound": "50",
-                        "mean": "25",
-                        "max_slew_rate": "1",
-                        "update_period": "1000",
-                        "std_dev": "5"
-
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": "-10",
+                    "max_bound": "50",
+                    "mean": "25",
+                    "max_slew_rate": "1",
+                    "update_period": "1000",
+                    "std_dev": "5"
                 }
             }
         },
         {
             "basicAttributeData": {
                 "name": "insolation",
-                        "dataSimulationParameters": {
-                        "quantity_simulation_type": "GaussianSlewLimited",
-                        "min_bound": "0",
-                        "max_bound": "1200",
-                        "mean": "500",
-                        "max_slew_rate": "5",
-                        "update_period": "1000",
-                        "std_dev": "100"
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": "0",
+                    "max_bound": "1200",
+                    "mean": "500",
+                    "max_slew_rate": "5",
+                    "update_period": "1000",
+                    "std_dev": "100"
                 }
             }
         },
         {
             "basicAttributeData": {
                 "name": "pressure",
-                        "dataSimulationParameters": {
-                        "quantity_simulation_type": "GaussianSlewLimited",
-                        "min_bound": "0",
-                        "max_bound": "1200",
-                        "mean": "500",
-                        "max_slew_rate": "5",
-                        "update_period": "1000",
-                        "std_dev": "50"
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": "0",
+                    "max_bound": "1200",
+                    "mean": "500",
+                    "max_slew_rate": "5",
+                    "update_period": "1000",
+                    "std_dev": "50"
                 }
             }
         },
@@ -52,13 +51,13 @@
             "basicAttributeData": {
                 "name": "rainfall",
                 "dataSimulationParameters": {
-                        "quantity_simulation_type": "GaussianSlewLimited",
-                        "min_bound": "0",
-                        "max_bound": "3.2",
-                        "mean": "1.5",
-                        "max_slew_rate": "0.2",
-                        "update_period": "1000",
-                        "std_dev": "1"
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": "0",
+                    "max_bound": "3.2",
+                    "mean": "1.5",
+                    "max_slew_rate": "0.2",
+                    "update_period": "1000",
+                    "std_dev": "1"
                 }
             }
         },
@@ -66,13 +65,13 @@
             "basicAttributeData": {
                 "name": "relative_humidity",
                 "dataSimulationParameters": {
-                        "quantity_simulation_type": "GaussianSlewLimited",
-                        "min_bound": "0",
-                        "max_bound": "150",
-                        "mean": "65",
-                        "max_slew_rate": "10",
-                        "update_period": "1000",
-                        "std_dev": "5"
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": "0",
+                    "max_bound": "150",
+                    "mean": "65",
+                    "max_slew_rate": "10",
+                    "update_period": "1000",
+                    "std_dev": "5"
                 }
             }
         },
@@ -80,13 +79,13 @@
             "basicAttributeData": {
                 "name": "wind_speed",
                 "dataSimulationParameters": {
-                        "quantity_simulation_type": "GaussianSlewLimited",
-                        "min_bound": "0",
-                        "max_bound": "100",
-                        "mean": "3",
-                        "max_slew_rate": "3",
-                        "update_period": "1000",
-                        "std_dev": "2"
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": "0",
+                    "max_bound": "100",
+                    "mean": "3",
+                    "max_slew_rate": "3",
+                    "update_period": "1000",
+                    "std_dev": "2"
                 }
             }
         },
@@ -94,13 +93,13 @@
             "basicAttributeData": {
                 "name": "wind_direction",
                 "dataSimulationParameters": {
-                        "quantity_simulation_type": "GaussianSlewLimited",
-                        "min_bound": "0",
-                        "max_bound": "359.99",
-                        "mean": "0",
-                        "max_slew_rate": "60",
-                        "update_period": "1000",
-                        "std_dev": "10"
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": "0",
+                    "max_bound": "359.99",
+                    "mean": "0",
+                    "max_slew_rate": "60",
+                    "update_period": "1000",
+                    "std_dev": "10"
                 }
             }
         },

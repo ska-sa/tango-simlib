@@ -46,7 +46,7 @@ ARBITRARY_DATA_TYPE_RETURN_VALUES = {
     DevVoid: None}
 
 # In the case where an attribute with contant quantity simulation type is
-# specified, this dict is used to convert the iniatial value if specified to
+# specified, this dict is used to convert the initial value if specified to
 # the data-type corresponding to the attribute data-type.
 INITIAL_CONTANT_VALUE = {
     DevString: str,
@@ -668,7 +668,7 @@ class PopulateModelQuantities(object):
                 model_attr_props.update(attr_props)
 
             if model_attr_props.has_key('quantity_simulation_type'):
-                if model_attr_props['quantity_simulation_type'] in ['ConstantQuantity']:
+                if model_attr_props['quantity_simulation_type'] == 'ConstantQuantity':
                     try:
                         initial_value = model_attr_props['initial_value']
                     except KeyError:
@@ -679,11 +679,11 @@ class PopulateModelQuantities(object):
                     init_val = initial_value if initial_value is not "" else True
                     start_val = INITIAL_CONTANT_VALUE[model_attr_props['data_type']](
                             init_val)
-                    self.sim_model.sim_quantities[attr_name] = (
-                        partial(
-                            quantities.registry[attr_props['quantity_simulation_type']],
-                            start_time=start_time)(meta=model_attr_props,
-                                                   start_value=start_val))
+                    quantity_factory = (
+                            quantities.registry[attr_props['quantity_simulation_type']])
+                    self.sim_model.sim_quantities[attr_name] = quantity_factory(
+                            start_time=start_time, meta=model_attr_props,
+                            start_value=start_val)
                 else:
                     try:
                         sim_attr_quantities = self.sim_attribute_quantities(
@@ -698,15 +698,14 @@ class PopulateModelQuantities(object):
                             " file [{}] has no mininum or maximum values set".format(
                                 attr_name,
                                 self.parser_instance.data_description_file_name))
-                    self.sim_model.sim_quantities[attr_name] = (
-                        partial(
-                            quantities.registry[attr_props['quantity_simulation_type']],
-                            start_time=start_time)(meta=model_attr_props,
-                                                   **sim_attr_quantities))
+                    quantity_factory = (
+                            quantities.registry[attr_props['quantity_simulation_type']])
+                    self.sim_model.sim_quantities[attr_name] = quantity_factory(
+                            start_time=start_time, meta=model_attr_props,
+                            **sim_attr_quantities)
             else:
-                self.sim_model.sim_quantities[attr_name] = (
-                    partial(quantities.ConstantQuantity, start_time=start_time)
-                    (meta=model_attr_props, start_value=True))
+                self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
+                        start_time=start_time, meta=model_attr_props, start_value=True)
 
     def sim_attribute_quantities(self, min_bound, max_bound, max_slew_rate,
                                  mean, std_dev):
