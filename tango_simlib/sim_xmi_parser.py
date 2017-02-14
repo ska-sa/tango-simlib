@@ -47,10 +47,10 @@ ARBITRARY_DATA_TYPE_RETURN_VALUES = {
 # In the case where an attribute with contant quantity simulation type is
 # specified, this dict is used to convert the initial value if specified to
 # the data-type corresponding to the attribute data-type.
-INITIAL_CONTANT_VALUE = {
-    DevString: str,
-    DevDouble: float,
-    DevBoolean: bool}
+INITIAL_CONTANT_VALUE_TYPES = {
+    DevString: [str, ""],
+    DevDouble: [float, 0],
+    DevBoolean: [bool, False]}
 
 # TODO(KM 31-10-2016): Need to add xmi attributes' properties that are currently
 # not being handled by the parser e.g. [displayLevel, enumLabels] etc.
@@ -673,15 +673,17 @@ class PopulateModelQuantities(object):
                     except KeyError:
                         # `initial_value` is an optional parameter, thus if not
                         # specified in the SIMDD datafile, an initial value of
-                        # default value of `True` is assigned to the attribute
+                        # default value of is assigned to the attribute
                         # quantity initial value
-                        initial_value = ""
+                        initial_value = None
                         MODULE_LOGGER.info(
-                            "Parameter `initial_value` does not exist. Default "
-                            "of True will be used")
-                    init_val = initial_value if initial_value is not "" else True
-                    start_val = INITIAL_CONTANT_VALUE[model_attr_props['data_type']](
-                            init_val)
+                            "Parameter `initial_value` does not exist for"
+                            "attribute {}. Default will be used".format(
+                                model_attr_props['name']))
+                    attr_data_type = model_attr_props['data_type']
+                    init_val = (initial_value if initial_value not in [None, ""]
+                                else INITIAL_CONTANT_VALUE_TYPES[attr_data_type][-1])
+                    start_val = INITIAL_CONTANT_VALUE_TYPES[attr_data_type][0](init_val)
                     quantity_factory = (
                             quantities.registry[attr_props['quantity_simulation_type']])
                     self.sim_model.sim_quantities[attr_name] = quantity_factory(
