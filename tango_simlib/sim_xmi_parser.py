@@ -672,6 +672,10 @@ class PopulateModelQuantities(object):
                     try:
                         initial_value = model_attr_props['initial_value']
                     except KeyError:
+                        # `initial_value` is an optional parameter thus if not
+                        # specified in the SIMDD datafile, an initial value of
+                        # default value of `True` is assigned to the attribute
+                        # quantity initial value
                         initial_value = ""
                         MODULE_LOGGER.info(
                             "Parameter `initial_value` does not exist. Default "

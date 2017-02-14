@@ -4,8 +4,7 @@
           "basicAttributeData": {
               "name": "camera_power_on",
               "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity",
-                  "initial_value": ""
+                  "quantity_simulation_type": "ConstantQuantity"
                   }
            }
       },
@@ -13,8 +12,7 @@
           "basicAttributeData": {
               "name": "flood_lights_on",
               "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity",
-                  "initial_value": ""
+                  "quantity_simulation_type": "ConstantQuantity"
                   }
            }
       },
@@ -31,8 +29,7 @@
           "basicAttributeData": {
               "name": "pan_position",
               "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity",
-                  "initial_value": ""
+                  "quantity_simulation_type": "ConstantQuantity"
                   }
            }
       },
@@ -40,8 +37,7 @@
           "basicAttributeData": {
               "name": "pdu_connected",
               "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity",
-                  "initial_value": ""
+                  "quantity_simulation_type": "ConstantQuantity"
                   }
            }
       },
