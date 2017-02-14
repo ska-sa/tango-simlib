@@ -142,22 +142,26 @@ class SimddParser(object):
         with open(simdd_json_file) as simdd_file:
             device_data = json.load(simdd_file)
         for data_component, elements in device_data.items():
-            if data_component in ['class_name']:
+            if data_component == 'class_name':
                 self.device_class_name = str(elements)
-            elif data_component in ['dynamicAttributes']:
-                attribute_info = self.get_device_data_components_dict(elements)
+            elif data_component == 'dynamicAttributes':
+                attribute_info = self.get_device_data_components_dict(
+                        elements, data_component)
                 self._device_attributes.update(attribute_info)
-            elif data_component in ['commands']:
-                command_info = self.get_device_data_components_dict(elements)
+            elif data_component == 'commands':
+                command_info = self.get_device_data_components_dict(
+                        elements, data_component)
                 self._device_commands.update(command_info)
-            elif data_component in ['deviceProperties']:
-                device_prop_info = self.get_device_data_components_dict(elements)
+            elif data_component == 'deviceProperties':
+                device_prop_info = self.get_device_data_components_dict(
+                        elements, data_component)
                 self._device_properties.update(device_prop_info)
-            elif data_component in ['class_overrides']:
-                device_prop_info = self.get_device_data_components_dict(elements)
+            elif data_component == 'class_overrides':
+                device_prop_info = self.get_device_data_components_dict(
+                        elements, data_component)
                 self._device_override_class.update(device_prop_info)
 
-    def get_device_data_components_dict(self, elements):
+    def get_device_data_components_dict(self, elements, element_type):
         """
         Extract description data from the simdd json element
 
@@ -225,13 +229,14 @@ class SimddParser(object):
                 `self._device_attributes` or `self._device_commands`
         """
         device_dict = dict()
-        for attribute_data in elements:
-            for attribute_info in attribute_data.values():
-                name = attribute_info['name']
-                device_dict[str(name)] = self.get_reformated_data(attribute_info)
+        for element_data in elements:
+            for element_info in element_data.values():
+                name = element_info['name']
+                device_dict[str(name)] = self.get_reformated_data(
+                        element_info, element_type)
         return device_dict
 
-    def get_reformated_data(self, sim_device_info):
+    def get_reformated_data(self, sim_device_element_info, element_type):
         """Helper function for flattening the data dicts to be more readable
 
         Parameters
@@ -331,27 +336,30 @@ class SimddParser(object):
             # Recursively call get_reformated_data if value is still a dict
             return [(param_name, param_val)
                     for param_name, param_val in self.get_reformated_data(
-                    value).items()]
+                    value, element_type).items()]
 
         formated_info = dict()
-        for param_name, param_val in sim_device_info.items():
+        for param_name, param_val in sim_device_element_info.items():
             if isinstance(param_val, dict):
                 if 'dataSimulationParameters' in param_name:
                     try:
                         sim_type = param_val['quantity_simulation_type']
                     except ValueError:
-                        raise ValueError("Attribute with name {} has no quantity "
+                        raise ValueError("{} with name {} has no quantity "
                                          "simulation type specified".format(
-                                             str(sim_device_info['name'])))
+                                             str(element_type),
+                                             str(sim_device_element_info['name'])))
                     for sim_param in param_val:
                         try:
                             assert str(sim_param) in (
                                     EXPECTED_SIMULATION_PARAMETERS[sim_type])
                         except AssertionError:
-                            raise ValueError("Attribute with name {} has "
+                            raise ValueError("{} with name {} has "
                                              "unexpected simulation parameter {}"
-                                             .format(str(sim_device_info['name']),
-                                                     str(sim_param)))
+                                             .format(
+                                                 str(element_type),
+                                                 str(sim_device_element_info['name']),
+                                                 str(sim_param)))
 
                 for item in expand(param_val):
                     property_key = str(item[0])
