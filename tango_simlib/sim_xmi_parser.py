@@ -20,7 +20,6 @@ import imp
 import xml.etree.ElementTree as ET
 import PyTango
 
-from functools import partial
 from PyTango import (DevBoolean, DevString, DevEnum, AttrDataFormat,
                      CmdArgType, DevDouble, DevFloat, DevLong, DevVoid)
 
