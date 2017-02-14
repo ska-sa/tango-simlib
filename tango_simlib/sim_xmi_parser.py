@@ -776,7 +776,7 @@ class PopulateModelActions(object):
                         instance = instances[instance_]
                 self._check_override_action_presence(cmd_name, instance, 'test_action_{}')
                 handler = getattr(
-                    instance, 'test_action_{}'.format(cmd_name.split('test_')[1].lower()),
+                    instance, 'test_action_{}'.format(cmd_name.split('test_')[1]),
                     self.generate_action_handler(cmd_name, cmd_meta['dtype_out'],
                                                  actions))
                 self.sim_model.set_test_sim_action(cmd_name.split('test_')[1], handler)
@@ -785,7 +785,7 @@ class PopulateModelActions(object):
                     if instance_.startswith('Sim'):
                         instance = instances[instance_]
                 self._check_override_action_presence(cmd_name, instance, 'action_{}')
-                handler = getattr(instance, 'action_{}'.format(cmd_name.lower()),
+                handler = getattr(instance, 'action_{}'.format(cmd_name),
                                   self.generate_action_handler(
                                       cmd_name, cmd_meta['dtype_out'], actions))
 
@@ -823,11 +823,7 @@ class PopulateModelActions(object):
         # Assuming that there is only one override method defined, now we check if
         # it is in the correct letter case.
         elif attr_occurences == MAX_NUM_OF_CLASS_ATTR_OCCURENCE:
-            try:
-                instance_attributes.index(action_type.format(cmd_name.lower()))
-            except ValueError:
-                raise Exception(
-                    "Only lower-case override method names are supported")
+            instance_attributes.index(action_type.format(cmd_name))
 
     def generate_action_handler(self, action_name, action_output_type, actions=None):
         """Generates and returns an action handler to manage tango commands

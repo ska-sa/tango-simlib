@@ -18,13 +18,15 @@ from PyTango import UserDefaultAttrProp
 from PyTango import DevState
 from PyTango import Attr, AttrWriteType
 from PyTango import DevDouble
-from PyTango.server import Device
+from PyTango.server import Device, DeviceMeta
 from PyTango.server import attribute, device_property
 
 from tango_simlib import model
 
 
 class TangoTestDeviceServerBase(Device):
+    __metaclass__ = DeviceMeta
+
     instances = weakref.WeakValueDictionary()
 
     model_key = device_property(

@@ -100,16 +100,18 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         control_attributes = test_sim_test_interface.control_attributes(
                 self.expected_model)
         attributes = set(self.sim_control_device.get_attribute_list())
-        self.assertEqual(attributes - implemented_attr,
-                set(control_attributes))
+        test_sim_static_attributes = frozenset(['attribute_name', 'pause_active'])
+        self.assertEqual(
+            attributes - implemented_attr - test_sim_static_attributes,
+            set(control_attributes))
 
     def test_sim_control_device_attribute_change(self):
         """Setting the desired attribute value for the device's attribute from
         the simulator controller device
         """
-        desired_sensor_name = 'temperature'
+        desired_attribute_name = 'temperature'
         input_value = 100.0
         self.sim_control_device.pause_active = True
-        self.sim_control_device.sensor_name = desired_sensor_name
+        self.sim_control_device.attribute_name = desired_attribute_name
         setattr(self.sim_control_device, 'last_val', input_value)
         self.assertEqual(self.sim_device.temperature, input_value)

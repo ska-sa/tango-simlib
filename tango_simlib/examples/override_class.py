@@ -1,3 +1,67 @@
+#!/usr/bin/env python
+###############################################################################
+# SKA South Africa (http://ska.ac.za/)                                        #
+# Author: cam@ska.ac.za                                                       #
+# Copyright @ 2013 SKA SA. All rights reserved.                               #
+#                                                                             #
+# THIS SOFTWARE MAY NOT BE COPIED OR DISTRIBUTED IN ANY FORM WITHOUT THE      #
+# WRITTEN PERMISSION OF SKA SA.                                               #
+###############################################################################
+"""
+An example of the user-defined override class.
+@author MeerKAT CAM team <cam@ska.ac.za>
+"""
+
+import logging
+
+from PyTango import DevState
+
+MODULE_LOGGER = logging.getLogger(__name__)
+
+class WeatherSimError(Exception):
+    """Raised when a Weather simulator action could not be executed.
+    """
+
+
+class VdsSimError(Exception):
+    """Raised when a Video Display System simulator action could not be executed.
+    """
+
+
+class OverrideWeather(object):
+    """An example of the override class for the TANGO device class 'Weather'. It
+    provides all the implementations of the command handler functions for the commands
+    specified in the POGO generated XMI data description file.
+    """
+    def action_On(self, model, tango_dev=None, data_input=None):
+        """Changes the State of the device to ON.
+        """
+        tango_dev.set_state(DevState.ON)
+
+    def action_Off(self, model, tango_dev=None, data_input=None):
+        """Changes the State of the device to OFF.
+        """
+        tango_dev.set_state(DevState.OFF)
+
+    def action_Add(self, model, tango_dev=None, data_input=None):
+        """Add two or more numbers together and return their sum.
+        """
+        total = sum(data_input)
+        return total
+
+    def action_MultiplyStringBy3(self, model, tango_dev=None, data_input=None):
+        """Takes a string and multiplies it by a constant integer value of 3.
+        """
+        return 3 * data_input
+
+
+class OverrideVds(object):
+    """An example of the override class for the TANGO device class 'MKATVDS'. It
+    provides all the implementations of the command handler functions for the commands
+    specified in the POGO generated XMI data description file.
+    """
+
+    def action_Pan(self, model, tango_dev=None, data_input=None):
         """Drive camera to a pan direction(left or right) or pan to specified position.
 
         Parameters:
@@ -36,7 +100,7 @@
 
         quant_pan_position.set_val(pan_position, model.time_func())
 
-    def action_camerapoweron(self, model, tango_dev=None, data_input=None):
+    def action_CameraPowerOn(self, model, tango_dev=None, data_input=None):
         """Switch camera electronics on or off.
 
         Parameters:
@@ -68,7 +132,7 @@
                 quantity.set_val(None, model.time_func())
             tango_dev.set_state(DevState.OFF)
 
-    def action_floodlighton(self, model, tango_dev=None, data_input=None):
+    def action_FloodlightOn(self, model, tango_dev=None, data_input=None):
         """Set floodlight to a on or off.
 
         Parameters:
@@ -91,7 +155,7 @@
 
         quant_flood_lights_on.set_val(flood_lights_state_value, model.time_func())
 
-    def action_focus(self, model, tango_dev=None, data_input=None):
+    def action_Focus(self, model, tango_dev=None, data_input=None):
         """Focuses camera to a specified direction or specified position.
 
         Parameters:
@@ -130,7 +194,7 @@
 
         quant_focus_position.set_val(focus_position, model.time_func())
 
-    def action_presetclear(self, model, tango_dev=None, data_input=None):
+    def action_PresetClear(self, model, tango_dev=None, data_input=None):
         """Clear the specified preset.
 
         Parameters:
@@ -148,7 +212,7 @@
             raise VdsSimError(
                 "No preset position values for receptor {}.".format(data_input))
 
-    def action_presetgoto(self, model, tango_dev=None, data_input=None):
+    def action_PresetGoto(self, model, tango_dev=None, data_input=None):
         """Go to preset stored position(pan, tilt, zoom).
 
         Parameters:
@@ -179,7 +243,7 @@
             else:
                 model_quant.set_val(presets[position], model.time_func())
 
-    def action_presetset(self, model, tango_dev=None, data_input=None):
+    def action_PresetSet(self, model, tango_dev=None, data_input=None):
         """Set the position which the camera is at currently as preset position.
 
         Parameters:
@@ -203,12 +267,12 @@
         tmp_presets[preset_id] = tmp_presets
         model.presets.update(tmp_presets)
 
-    def action_stop(self, model, tango_dev=None, data_input=None):
+    def action_Stop(self, model, tango_dev=None, data_input=None):
         """Stop camera.
         """
         pass
 
-    def action_tilt(self, model, tango_dev=None, data_input=None):
+    def action_Tilt(self, model, tango_dev=None, data_input=None):
         """Drive camera to a tilt direction or specified position.
 
         Parameters:
@@ -247,7 +311,7 @@
 
         quant_tilt_position.set_val(tilt_position, model.time_func())
 
-    def action_zoom(self, model, tango_dev=None, data_input=None):
+    def action_Zoom(self, model, tango_dev=None, data_input=None):
         """Zoom camera to a specified direction or specified position.
 
         Parameters:
@@ -286,7 +350,7 @@
 
         quant_zoom_position.set_val(zoom_position, model.time_func())
 
-    def action_trapupdate(self, model, tango_dev=None, data_input=None):
+    def action_TrapUpdate(self, model, tango_dev=None, data_input=None):
         """Update trap. this request is called by a script.
 
         Parameters:
@@ -316,7 +380,7 @@ class OverrideWeatherSimControl(object):
     commands required to stimulate a running TANGO device in real time.
     """
 
-    def test_action_setattributemaxvalue(
+    def test_action_SetAttributeMaxValue(
             self, model, tango_dev=None, data_input=None):
         """This command sets an attribute value to it maximum value to set its quality to
         Alarm state to warning.
@@ -336,7 +400,7 @@ class OverrideWeatherSimControl(object):
         else:
             simulated_quantity.last_val = maximum_value
 
-    def test_action_stimulateattributeconfigurationerror(
+    def test_action_StimulateAttributeConfigurationError(
             self, model, tango_dev=None, data_input=None):
         """This command sets the attribute maximum allowed value to be the same as that
         minimum allowed value.
@@ -351,7 +415,7 @@ class OverrideWeatherSimControl(object):
             tango_dev.get_attribute_config(quantity_name)[0].max_value = (
                     tango_dev.get_attribute_config(quantity_name)[0].min_value)
 
-    def test_action_simulatefaultdevicestate(
+    def test_action_SimulateFaultDeviceState(
             self, model, tango_dev=None, data_input=None):
         """This command sets the current device state to fault/on.
         """
@@ -360,7 +424,7 @@ class OverrideWeatherSimControl(object):
         else:
             tango_dev.set_state(DevState.FAULT)
 
-    def test_action_stopquantitysimulation(
+    def test_action_StopQuantitySimulation(
             self, model, tango_dev=None, data_input=None):
         """Totally sets the simulated quantities` values to a constant value of zero.
         """
@@ -377,7 +441,7 @@ class OverrideWeatherSimControl(object):
                     MODULE_LOGGER.debug("Quantity %s is not a GaussianSlewLimited"
                                         " instance.", simulated_quantity)
 
-    def test_action_stoprainfall(self, model, tango_dev=None, data_input=None):
+    def test_action_StopRainfall(self, model, tango_dev=None, data_input=None):
         """Totally sets the simulated quantity rainfall to a constant value of zero.
         """
         try:
@@ -387,7 +451,7 @@ class OverrideWeatherSimControl(object):
         else:
             quant_rainfall.max_bound = 0.0
 
-    def test_action_setoffwindstorm(self, model, tango_dev=None, data_input=None):
+    def test_action_SetOffWindstorm(self, model, tango_dev=None, data_input=None):
 
         try:
             quant_wind_speed = model.sim_quantities['wind_speed']
@@ -398,7 +462,7 @@ class OverrideWeatherSimControl(object):
                 quant_wind_speed.meta['max_value'])
             quant_wind_speed.mean = 1000.0 * float(quant_wind_speed.meta['max_value'])
 
-    def test_action_stopwindstorm(self, model, tango_dev=None, data_input=None):
+    def test_action_StopWindtorm(self, model, tango_dev=None, data_input=None):
 
         try:
             quant_wind_speed = model.sim_quantities['wind_speed']
@@ -408,7 +472,7 @@ class OverrideWeatherSimControl(object):
             quant_wind_speed.max_bound = float(quant_wind_speed.meta['max_bound'])
             quant_wind_speed.mean = 1.00
 
-    def test_action_setoffrainstorm(self, model, tango_dev=None, data_input=None):
+    def test_action_SetOffWindstorm(self, model, tango_dev=None, data_input=None):
 
         try:
             quant_rainfall = model.sim_quantities['rainfall']
@@ -418,7 +482,7 @@ class OverrideWeatherSimControl(object):
             quant_rainfall.max_bound = 1000.0 * float(quant_rainfall.meta['max_value'])
             quant_rainfall.mean = 1000.0 * float(quant_rainfall.meta['max_value'])
 
-    def test_action_stoprainstorm(self, model, tango_dev=None, data_input=None):
+    def test_action_StopRainstorm(self, model, tango_dev=None, data_input=None):
 
         try:
             quant_rainfall = model.sim_quantities['rainfall']

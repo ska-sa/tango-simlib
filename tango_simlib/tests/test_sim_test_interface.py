@@ -49,7 +49,7 @@ def control_attributes(test_model):
     return control_attributes
 
 class test_SimControl(DeviceTestCase):
-    device = sim_test_interface.SimControl
+    device = sim_test_interface.TangoTestDeviceServerBase
     properties = dict(model_key='the_test_model')
 
     @classmethod
@@ -61,7 +61,7 @@ class test_SimControl(DeviceTestCase):
         super(test_SimControl, self).setUp()
         self.addCleanup(self.test_model.reset_model)
         self.control_attributes = control_attributes(self.test_model)
-        self.device_instance = sim_test_interface.SimControl.instances[
+        self.device_instance = sim_test_interface.TangoTestDeviceServerBase.instances[
                 self.device.name()]
         def cleanup_refs(): del self.device_instance
         self.addCleanup(cleanup_refs)
@@ -70,7 +70,7 @@ class test_SimControl(DeviceTestCase):
         ADDITIONAL_IMPLEMENTED_ATTR = set([
             'Status',   # Tango library attribute
             'State',    # Tango library attribute
-            'sensor_name',    # Attribute indentifier for sensor to be controlled
+            'attribute_name',    # Attribute indentifier for sensor to be controlled
             'pause_active',    # Flag for pausing the model updates
             'control_sensor_list_names',  # List of sensors to control
             ])
@@ -97,7 +97,7 @@ class test_SimControl(DeviceTestCase):
         """
         # test that expected values from the instantiated model match that of sim control
         for quantity in expected_model.sim_quantities.keys():
-            self.device.sensor_name = quantity  # sets the sensor name for which
+            self.device.attribute_name = quantity  # sets the sensor name for which
             # to evaluate the quantities to be controlled
             desired_quantity = expected_model.sim_quantities[quantity]
             for attr in desired_quantity.adjustable_attributes:
@@ -148,15 +148,15 @@ class test_SimControl(DeviceTestCase):
         expected_model = FixtureModel('random_test1_name',
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(expected_model)
-        desired_sensor_name = 'relative-humidity'
-        self.device.sensor_name = desired_sensor_name
+        desired_attribute_name = 'relative-humidity'
+        self.device.attribute_name = desired_attribute_name
         for attr in self.control_attributes:
             new_val = self.generate_test_attribute_values()[
                     'desired_' + attr]
             setattr(self.device, attr, new_val)
-            setattr(expected_model.sim_quantities[desired_sensor_name], attr, new_val)
+            setattr(expected_model.sim_quantities[desired_attribute_name], attr, new_val)
             self.assertNotEqual(getattr(self.device, attr),
-                    quants_before[desired_sensor_name][attr])
+                    quants_before[desired_attribute_name][attr])
         # Compare the modified quantities and check if the other
         # quantities have not changed
         self._compare_models(self.test_model, expected_model)
@@ -167,16 +167,16 @@ class test_SimControl(DeviceTestCase):
         expected_model = FixtureModel('random_test2_name',
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(self.test_model)
-        desired_sensor_name = 'wind-speed'
-        self.device.sensor_name = desired_sensor_name
+        desired_attribute_name = 'wind-speed'
+        self.device.attribute_name = desired_attribute_name
         for attr in self.control_attributes:
             new_val = self.generate_test_attribute_values()[
                     'desired_' + attr]
             setattr(self.device, attr, new_val)
-            setattr(expected_model.sim_quantities[desired_sensor_name], attr, new_val)
+            setattr(expected_model.sim_quantities[desired_attribute_name], attr, new_val)
             # Sanity check that we have indeed changed the value.
             self.assertNotEqual(getattr(self.device, attr),
-                    quants_before[desired_sensor_name][attr])
+                    quants_before[desired_attribute_name][attr])
         # Compare the modified quantities and check that no other quantities
         # have changed.
         self._compare_models(self.test_model, expected_model)
