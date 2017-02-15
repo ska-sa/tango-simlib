@@ -48,9 +48,9 @@ ARBITRARY_DATA_TYPE_RETURN_VALUES = {
 # specified, this dict is used to convert the initial value if specified to
 # the data-type corresponding to the attribute data-type.
 INITIAL_CONTANT_VALUE_TYPES = {
-    DevString: [str, ""],
-    DevDouble: [float, 0],
-    DevBoolean: [bool, False]}
+    DevString: (str, ""),
+    DevDouble: (float, 0),
+    DevBoolean: (bool, False)}
 
 # TODO(KM 31-10-2016): Need to add xmi attributes' properties that are currently
 # not being handled by the parser e.g. [displayLevel, enumLabels] etc.
