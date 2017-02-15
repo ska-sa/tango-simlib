@@ -20,7 +20,6 @@ import imp
 import xml.etree.ElementTree as ET
 import PyTango
 
-from functools import partial
 from PyTango import (DevBoolean, DevString, DevEnum, AttrDataFormat,
                      CmdArgType, DevDouble, DevFloat, DevLong, DevVoid)
 
@@ -44,6 +43,14 @@ ARBITRARY_DATA_TYPE_RETURN_VALUES = {
     DevFloat: 8.1,
     DevLong: 3,
     DevVoid: None}
+
+# In the case where an attribute with contant quantity simulation type is
+# specified, this dict is used to convert the initial value if specified to
+# the data-type corresponding to the attribute data-type.
+INITIAL_CONTANT_VALUE_TYPES = {
+    DevString: (str, ""),
+    DevDouble: (float, 0),
+    DevBoolean: (bool, False)}
 
 # TODO(KM 31-10-2016): Need to add xmi attributes' properties that are currently
 # not being handled by the parser e.g. [displayLevel, enumLabels] etc.
@@ -659,12 +666,29 @@ class PopulateModelQuantities(object):
             else:
                 model_attr_props.update(attr_props)
 
-            if model_attr_props.has_key('quantity_type'):
-                if model_attr_props['quantity_type'] in ['ConstantQuantity']:
-                    self.sim_model.sim_quantities[attr_name] = (
-                        partial(quantities.registry[attr_props['quantity_type']],
-                                start_time=start_time)(meta=model_attr_props,
-                                                       start_value=True))
+            if model_attr_props.has_key('quantity_simulation_type'):
+                if model_attr_props['quantity_simulation_type'] == 'ConstantQuantity':
+                    try:
+                        initial_value = model_attr_props['initial_value']
+                    except KeyError:
+                        # `initial_value` is an optional parameter, thus if not
+                        # specified in the SIMDD datafile, an initial value of
+                        # default value of is assigned to the attribute
+                        # quantity initial value
+                        initial_value = None
+                        MODULE_LOGGER.info(
+                            "Parameter `initial_value` does not exist for"
+                            "attribute {}. Default will be used".format(
+                                model_attr_props['name']))
+                    attr_data_type = model_attr_props['data_type']
+                    init_val = (initial_value if initial_value not in [None, ""]
+                                else INITIAL_CONTANT_VALUE_TYPES[attr_data_type][-1])
+                    start_val = INITIAL_CONTANT_VALUE_TYPES[attr_data_type][0](init_val)
+                    quantity_factory = (
+                            quantities.registry[attr_props['quantity_simulation_type']])
+                    self.sim_model.sim_quantities[attr_name] = quantity_factory(
+                            start_time=start_time, meta=model_attr_props,
+                            start_value=start_val)
                 else:
                     try:
                         sim_attr_quantities = self.sim_attribute_quantities(
@@ -679,14 +703,14 @@ class PopulateModelQuantities(object):
                             " file [{}] has no mininum or maximum values set".format(
                                 attr_name,
                                 self.parser_instance.data_description_file_name))
-                    self.sim_model.sim_quantities[attr_name] = (
-                        partial(quantities.registry[attr_props['quantity_type']],
-                                start_time=start_time)(meta=model_attr_props,
-                                                       **sim_attr_quantities))
+                    quantity_factory = (
+                            quantities.registry[attr_props['quantity_simulation_type']])
+                    self.sim_model.sim_quantities[attr_name] = quantity_factory(
+                            start_time=start_time, meta=model_attr_props,
+                            **sim_attr_quantities)
             else:
-                self.sim_model.sim_quantities[attr_name] = (
-                    partial(quantities.ConstantQuantity, start_time=start_time)
-                    (meta=model_attr_props, start_value=True))
+                self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
+                        start_time=start_time, meta=model_attr_props, start_value=True)
 
     def sim_attribute_quantities(self, min_bound, max_bound, max_slew_rate,
                                  mean, std_dev):
