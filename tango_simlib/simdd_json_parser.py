@@ -14,8 +14,10 @@ containing the information needed to instantiate a useful device simulator.
 
 import logging
 import json
+import pkg_resources
 
 from PyTango._PyTango import CmdArgType, AttrDataFormat
+from jsonschema import validate
 
 MODULE_LOGGER = logging.getLogger(__name__)
 EXPECTED_SIMULATION_PARAMETERS = {
@@ -138,9 +140,14 @@ class SimddParser(object):
           element name and values must be the corresponding data value.
 
         """
+        simdd_schema_file = pkg_resources.resource_filename(
+                'tango_simlib.tests', 'SIMDD.schema')
+        with open(simdd_schema_file) as simdd_schema:
+            schema_data = json.load(simdd_schema)
         self.data_description_file_name = simdd_json_file
         with open(simdd_json_file) as simdd_file:
             device_data = json.load(simdd_file)
+        validate(device_data, schema_data)
         for data_component, elements in device_data.items():
             if data_component == 'class_name':
                 self.device_class_name = str(elements)
