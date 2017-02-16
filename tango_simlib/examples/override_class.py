@@ -451,7 +451,7 @@ class OverrideWeatherSimControl(object):
         else:
             quant_rainfall.max_bound = 0.0
 
-    def test_action_SetOffWindstorm(self, model, tango_dev=None, data_input=None):
+    def test_action_SetOffWindStorm(self, model, tango_dev=None, data_input=None):
 
         try:
             quant_wind_speed = model.sim_quantities['wind_speed']
@@ -462,7 +462,7 @@ class OverrideWeatherSimControl(object):
                 quant_wind_speed.meta['max_value'])
             quant_wind_speed.mean = 1000.0 * float(quant_wind_speed.meta['max_value'])
 
-    def test_action_StopWindtorm(self, model, tango_dev=None, data_input=None):
+    def test_action_StopWindStorm(self, model, tango_dev=None, data_input=None):
 
         try:
             quant_wind_speed = model.sim_quantities['wind_speed']
@@ -472,7 +472,7 @@ class OverrideWeatherSimControl(object):
             quant_wind_speed.max_bound = float(quant_wind_speed.meta['max_bound'])
             quant_wind_speed.mean = 1.00
 
-    def test_action_SetOffWindstorm(self, model, tango_dev=None, data_input=None):
+    def test_action_SetOffWindStorm(self, model, tango_dev=None, data_input=None):
 
         try:
             quant_rainfall = model.sim_quantities['rainfall']
@@ -482,7 +482,7 @@ class OverrideWeatherSimControl(object):
             quant_rainfall.max_bound = 1000.0 * float(quant_rainfall.meta['max_value'])
             quant_rainfall.mean = 1000.0 * float(quant_rainfall.meta['max_value'])
 
-    def test_action_StopRainstorm(self, model, tango_dev=None, data_input=None):
+    def test_action_StopRainStorm(self, model, tango_dev=None, data_input=None):
 
         try:
             quant_rainfall = model.sim_quantities['rainfall']

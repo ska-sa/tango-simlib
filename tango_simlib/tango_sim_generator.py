@@ -183,6 +183,24 @@ def get_tango_device_server(model, sim_data_files):
         def init_device(self):
             TangoDeviceServerBase.init_device(self)
             self.model = model
+            self._reset_to_default_state()
+
+        def _reset_to_default_state(self):
+            """Reset the model's quantities' adjustable attributes to their default
+            values.
+            """
+            simulated_quantities = self.model.sim_quantities.values()
+            for simulated_quantity in simulated_quantities:
+                sim_quantity_meta_info = simulated_quantity.meta
+                adjustable_attrs = simulated_quantity.adjustable_attributes
+
+                for attr in adjustable_attrs:
+                    try:
+                        adjustable_val = float(sim_quantity_meta_info[attr])
+                    except KeyError:
+                        adjustable_val = 0.0
+                    setattr(simulated_quantity, attr, adjustable_val)
+
 
         def initialize_dynamic_attributes(self):
             model_sim_quants = self.model.sim_quantities

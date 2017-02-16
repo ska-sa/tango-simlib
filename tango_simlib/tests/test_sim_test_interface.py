@@ -1,11 +1,20 @@
 import time
 import mock
+import unittest
+import shutil
+import tempfile
+import subprocess
+
+import pkg_resources
+import devicetest
 
 from functools import partial
 
-from devicetest import DeviceTestCase
+from devicetest import DeviceTestCase, TangoTestContext
 
 from tango_simlib import sim_test_interface, model, quantities
+from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
+from tango_simlib.testutils import ClassCleanupUnittestMixin
 
 class FixtureModel(model.Model):
 
@@ -180,3 +189,111 @@ class test_SimControl(DeviceTestCase):
         # Compare the modified quantities and check that no other quantities
         # have changed.
         self._compare_models(self.test_model, expected_model)
+
+
+EXPECTED_COMMAND_LIST = frozenset(['StopRainfall', 'StopQuantitySimulation', 'SetAttributeMaxValue',
+                                   'StimulateAttributeConfigurationError', 'SimulateFaultDeviceState',
+                                   'SetOffWindStorm', 'StopWindStorm', 'SetOffRainStorm', 'StopRainStorm'])
+
+
+class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
+
+    longMessage = True
+
+    @classmethod
+    def setUpClassWithCleanup(cls):
+        cls.port = helper_module.get_port()
+        cls.host = helper_module.get_host_address()
+        cls.data_descr_files = []
+        cls.data_descr_files.append(pkg_resources.resource_filename(
+            'tango_simlib.tests', 'weather_sim.xmi'))
+        cls.data_descr_files.append(pkg_resources.resource_filename(
+            'tango_simlib.tests', 'weather_SIMDD_3.json'))
+        print cls.data_descr_files
+        cls.temp_dir = tempfile.mkdtemp()
+        cls.sim_device_class = tango_sim_generator.get_device_class(cls.data_descr_files)
+        device_name = 'test/nodb/tangodeviceserver'
+        server_name = 'weather_ds'
+        server_instance = 'test'
+        database_filename = '%s/%s_tango.db' % (cls.temp_dir, server_name)
+        sim_device_prop = dict(sim_data_description_file=cls.data_descr_files[0])
+        sim_test_device_prop = dict(model_key=device_name)
+        patcher = devicetest.patch.Patcher()
+        device_proxy = patcher.ActualDeviceProxy
+        tango_sim_generator.generate_device_server(
+                server_name, cls.data_descr_files, cls.temp_dir)
+        helper_module.append_device_to_db_file(
+                server_name, server_instance, device_name,
+                database_filename, cls.sim_device_class, sim_device_prop)
+        helper_module.append_device_to_db_file(
+                server_name, server_instance, '%scontrol' % device_name,
+                database_filename, '%sSimControl' % cls.sim_device_class,
+                sim_test_device_prop)
+        cls.sub_proc = subprocess.Popen(["python", "{}/{}.py".format(
+                                            cls.temp_dir, server_name),
+                                        server_instance, "-file={}".format(
+                                            database_filename),
+                                        "-ORBendPoint", "giop:tcp::{}".format(
+                                            cls.port)])
+        # Note that tango demands that connection to the server must
+        # be delayed by atleast 1000 ms of device server start up.
+        time.sleep(1)
+        cls.sim_device = device_proxy(
+                '%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
+                    cls.host, cls.port))
+
+        cls.sim_control_device = device_proxy(
+                '%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
+                    cls.host, cls.port))
+        cls.addCleanupClass(cls.sub_proc.kill)
+        cls.addCleanupClass(shutil.rmtree, cls.temp_dir)
+
+    def setUp(self):
+        super(test_TangoSimGenDeviceIntegration, self).setUp()
+        self.xmi_parser = sim_xmi_parser.XmiParser()
+        self.xmi_parser.parse(self.data_descr_files[0])
+        self.expected_model = tango_sim_generator.configure_device_model(
+                self.data_descr_files)
+
+    def test_sim_control_command_list(self):
+        device_commands = self.sim_control_device.get_command_list()
+        self.assertEqual(
+            set(EXPECTED_COMMAND_LIST),
+            set(device_commands) - helper_module.DEFAULT_TANGO_DEVICE_COMMANDS)
+        self.assertNotIn(set(self.sim_device.get_command_list()),
+                         set(EXPECTED_COMMAND_LIST))
+
+    def test_StopRainfall_command(self):
+        command_name = 'StopRainfall'
+        expected_rainfall_value = 0.0
+        self.sim_control_device.command_inout(command_name)
+        # The model needs 'dt' to be greater than the min_update_period for it to update
+        # the model.quantity_state dictionary. If it was posssible to get hold of the
+        # model instance, we would manipulate the value of the last_update_time of the
+        # model to ensure that the model.quantity_state dictionary is updated before
+        # reading the attribute value. So instead we use the sleep method to allow for
+        # 'dt' to be large enough.
+        time.sleep(1)
+        self.assertEqual(expected_rainfall_value,
+                         getattr(self.sim_device.read_attribute('rainfall'), 'value'))
+
+    def test_StopQuantitySimulation_command(self):
+        """Testing that the Tango device weather simulation of quantities can be halted.
+        """
+        command_name = 'StopQuantitySimulation'
+        expected_result = {'temperature': 0.0,
+                           'insolation': 0.0}
+        self.sim_control_device.command_inout(command_name, expected_result.keys())
+        # The model needs 'dt' to be greater than the min_update_period for it to update
+        # the model.quantity_state dictionary. If it was posssible to get hold of the
+        # model instance, we would manipulate the value of the last_update_time of the
+        # model to ensure that the model.quantity_state dictionary is updated before
+        # reading the attribute value. So instead we use the sleep method to allow for
+        # 'dt' to be large enough.
+        time.sleep(1)
+        for quantity_name, quantity_value in expected_result.items():
+            self.assertEqual(quantity_value,
+                             getattr(self.sim_device.read_attribute(quantity_name), 'value'),
+                             "The {} quantity value in the model does not match with the"
+                             " value read from the device attribute.".format(
+                                 quantity_name))
