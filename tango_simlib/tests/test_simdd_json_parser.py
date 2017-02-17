@@ -25,13 +25,6 @@ TANGO_CMD_PARAMS_NAME_MAP = {
     'doc_out': 'out_type_desc',
     'dtype_out': 'out_type'}
 
-# Mandatory parameters required to create a well configure Tango attribute.
-EXPECTED_MANDATORY_ATTR_PARAMETERS = frozenset([
-    "max_dim_x", "max_dim_y", "data_format", "period",
-    "data_type", "writable", "name", "description", "delta_val",
-    "max_alarm", "max_value", "min_value", "max_warning", "min_warning",
-    "min_alarm", "unit", "delta_t", "label", "format"])
-
 # Mandatory parameters required to create a well configure Tango command.
 EXPECTED_MANDATORY_CMD_PARAMETERS = frozenset([
     'dformat_in', 'dformat_out', 'doc_in',
@@ -73,6 +66,7 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
         'quantity_simulation_type': 'GaussianSlewLimited',
         'period': '1000',
         'rel_change': '10',
+        'std_dev': '5',
         'unit': 'Degrees Centrigrade',
         'update_period': '1000',
         'writable': 'READ'
@@ -111,10 +105,10 @@ class test_SimddJsonParser(GenericSetup):
 
         # Test if all the parsed attributes have the mandatory properties
         for attr_name, attribute_metadata in actual_parsed_attrs.items():
-            for param in EXPECTED_MANDATORY_ATTR_PARAMETERS:
+            for param in helper_module.DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE.keys():
                 self.assertIn(
                     param, attribute_metadata.keys(),
-                    "The parsed attribute '%s' does not the mandotory parameter "
+                    "The parsed attribute '%s' does not have the mandotory parameter "
                     "'%s' " % (attr_name, param))
 
         # Using the made up temperature attribute expected results as we

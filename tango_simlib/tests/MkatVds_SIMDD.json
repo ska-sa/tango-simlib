@@ -1,254 +1,253 @@
 {
   "dynamicAttributes": [
-      {
-          "basicAttributeData": {
-              "name": "camera_power_on",
-              "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity"
-                  }
-           }
-      },
-      {
-          "basicAttributeData": {
-              "name": "flood_lights_on",
-              "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity"
-                  }
-           }
-      },
-      {
-          "basicAttributeData": {
-              "name": "focus_position",
-              "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity",
-                  "initial_value": "5"
-                  }
-           }
-      },
-      {
-          "basicAttributeData": {
-              "name": "pan_position",
-              "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity"
-                  }
-           }
-      },
-      {
-          "basicAttributeData": {
-              "name": "pdu_connected",
-              "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity"
-                  }
-           }
-      },
-      {
-          "basicAttributeData": {
-              "name": "ptz_controller_connected",
-              "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity",
-                  "initial_value": ""
-                  }
-           }
-      },
-      {
-          "basicAttributeData": {
-              "name": "snmpd_trap_running",
-              "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity",
-                  "initial_value": ""
-                  }
-           }
-      },
-      {
-          "basicAttributeData": {
-              "name": "tilt_position",
-              "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity",
-                  "initial_value": ""
-                  }
-           }
-      },
-      {
-          "basicAttributeData": {
-              "name": "zoom_position",
-              "dataSimulationParameters": {
-                  "quantity_simulation_type": "ConstantQuantity",
-                  "initial_value": ""
-                  }
-           }
-      }
-    ],
-
-    "commands": [
-    	{
-            "basicCommandData": {
-                "name": "CameraPowerOn",
-                "description": "Switch camera electronics on or off",
-                "input_parameters": {
-                    "dtype_in": "String",
-                    "doc_in": "on_off_value: string (indicates if its on or off)",
-                    "dformat_in": "Scalar"
-                },
-                "output_parameters": {
-                    "dtype_out": "Void",
-                    "doc_out": "",
-                    "dformat_out": "Scalar"
-                }
-	    }
-        },
-        {
-            "basicCommandData": {
-                "name": "Pan",
-                "description": "Drive camera to a pan direction (left or right) or to specified position.",
-                "input_parameters": {
-                    "dtype_in": "VarStringArray",
-                    "doc_in": "pan_position : int (pan to the specified position), pan_direction : string (pan to the specified direction)",
-                    "dformat_in": "Spectrum"
-                },
-                "output_parameters": {
-                    "dtype_out": "Void",
-                    "doc_out": "",
-                    "dformat_out": "Scalar"
-                }
-	    }
-        },
-        {
-            "basicCommandData": {
-                "name": "Tilt",
-                "description": "Drive camera to a tilt direction or specified position.",
-                "input_parameters": {
-                    "dtype_in": "VarStringArray",
-                    "doc_in": "tilt_direction : string (tilt to the specific direction), tilt_position : int (tilt tot the specific position)",
-                    "dformat_in": "Spectrum"
-                },
-                "output_parameters": {
-                    "dtype_out": "Void",
-                    "doc_out": "",
-                    "dformat_out": "Scalar"
-                }
-	    }
-        },
-    	{
-            "basicCommandData": {
-                "name": "Zoom",
-                "description": "Zoom camera to a specified direction or specified position.",
-                "input_parameters": {
-                    "dtype_in": "VarStringArray",
-                    "doc_in": "zoom_direction : string (zoom to the specific direction.), zoom_position : int (zoom to the specific position)",
-                    "dformat_in": "Spectrum"
-                },
-                "output_parameters": {
-                    "dtype_out": "Void",
-                    "doc_out": "",
-                    "dformat_out": "Scalar"
-                }
-	    }
-        },
-    	{
-            "basicCommandData": {
-                "name": "PresetSet",
-                "description": "Set the position which the camera is at currently as preset position.",
-                "input_parameters": {
-                    "dtype_in": "String",
-                    "doc_in": "receptor_name : str (receptor name (from m000 to m063))",
-                    "dformat_in": "Scalar"
-                },
-                "output_parameters": {
-                    "dtype_out": "Void",
-                    "doc_out": "",
-                    "dformat_out": "Scalar"
-                }
-	    }
-        },
-    	{
-            "basicCommandData": {
-                "name": "PresetGoto",
-                "description": "Go to preset stored position (pan, tilt, zoom)",
-                "input_parameters": {
-                    "dtype_in": "String",
-                    "doc_in": "receptor_name : str (receptor name (from m000 to m060)), clear_set_flag : str (flag that determines if we have to write to screen or clear text)",
-                    "dformat_in": "Scalar"
-                },
-                "output_parameters": {
-                    "dtype_out": "Void",
-                    "doc_out": "",
-                    "dformat_out": "Scalar"
-                }
-	    }
-        },
-    	{
-            "basicCommandData": {
-                "name": "PresetClear",
-                "description": "Clear the specified preset.",
-                "input_parameters": {
-                    "dtype_in": "String",
-                    "doc_in": "receptor_name : str (receptor name (from m000 to m063))",
-                    "dformat_in": "Scalar"
-                },
-                "output_parameters": {
-                    "dtype_out": "Void",
-                    "doc_out": "Command responds",
-                    "dformat_out": "Scalar"
-                }
-	    }
-        },
-    	{
-            "basicCommandData": {
-                "name": "FloodLightOn",
-                "description": "Set floodlight to on or off state.",
-                "input_parameters": {
-                    "dtype_in": "String",
-                    "doc_in": "on_off_value : str (indicates if floodlight are on or off)",
-                    "dformat_in": "Scalar"
-                },
-                "output_parameters": {
-                    "dtype_out": "Void",
-                    "doc_out": "",
-                    "dformat_out": "Scalar"
-                }
-	    }
-        },
-    	{
-            "basicCommandData": {
-                "name": "Stop",
-                "description": "Stop camera.",
-                "input_parameters": {
-                    "dtype_in": "Void",
-                    "doc_in": "",
-                    "dformat_in": "Scalar"
-                },
-                "output_parameters": {
-                    "dtype_out": "Void",
-                    "doc_out": "",
-                    "dformat_out": "Scalar"
-                }
-	    }
-        },
-    	{
-            "basicCommandData": {
-                "name": "Focus",
-                "description": "Focuses camera to a specified direction or specified position.",
-                "input_parameters": {
-                    "dtype_in": "VarStringArray",
-                    "doc_in": "focus_direction : string (focus to the specified direction), focus_position : int (focus to the specific position)",
-                    "dformat_in": "Spectrum"
-                },
-                "output_parameters": {
-                    "dtype_out": "Void",
-                    "doc_out": "",
-                    "dformat_out": "Scalar"
-                }
-	    }
+    {
+      "basicAttributeData": {
+        "name": "camera_power_on",
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity"
         }
-    ],
-    "class_overrides": [
-        {
-	          "override_class": {
-		            "name": "Override_MKAT_VDS_Sim",
-		            "module_directory": "None",
-		            "module_name": "tango_simlib.examples.override_class",
-		            "class_name": "OverrideVds"
-	      }
       }
-    ]
+    },
+    {
+      "basicAttributeData": {
+        "name": "flood_lights_on",
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity"
+        }
+      }
+    },
+    {
+      "basicAttributeData": {
+        "name": "focus_position",
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity",
+          "initial_value": "5"
+        }
+      }
+    },
+    {
+      "basicAttributeData": {
+        "name": "pan_position",
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity"
+        }
+      }
+    },
+    {
+      "basicAttributeData": {
+        "name": "pdu_connected",
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity"
+        }
+      }
+    },
+    {
+      "basicAttributeData": {
+        "name": "ptz_controller_connected",
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity",
+          "initial_value": ""
+        }
+      }
+    },
+    {
+      "basicAttributeData": {
+        "name": "snmpd_trap_running",
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity",
+          "initial_value": ""
+        }
+      }
+    },
+    {
+      "basicAttributeData": {
+        "name": "tilt_position",
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity",
+          "initial_value": ""
+        }
+      }
+    },
+    {
+      "basicAttributeData": {
+        "name": "zoom_position",
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity",
+          "initial_value": ""
+        }
+      }
+    }
+  ],
+  "commands": [
+    {
+      "basicCommandData": {
+        "name": "CameraPowerOn",
+        "description": "Switch camera electronics on or off",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "on_off_value: string (indicates if its on or off)",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "Pan",
+        "description": "Drive camera to a pan direction (left or right) or to specified position.",
+        "input_parameters": {
+          "dtype_in": "VarStringArray",
+          "doc_in": "pan_position : int (pan to the specified position), pan_direction : string (pan to the specified direction)",
+          "dformat_in": "Spectrum"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "Tilt",
+        "description": "Drive camera to a tilt direction or specified position.",
+        "input_parameters": {
+          "dtype_in": "VarStringArray",
+          "doc_in": "tilt_direction : string (tilt to the specific direction), tilt_position : int (tilt tot the specific position)",
+          "dformat_in": "Spectrum"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "Zoom",
+        "description": "Zoom camera to a specified direction or specified position.",
+        "input_parameters": {
+          "dtype_in": "VarStringArray",
+          "doc_in": "zoom_direction : string (zoom to the specific direction.), zoom_position : int (zoom to the specific position)",
+          "dformat_in": "Spectrum"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "PresetSet",
+        "description": "Set the position which the camera is at currently as preset position.",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "receptor_name : str (receptor name (from m000 to m063))",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "PresetGoto",
+        "description": "Go to preset stored position (pan, tilt, zoom)",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "receptor_name : str (receptor name (from m000 to m060)), clear_set_flag : str (flag that determines if we have to write to screen or clear text)",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "PresetClear",
+        "description": "Clear the specified preset.",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "receptor_name : str (receptor name (from m000 to m063))",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "Command responds",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "FloodLightOn",
+        "description": "Set floodlight to on or off state.",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "on_off_value : str (indicates if floodlight are on or off)",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "Stop",
+        "description": "Stop camera.",
+        "input_parameters": {
+          "dtype_in": "Void",
+          "doc_in": "",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "Focus",
+        "description": "Focuses camera to a specified direction or specified position.",
+        "input_parameters": {
+          "dtype_in": "VarStringArray",
+          "doc_in": "focus_direction : string (focus to the specified direction), focus_position : int (focus to the specific position)",
+          "dformat_in": "Spectrum"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    }
+  ],
+  "class_overrides": [
+    {
+      "override_class": {
+        "name": "Override_MKAT_VDS_Sim",
+        "module_directory": "None",
+        "module_name": "tango_simlib.examples.override_class",
+        "class_name": "OverrideVds"
+      }
+    }
+  ]
 }

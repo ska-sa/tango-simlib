@@ -14,8 +14,12 @@ containing the information needed to instantiate a useful device simulator.
 
 import logging
 import json
+import pkg_resources
 
 from PyTango._PyTango import CmdArgType, AttrDataFormat
+from jsonschema import validate
+
+from tango_simlib import helper_module
 
 MODULE_LOGGER = logging.getLogger(__name__)
 EXPECTED_SIMULATION_PARAMETERS = {
@@ -138,9 +142,14 @@ class SimddParser(object):
           element name and values must be the corresponding data value.
 
         """
+        simdd_schema_file = pkg_resources.resource_filename(
+                'tango_simlib', 'SIMDD.schema')
+        with open(simdd_schema_file) as simdd_schema:
+            schema_data = json.load(simdd_schema)
         self.data_description_file_name = simdd_json_file
         with open(simdd_json_file) as simdd_file:
             device_data = json.load(simdd_file)
+        validate(device_data, schema_data)
         for data_component, elements in device_data.items():
             if data_component == 'class_name':
                 self.device_class_name = str(elements)
@@ -229,11 +238,16 @@ class SimddParser(object):
                 `self._device_attributes` or `self._device_commands`
         """
         device_dict = dict()
+        params_template = helper_module.DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE.copy()
         for element_data in elements:
             for element_info in element_data.values():
                 name = element_info['name']
-                device_dict[str(name)] = self.get_reformated_data(
-                        element_info, element_type)
+                element_params = self.get_reformated_data(element_info, element_type)
+                if 'Attributes' in element_type:
+                    device_dict[str(name)] = dict(params_template.items() +
+                                                  element_params.items())
+                else:
+                    device_dict[str(name)] = element_params
         return device_dict
 
     def get_reformated_data(self, sim_device_element_info, element_type):
