@@ -15,6 +15,40 @@ SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR = set([
     'control_sensor_list_names',  # List of sensors to control
     ])
 
+DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE = {
+    'abs_change': '',
+    'archive_abs_change': '',
+    'archive_period': '',
+    'archive_rel_change': '',
+    'data_format': '',
+    'data_type': '',
+    'delta_t': '',
+    'delta_val': '',
+    'description': '',
+    'display_level': '',
+    'event_period': '',
+    'label': '',
+    'max_alarm': '',
+    'max_warning': '',
+    'max_bound': '',
+    'max_dim_x': '',
+    'max_dim_y': '',
+    'max_slew_rate': '',
+    'max_value': '',
+    'mean': '',
+    'min_alarm': '',
+    'min_bound': '',
+    'min_value': '',
+    'min_warning': '',
+    'name': '',
+    'quantity_simulation_type': '',
+    'period': '',
+    'rel_change': '',
+    'unit': '',
+    'update_period': '',
+    'writable': ''
+}
+
 
 def get_server_name():
     """Gets the TANGO server name from the command line arguments
