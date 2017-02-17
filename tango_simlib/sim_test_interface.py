@@ -34,7 +34,7 @@ class TangoTestDeviceServerBase(Device):
         "Simulator model key, usually the TANGO name of the simulated device.")
 
     def __init__(self, dev_class, name):
-        Device.__init__(self, dev_class, name)
+        super(TangoTestDeviceServerBase, self).__init__(dev_class, name)
 
         self.model = None
         self._attribute_name = ''
@@ -44,7 +44,7 @@ class TangoTestDeviceServerBase(Device):
         self.init_device()
 
     def init_device(self):
-        Device.init_device(self)
+        super(TangoTestDeviceServerBase, self).init_device()
         name = self.get_name()
         self.instances[name] = self
 
@@ -89,7 +89,7 @@ class TangoTestDeviceServerBase(Device):
             self._attribute_name = name
             self.model_quantities = self.model.sim_quantities[self._attribute_name]
         else:
-            raise NameError('Name does not exist in the sensor list {}'.
+            raise NameError('Name does not exist in the attribute list {}'.
                             format(self.sim_device_attributes))
 
     @attribute(dtype=bool)

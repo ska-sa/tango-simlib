@@ -771,21 +771,23 @@ class PopulateModelActions(object):
             actions = cmd_meta.get('actions', [])
             instance = None
             if cmd_name.startswith('test_'):
+                cmd_name = cmd_name.split('test_')[1]
                 for instance_ in instances:
                     if instance_.startswith('SimControl'):
                         instance = instances[instance_]
-                self._check_override_action_presence(cmd_name, instance, 'test_action_{}')
+                self._check_override_action_presence(cmd_name, instance,
+                                                     'test_action_{}')
                 handler = getattr(
-                    instance, 'test_action_{}'.format(cmd_name.split('test_')[1]),
+                    instance, 'test_action_{}'.format(cmd_name.lower()),
                     self.generate_action_handler(cmd_name, cmd_meta['dtype_out'],
                                                  actions))
-                self.sim_model.set_test_sim_action(cmd_name.split('test_')[1], handler)
+                self.sim_model.set_test_sim_action(cmd_name, handler)
             else:
                 for instance_ in instances:
                     if instance_.startswith('Sim'):
                         instance = instances[instance_]
                 self._check_override_action_presence(cmd_name, instance, 'action_{}')
-                handler = getattr(instance, 'action_{}'.format(cmd_name),
+                handler = getattr(instance, 'action_{}'.format(cmd_name.lower()),
                                   self.generate_action_handler(
                                       cmd_name, cmd_meta['dtype_out'], actions))
 
@@ -803,8 +805,9 @@ class PopulateModelActions(object):
             if klass_info['module_directory'] == 'None':
                 module = importlib.import_module(klass_info['module_name'])
             else:
-                module = imp.load_source(klass_info['module_name'].split('.')[-1],
-                                         klass_info['module_directory'])
+                sys.path.append(klass_info['module_directory'])
+                module = importlib.import_module(klass_info['module_name'])
+                sys.path.remove(klass_info['module_directory'])
             klass = getattr(module, klass_info['class_name'])
             instance = klass()
             instances[klass_info['name']] = instance
@@ -820,10 +823,14 @@ class PopulateModelActions(object):
         if attr_occurences > MAX_NUM_OF_CLASS_ATTR_OCCURENCE:
             raise Exception("The command '{}' has multiple override methods defined"
                             " in the override class".format(cmd_name))
-        # Assuming that there is only one override method defined, now we check if
-        # it is in the correct letter case.
+        # Assuming that there is only one override method defined, now we check if it
+        # is in the correct letter case.
         elif attr_occurences == MAX_NUM_OF_CLASS_ATTR_OCCURENCE:
-            instance_attributes.index(action_type.format(cmd_name))
+            try:
+                instance_attributes.index(action_type.format(cmd_name.lower()))
+            except ValueError:
+                raise Exception("Only lower-case overide method names are supported.")
+
 
     def generate_action_handler(self, action_name, action_output_type, actions=None):
         """Generates and returns an action handler to manage tango commands

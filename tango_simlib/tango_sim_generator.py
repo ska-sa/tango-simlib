@@ -49,7 +49,7 @@ class TangoDeviceServerBase(Device):
             doc='Complete path name of the POGO xmi file to be parsed')
 
     def init_device(self):
-        Device.init_device(self)
+        super(TangoDeviceServerBase, self).init_device()
         name = self.get_name()
         self.model = None
         self.instances[name] = self
@@ -181,7 +181,7 @@ def get_tango_device_server(model, sim_data_files):
         __metaclass__ = DeviceMeta
 
         def init_device(self):
-            TangoDeviceServerBase.init_device(self)
+            super(TangoDeviceServer, self).init_device()
             self.model = model
             self._reset_to_default_state()
 
@@ -232,7 +232,7 @@ def get_tango_device_server(model, sim_data_files):
         instances = weakref.WeakValueDictionary()
 
         def init_device(self):
-            TangoTestDeviceServerBase.init_device(self)
+            super(SimControl, self).init_device()
 
             name = self.get_name()
             self.instances[name] = self

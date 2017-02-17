@@ -1,3 +1,4 @@
+import os
 import time
 import mock
 import unittest
@@ -15,6 +16,8 @@ from devicetest import DeviceTestCase, TangoTestContext
 from tango_simlib import sim_test_interface, model, quantities
 from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
 from tango_simlib.testutils import ClassCleanupUnittestMixin
+
+from PyTango import DevState
 
 class FixtureModel(model.Model):
 
@@ -191,9 +194,11 @@ class test_SimControl(DeviceTestCase):
         self._compare_models(self.test_model, expected_model)
 
 
-EXPECTED_COMMAND_LIST = frozenset(['StopRainfall', 'StopQuantitySimulation', 'SetAttributeMaxValue',
-                                   'StimulateAttributeConfigurationError', 'SimulateFaultDeviceState',
-                                   'SetOffWindStorm', 'StopWindStorm', 'SetOffRainStorm', 'StopRainStorm'])
+EXPECTED_COMMAND_LIST = frozenset(['StopRainfall', 'StopQuantitySimulation',
+                                   'SetAttributeMaxValue', 'SimulateFaultDeviceState',
+                                   'StimulateAttributeConfigurationError',
+                                   'SetOffWindStorm', 'StopWindStorm', 'SetOffRainStorm',
+                                   'StopRainStorm'])
 
 
 class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
@@ -209,15 +214,17 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
             'tango_simlib.tests', 'weather_sim.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
             'tango_simlib.tests', 'weather_SIMDD_3.json'))
-        print cls.data_descr_files
         cls.temp_dir = tempfile.mkdtemp()
         cls.sim_device_class = tango_sim_generator.get_device_class(cls.data_descr_files)
         device_name = 'test/nodb/tangodeviceserver'
         server_name = 'weather_ds'
         server_instance = 'test'
-        database_filename = '%s/%s_tango.db' % (cls.temp_dir, server_name)
+        database_filename = os.path.join('{}', '{}_tango.db').format(
+            cls.temp_dir, server_name)
         sim_device_prop = dict(sim_data_description_file=cls.data_descr_files[0])
         sim_test_device_prop = dict(model_key=device_name)
+        # Cannot create an instance of the DeviceProxy inside the test because the
+        # devicetest module has side effects when imported.
         patcher = devicetest.patch.Patcher()
         device_proxy = patcher.ActualDeviceProxy
         tango_sim_generator.generate_device_server(
@@ -241,12 +248,12 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         cls.sim_device = device_proxy(
                 '%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
                     cls.host, cls.port))
-
         cls.sim_control_device = device_proxy(
                 '%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
                     cls.host, cls.port))
-        cls.addCleanupClass(cls.sub_proc.kill)
-        cls.addCleanupClass(shutil.rmtree, cls.temp_dir)
+
+        cls.addcleanupclass(cls.sub_proc.kill)
+        cls.addcleanupclass(shutil.rmtree, cls.temp_dir)
 
     def setUp(self):
         super(test_TangoSimGenDeviceIntegration, self).setUp()
@@ -260,13 +267,17 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         self.assertEqual(
             set(EXPECTED_COMMAND_LIST),
             set(device_commands) - helper_module.DEFAULT_TANGO_DEVICE_COMMANDS)
-        self.assertNotIn(set(self.sim_device.get_command_list()),
-                         set(EXPECTED_COMMAND_LIST))
+        self.assertEqual(
+            set(self.sim_device.get_command_list()) & EXPECTED_COMMAND_LIST,
+            set(), "The device has commands meant for the test sim control device.")
 
     def test_StopRainfall_command(self):
         command_name = 'StopRainfall'
         expected_rainfall_value = 0.0
         self.sim_control_device.command_inout(command_name)
+        # TODO (KM 17-02-2018) Follow up on this issue:
+        # https://skaafrica.atlassian.net/browse/LMC-64 for testing two dependent TANGO
+        # device servers.
         # The model needs 'dt' to be greater than the min_update_period for it to update
         # the model.quantity_state dictionary. If it was posssible to get hold of the
         # model instance, we would manipulate the value of the last_update_time of the
@@ -275,7 +286,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # 'dt' to be large enough.
         time.sleep(1)
         self.assertEqual(expected_rainfall_value,
-                         getattr(self.sim_device.read_attribute('rainfall'), 'value'))
+                         getattr(self.sim_device.read_attribute('rainfall'), 'value'),
+                         "The rainfall value is not zero.")
 
     def test_StopQuantitySimulation_command(self):
         """Testing that the Tango device weather simulation of quantities can be halted.
@@ -293,7 +305,29 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         time.sleep(1)
         for quantity_name, quantity_value in expected_result.items():
             self.assertEqual(quantity_value,
-                             getattr(self.sim_device.read_attribute(quantity_name), 'value'),
+                             getattr(self.sim_device.read_attribute(quantity_name),
+                                     'value'),
                              "The {} quantity value in the model does not match with the"
                              " value read from the device attribute.".format(
                                  quantity_name))
+
+    def test_SetOffRainStorm(self):
+        command_name = 'SetOffRainStorm'
+        max_rainfall_value = 3.45
+        test_max_slew_rate = 1000
+        self.sim_control_device.write_attribute('attribute_name', 'rainfall')
+        self.sim_control_device.write_attribute('max_slew_rate', test_max_slew_rate)
+        self.sim_control_device.command_inout(command_name)
+        # The model needs 'dt' to be greater than the min_update_period for it to update
+        # the model.quantity_state dictionary. If it was posssible to get hold of the
+        # model instance, we would manipulate the value of the last_update_time of the
+        # model to ensure that the model.quantity_state dictionary is updated before
+        # reading the attribute value. So instead we use the sleep method to allow for
+        # 'dt' to be large enough.
+        time.sleep(1)
+        self.assertGreater(getattr(self.sim_device.read_attribute('rainfall'), 'value'),
+                           max_rainfall_value,
+                           "Rain levels not above the expected value for a rainstorm")
+        self.assertEqual(self.sim_device.State(), DevState.ALARM,
+                         "The rainfall levels are higher than the maximun allowed value"
+                         " but the device is not in ALARM state.") 
