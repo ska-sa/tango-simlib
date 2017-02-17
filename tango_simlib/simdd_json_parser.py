@@ -143,7 +143,7 @@ class SimddParser(object):
 
         """
         simdd_schema_file = pkg_resources.resource_filename(
-                'tango_simlib.tests', 'SIMDD.schema')
+                'tango_simlib', 'SIMDD.schema')
         with open(simdd_schema_file) as simdd_schema:
             schema_data = json.load(simdd_schema)
         self.data_description_file_name = simdd_json_file
