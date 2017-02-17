@@ -15,6 +15,7 @@ SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR = set([
     'control_sensor_list_names',  # List of sensors to control
     ])
 
+# Mandatory parameters required to create a well configure Tango attribute.
 DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE = {
     'abs_change': '',
     'archive_abs_change': '',
@@ -31,18 +32,13 @@ DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE = {
     'label': '',
     'max_alarm': '',
     'max_warning': '',
-    'max_bound': '',
     'max_dim_x': '',
     'max_dim_y': '',
-    'max_slew_rate': '',
     'max_value': '',
-    'mean': '',
     'min_alarm': '',
-    'min_bound': '',
     'min_value': '',
     'min_warning': '',
     'name': '',
-    'quantity_simulation_type': '',
     'period': '',
     'rel_change': '',
     'unit': '',
