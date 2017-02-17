@@ -14,7 +14,8 @@
             "type": "object",
             "properties": {
               "name": {
-                "type": "string"
+                "type": "string",
+                "uniqueItems": true
               },
               "unit": {
                 "type": "string"
@@ -26,7 +27,8 @@
                 "type": "string"
               },
               "data_type": {
-                "type": "string"
+                "type": "string",
+                "enum": ["Boolean", "String", "Double", "VarStringArray", "VarDoubleArray"]
               },
               "data_format": {
                 "type": "string"
@@ -35,19 +37,19 @@
                 "type": "string"
               },
               "delta_t": {
-                "type": "string"
+                "type": "number"
               },
               "delta_val": {
-                "type": "string"
+                "type": "number"
               },
               "data_shape": {
                 "type": "object",
                 "properties": {
                   "max_dim_x": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "max_dim_y": {
-                    "type": "string"
+                    "type": "number"
                   }
                 },
                 "required": [
@@ -59,22 +61,22 @@
                 "type": "object",
                 "properties": {
                   "min_value": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "max_value": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "min_alarm": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "max_alarm": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "min_warning": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "max_warning": {
-                    "type": "string"
+                    "type": "number"
                   }
                 },
                 "required": [
@@ -97,28 +99,29 @@
                 "type": "object",
                 "properties": {
                   "quantity_simulation_type": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": ["ConstantQuantity", "GaussianSlewLimited"]
                   },
                   "min_bound": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "max_bound": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "mean": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "max_slew_rate": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "update_period": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "std_dev": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "initial_value": {
-                    "type": "string"
+                    "type": ["string", "number"]
                   }
                 },
                 "required": [
@@ -132,7 +135,7 @@
                     "type": "string"
                   },
                   "period": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "EventSettings": {
                     "type": "object",
@@ -141,13 +144,13 @@
                         "type": "object",
                         "properties": {
                           "archive_abs_change": {
-                            "type": "string"
+                            "type": "number"
                           },
                           "archive_period": {
-                            "type": "string"
+                            "type": "number"
                           },
                           "archive_rel_change": {
-                            "type": "string"
+                            "type": "number"
                           }
                         },
                         "required": [
@@ -160,13 +163,13 @@
                         "type": "object",
                         "properties": {
                           "abs_change": {
-                            "type": "string"
+                            "type": "number"
                           },
                           "event_period": {
-                            "type": "string"
+                            "type": "number"
                           },
                           "rel_change": {
-                            "type": "string"
+                            "type": "number"
                           }
                         },
                         "required": [
@@ -184,8 +187,7 @@
                 },
                 "required": [
                   "display_level",
-                  "period",
-                  "EventSettings"
+                  "period"
                 ]
               }
             },
@@ -209,7 +211,8 @@
             "type": "object",
             "properties": {
               "name": {
-                "type": "string"
+                "type": "string",
+                "uniqueItems": true
               },
               "description": {
                 "type": "string"
@@ -278,7 +281,8 @@
             "type": "object",
             "properties": {
               "name": {
-                "type": "string"
+                "type": "string",
+                "uniqueItems": true
               },
               "type": {
                 "type": "string"

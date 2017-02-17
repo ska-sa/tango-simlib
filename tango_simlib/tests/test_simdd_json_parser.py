@@ -114,7 +114,7 @@ class test_SimddJsonParser(GenericSetup):
             for param in EXPECTED_MANDATORY_ATTR_PARAMETERS:
                 self.assertIn(
                     param, attribute_metadata.keys(),
-                    "The parsed attribute '%s' does not the mandotory parameter "
+                    "The parsed attribute '%s' does not have the mandotory parameter "
                     "'%s' " % (attr_name, param))
 
         # Using the made up temperature attribute expected results as we
