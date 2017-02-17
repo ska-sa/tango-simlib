@@ -21,6 +21,7 @@ DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE = {
     'archive_period': '',
     'archive_rel_change': '',
     'data_format': '',
+    'format': '',
     'data_type': '',
     'delta_t': '',
     'delta_val': '',

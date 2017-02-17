@@ -664,7 +664,14 @@ class PopulateModelQuantities(object):
                                     self.parser_instance.data_description_file_name))
                 model_attr_props = attr_props
             else:
-                model_attr_props.update(attr_props)
+                # Before the model attribute props dict is updated, the
+                # parameter keys with no values specified from the attribute
+                # props template are removed.
+                # i.e. All optional parameters not provided in the SIMDD
+                attr_props = dict((param_key, param_val)
+                                  for param_key, param_val in attr_props.iteritems()
+                                  if param_val)
+                model_attr_props = dict(model_attr_props.items() + attr_props.items())
 
             if model_attr_props.has_key('quantity_simulation_type'):
                 if model_attr_props['quantity_simulation_type'] == 'ConstantQuantity':
