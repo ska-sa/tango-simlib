@@ -252,10 +252,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
 
     def setUp(self):
         super(test_TangoSimGenDeviceIntegration, self).setUp()
-        self.xmi_parser = sim_xmi_parser.XmiParser()
-        self.xmi_parser.parse(self.data_descr_files[0])
-        self.expected_model = tango_sim_generator.configure_device_model(
-                self.data_descr_files)
 
     def test_sim_control_command_list(self):
         device_commands = self.sim_control_device.get_command_list()
