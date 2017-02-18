@@ -79,15 +79,10 @@ class test_SimControl(DeviceTestCase):
         self.addCleanup(cleanup_refs)
 
     def test_attribute_list(self):
-        ADDITIONAL_IMPLEMENTED_ATTR = set([
-            'Status',   # Tango library attribute
-            'State',    # Tango library attribute
-            'attribute_name',    # Attribute indentifier for sensor to be controlled
-            'pause_active',    # Flag for pausing the model updates
-            'control_sensor_list_names',  # List of sensors to control
-            ])
+        sim_control_static_attributes = (
+            helper_module.SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR)
         attributes = set(self.device.get_attribute_list())
-        self.assertEqual(attributes - ADDITIONAL_IMPLEMENTED_ATTR,
+        self.assertEqual(attributes - sim_control_static_attributes,
                         set(self.control_attributes))
 
     def test_model_defaults(self):

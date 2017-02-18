@@ -100,9 +100,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         control_attributes = test_sim_test_interface.control_attributes(
                 self.expected_model)
         attributes = set(self.sim_control_device.get_attribute_list())
-        test_sim_static_attributes = frozenset(['attribute_name', 'pause_active'])
         self.assertEqual(
-            attributes - implemented_attr - test_sim_static_attributes,
+            attributes - implemented_attr,
             set(control_attributes))
 
     def test_sim_control_device_attribute_change(self):
