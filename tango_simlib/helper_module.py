@@ -10,9 +10,9 @@ DEFAULT_TANGO_DEVICE_ATTRIBUTES = frozenset(['State', 'Status'])
 SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR = set([
     'Status',   # Tango library attribute
     'State',    # Tango library attribute
-    'sensor_name',    # Attribute indentifier for sensor to be controlled
+    'attribute_name',    # Attribute indentifier for attribute to be controlled
     'pause_active',    # Flag for pausing the model updates
-    'control_sensor_list_names',  # List of sensors to control
+    'control_attribute_list_names',  # List of attributes to control
     ])
 
 # Mandatory parameters required to create a well configure Tango attribute.

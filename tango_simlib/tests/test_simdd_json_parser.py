@@ -367,41 +367,6 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.assertEqual(getattr(self.device.read_attribute('State'), 'value'),
                          PyTango.DevState.ON)
 
-    def test_StopRainfall_command(self):
-        """Testing that the Tango device weather simulator 'detects' no rainfall when
-        the StopRainfall command is executed.
-        """
-        command_name = 'StopRainfall'
-        expected_result = 0.0
-        self.device.command_inout(command_name)
-        # The model needs 'dt' to be greater than the min_update_period for it to update
-        # the model.quantity_state dictionary, so by manipulating the value of the last
-        # update time of the model it will  ensure that the model.quantity_state
-        # dictionary will be updated before reading the attribute value.
-        self.instance.model.last_update_time = 0
-        self.assertEqual(expected_result,
-                         getattr(self.device.read_attribute('Rainfall'), 'value'),
-                         "The value override action didn't execute successfully")
-
-    def test_StopQuantitySimulation_command(self):
-        """Testing that the Tango device weather simulation of quantities can be halted.
-        """
-        command_name = 'StopQuantitySimulation'
-        expected_result = {'temperature': 0.0,
-                           'insolation': 0.0}
-        self.device.command_inout(command_name, expected_result.keys())
-        # The model needs 'dt' to be greater than the min_update_period for it to update
-        # the model.quantity_state dictionary, so by manipulating the value of the last
-        # update time of the model it will  ensure that the model.quantity_state
-        # dictionary will be updated before reading the attribute value.
-        self.instance.model.last_update_time = 0
-        for quantity_name, quantity_value in expected_result.items():
-            self.assertEqual(quantity_value,
-                             getattr(self.device.read_attribute(quantity_name), 'value'),
-                             "The {} quantity value in the model does not match with the"
-                             " value read from the device attribute.".format(
-                                 quantity_name))
-
     def test_Add_command(self):
         """Testing that the Tango device command can take input of an array type and
         return a output value of type double.

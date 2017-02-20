@@ -7,78 +7,56 @@
 # THIS SOFTWARE MAY NOT BE COPIED OR DISTRIBUTED IN ANY FORM WITHOUT THE      #
 # WRITTEN PERMISSION OF SKA SA.                                               #
 ###############################################################################
-
+"""
+@author MeerKAT CAM team <cam@ska.ac.za>
+"""
 
 import time
 import weakref
-import logging
-import PyTango
-import numpy
 
 from PyTango import UserDefaultAttrProp
-from PyTango import AttrQuality, DevState
-from PyTango import Attr, AttrWriteType, WAttribute
-from PyTango import DevString, DevDouble, DevBoolean
+from PyTango import DevState
+from PyTango import Attr, AttrWriteType
+from PyTango import DevDouble
 from PyTango.server import Device, DeviceMeta
-from PyTango.server import attribute, command, device_property
+from PyTango.server import attribute, device_property
 
 from tango_simlib import model
 
-class SimControl(Device):
+
+class TangoTestDeviceServerBase(Device):
     __metaclass__ = DeviceMeta
 
     instances = weakref.WeakValueDictionary()
 
-    def init_device(self):
-        super(SimControl, self).init_device()
+    model_key = device_property(
+        dtype=str, doc=
+        "Simulator model key, usually the TANGO name of the simulated device.")
 
+    def __init__(self, dev_class, name):
+        super(TangoTestDeviceServerBase, self).__init__(dev_class, name)
+
+        self.model = None
+        self._attribute_name = ''
+        self.model_quantities = None
+        self._pause_active = False
+        self.sim_device_attributes = None
+        self.init_device()
+
+    def init_device(self):
+        super(TangoTestDeviceServerBase, self).init_device()
         name = self.get_name()
         self.instances[name] = self
-        # Get the device instance model to be controlled
+
         try:
             self.model = model.model_registry[self.model_key]
         except KeyError:
             raise RuntimeError('Could not find model with device name or key '
                                '{}. Set the "model_key" device property to the '
                                'correct value.'.format(self.model_key))
-        # Get a list of attributes a device contains from the model
-        self.device_sensors = self.model.sim_quantities.keys()
+        self.sim_device_attributes = self.model.sim_quantities.keys()
         self.set_state(DevState.ON)
-        self.model_quantities = None
-        self._sensor_name = ''
-        self._pause_active = False
 
-    model_key = device_property(
-        dtype=str, doc=
-        'Simulator model key, usually the TANGO name of the simulated device.')
-
-    # Static attributes of the device
-
-    @attribute(dtype=str)
-    def sensor_name(self):
-        return self._sensor_name
-
-    @sensor_name.write
-    def sensor_name(self, name):
-        if name in self.device_sensors:
-            self._sensor_name = name
-            self.model_quantities = self.model.sim_quantities[self._sensor_name]
-        else:
-            raise NameError('Name does not exist in the sensor list {}'.
-                            format(self.device_sensors))
-
-    @attribute(dtype=str, dformat=PyTango.AttrDataFormat.SPECTRUM, max_dim_x=9999)
-    def control_sensor_list_names(self):
-        return self.device_sensors
-
-    @attribute(dtype=bool)
-    def pause_active(self):
-        return self._pause_active
-
-    @pause_active.write
-    def pause_active(self, isActive):
-        self._pause_active = isActive
-        setattr(self.model, 'paused', isActive)
 
     def initialize_dynamic_attributes(self):
         '''The device method that sets up attributes during run time'''
@@ -99,6 +77,29 @@ class SimControl(Device):
             attr = Attr(attribute_name, DevDouble, AttrWriteType.READ_WRITE)
             attr.set_default_properties(attr_props)
             self.add_attribute(attr, self.read_attributes, self.write_attributes)
+    # Static attributes of the device
+
+    @attribute(dtype=str)
+    def attribute_name(self):
+        return self._attribute_name
+
+    @attribute_name.write
+    def attribute_name(self, name):
+        if name in self.sim_device_attributes:
+            self._attribute_name = name
+            self.model_quantities = self.model.sim_quantities[self._attribute_name]
+        else:
+            raise NameError('Name does not exist in the attribute list {}'.
+                            format(self.sim_device_attributes))
+
+    @attribute(dtype=bool)
+    def pause_active(self):
+        return self._pause_active
+
+    @pause_active.write
+    def pause_active(self, isActive):
+        self._pause_active = isActive
+        setattr(self.model, 'paused', isActive)
 
     def read_attributes(self, attr):
         '''Method reading an attribute value
@@ -124,7 +125,6 @@ class SimControl(Device):
         attr.set_value(data)
         setattr(self.model_quantities, name, data)
         if name == 'last_val' and self._pause_active:
-            self.model.quantity_state[self._sensor_name] = data, time.time()
+            self.model.quantity_state[self._attribute_name] = data, time.time()
         else:
             setattr(self.model_quantities, name, data)
-
