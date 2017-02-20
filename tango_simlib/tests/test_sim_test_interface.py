@@ -237,6 +237,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                                             database_filename),
                                         "-ORBendPoint", "giop:tcp::{}".format(
                                             cls.port)])
+        cls.addCleanupClass(cls.sub_proc.kill)
+        cls.addCleanupClass(shutil.rmtree, cls.temp_dir)
         # Note that tango demands that connection to the server must
         # be delayed by atleast 1000 ms of device server start up.
         time.sleep(1)
@@ -246,9 +248,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         cls.sim_control_device = device_proxy(
                 '%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
                     cls.host, cls.port))
-
-        cls.addcleanupclass(cls.sub_proc.kill)
-        cls.addcleanupclass(shutil.rmtree, cls.temp_dir)
 
     def setUp(self):
         super(test_TangoSimGenDeviceIntegration, self).setUp()
