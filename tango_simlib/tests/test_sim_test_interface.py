@@ -1,9 +1,6 @@
 import os
 import time
-import mock
 import unittest
-import shutil
-import tempfile
 import subprocess
 
 import pkg_resources
@@ -11,11 +8,11 @@ import devicetest
 
 from functools import partial
 
-from devicetest import DeviceTestCase, TangoTestContext
+from devicetest import DeviceTestCase
 
 from tango_simlib import sim_test_interface, model, quantities
-from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
-from tango_simlib.testutils import ClassCleanupUnittestMixin
+from tango_simlib import tango_sim_generator, helper_module
+from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
 
 from PyTango import DevState
 
@@ -209,7 +206,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
             'tango_simlib.tests', 'weather_sim.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
             'tango_simlib.tests', 'weather_SIMDD_3.json'))
-        cls.temp_dir = tempfile.mkdtemp()
+        cls.temp_dir = cleanup_tempdir(cls)
         cls.sim_device_class = tango_sim_generator.get_device_class(cls.data_descr_files)
         device_name = 'test/nodb/tangodeviceserver'
         server_name = 'weather_ds'
@@ -219,8 +216,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         sim_device_prop = dict(sim_data_description_file=cls.data_descr_files[0])
         sim_test_device_prop = dict(model_key=device_name)
         # Cannot create an instance of the DeviceProxy inside the test because the
-        # devicetest module patches it as a side effect at import time. It does 
-        # save the original DeviceProxy class in the Patcher singleton, so get it 
+        # devicetest module patches it as a side effect at import time. It does
+        # save the original DeviceProxy class in the Patcher singleton, so get it
         # from there
         patcher = devicetest.patch.Patcher()
         device_proxy = patcher.ActualDeviceProxy
@@ -240,7 +237,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                                         "-ORBendPoint", "giop:tcp::{}".format(
                                             cls.port)])
         cls.addCleanupClass(cls.sub_proc.kill)
-        cls.addCleanupClass(shutil.rmtree, cls.temp_dir)
         # Note that tango demands that connection to the server must
         # be delayed by atleast 1000 ms of device server start up.
         time.sleep(1)
@@ -322,4 +318,4 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                            "Rain levels not above the expected value for a rainstorm")
         self.assertEqual(self.sim_device.State(), DevState.ALARM,
                          "The rainfall levels are higher than the maximun allowed value"
-                         " but the device is not in ALARM state.") 
+                         " but the device is not in ALARM state.")
