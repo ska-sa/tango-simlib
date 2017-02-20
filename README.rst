@@ -148,6 +148,7 @@ the MkatVds_SIMDD.json files with a SimControl instance using tango_launcher ::
                           --server-instance tango-launched\
  --put-device-property mkat_simcontrol/vds/1:model_key:mkat_sim/vds/1
 
+![Alt text] (tango_simlib/pic1.png?raw=true "Optional Title")
 - [-] Add basic Readme
 
   - [X] Introduction and purpose
