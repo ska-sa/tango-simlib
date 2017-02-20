@@ -455,7 +455,7 @@ class OverrideWeatherSimControl(object):
 
         try:
             quant_wind_speed = model.sim_quantities['wind_speed']
-        except:
+        except KeyError:
             raise WeatherSimError("Quantity 'wind_speed' is not in the Weather model.")
         else:
             quant_wind_speed.max_bound = 1000.0 * float(
@@ -466,17 +466,16 @@ class OverrideWeatherSimControl(object):
 
         try:
             quant_wind_speed = model.sim_quantities['wind_speed']
-        except:
+        except KeyError:
             raise WeatherSimError("Quantity 'wind_speed' is not in the Weather model.")
         else:
             quant_wind_speed.max_bound = float(quant_wind_speed.meta['max_bound'])
             quant_wind_speed.mean = 1.00
 
     def test_action_setoffrainstorm(self, model, tango_dev=None, data_input=None):
-
         try:
             quant_rainfall = model.sim_quantities['rainfall']
-        except:
+        except KeyError:
             raise WeatherSimError("Quantity 'rainfall' is not in the Weather model.")
         else:
             quant_rainfall.max_bound = 1000.0 * float(quant_rainfall.meta['max_value'])
@@ -486,7 +485,7 @@ class OverrideWeatherSimControl(object):
 
         try:
             quant_rainfall = model.sim_quantities['rainfall']
-        except:
+        except KeyError:
             raise WeatherSimError("Quantity 'rainfall' is not in the Weather model.")
         else:
             quant_rainfall.max_bound = float(quant_rainfall.meta['max_bound'])

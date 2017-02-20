@@ -253,7 +253,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
     def test_sim_control_command_list(self):
         device_commands = self.sim_control_device.get_command_list()
         self.assertEqual(
-            set(EXPECTED_COMMAND_LIST),
+            EXPECTED_COMMAND_LIST,
             set(device_commands) - helper_module.DEFAULT_TANGO_DEVICE_COMMANDS)
         self.assertEqual(
             set(self.sim_device.get_command_list()) & EXPECTED_COMMAND_LIST,
@@ -283,6 +283,10 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         command_name = 'StopQuantitySimulation'
         expected_result = {'temperature': 0.0,
                            'insolation': 0.0}
+        device_attributes = self.sim_device.get_attribute_list()
+        for quantity_name in expected_result.keys():
+            self.assertIn(quantity_name, device_attributes)
+
         self.sim_control_device.command_inout(command_name, expected_result.keys())
         # The model needs 'dt' to be greater than the min_update_period for it to update
         # the model.quantity_state dictionary. If it was posssible to get hold of the
@@ -303,6 +307,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         command_name = 'SetOffRainStorm'
         max_rainfall_value = 3.45
         test_max_slew_rate = 1000
+        self.assertIn('rainfall', self.sim_device.get_attribute_list())
         self.sim_control_device.write_attribute('attribute_name', 'rainfall')
         self.sim_control_device.write_attribute('max_slew_rate', test_max_slew_rate)
         self.sim_control_device.command_inout(command_name)
