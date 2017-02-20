@@ -35,15 +35,15 @@ having control-interface simulators available for all hardware and subsystems
 that CAM needs to control and monitor is an incredibly valuable resource. In
 early CAM development it:
 
- - Makes it possible to start devloping the CAM system before hardware
+ - Makes it possible to start developing the CAM system before hardware
    or vendor-provided hardware simulators are available.
- - Allows gaps to in interfaces to be identified early on in the development
+ - Allows gaps in interfaces to be identified early on in the development
    process.
 
 As development progresses, The full, actual, MeerKAT/KAT-7 CAM is run against
 the simulated devices, allowing CAM functionality to be tested without the need
 of real telescope hardware. The simulators also expose a back-channel that can
-be using to modify the behaviour of the simulators during tests to e.g. simulate
+be used to modify the behaviour of the simulators during tests e.g. to simulate
 error conditions. This is exploited by CAM developers in their own development
 environments for day to day development tasks and also allows daily automated
 functional integration tests to be run. It was also found that initially having
