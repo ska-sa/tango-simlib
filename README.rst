@@ -89,13 +89,17 @@ install `tango-simlib`.
 .. _PyTango: https://pypi.python.org/pypi/PyTango
 
 
-Installation from source, working dir where source is checked out ::
+Installation from source, working dir where source is checked out
 
-  pip install .
+.. code-block:: bash
+  
+    $ pip install .
 
-In the neare future, this package should be available on PYPI, allowing ::
+In the neare future, this package should be available on PYPI, allowing
 
-  pip install tango-simlib
+.. code-block:: bash
+  
+    $ pip install tango-simlib
 
 
 Simulators
@@ -105,18 +109,22 @@ Generating Simulators
 ---------------------
 
 Basic example of how to make use of the tango simulator generator module.
-Give it a path to the description files xmi or simdd or both ::
+Give it a path to the description files xmi or simdd or both
 
- tango-simlib-tango-simulator-generator --sim-data-file Weather.xmi\
+.. code-block:: bash
+
+    $ tango-simlib-tango-simulator-generator --sim-data-file Weather.xmi\
                                  --dserver-name tango_weather_xmi
 
 Weather simulators
 ------------------
 
 Example of starting the weather simulator generated from the Weather.xmi file
-with a SimControl instance using tango_launcher ::
+with a SimControl instance using tango_launcher
 
- tango-simlib-tango-launcher --name mkat_sim/weather/1 --class Weather\
+.. code-block:: bash
+
+    $ tango-simlib-tango-launcher --name mkat_sim/weather/1 --class Weather\
                           --name mkat_simcontrol/weather/1\
                           --class WeatherSimControl\
                           --server-command tango-simlib-weather-xmi-DS --port 0\
@@ -124,9 +132,11 @@ with a SimControl instance using tango_launcher ::
  --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
 
 Example of starting the weather simulator generated from the Weather_SIMDD.json
-file with a SimControl instance using tango_launcher ::
+file with a SimControl instance using tango_launcher
 
- tango-simlib-tango-launcher --name mkat_sim/weather/2 --class Weather\
+.. code-block:: bash
+ 
+    $ tango-simlib-tango-launcher --name mkat_sim/weather/2 --class Weather\
                            --name mkat_simcontrol/weather/2\
                            --class WeatherSimControl\
                            --server-command tango-simlib-weather-simdd-DS\
@@ -138,9 +148,11 @@ MeerKAT Video Display System simulator
 --------------------------------------
 
 Example of starting the VDS simulator generated from both the MkatVds.xmi and
-the MkatVds_SIMDD.json files with a SimControl instance using tango_launcher ::
+the MkatVds_SIMDD.json files with a SimControl instance using tango_launcher
 
- tango-simlib-tango-launcher --name mkat_sim/vds/1 --class MkatVds\
+.. code-block:: bash
+
+    $ tango-simlib-tango-launcher --name mkat_sim/vds/1 --class MkatVds\
                           --name mkat_simcontrol/vds/1\
                           --class MkatVdsSimControl\
                           --server-command tango-simlib-vds-xmi-simdd-DS\
@@ -148,11 +160,33 @@ the MkatVds_SIMDD.json files with a SimControl instance using tango_launcher ::
                           --server-instance tango-launched\
  --put-device-property mkat_simcontrol/vds/1:model_key:mkat_sim/vds/1
 
-![Alt text] (https://cloud.githubusercontent.com/assets/16665803/23124242/ad3c28f8-f774-11e6-8dd8-9f853ba39c12.png)
+Once the tango-simlib-tango-launcher script has been executed, the TANGO server will be created in the TANGO database. The TANGO device server will be registered along with its properties and the server process will be started. This will start the server instance which has the two classes 'Weather' and 'WeatherSimControl' registered under it, respectively. Which in turn will start thee devices from each of the TANGO classes.
+
+Here is what you would have in your TANGO DB once your devices have been registered
+
+.. class:: no-web
+
+    .. image:: https://cloud.githubusercontent.com/assets/16665803/23126716/c0f366fc-f780-11e6-9b55-28ff26b834e0.png
+        :alt: HTTPie compared to cURL
+        :width: 30%
+        :align: right
+        
+    .. image:: https://cloud.githubusercontent.com/assets/16665803/23127812/0ed30a54-f785-11e6-8a81-4854c2b13efd.png
+        :alt: HTTPie compared to cURL
+        :width: 30%
+        :align: center
+       
+    .. image:: https://cloud.githubusercontent.com/assets/16665803/23127824/1a7d603e-f785-11e6-99c0-2e20e64624a5.png
+        :alt: HTTPie compared to cURL
+        :width: 30%
+        :align: left
+        
+In this instance, we have the simulated device in an alarm state after executing the 'SetOffRainStorm' command on the test device interface, or what we call the simulator controller.
+
 - [-] Add basic Readme
 
   - [X] Introduction and purpose
-  - [ ] Basic examples of use. I.e. just how to start up a simulator using
+  - [X] Basic examples of use. I.e. just how to start up a simulator using
     pre-existing example files
   - [ ] Get/generate example simulators in an example folder
 
