@@ -219,7 +219,9 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         sim_device_prop = dict(sim_data_description_file=cls.data_descr_files[0])
         sim_test_device_prop = dict(model_key=device_name)
         # Cannot create an instance of the DeviceProxy inside the test because the
-        # devicetest module has side effects when imported.
+        # devicetest module patches it as a side effect at import time. It does 
+        # save the original DeviceProxy class in the Patcher singleton, so get it 
+        # from there
         patcher = devicetest.patch.Patcher()
         device_proxy = patcher.ActualDeviceProxy
         tango_sim_generator.generate_device_server(
