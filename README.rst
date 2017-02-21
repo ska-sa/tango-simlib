@@ -2,10 +2,11 @@
 tango-simlib: Easily generate TANGO device simulators
 =====================================================
 
+============
 Introduction
 ============
 
-`tango-simlib` is a library that aids the data-driven development TANGO_ device
+`tango-simlib` is a library that aids the data-driven development of TANGO_ device
 simulators. It aims to make it easy to develop basic simulators while making it
 possible to implement more complex simulators. In addition to the simulated
 device interface, a separate TANGO simulation-control interface is generated,
@@ -21,8 +22,8 @@ proposal and subject to change. A more formal format specification is being
 worked on.
 
 Note that `tango-simlib` does not generate simulator code. Rather, the
-simulator's behaviour is driven by the description data at run-time using Python'
-dynamic programming features. If the the description files (XMI or SIMDD) are
+simulator's behaviour is driven by the description data at run-time using Python's
+dynamic programming features. If the description files (XMI or SIMDD) are
 modified, the simulator device server only needs to be restarted for the changes
 to take effect.
 
@@ -40,7 +41,7 @@ early CAM development it:
  - Allows gaps in interfaces to be identified early on in the development
    process.
 
-As development progresses, The full, actual, MeerKAT/KAT-7 CAM is run against
+As development progresses, the full, actual, MeerKAT/KAT-7 CAM is run against
 the simulated devices, allowing CAM functionality to be tested without the need
 of real telescope hardware. The simulators also expose a back-channel that can
 be used to modify the behaviour of the simulators during tests e.g. to simulate
@@ -75,7 +76,7 @@ telescope to the TANGO world.
 .. _KATCP: http://pythonhosted.org/katcp/
 .. _SKA: https://www.skatelescope.org/
 
-
+===========
 Basic Usage
 ===========
 
@@ -101,23 +102,37 @@ In the neare future, this package should be available on PYPI, allowing
   
     $ pip install tango-simlib
 
-
-Simulators
+==========
+Device Simulators
 ==========
 
 Generating Simulators
 ---------------------
 
-Basic example of how to make use of the tango simulator generator module.
-Give it a path to the description files xmi or simdd or both
+The basic way of generating a TANGO device simulator using this library is to make use of the tango simulator generator module.
+Give it a path to the description files (xmi or simdd or both).
 
 .. code-block:: bash
 
     $ tango-simlib-tango-simulator-generator --sim-data-file Weather.xmi\
-                                 --dserver-name tango_weather_xmi
+                                 --dserver-name weather
+This will generate a python module file in your current working directory with a module name 'weather.py'.
 
+And in order to run this generated device simulator code, you can execute the tango-launcher script, a helper script which will register the TANGO device server, setup any required device properties and in turn start up the device server server process, all in one go.
+
+.. code-block:: bash
+
+    $ tango-simlib-tango-launcher --name mkat_sim/weather/1 --class Weather\
+                          --name mkat_simcontrol/weather/1\
+                          --class WeatherSimControl\
+                          --server-command weather.py --port 0\
+                          --server-instance tango-launched\
+   --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1                      
+
+Ready-made Simulators
+---------------------
 Weather simulators
-------------------
+******************
 
 Example of starting the weather simulator generated from the Weather.xmi file
 with a SimControl instance using tango_launcher
@@ -145,7 +160,7 @@ file with a SimControl instance using tango_launcher
   --put-device-property mkat_simcontrol/weather/2:model_key:mkat_sim/weather/2
 
 MeerKAT Video Display System simulator
---------------------------------------
+**************************************
 
 Example of starting the VDS simulator generated from both the MkatVds.xmi and
 the MkatVds_SIMDD.json files with a SimControl instance using tango_launcher
