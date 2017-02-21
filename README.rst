@@ -179,23 +179,6 @@ Once the tango-simlib-tango-launcher script has been executed, the TANGO server 
 
 Here is what you would have in your TANGO DB once your devices have been registered
 
-.. class:: no-web
-
-    .. image:: https://cloud.githubusercontent.com/assets/16665803/23126716/c0f366fc-f780-11e6-9b55-28ff26b834e0.png
-        :alt: HTTPie compared to cURL
-        :width: 30%
-        :align: right
-        
-    .. image:: https://cloud.githubusercontent.com/assets/16665803/23127812/0ed30a54-f785-11e6-8a81-4854c2b13efd.png
-        :alt: HTTPie compared to cURL
-        :width: 30%
-        :align: center
-       
-    .. image:: https://cloud.githubusercontent.com/assets/16665803/23127824/1a7d603e-f785-11e6-99c0-2e20e64624a5.png
-        :alt: HTTPie compared to cURL
-        :width: 30%
-        :align: left
-        
 In this instance, we have the simulated device in an alarm state after executing the 'SetOffRainStorm' command on the test device interface, or what we call the simulator controller.
 
 - [-] Add basic Readme
