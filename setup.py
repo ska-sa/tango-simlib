@@ -27,6 +27,7 @@ setup(name="tango_simlib",
           'nose_xunitmp',
           'python-devicetest'],
       zip_safe=False,
+      include_package_data=True,
       dependency_links=[
           'git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
       entry_points={
