@@ -1,0 +1,366 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "class_name": {
+      "type": "string"
+    },
+    "dynamicAttributes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "basicAttributeData": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "uniqueItems": true
+              },
+              "unit": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "data_type": {
+                "type": "string",
+                "enum": ["Boolean", "String", "Double", "VarStringArray", "VarDoubleArray"]
+              },
+              "data_format": {
+                "type": "string"
+              },
+              "format": {
+                "type": "string"
+              },
+              "delta_t": {
+                "type": "number"
+              },
+              "delta_val": {
+                "type": "number"
+              },
+              "data_shape": {
+                "type": "object",
+                "properties": {
+                  "max_dim_x": {
+                    "type": "number"
+                  },
+                  "max_dim_y": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "max_dim_x",
+                  "max_dim_y"
+                ]
+              },
+              "attributeErrorChecking": {
+                "type": "object",
+                "properties": {
+                  "min_value": {
+                    "type": "number"
+                  },
+                  "max_value": {
+                    "type": "number"
+                  },
+                  "min_alarm": {
+                    "type": "number"
+                  },
+                  "max_alarm": {
+                    "type": "number"
+                  },
+                  "min_warning": {
+                    "type": "number"
+                  },
+                  "max_warning": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "min_value",
+                  "max_value"
+                ]
+              },
+              "attributeInterlocks": {
+                "type": "object",
+                "properties": {
+                  "writable": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "writable"
+                ]
+              },
+              "dataSimulationParameters": {
+                "type": "object",
+                "properties": {
+                  "quantity_simulation_type": {
+                    "type": "string",
+                    "enum": ["ConstantQuantity", "GaussianSlewLimited"]
+                  },
+                  "min_bound": {
+                    "type": "number"
+                  },
+                  "max_bound": {
+                    "type": "number"
+                  },
+                  "mean": {
+                    "type": "number"
+                  },
+                  "max_slew_rate": {
+                    "type": "number"
+                  },
+                  "update_period": {
+                    "type": "number"
+                  },
+                  "std_dev": {
+                    "type": "number"
+                  },
+                  "initial_value": {
+                    "type": ["string", "number"]
+                  }
+                },
+                "required": [
+                  "quantity_simulation_type"
+                ]
+              },
+              "attributeControlSystem": {
+                "type": "object",
+                "properties": {
+                  "display_level": {
+                    "type": "string"
+                  },
+                  "period": {
+                    "type": "number"
+                  },
+                  "EventSettings": {
+                    "type": "object",
+                    "properties": {
+                      "eventArchiveCriteria": {
+                        "type": "object",
+                        "properties": {
+                          "archive_abs_change": {
+                            "type": "number"
+                          },
+                          "archive_period": {
+                            "type": "number"
+                          },
+                          "archive_rel_change": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "archive_abs_change",
+                          "archive_period",
+                          "archive_rel_change"
+                        ]
+                      },
+                      "eventCrateria": {
+                        "type": "object",
+                        "properties": {
+                          "abs_change": {
+                            "type": "number"
+                          },
+                          "event_period": {
+                            "type": "number"
+                          },
+                          "rel_change": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "abs_change",
+                          "event_period",
+                          "rel_change"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "eventArchiveCriteria",
+                      "eventCrateria"
+                    ]
+                  }
+                },
+                "required": [
+                  "display_level",
+                  "period"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "dataSimulationParameters"
+            ]
+          }
+        },
+        "required": [
+          "basicAttributeData"
+        ]
+      }
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "basicCommandData": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "uniqueItems": true
+              },
+              "description": {
+                "type": "string"
+              },
+              "actions": {
+                "type": "array",
+                "items": {}
+              },
+              "input_parameters": {
+                "type": "object",
+                "properties": {
+                  "dtype_in": {
+                    "type": "string"
+                  },
+                  "doc_in": {
+                    "type": "string"
+                  },
+                  "dformat_in": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "dtype_in",
+                  "doc_in",
+                  "dformat_in"
+                ]
+              },
+              "output_parameters": {
+                "type": "object",
+                "properties": {
+                  "dtype_out": {
+                    "type": "string"
+                  },
+                  "doc_out": {
+                    "type": "string"
+                  },
+                  "dformat_out": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "dtype_out",
+                  "doc_out",
+                  "dformat_out"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "input_parameters",
+              "output_parameters"
+            ]
+          }
+        },
+        "required": [
+          "basicCommandData"
+        ]
+      }
+    },
+    "deviceProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "propertyData": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "uniqueItems": true
+              },
+              "type": {
+                "type": "string"
+              },
+              "DefaultPropValue": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "type",
+              "DefaultPropValue"
+            ]
+          }
+        }
+      }
+    },
+    "class_overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "override_class": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "module_directory": {
+                "type": "string"
+              },
+              "module_name": {
+                "type": "string"
+              },
+              "class_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "module_directory",
+              "module_name",
+              "class_name"
+            ]
+          }
+        }
+      }
+    },
+    "sim_control_class_overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "override_class": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "module_directory": {
+                "type": "string"
+              },
+              "module_name": {
+                "type": "string"
+              },
+              "class_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "module_directory",
+              "module_name",
+              "class_name"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

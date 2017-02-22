@@ -43,16 +43,6 @@ class OverrideWeather(object):
         """
         tango_dev.set_state(DevState.OFF)
 
-    def action_stoprainfall(self, model, tango_dev=None, data_input=None):
-        """Totally sets the simulated quantity rainfall to a constant value of zero.
-        """
-        try:
-            quant_rainfall = model.sim_quantities['rainfall']
-        except KeyError:
-            raise WeatherSimError("Quantity 'rainfall' is not in the Weather model")
-        else:
-            quant_rainfall.max_bound = 0.0
-
     def action_add(self, model, tango_dev=None, data_input=None):
         """Add two or more numbers together and return their sum.
         """
@@ -63,22 +53,6 @@ class OverrideWeather(object):
         """Takes a string and multiplies it by a constant integer value of 3.
         """
         return 3 * data_input
-
-    def action_stopquantitysimulation(self, model, tango_dev=None, data_input=None):
-        """Totally sets the simulated quantities` values to a constant value of zero.
-        """
-        for quantity in data_input:
-            try:
-                simulated_quantity = model.sim_quantities[quantity]
-            except KeyError:
-                raise WeatherSimError("Quantity {} not in the Weather model".format(
-                    quantity))
-            else:
-                if hasattr(simulated_quantity, 'max_bound'):
-                    simulated_quantity.max_bound = 0.0
-                else:
-                    MODULE_LOGGER.debug("Quantity %s is not a GaussianSlewLimited"
-                                        " instance.", simulated_quantity)
 
 
 class OverrideVds(object):
@@ -399,3 +373,120 @@ class OverrideVds(object):
             receptor_number = int(receptor_name)
         return receptor_number
 
+
+class OverrideWeatherSimControl(object):
+    """An example of the override class for the TANGO device class 'SimControl'.
+    It provides all the implementations of the command handler functions for the
+    commands required to stimulate a running TANGO device in real time.
+    """
+
+    def test_action_setattributemaxvalue(
+            self, model, tango_dev=None, data_input=None):
+        """This command sets an attribute value to its maximum value to set its quality to
+        Alarm state to warning.
+        """
+        quantity_name = data_input
+        try:
+            simulated_quantity = model.sim_quantities[quantity_name]
+        except KeyError:
+            raise WeatherSimError("Quantity {} not in the Weather model".format(
+                 quantity_name))
+
+        try:
+            maximum_value = simulated_quantity.max_bound
+        except AttributeError:
+            raise WeatherSimError("Quantity {} is a ConstantQuantity instance".format(
+                 simulated_quantity))
+        else:
+            simulated_quantity.last_val = maximum_value
+
+    def test_action_stimulateattributeconfigurationerror(
+            self, model, tango_dev=None, data_input=None):
+        """This command sets the attribute maximum allowed value to be the same as that
+        minimum allowed value.
+        """
+        quantity_name = data_input
+        try:
+            model.sim_quantities[quantity_name]
+        except KeyError:
+            raise WeatherSimError("Quantity {} not in the Weather model".format(
+                quantity_name))
+        else:
+            tango_dev.get_attribute_config(quantity_name)[0].max_value = (
+                    tango_dev.get_attribute_config(quantity_name)[0].min_value)
+
+    def test_action_simulatefaultdevicestate(
+            self, model, tango_dev=None, data_input=None):
+        """This command sets the current device state to fault/on.
+        """
+        if str(tango_dev.get_status()) in ['FAULT']:
+            tango_dev.set_state(DevState.ON)
+        else:
+            tango_dev.set_state(DevState.FAULT)
+
+    def test_action_stopquantitysimulation(
+            self, model, tango_dev=None, data_input=None):
+        """Totally sets the simulated quantities` values to a constant value of zero.
+        """
+        for quantity in data_input:
+            try:
+                simulated_quantity = model.sim_quantities[quantity]
+            except KeyError:
+                raise WeatherSimError("Quantity {} not in the Weather model".format(
+                    quantity))
+            else:
+                if hasattr(simulated_quantity, 'max_bound'):
+                    simulated_quantity.max_bound = 0.0
+                else:
+                    MODULE_LOGGER.debug("Quantity %s is not a GaussianSlewLimited"
+                                        " instance.", simulated_quantity)
+
+    def test_action_stoprainfall(self, model, tango_dev=None, data_input=None):
+        """Totally sets the simulated quantity rainfall to a constant value of zero.
+        """
+        try:
+            quant_rainfall = model.sim_quantities['rainfall']
+        except KeyError:
+            raise WeatherSimError("Quantity 'rainfall' is not in the Weather model")
+        else:
+            quant_rainfall.max_bound = 0.0
+
+    def test_action_setoffwindstorm(self, model, tango_dev=None, data_input=None):
+
+        try:
+            quant_wind_speed = model.sim_quantities['wind_speed']
+        except KeyError:
+            raise WeatherSimError("Quantity 'wind_speed' is not in the Weather model.")
+        else:
+            quant_wind_speed.max_bound = 1000.0 * float(
+                quant_wind_speed.meta['max_value'])
+            quant_wind_speed.mean = 1000.0 * float(quant_wind_speed.meta['max_value'])
+
+    def test_action_stopwindstorm(self, model, tango_dev=None, data_input=None):
+
+        try:
+            quant_wind_speed = model.sim_quantities['wind_speed']
+        except KeyError:
+            raise WeatherSimError("Quantity 'wind_speed' is not in the Weather model.")
+        else:
+            quant_wind_speed.max_bound = float(quant_wind_speed.meta['max_bound'])
+            quant_wind_speed.mean = 1.00
+
+    def test_action_setoffrainstorm(self, model, tango_dev=None, data_input=None):
+        try:
+            quant_rainfall = model.sim_quantities['rainfall']
+        except KeyError:
+            raise WeatherSimError("Quantity 'rainfall' is not in the Weather model.")
+        else:
+            quant_rainfall.max_bound = 1000.0 * float(quant_rainfall.meta['max_value'])
+            quant_rainfall.mean = 1000.0 * float(quant_rainfall.meta['max_value'])
+
+    def test_action_stoprainstorm(self, model, tango_dev=None, data_input=None):
+
+        try:
+            quant_rainfall = model.sim_quantities['rainfall']
+        except KeyError:
+            raise WeatherSimError("Quantity 'rainfall' is not in the Weather model.")
+        else:
+            quant_rainfall.max_bound = float(quant_rainfall.meta['max_bound'])
+            quant_rainfall.mean = 1.00

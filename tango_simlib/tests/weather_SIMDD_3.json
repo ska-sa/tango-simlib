@@ -1,0 +1,385 @@
+{"class_name": "Weather",
+    "dynamicAttributes": [
+        {
+            "basicAttributeData": {
+                "name": "temperature",
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": -10,
+                    "max_bound": 50,
+                    "mean": 25,
+                    "max_slew_rate": 1,
+                    "update_period": 1000,
+                    "std_dev": 5
+                }
+            }
+        },
+        {
+            "basicAttributeData": {
+                "name": "insolation",
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": 0,
+                    "max_bound": 1200,
+                    "mean": 500,
+                    "max_slew_rate": 5,
+                    "update_period": 1000,
+                    "std_dev": 100
+                }
+            }
+        },
+        {
+            "basicAttributeData": {
+                "name": "pressure",
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": 0,
+                    "max_bound": 1200,
+                    "mean": 500,
+                    "max_slew_rate": 5,
+                    "update_period": 1000,
+                    "std_dev": 50
+                }
+            }
+        },
+        {
+            "basicAttributeData": {
+                "name": "rainfall",
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": 0,
+                    "max_bound": 3.2,
+                    "mean": 1.5,
+                    "max_slew_rate": 0.2,
+                    "update_period": 1000,
+                    "std_dev": 1
+                }
+            }
+        },
+        {
+            "basicAttributeData": {
+                "name": "relative_humidity",
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": 0,
+                    "max_bound": 150,
+                    "mean": 65,
+                    "max_slew_rate": 10,
+                    "update_period": 1000,
+                    "std_dev": 5
+                }
+            }
+        },
+        {
+            "basicAttributeData": {
+                "name": "wind_speed",
+                "attributeErrorChecking": {
+                    "min_value": 0,
+                    "max_value": 30,
+                    "max_alarm": 25,
+                    "max_warning": 20
+                },
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": 0,
+                    "max_bound": 100,
+                    "mean": 3,
+                    "max_slew_rate": 3,
+                    "update_period": 1000,
+                    "std_dev": 2
+                }
+            }
+        },
+        {
+            "basicAttributeData": {
+                "name": "wind_direction",
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "GaussianSlewLimited",
+                    "min_bound": 0,
+                    "max_bound": 359.99,
+                    "mean": 0,
+                    "max_slew_rate": 60,
+                    "update_period": 1000,
+                    "std_dev": 10
+                }
+            }
+        },
+        {
+            "basicAttributeData": {
+                "name": "input_comms_ok",
+                "dataSimulationParameters": {
+                  "quantity_simulation_type": "ConstantQuantity"
+                }
+            }
+        }
+    ],
+    "commands": [
+        {
+            "basicCommandData": {
+                "name": "On",
+                "description": "Turns On Device",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "Void",
+                    "doc_in": "No input parameter",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "Void",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+    {
+            "basicCommandData": {
+                "name": "SetTemperature",
+                "description": "Sets the temperature value",
+                "actions": [
+                    {
+                     "behaviour": "input_transform",
+                     "destination_variable": "temporary_variable"
+                    },
+                    {
+                     "behaviour": "side_effect",
+                     "source_variable": "temporary_variable",
+                     "destination_quantity": "temperature"
+                    },
+                    {"behaviour": "output_return",
+                     "source_variable": "temporary_variable"
+                    }],
+                "input_parameters": {
+                    "dtype_in": "Double",
+                    "doc_in": "Value to set quantity",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "Double",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+        {
+            "basicCommandData": {
+                "name": "Off",
+                "description": "Turns Off Device",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "Void",
+                    "doc_in": "No input parameter",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "Void",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+    {
+            "basicCommandData": {
+                "name": "test_StopRainfall",
+                "description": "Stops the rain",
+                "input_parameters": {
+                    "dtype_in": "Void",
+                    "doc_in": "No input parameter",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "Void",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+        {
+            "basicCommandData": {
+                "name": "Add",
+                "description": "Add two or more numbers together",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "VarDoubleArray",
+                    "doc_in": "Takes an array of at least two numerals",
+                    "dformat_in": "Spectrum"
+                },
+                "output_parameters": {
+                    "dtype_out": "Double",
+                    "doc_out": "Returns the sum of the values",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+        {
+            "basicCommandData": {
+                "name": "MultiplyStringBy3",
+                "description": "Takes a string and multiplies it by a constant integer value of 3.",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "String",
+                    "doc_in": "A string of arbitrary characters.",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "String",
+                    "doc_out": "The input string multiplied 3 times",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+        {
+            "basicCommandData": {
+                "name": "test_StopQuantitySimulation",
+                "description": "Totally sets the simulated quantities` values to a constant value of zero.",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "VarStringArray",
+                    "doc_in": "A list of attribute names",
+                    "dformat_in": "Spectrum"
+                },
+                "output_parameters": {
+                    "dtype_out": "Void",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+        {
+            "basicCommandData": {
+                "name": "test_SetAttributeMaxValue",
+                "description": "Set the value of an attribute to its maximum value.",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "String",
+                    "doc_in": "A attribute's name",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "Void",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+        {
+            "basicCommandData": {
+                "name": "test_StimulateAttributeConfigurationError",
+                "description": "Sets the attribute maximum allowed value to be the same as the minimum allowed value.",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "String",
+                    "doc_in": "An attribute's name",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "Void",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+        {
+            "basicCommandData": {
+                "name": "test_SimulateFaultDeviceState",
+                "description": "Sets the device state to fault/on.",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "Void",
+                    "doc_in": "",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "Void",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+        {
+            "basicCommandData": {
+                "name": "test_SetOffWindStorm",
+                "description": "",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "Void",
+                    "doc_in": "",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "Void",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+        {
+            "basicCommandData": {
+                "name": "test_StopWindStorm",
+                "description": "",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "Void",
+                    "doc_in": "",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "Void",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+        {
+            "basicCommandData": {
+                "name": "test_SetOffRainStorm",
+                "description": "",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "Void",
+                    "doc_in": "A list of attribute names",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "Void",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        },
+        {
+            "basicCommandData": {
+                "name": "test_StopRainStorm",
+                "description": "",
+                "actions": [],
+                "input_parameters": {
+                    "dtype_in": "Void",
+                    "doc_in": "",
+                    "dformat_in": "Scalar"
+                },
+                "output_parameters": {
+                    "dtype_out": "Void",
+                    "doc_out": "Command responds",
+                    "dformat_out": "Scalar"
+                }
+            }
+        }
+    ],
+    "class_overrides": [
+        {
+	          "override_class": {
+		        "name": "Sim_Weather_Override",
+		        "module_directory": "None",
+		        "module_name": "tango_simlib.examples.override_class",
+		        "class_name": "OverrideWeather"
+          }
+	      },
+        {
+	          "override_class": {
+		        "name": "SimControl_Weather_Override",
+		        "module_directory": "None",
+		        "module_name": "tango_simlib.examples.override_class",
+		        "class_name": "OverrideWeatherSimControl"
+	      }
+	}
+    ]
+}

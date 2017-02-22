@@ -27,7 +27,7 @@ from functools import partial
 from tango_simlib.model import Model
 from tango_simlib.simdd_json_parser import SimddParser
 from tango_simlib.sim_sdd_xml_parser import SDDParser
-from tango_simlib.sim_test_interface import SimControl
+from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.sim_xmi_parser import (XmiParser, PopulateModelQuantities,
                                          PopulateModelActions)
 from tango_simlib import helper_module
@@ -49,7 +49,7 @@ class TangoDeviceServerBase(Device):
             doc='Complete path name of the POGO xmi file to be parsed')
 
     def init_device(self):
-        Device.init_device(self)
+        super(TangoDeviceServerBase, self).init_device()
         name = self.get_name()
         self.model = None
         self.instances[name] = self
@@ -141,6 +141,9 @@ def get_tango_device_server(model, sim_data_files):
     class TangoDeviceServerCommands(object):
         pass
 
+    class TangoTestDeviceServerCommands(object):
+        pass
+
     def generate_cmd_handler(action_name, action_handler):
         def cmd_handler(tango_device, input_parameters=None):
             return action_handler(tango_dev=tango_device, data_input=input_parameters)
@@ -168,12 +171,36 @@ def get_tango_device_server(model, sim_data_files):
         # it to the class
         setattr(TangoDeviceServerCommands, action_name, cmd_handler)
 
+    for action_name, action_handler in model.test_sim_actions.items():
+        cmd_handler = generate_cmd_handler(action_name, action_handler)
+        # You might need to turn cmd_handler into an unbound method before you add
+        # it to the class
+        setattr(TangoTestDeviceServerCommands, action_name, cmd_handler)
+
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerCommands):
         __metaclass__ = DeviceMeta
 
         def init_device(self):
-            TangoDeviceServerBase.init_device(self)
+            super(TangoDeviceServer, self).init_device()
             self.model = model
+            self._reset_to_default_state()
+
+        def _reset_to_default_state(self):
+            """Reset the model's quantities' adjustable attributes to their default
+            values.
+            """
+            simulated_quantities = self.model.sim_quantities.values()
+            for simulated_quantity in simulated_quantities:
+                sim_quantity_meta_info = simulated_quantity.meta
+                adjustable_attrs = simulated_quantity.adjustable_attributes
+
+                for attr in adjustable_attrs:
+                    try:
+                        adjustable_val = float(sim_quantity_meta_info[attr])
+                    except KeyError:
+                        adjustable_val = 0.0
+                    setattr(simulated_quantity, attr, adjustable_val)
+
 
         def initialize_dynamic_attributes(self):
             model_sim_quants = self.model.sim_quantities
@@ -198,6 +225,18 @@ def get_tango_device_server(model, sim_data_files):
                         MODULE_LOGGER.info("No setter function for " + prop + " property")
                 attr.set_default_properties(attr_props)
                 self.add_attribute(attr, self.read_attributes)
+
+    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerCommands):
+        __metaclass__ = DeviceMeta
+
+        instances = weakref.WeakValueDictionary()
+
+        def init_device(self):
+            super(SimControl, self).init_device()
+
+            name = self.get_name()
+            self.instances[name] = self
+
     klass_name = get_device_class(sim_data_files)
     TangoDeviceServer.TangoClassName = klass_name
     TangoDeviceServer.__name__ = klass_name

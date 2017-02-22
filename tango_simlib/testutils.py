@@ -1,8 +1,30 @@
 import logging
 import time
 import mock
+import shutil
+import tempfile
+import sys
+import errno
 
 LOGGER = logging.getLogger(__name__)
+
+def cleanup_tempdir(test_instance, *mkdtemp_args, **mkdtemp_kwargs):
+    """
+    Return filname of a new tempfile and add cleanup callback to test_instance.
+
+    Will not raise an error if the directory is not present when trying to delete.
+
+    Extra args and kwargs are passed on to the tempfile.mkdtemp call
+    """
+    dirname = tempfile.mkdtemp(*mkdtemp_args, **mkdtemp_kwargs)
+    def cleanup():
+        try:
+            shutil.rmtree(dirname)
+        except OSError, e:
+            if e.errno == errno.ENOENT: pass
+            else: raise
+    test_instance.addCleanup(cleanup)
+    return dirname
 
 def set_attributes_polling(test_case, device_proxy, device_server, poll_periods):
     """Set attribute polling and restore after test

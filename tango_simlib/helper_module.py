@@ -10,10 +10,41 @@ DEFAULT_TANGO_DEVICE_ATTRIBUTES = frozenset(['State', 'Status'])
 SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR = set([
     'Status',   # Tango library attribute
     'State',    # Tango library attribute
-    'sensor_name',    # Attribute indentifier for sensor to be controlled
+    'attribute_name',    # Attribute indentifier for attribute to be controlled
     'pause_active',    # Flag for pausing the model updates
-    'control_sensor_list_names',  # List of sensors to control
+    'control_attribute_list_names',  # List of attributes to control
     ])
+
+# Mandatory parameters required to create a well configure Tango attribute.
+DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE = {
+    'abs_change': '',
+    'archive_abs_change': '',
+    'archive_period': '',
+    'archive_rel_change': '',
+    'data_format': '',
+    'format': '',
+    'data_type': '',
+    'delta_t': '',
+    'delta_val': '',
+    'description': '',
+    'display_level': '',
+    'event_period': '',
+    'label': '',
+    'max_alarm': '',
+    'max_warning': '',
+    'max_dim_x': '',
+    'max_dim_y': '',
+    'max_value': '',
+    'min_alarm': '',
+    'min_value': '',
+    'min_warning': '',
+    'name': '',
+    'period': '',
+    'rel_change': '',
+    'unit': '',
+    'update_period': '',
+    'writable': ''
+}
 
 
 def get_server_name():

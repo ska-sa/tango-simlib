@@ -20,7 +20,6 @@ import imp
 import xml.etree.ElementTree as ET
 import PyTango
 
-from functools import partial
 from PyTango import (DevBoolean, DevString, DevEnum, AttrDataFormat,
                      CmdArgType, DevDouble, DevFloat, DevLong, DevVoid)
 
@@ -44,6 +43,14 @@ ARBITRARY_DATA_TYPE_RETURN_VALUES = {
     DevFloat: 8.1,
     DevLong: 3,
     DevVoid: None}
+
+# In the case where an attribute with contant quantity simulation type is
+# specified, this dict is used to convert the initial value if specified to
+# the data-type corresponding to the attribute data-type.
+INITIAL_CONTANT_VALUE_TYPES = {
+    DevString: (str, ""),
+    DevDouble: (float, 0),
+    DevBoolean: (bool, False)}
 
 # TODO(KM 31-10-2016): Need to add xmi attributes' properties that are currently
 # not being handled by the parser e.g. [displayLevel, enumLabels] etc.
@@ -657,14 +664,38 @@ class PopulateModelQuantities(object):
                                     self.parser_instance.data_description_file_name))
                 model_attr_props = attr_props
             else:
-                model_attr_props.update(attr_props)
+                # Before the model attribute props dict is updated, the
+                # parameter keys with no values specified from the attribute
+                # props template are removed.
+                # i.e. All optional parameters not provided in the SIMDD
+                attr_props = dict((param_key, param_val)
+                                  for param_key, param_val in attr_props.iteritems()
+                                  if param_val)
+                model_attr_props = dict(model_attr_props.items() + attr_props.items())
 
-            if model_attr_props.has_key('quantity_type'):
-                if model_attr_props['quantity_type'] in ['ConstantQuantity']:
-                    self.sim_model.sim_quantities[attr_name] = (
-                        partial(quantities.registry[attr_props['quantity_type']],
-                                start_time=start_time)(meta=model_attr_props,
-                                                       start_value=True))
+            if model_attr_props.has_key('quantity_simulation_type'):
+                if model_attr_props['quantity_simulation_type'] == 'ConstantQuantity':
+                    try:
+                        initial_value = model_attr_props['initial_value']
+                    except KeyError:
+                        # `initial_value` is an optional parameter, thus if not
+                        # specified in the SIMDD datafile, an initial value of
+                        # default value of is assigned to the attribute
+                        # quantity initial value
+                        initial_value = None
+                        MODULE_LOGGER.info(
+                            "Parameter `initial_value` does not exist for"
+                            "attribute {}. Default will be used".format(
+                                model_attr_props['name']))
+                    attr_data_type = model_attr_props['data_type']
+                    init_val = (initial_value if initial_value not in [None, ""]
+                                else INITIAL_CONTANT_VALUE_TYPES[attr_data_type][-1])
+                    start_val = INITIAL_CONTANT_VALUE_TYPES[attr_data_type][0](init_val)
+                    quantity_factory = (
+                            quantities.registry[attr_props['quantity_simulation_type']])
+                    self.sim_model.sim_quantities[attr_name] = quantity_factory(
+                            start_time=start_time, meta=model_attr_props,
+                            start_value=start_val)
                 else:
                     try:
                         sim_attr_quantities = self.sim_attribute_quantities(
@@ -679,14 +710,14 @@ class PopulateModelQuantities(object):
                             " file [{}] has no mininum or maximum values set".format(
                                 attr_name,
                                 self.parser_instance.data_description_file_name))
-                    self.sim_model.sim_quantities[attr_name] = (
-                        partial(quantities.registry[attr_props['quantity_type']],
-                                start_time=start_time)(meta=model_attr_props,
-                                                       **sim_attr_quantities))
+                    quantity_factory = (
+                            quantities.registry[attr_props['quantity_simulation_type']])
+                    self.sim_model.sim_quantities[attr_name] = quantity_factory(
+                            start_time=start_time, meta=model_attr_props,
+                            **sim_attr_quantities)
             else:
-                self.sim_model.sim_quantities[attr_name] = (
-                    partial(quantities.ConstantQuantity, start_time=start_time)
-                    (meta=model_attr_props, start_value=True))
+                self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
+                        start_time=start_time, meta=model_attr_props, start_value=True)
 
     def sim_attribute_quantities(self, min_bound, max_bound, max_slew_rate,
                                  mean, std_dev):
@@ -750,17 +781,9 @@ class PopulateModelActions(object):
     def add_actions(self):
         command_info = self.parser_instance.get_reformatted_cmd_metadata()
         override_info = self.parser_instance.get_reformatted_override_metadata()
+        instances = {}
         if override_info != {}:
-            for klass_info in override_info.values():
-                if klass_info['module_directory'] == 'None':
-                    module = importlib.import_module(klass_info['module_name'])
-                else:
-                    module = imp.load_source(klass_info['module_name'].split('.')[-1],
-                                             klass_info['module_directory'])
-                klass = getattr(module, klass_info['class_name'])
-                instance = klass()
-        else:
-            instance = None
+            instances = self._get_class_instances(override_info)
 
         for cmd_name, cmd_meta in command_info.items():
             # Exclude the TANGO default commands as they have their own built in handlers
@@ -777,31 +800,68 @@ class PopulateModelActions(object):
             # {'behaviour': 'output_return',
             # 'source_variable': 'temporary_variable'}]
             actions = cmd_meta.get('actions', [])
-            instance_attributes = dir(instance)
-            instance_attributes_list = [attr.lower() for attr in instance_attributes]
-            attr_occurences = instance_attributes_list.count(
-                'action_{}'.format(cmd_name.lower()))
-            # Check if there is only one override class method defined for each command
-            if attr_occurences > MAX_NUM_OF_CLASS_ATTR_OCCURENCE:
-                raise Exception("The command '{}' has multiple override methods defined"
-                                " in the override class".format(cmd_name))
-            # Assuming that there is only one override method defined, now we check if
-            # it is in the correct letter case.
-            elif attr_occurences == MAX_NUM_OF_CLASS_ATTR_OCCURENCE:
-                try:
-                    instance_attributes.index('action_{}'.format(cmd_name.lower()))
-                except ValueError:
-                    raise Exception(
-                        "Only lower-case override method names are supported")
+            instance = None
+            if cmd_name.startswith('test_'):
+                cmd_name = cmd_name.split('test_')[1]
+                for instance_ in instances:
+                    if instance_.startswith('SimControl'):
+                        instance = instances[instance_]
+                self._check_override_action_presence(cmd_name, instance,
+                                                     'test_action_{}')
+                handler = getattr(
+                    instance, 'test_action_{}'.format(cmd_name.lower()),
+                    self.generate_action_handler(cmd_name, cmd_meta['dtype_out'],
+                                                 actions))
+                self.sim_model.set_test_sim_action(cmd_name, handler)
+            else:
+                for instance_ in instances:
+                    if instance_.startswith('Sim'):
+                        instance = instances[instance_]
+                self._check_override_action_presence(cmd_name, instance, 'action_{}')
+                handler = getattr(instance, 'action_{}'.format(cmd_name.lower()),
+                                  self.generate_action_handler(
+                                      cmd_name, cmd_meta['dtype_out'], actions))
 
-            handler = getattr(instance, 'action_{}'.format(cmd_name.lower()),
-                              self.generate_action_handler(
-                              cmd_name, cmd_meta['dtype_out'], actions))
-
-            self.sim_model.set_sim_action(cmd_name, handler)
+                self.sim_model.set_sim_action(cmd_name, handler)
             # Might store the action's metadata in the sim_actions dictionary
             # instead of creating a separate dict.
-            self.sim_model.sim_actions_meta[cmd_name] = cmd_meta
+            try:
+                self.sim_model.sim_actions_meta[cmd_name.split('test_')[1]] = cmd_meta
+            except IndexError:
+                self.sim_model.sim_actions_meta[cmd_name] = cmd_meta
+
+    def _get_class_instances(self, override_class_info):
+        instances = {}
+        for klass_info in override_class_info.values():
+            if klass_info['module_directory'] == 'None':
+                module = importlib.import_module(klass_info['module_name'])
+            else:
+                sys.path.append(klass_info['module_directory'])
+                module = importlib.import_module(klass_info['module_name'])
+                sys.path.remove(klass_info['module_directory'])
+            klass = getattr(module, klass_info['class_name'])
+            instance = klass()
+            instances[klass_info['name']] = instance
+
+        return instances
+
+    def _check_override_action_presence(self, cmd_name, instance, action_type):
+        instance_attributes = dir(instance)
+        instance_attributes_list = [attr.lower() for attr in instance_attributes]
+        attr_occurences = instance_attributes_list.count(
+            action_type.format(cmd_name.lower()))
+        # Check if there is only one override class method defined for each command
+        if attr_occurences > MAX_NUM_OF_CLASS_ATTR_OCCURENCE:
+            raise Exception("The command '{}' has multiple override methods defined"
+                            " in the override class".format(cmd_name))
+        # Assuming that there is only one override method defined, now we check if it
+        # is in the correct letter case.
+        elif attr_occurences == MAX_NUM_OF_CLASS_ATTR_OCCURENCE:
+            try:
+                instance_attributes.index(action_type.format(cmd_name.lower()))
+            except ValueError:
+                raise Exception("Only lower-case overide method names are supported.")
+
 
     def generate_action_handler(self, action_name, action_output_type, actions=None):
         """Generates and returns an action handler to manage tango commands

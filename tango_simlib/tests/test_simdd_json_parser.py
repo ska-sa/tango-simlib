@@ -25,13 +25,6 @@ TANGO_CMD_PARAMS_NAME_MAP = {
     'doc_out': 'out_type_desc',
     'dtype_out': 'out_type'}
 
-# Mandatory parameters required to create a well configure Tango attribute.
-EXPECTED_MANDATORY_ATTR_PARAMETERS = frozenset([
-    "max_dim_x", "max_dim_y", "data_format", "period",
-    "data_type", "writable", "name", "description", "delta_val",
-    "max_alarm", "max_value", "min_value", "max_warning", "min_warning",
-    "min_alarm", "unit", "delta_t", "label", "format"])
-
 # Mandatory parameters required to create a well configure Tango command.
 EXPECTED_MANDATORY_CMD_PARAMETERS = frozenset([
     'dformat_in', 'dformat_out', 'doc_in',
@@ -67,11 +60,13 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
         'min_alarm': '-9',
         'min_bound': '-10',
         'min_value': '-10',
-        "min_warning": '-8',
-        "max_warning": '49',
+        'min_warning': '-8',
+        'max_warning': '49',
         'name': 'temperature',
+        'quantity_simulation_type': 'GaussianSlewLimited',
         'period': '1000',
         'rel_change': '10',
+        'std_dev': '5',
         'unit': 'Degrees Centrigrade',
         'update_period': '1000',
         'writable': 'READ'
@@ -110,10 +105,10 @@ class test_SimddJsonParser(GenericSetup):
 
         # Test if all the parsed attributes have the mandatory properties
         for attr_name, attribute_metadata in actual_parsed_attrs.items():
-            for param in EXPECTED_MANDATORY_ATTR_PARAMETERS:
+            for param in helper_module.DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE.keys():
                 self.assertIn(
                     param, attribute_metadata.keys(),
-                    "The parsed attribute '%s' does not the mandotory parameter "
+                    "The parsed attribute '%s' does not have the mandotory parameter "
                     "'%s' " % (attr_name, param))
 
         # Using the made up temperature attribute expected results as we
@@ -372,41 +367,6 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
                          expected_result)
         self.assertEqual(getattr(self.device.read_attribute('State'), 'value'),
                          PyTango.DevState.ON)
-
-    def test_StopRainfall_command(self):
-        """Testing that the Tango device weather simulator 'detects' no rainfall when
-        the StopRainfall command is executed.
-        """
-        command_name = 'StopRainfall'
-        expected_result = 0.0
-        self.device.command_inout(command_name)
-        # The model needs 'dt' to be greater than the min_update_period for it to update
-        # the model.quantity_state dictionary, so by manipulating the value of the last
-        # update time of the model it will  ensure that the model.quantity_state
-        # dictionary will be updated before reading the attribute value.
-        self.instance.model.last_update_time = 0
-        self.assertEqual(expected_result,
-                         getattr(self.device.read_attribute('Rainfall'), 'value'),
-                         "The value override action didn't execute successfully")
-
-    def test_StopQuantitySimulation_command(self):
-        """Testing that the Tango device weather simulation of quantities can be halted.
-        """
-        command_name = 'StopQuantitySimulation'
-        expected_result = {'temperature': 0.0,
-                           'insolation': 0.0}
-        self.device.command_inout(command_name, expected_result.keys())
-        # The model needs 'dt' to be greater than the min_update_period for it to update
-        # the model.quantity_state dictionary, so by manipulating the value of the last
-        # update time of the model it will  ensure that the model.quantity_state
-        # dictionary will be updated before reading the attribute value.
-        self.instance.model.last_update_time = 0
-        for quantity_name, quantity_value in expected_result.items():
-            self.assertEqual(quantity_value,
-                             getattr(self.device.read_attribute(quantity_name), 'value'),
-                             "The {} quantity value in the model does not match with the"
-                             " value read from the device attribute.".format(
-                                 quantity_name))
 
     def test_Add_command(self):
         """Testing that the Tango device command can take input of an array type and
