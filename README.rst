@@ -176,11 +176,28 @@ the MkatVds_SIMDD.json files with a SimControl instance using tango_launcher
                           --server-instance tango-launched\
  --put-device-property mkat_simcontrol/vds/1:model_key:mkat_sim/vds/1
 
-Once the tango-simlib-tango-launcher script has been executed, the TANGO server will be created in the TANGO database. The TANGO device server will be registered along with its properties and the server process will be started. This will start the server instance which has the two classes 'Weather' and 'WeatherSimControl' registered under it, respectively. Which in turn will start thee devices from each of the TANGO classes.
+Once the tango-simlib-tango-launcher script has been executed, the TANGO server will be created in the TANGO database. The TANGO device server will be registered along with its properties and the server process will be started. This will start the server instance which has the two classes 'Weather' and 'WeatherSimControl' registered under it, respectively. Which in turn will start the devices from each of the TANGO classes.
+
+Screenshots of Interfaces
+-------------------------
 
 Here is what you would have in your TANGO DB once your devices have been registered
 
+.. class:: center
+    
+    .. image:: https://cloud.githubusercontent.com/assets/16665803/23232667/d322b3e8-f954-11e6-86df-942b3b7bd233.png
+        :alt: JIVE
+        :width: 100px
+        :align: center
+
 In this instance, we have the simulated device in an alarm state after executing the 'SetOffRainStorm' command on the test device interface, or what we call the simulator controller.
+
+.. class:: center
+
+    .. image:: https://cloud.githubusercontent.com/assets/16665803/23234302/5068380a-f95a-11e6-868c-9a0f3e9d1aac.png
+        :alt: Sim device
+        :width: 100px
+        :align: center
 
 
 =======
@@ -195,6 +212,9 @@ Contribute
 
 Contributions are always welcome! Please ensure that you adhere to our coding standards CAM_Style_guide_.
 
+
+
+
 - [-] Add basic Readme
 
   - [X] Introduction and purpose
@@ -202,11 +222,11 @@ Contributions are always welcome! Please ensure that you adhere to our coding st
     pre-existing example files
   - [X] Get/generate example simulators in an example folder
 
-    - [ ] XMI only
-    - [ ] XMI + SIMDD
-    - [ ] SIMDD only
+    - [X] XMI only
+    - [X] XMI + SIMDD
+    - [X] SIMDD only
 
-  - [ ] Screenshots of interfaces?
+  - [X] Screenshots of interfaces?
     - http://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository
   - [X] Link to SIMDD working document
   - [ ] Link to full documentation
