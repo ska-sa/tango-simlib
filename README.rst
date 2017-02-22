@@ -75,6 +75,7 @@ telescope to the TANGO world.
 .. _SKASA: http://www.ska.ac.za/
 .. _KATCP: http://pythonhosted.org/katcp/
 .. _SKA: https://www.skatelescope.org/
+.. _CAM_Style_guide: https://docs.google.com/document/d/1aZoIyR9tz5rCWr2qJKuMTmKp2IzHlFjrCFrpDDHFypM/edit?usp=sharing
 
 ===========
 Basic Usage
@@ -102,9 +103,9 @@ In the neare future, this package should be available on PYPI, allowing
   
     $ pip install tango-simlib
 
-==========
+=================
 Device Simulators
-==========
+=================
 
 Generating Simulators
 ---------------------
@@ -181,12 +182,25 @@ Here is what you would have in your TANGO DB once your devices have been registe
 
 In this instance, we have the simulated device in an alarm state after executing the 'SetOffRainStorm' command on the test device interface, or what we call the simulator controller.
 
+
+=======
+License
+=======
+
+This project is licensed under the BSD 3-Clause License - see https://opensource.org/licenses/BSD-3-Clause for details.
+
+==========
+Contribute
+==========
+
+Contributions are always welcome! Please ensure that you adhere to our coding standards CAM_Style_guide_.
+
 - [-] Add basic Readme
 
   - [X] Introduction and purpose
   - [X] Basic examples of use. I.e. just how to start up a simulator using
     pre-existing example files
-  - [ ] Get/generate example simulators in an example folder
+  - [X] Get/generate example simulators in an example folder
 
     - [ ] XMI only
     - [ ] XMI + SIMDD
@@ -196,7 +210,7 @@ In this instance, we have the simulated device in an alarm state after executing
     - http://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository
   - [X] Link to SIMDD working document
   - [ ] Link to full documentation
-  - [ ] Link to our coding standard. (If you would like to contribute, please
+  - [X] Link to our coding standard. (If you would like to contribute, please
     attempt to follow our coding standard)
 
  - [ ] Copy sphix toolflow from katcp
