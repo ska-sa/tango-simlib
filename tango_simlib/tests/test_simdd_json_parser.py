@@ -143,7 +143,6 @@ class test_PopulateModelQuantities(GenericSetup):
         """
         device_name = 'tango/device/instance'
         pmq = sim_xmi_parser.PopulateModelQuantities(self.simdd_parser, device_name)
-        import IPython; IPython.embed()
         self.assertEqual(device_name, pmq.sim_model.name,
                          "The device name and the model name do not match.")
         expected_quantities_list = ['insolation', 'temperature',
