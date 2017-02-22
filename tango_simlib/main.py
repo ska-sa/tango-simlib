@@ -15,10 +15,10 @@ import threading
 
 from PyTango.server import server_run
 
-from tango_simlib.sim_test_interface import SimControl
+from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 
 
-def simulator_main(sim_class, sim_control_class=SimControl):
+def simulator_main(sim_class, sim_control_class=TangoTestDeviceServerBase):
     """Main function for a simulator with class sim_class
 
     sim_class is a tango.server.Device subclass
