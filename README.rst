@@ -84,7 +84,7 @@ Basic Usage
 Installation
 ------------
 
-Note that installation requires the** *TANGO* binary prerequisites to be
+Note that installation requires the *TANGO* binary prerequisites to be
 installed. If you cannot install the PyTango_ package you will not be able to
 install `tango-simlib`.
 
