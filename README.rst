@@ -1,6 +1,6 @@
-=====================================================
-tango-simlib: Easily generate TANGO device simulators
-=====================================================
+=======================================================
+tango-simlib: Easily generate *TANGO* device simulators
+=======================================================
 
 ============
 Introduction
@@ -9,11 +9,11 @@ Introduction
 `tango-simlib` is a library that aids the data-driven development of TANGO_ device
 simulators. It aims to make it easy to develop basic simulators while making it
 possible to implement more complex simulators. In addition to the simulated
-device interface, a separate TANGO simulation-control interface is generated,
+device interface, a separate *TANGO* simulation-control interface is generated,
 allowing the simulator to be manipulated via a back-channel to simulate
 e.g. failure conditions on the simulated device interface.
 
-Using only the basic TANGO interface description captured via a POGO_ generated
+Using only the basic *TANGO* interface description captured via a POGO_ generated
 XMI file, a basic simulator with randomly varying attributes and no-op command
 handlers can be generated with no further coding. Attribute simulation
 parameters and simple command behaviour can be specified using a Simulator
@@ -30,39 +30,39 @@ to take effect.
 Rationale
 ---------
 
-During the development of the control and monitoring (CAM) systems for the
+During the development of the control and monitoring (*CAM*) systems for the
 KAT-7_ (KAT-7-wiki_) and MeerKAT_ (MeerKAT-wiki_) at SKASA_ it was found that
 having control-interface simulators available for all hardware and subsystems
-that CAM needs to control and monitor is an incredibly valuable resource. In
-early CAM development it:
+that *CAM* needs to control and monitor is an incredibly valuable resource. In
+early *CAM* development it:
 
- - Makes it possible to start developing the CAM system before hardware
+ - Makes it possible to start developing the *CAM* system before hardware
    or vendor-provided hardware simulators are available.
  - Allows gaps in interfaces to be identified early on in the development
    process.
 
-As development progresses, the full, actual, MeerKAT/KAT-7 CAM is run against
-the simulated devices, allowing CAM functionality to be tested without the need
+As development progresses, the full, actual, *MeerKAT*/*KAT-7* *CAM* is run against
+the simulated devices, allowing *CAM* functionality to be tested without the need
 of real telescope hardware. The simulators also expose a back-channel that can
 be used to modify the behaviour of the simulators during tests e.g. to simulate
-error conditions. This is exploited by CAM developers in their own development
+error conditions. This is exploited by *CAM* developers in their own development
 environments for day to day development tasks and also allows daily automated
 functional integration tests to be run. It was also found that initially having
 even a very simple simulator available is quite valuable, and that for many
 devices the simple simulator is always sufficient.
 
 
-The KAT-7 and MeerKAT telescopes use the Karoo Array Telescope Control Protocol
+The *KAT-7* and *MeerKAT* telescopes use the Karoo Array Telescope Control Protocol
 KATCP_ for inter-device, subsystem and component communications.
 In light of that a library was developed that makes it very easy to
-code a basic simulator, providing no-op command (KATCP request) handlers and
-randomly varying attribute (KATCP sensor) values along with the back-channel
+code a basic simulator, providing no-op command (*KATCP* request) handlers and
+randomly varying attribute (*KATCP* sensor) values along with the back-channel
 interface for "free".
 
 The planned SKA_ telescope project that the SKASA_ team is participating in has
 decided to standardise on the TANGO_ control systems framework. This library is
-an attempt to bring the same simulation approach used for the KAT-7 and MeerKAT
-telescope to the TANGO world.
+an attempt to bring the same simulation approach used for the *KAT-7* and *MeerKAT*
+telescope to the *TANGO* world.
 
 
 .. _TANGO: http://www.tango-controls.org/
@@ -84,7 +84,7 @@ Basic Usage
 Installation
 ------------
 
-Note that installation requires the TANGO binary prerequisites to be
+Note that installation requires the** *TANGO* binary prerequisites to be
 installed. If you cannot install the PyTango_ package you will not be able to
 install `tango-simlib`.
 
@@ -110,16 +110,17 @@ Device Simulators
 Generating Simulators
 ---------------------
 
-The basic way of generating a TANGO device simulator using this library is to make use of the tango simulator generator module.
+The basic way of generating a *TANGO* device simulator using this library is to make use of the *TANGO* simulator generator module.
 Give it a path to the description files (xmi or simdd or both).
 
 .. code-block:: bash
 
     $ tango-simlib-tango-simulator-generator --sim-data-file Weather.xmi\
                                  --dserver-name weather
+
 This will generate a python module file in your current working directory with a module name 'weather.py'.
 
-And in order to run this generated device simulator code, you can execute the tango-launcher script, a helper script which will register the TANGO device server, setup any required device properties and in turn start up the device server server process, all in one go.
+And in order to run this generated device simulator code, you can execute the tango-launcher script, a helper script which will register the *TANGO* device server, setup any required device properties and in turn start up the device server server process, all in one go.
 
 .. code-block:: bash
 
@@ -147,7 +148,7 @@ with a SimControl instance using tango_launcher
                           --server-instance tango-launched\
  --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
 
-Example of starting the weather simulator generated from the Weather_SIMDD.json
+Example of starting the *Weather* simulator generated from the Weather_SIMDD.json
 file with a SimControl instance using tango_launcher
 
 .. code-block:: bash
@@ -160,10 +161,10 @@ file with a SimControl instance using tango_launcher
                            --server-instance tango-launched\
   --put-device-property mkat_simcontrol/weather/2:model_key:mkat_sim/weather/2
 
-MeerKAT Video Display System simulator
-**************************************
+*MeerKAT* Video Display System simulator
+****************************************
 
-Example of starting the VDS simulator generated from both the MkatVds.xmi and
+Example of starting the *VDS* simulator generated from both the MkatVds.xmi and
 the MkatVds_SIMDD.json files with a SimControl instance using tango_launcher
 
 .. code-block:: bash
@@ -176,28 +177,33 @@ the MkatVds_SIMDD.json files with a SimControl instance using tango_launcher
                           --server-instance tango-launched\
  --put-device-property mkat_simcontrol/vds/1:model_key:mkat_sim/vds/1
 
-Once the tango-simlib-tango-launcher script has been executed, the TANGO server will be created in the TANGO database. The TANGO device server will be registered along with its properties and the server process will be started. This will start the server instance which has the two classes 'Weather' and 'WeatherSimControl' registered under it, respectively. Which in turn will start the devices from each of the TANGO classes.
+
+Once the *tango-simlib-tango-launcher* script has been executed, the *TANGO* server will be created in the *TANGO* database. The *TANGO* device server will be registered along with its properties and the server process will be started. This will start the server instance which has the two classes *Weather* and *WeatherSimControl* registered under it, respectively. Which in turn will start the devices from each of the *TANGO* classes.
 
 Screenshots of Interfaces
 -------------------------
 
-Here is what you would have in your TANGO DB once your devices have been registered
+This is what you would have in the *TANGO* DB once the device server has been registered
 
-.. class:: center
+   .. figure:: https://cloud.githubusercontent.com/assets/16665803/23232667/d322b3e8-f954-11e6-86df-942b3b7bd233.png
+    :width: 60%
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+    Figure 1. A snapshot of the *TANGO* DB viewed using *JIVE* - the *TANGO*-DB browser.
     
-    .. image:: https://cloud.githubusercontent.com/assets/16665803/23232667/d322b3e8-f954-11e6-86df-942b3b7bd233.png
-        :alt: JIVE
-        :width: 100px
-        :align: center
 
-In this instance, we have the simulated device in an alarm state after executing the 'SetOffRainStorm' command on the test device interface, or what we call the simulator controller.
+In this instance, we have the simulated device in an alarm state after executing the *SetOffRainStorm* command on the test device interface, or what we call the simulator controller.
 
-.. class:: center
+ 
+    .. figure:: https://cloud.githubusercontent.com/assets/16665803/23234302/5068380a-f95a-11e6-868c-9a0f3e9d1aac.png
+       :width: 60%
+       :align: center
+       :alt: alternate text
+       :figclass: align-center
 
-    .. image:: https://cloud.githubusercontent.com/assets/16665803/23234302/5068380a-f95a-11e6-868c-9a0f3e9d1aac.png
-        :alt: Sim device
-        :width: 100px
-        :align: center
+       Figure 2. A view of the sim device and its associated sim control interface using the *TANGO Application ToolKit* (ATK) client framework.
 
 
 =======
