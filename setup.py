@@ -26,11 +26,27 @@ setup(name="tango_simlib",
           'numpy',
           'nose_xunitmp',
           'python-devicetest'],
+      extras_require={
+          'docs': ["sphinx-pypi-upload",
+                   "numpydoc",
+                   "Sphinx"],
+          },
       zip_safe=False,
       include_package_data=True,
       dependency_links=[
           'git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
       entry_points={
           'console_scripts': [
-          ]},
+              'tango-simlib-tango-simulator-generator'
+              '= tango_simlib.tango_sim_generator:main',
+              'tango-simlib-tango-launcher = tango_simlib.tango_launcher:main',
+              'tango-simlib-tango-weather-xmi-DS'
+              '= tango_simlib.examples.weather1:main',
+              'tango-simlib-tango-weather-simdd-DS'
+              '= tango_simlib.examples.weather2:main',
+              'tango-simlib-tango-vds-xmi-simdd-DS'
+              '= tango_simlib.examples.mkat_vds:main',
+              'tango-simlib-tango-weather-xmi-simdd-DS'
+              '= tango_simlib.examples.weather3:main',
+          ]}
       )
