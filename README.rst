@@ -97,7 +97,7 @@ Installation from source, working dir where source is checked out
   
     $ pip install .
 
-In the neare future, this package should be available on PYPI, allowing
+In the nearer future, this package should be available on PYPI, allowing
 
 .. code-block:: bash
   
