@@ -10,7 +10,7 @@ from devicetest import TangoTestContext
 from katcore.testutils import cleanup_tempfile
 from katcp.testutils import start_thread_with_cleanup
 from tango_simlib import simdd_json_parser, helper_module
-from tango_simlib import sim_xmi_parser
+from tango_simlib import sim_xmi_parser, model
 from tango_simlib import tango_sim_generator
 from tango_simlib.examples import override_class
 from tango_simlib.testutils import ClassCleanupUnittestMixin
@@ -142,7 +142,7 @@ class test_PopulateModelQuantities(GenericSetup):
         the attributes specified in the XMI file.
         """
         device_name = 'tango/device/instance'
-        pmq = sim_xmi_parser.PopulateModelQuantities(self.simdd_parser, device_name)
+        pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
         self.assertEqual(device_name, pmq.sim_model.name,
                          "The device name and the model name do not match.")
         expected_quantities_list = ['insolation', 'temperature',
@@ -158,7 +158,7 @@ class test_PopulateModelQuantities(GenericSetup):
         data of the parsed attribute data captured in the SDD xml file.
         """
         device_name = 'tango/device/instance'
-        pmq = sim_xmi_parser.PopulateModelQuantities(self.simdd_parser, device_name)
+        pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
         self.assertEqual(device_name, pmq.sim_model.name,
                          "The device name and the model name do not match.")
         attribute_metadata = self.simdd_parser.get_reformatted_device_attr_metadata()
@@ -205,11 +205,11 @@ class test_PopulateModelActions(GenericSetup):
         the commands specified in the XMI file.
         """
         device_name = 'tango/device/instance'
-        pmq = sim_xmi_parser.PopulateModelQuantities(self.simdd_parser, device_name)
-        model = pmq.sim_model
-        sim_xmi_parser.PopulateModelActions(self.simdd_parser, device_name, model)
+        pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
+        sim_model = pmq.sim_model
+        model.PopulateModelActions(self.simdd_parser, device_name, sim_model)
 
-        actual_actions_list = model.sim_actions.keys()
+        actual_actions_list = sim_model.sim_actions.keys()
         expected_actions_list = ['On', 'Off', 'StopRainfall', 'SetTemperature', 'Add',
                                  'StopQuantitySimulation', 'MultiplyStringBy3']
         self.assertEqual(set(actual_actions_list), set(expected_actions_list),
@@ -219,11 +219,11 @@ class test_PopulateModelActions(GenericSetup):
         """Testing that the model action metadata has been added correctly to the model.
         """
         device_name = 'tango/device/instance'
-        pmq = sim_xmi_parser.PopulateModelQuantities(self.simdd_parser, device_name)
-        model = pmq.sim_model
+        pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
+        sim_model = pmq.sim_model
         cmd_info = self.simdd_parser.get_reformatted_cmd_metadata()
-        sim_xmi_parser.PopulateModelActions(self.simdd_parser, device_name, model)
-        sim_model_actions_meta = model.sim_actions_meta
+        model.PopulateModelActions(self.simdd_parser, device_name, sim_model)
+        sim_model_actions_meta = sim_model.sim_actions_meta
 
         for cmd_name, cmd_metadata in cmd_info.items():
             model_act_meta = sim_model_actions_meta[cmd_name]
@@ -239,18 +239,18 @@ class test_PopulateModelActions(GenericSetup):
         correct user-defined action handler provided in the override class.
         """
         device_name = 'tango/device/instance'
-        pmq = sim_xmi_parser.PopulateModelQuantities(self.simdd_parser, device_name)
-        model = pmq.sim_model
-        sim_xmi_parser.PopulateModelActions(self.simdd_parser, device_name, model)
-        action_on = model.sim_actions['On']
+        pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
+        sim_model = pmq.sim_model
+        model.PopulateModelActions(self.simdd_parser, device_name, sim_model)
+        action_on = sim_model.sim_actions['On']
         self.assertEqual(action_on.func.im_class, override_class.OverrideWeather)
 
     def test_model_action_behaviour(self):
         device_name = 'tango/device/instance'
-        pmq = sim_xmi_parser.PopulateModelQuantities(self.simdd_parser, device_name)
-        model = pmq.sim_model
-        sim_xmi_parser.PopulateModelActions(self.simdd_parser, device_name, model)
-        action_set_temperature = model.sim_actions['SetTemperature']
+        pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
+        sim_model = pmq.sim_model
+        model.PopulateModelActions(self.simdd_parser, device_name, sim_model)
+        action_set_temperature = sim_model.sim_actions['SetTemperature']
         data_in = 25.00
         self.assertEqual(action_set_temperature(data_in), data_in)
 
