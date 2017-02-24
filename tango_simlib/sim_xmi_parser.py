@@ -37,6 +37,7 @@ POGO_USER_DEFAULT_ATTR_PROP_MAP = {
         'rwType': 'writable',
         'polledPeriod': 'period',
         'attType': 'data_format',
+        'enum_labels': 'enum_labels',
         'maxX': 'max_dim_x',
         'maxY': 'max_dim_y'},
     'eventArchiveCriteria': {
@@ -338,6 +339,13 @@ class XmiParser(object):
 
         attribute_data['dynamicAttributes']['dataType'] = (
             self._get_arg_type(description_data))
+        if str(attribute_data['dynamicAttributes']['dataType']) == 'DevEnum':
+            enum_labels = []
+            for child in description_data.getchildren():
+                if child.tag == 'enumLabels':
+                    enum_labels.append(child.text)
+            attribute_data['dynamicAttributes']['enum_labels'] = enum_labels
+
         attribute_data['properties'] = description_data.find('properties').attrib
 
         try:
@@ -481,7 +489,8 @@ class XmiParser(object):
                 'rel_change': '',
                 'standard_unit': '',
                 'unit': '',
-                'writable': 'READ'},
+                'writable': 'READ',
+                'enum_labels': []}, # If attribute data type is DevEnum
             }
 
         """
