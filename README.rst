@@ -6,7 +6,7 @@ tango-simlib: Easily generate *TANGO* device simulators
 Introduction
 ============
 
-`tango-simlib` is a library that aids the data-driven development of TANGO_ device
+``tango-simlib`` is a library that aids the data-driven development of TANGO_ device
 simulators. It aims to make it easy to develop basic simulators while making it
 possible to implement more complex simulators. In addition to the simulated
 device interface, a separate *TANGO* simulation-control interface is generated,
@@ -36,10 +36,10 @@ having control-interface simulators available for all hardware and subsystems
 that *CAM* needs to control and monitor is an incredibly valuable resource. In
 early *CAM* development it:
 
- - Makes it possible to start developing the *CAM* system before hardware
-   or vendor-provided hardware simulators are available.
- - Allows gaps in interfaces to be identified early on in the development
-   process.
+- Makes it possible to start developing the *CAM* system before hardware
+  or vendor-provided hardware simulators are available.
+- Allows gaps in interfaces to be identified early on in the development
+  process.
 
 As development progresses, the full, actual, *MeerKAT*/*KAT-7* *CAM* is run against
 the simulated devices, allowing *CAM* functionality to be tested without the need
@@ -97,7 +97,7 @@ Installation from source, working dir where source is checked out
   
     $ pip install .
 
-In the nearer future, this package should be available on PYPI, allowing
+In the near future, this package should be available on PYPI, allowing
 
 .. code-block:: bash
   
@@ -118,7 +118,7 @@ Give it a path to the description files (xmi or simdd or both).
     $ tango-simlib-tango-simulator-generator --sim-data-file Weather.xmi\
                                  --dserver-name weather
 
-This will generate a python module file in your current working directory with a module name 'weather.py'.
+This will generate a python script file in your current working directory named `weather.py`.
 
 And in order to run this generated device simulator code, you can execute the tango-launcher script, a helper script which will register the *TANGO* device server, setup any required device properties and in turn start up the device server server process, all in one go.
 
