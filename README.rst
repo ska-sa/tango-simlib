@@ -22,7 +22,7 @@ proposal and subject to change. A more formal format specification is being
 worked on.
 
 Note that ``tango-simlib`` does not generate simulator code. Rather, the
-simulator's behaviour is driven by the description data at run-time using Python's
+simulator's behaviour is driven by the description data at run-time using *Python*'s
 dynamic programming features. If the description files (``XMI`` or ``SIMDD``) are
 modified, the simulator device server only needs to be restarted for the changes
 to take effect.
@@ -53,7 +53,7 @@ devices the simple simulator is always sufficient.
 
 
 The *KAT-7* and *MeerKAT* telescopes use the *Karoo Array Telescope Control Protocol*
-KATCP_ for inter-device, subsystem and component communications.
+(KATCP_) for inter-device, subsystem and component communications.
 In light of that a library was developed that makes it very easy to
 code a basic simulator, providing no-op command (*KATCP* request) handlers and
 randomly varying attribute (*KATCP* sensor) values along with the back-channel
@@ -120,7 +120,7 @@ Give it a path to the description files (``XMI`` or ``SIMDD`` or both).
 
 This will generate a python script file in your current working directory named ``weather.py``.
 
-In order to run this generated device simulator code, you can execute the tango-launcher script, a helper script which will register the *TANGO* device server, setup any required device properties and in turn start up the device server process, all in one go.
+In order to run this generated device simulator code, you can execute the ``tango-launcher`` script, a helper script which will register the *TANGO* device server, setup any required device properties and in turn start up the device server process, all in one go.
 
 .. code-block:: bash
 
@@ -136,7 +136,7 @@ Ready-made Simulators
 Weather simulators
 ******************
 
-Example of starting the ``Weather`` simulator generated from the ``Weather.xmi`` file
+A code snippet of starting the ``Weather`` simulator generated from the ``Weather.xmi`` file
 with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 
 .. code-block:: bash
@@ -148,7 +148,7 @@ with a ``SimControl`` instance using the ``tango_launcher.py`` script.
                           --server-instance tango-launched\
  --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
 
-Example of starting the ``Weather`` simulator generated from the ``Weather_SIMDD.json``
+An example of starting the ``Weather`` simulator generated from the ``Weather_SIMDD.json``
 file with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 
 .. code-block:: bash
@@ -164,7 +164,7 @@ file with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 *MeerKAT* Video Display System simulator
 ****************************************
 
-Example of starting the ``VDS`` simulator generated from both the ``MkatVds.xmi`` and
+An example of starting the ``VDS`` simulator generated from both the ``MkatVds.xmi`` and
 the ``MkatVds_SIMDD.json`` files with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 
 .. code-block:: bash
@@ -178,7 +178,7 @@ the ``MkatVds_SIMDD.json`` files with a ``SimControl`` instance using the ``tang
  --put-device-property mkat_simcontrol/vds/1:model_key:mkat_sim/vds/1
 
 
-Once the *tango-simlib-tango-launcher* script has been executed, the *TANGO* server will be created in the *TANGO* database. The *TANGO* device server will be registered along with its properties and the server process will be started. This will start the server instance which has the two classes ``Weather`` and ``WeatherSimControl`` registered under it, respectively. Which in turn will start the devices from each of the *TANGO* classes.
+Once the ``tango-simlib-tango-launcher`` script has been executed, the *TANGO* server will be created in the *TANGO* database. The *TANGO* device server will be registered along with its properties and the server process will be started. This will start the server instance which has the two classes ``Weather`` and ``WeatherSimControl`` registered under it, respectively, which in turn will start the devices from each of the *TANGO* classes.
 
 Screenshots of Interfaces
 -------------------------
