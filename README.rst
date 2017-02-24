@@ -21,7 +21,7 @@ Description Datafile (SIMDD_). The format of this file is currently a working
 proposal and subject to change. A more formal format specification is being
 worked on.
 
-Note that `tango-simlib` does not generate simulator code. Rather, the
+Note that ``tango-simlib`` does not generate simulator code. Rather, the
 simulator's behaviour is driven by the description data at run-time using Python's
 dynamic programming features. If the description files (XMI or SIMDD) are
 modified, the simulator device server only needs to be restarted for the changes
@@ -86,7 +86,7 @@ Installation
 
 Note that installation requires the *TANGO* binary prerequisites to be
 installed. If you cannot install the PyTango_ package you will not be able to
-install `tango-simlib`.
+install ``tango-simlib``.
 
 .. _PyTango: https://pypi.python.org/pypi/PyTango
 
@@ -118,7 +118,7 @@ Give it a path to the description files (xmi or simdd or both).
     $ tango-simlib-tango-simulator-generator --sim-data-file Weather.xmi\
                                  --dserver-name weather
 
-This will generate a python script file in your current working directory named `weather.py`.
+This will generate a python script file in your current working directory named ``weather.py``.
 
 And in order to run this generated device simulator code, you can execute the tango-launcher script, a helper script which will register the *TANGO* device server, setup any required device properties and in turn start up the device server server process, all in one go.
 
@@ -217,36 +217,3 @@ Contribute
 ==========
 
 Contributions are always welcome! Please ensure that you adhere to our coding standards CAM_Style_guide_.
-
-
-
-
-- [-] Add basic Readme
-
-  - [X] Introduction and purpose
-  - [X] Basic examples of use. I.e. just how to start up a simulator using
-    pre-existing example files
-  - [X] Get/generate example simulators in an example folder
-
-    - [X] XMI only
-    - [X] XMI + SIMDD
-    - [X] SIMDD only
-
-  - [X] Screenshots of interfaces?
-    - http://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository
-  - [X] Link to SIMDD working document
-  - [ ] Link to full documentation
-  - [X] Link to our coding standard. (If you would like to contribute, please
-    attempt to follow our coding standard)
-
- - [ ] Copy sphix toolflow from katcp
-
-  - Or just install numpydoc package?
-  - Optional deps that can be used for documentation stuff:
-
-    - http://stackoverflow.com/questions/6237946/optional-dependencies-in-distutils-pip
-    - http://peak.telecommunity.com/DevCenter/setuptools#declaring-extras-optional-features-with-their-own-dependencies
-    - http://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-extras-optional-features-with-their-own-dependencies
-
-- [ ] Try an do some autodoc generation
-- [ ] Next?
