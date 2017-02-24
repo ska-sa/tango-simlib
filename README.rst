@@ -16,8 +16,8 @@ e.g. failure conditions on the simulated device interface.
 Using only the basic *TANGO* interface description captured via a POGO_ generated
 XMI file, a basic simulator with randomly varying attributes and no-op command
 handlers can be generated with no further coding. Attribute simulation
-parameters and simple command behaviour can be specified using a ``Simulator
-Description Datafile`` (SIMDD_). The format of this file is currently a working
+parameters and simple command behaviour can be specified using a *Simulator
+Description Datafile* (SIMDD_). The format of this file is currently a working
 proposal and subject to change. A more formal format specification is being
 worked on.
 
