@@ -91,7 +91,7 @@ install ``tango-simlib``.
 .. _PyTango: https://pypi.python.org/pypi/PyTango
 
 
-Installation from source, working dir where source is checked out
+Installation from source, working directory where source is checked out
 
 .. code-block:: bash
   
@@ -120,7 +120,7 @@ Give it a path to the description files (``XMI`` or ``SIMDD`` or both).
 
 This will generate a python script file in your current working directory named ``weather.py``.
 
-And in order to run this generated device simulator code, you can execute the tango-launcher script, a helper script which will register the *TANGO* device server, setup any required device properties and in turn start up the device server server process, all in one go.
+In order to run this generated device simulator code, you can execute the tango-launcher script, a helper script which will register the *TANGO* device server, setup any required device properties and in turn start up the device server process, all in one go.
 
 .. code-block:: bash
 
@@ -136,8 +136,8 @@ Ready-made Simulators
 Weather simulators
 ******************
 
-Example of starting the weather simulator generated from the ``Weather.xmi`` file
-with a ``SimControl`` instance using ``tango_launcher.py``
+Example of starting the ``Weather`` simulator generated from the ``Weather.xmi`` file
+with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 
 .. code-block:: bash
 
@@ -148,8 +148,8 @@ with a ``SimControl`` instance using ``tango_launcher.py``
                           --server-instance tango-launched\
  --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
 
-Example of starting the *Weather* simulator generated from the ``Weather_SIMDD.json``
-file with a SimControl instance using ``tango_launcher``
+Example of starting the ``Weather`` simulator generated from the ``Weather_SIMDD.json``
+file with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 
 .. code-block:: bash
  
@@ -164,8 +164,8 @@ file with a SimControl instance using ``tango_launcher``
 *MeerKAT* Video Display System simulator
 ****************************************
 
-Example of starting the *VDS* simulator generated from both the ``MkatVds.xmi`` and
-the ``MkatVds_SIMDD.json`` files with a SimControl instance using tango_launcher
+Example of starting the ``VDS`` simulator generated from both the ``MkatVds.xmi`` and
+the ``MkatVds_SIMDD.json`` files with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 
 .. code-block:: bash
 
@@ -196,7 +196,6 @@ This is what you would have in the *TANGO* DB once the device server has been re
 
 In this instance, we have the simulated device in an alarm state after executing the *SetOffRainStorm* command on the test device interface, or what we call the simulator controller.
 
- 
     .. figure:: https://cloud.githubusercontent.com/assets/16665803/23234302/5068380a-f95a-11e6-868c-9a0f3e9d1aac.png
        :width: 60%
        :align: center
