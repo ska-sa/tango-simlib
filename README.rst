@@ -14,7 +14,7 @@ allowing the simulator to be manipulated via a back-channel to simulate
 e.g. failure conditions on the simulated device interface.
 
 Using only the basic *TANGO* interface description captured via a POGO_ generated
-``XMI`` file, a basic simulator with randomly varying attributes and no-op command
+XMI file, a basic simulator with randomly varying attributes and no-op command
 handlers can be generated with no further coding. Attribute simulation
 parameters and simple command behaviour can be specified using a ``Simulator
 Description Datafile`` (SIMDD_). The format of this file is currently a working
@@ -23,7 +23,7 @@ worked on.
 
 Note that ``tango-simlib`` does not generate simulator code. Rather, the
 simulator's behaviour is driven by the description data at run-time using *Python*'s
-dynamic programming features. If the description files (``XMI`` or ``SIMDD``) are
+dynamic programming features. If the description files (XMI or SIMDD) are
 modified, the simulator device server only needs to be restarted for the changes
 to take effect.
 
@@ -111,7 +111,7 @@ Generating Simulators
 ---------------------
 
 The basic way of generating a *TANGO* device simulator using this library is to make use of the *TANGO* simulator generator module.
-Give it a path to the description files (``XMI`` or ``SIMDD`` or both).
+Give it a path to the description files (XMI or SIMDD or both).
 
 .. code-block:: bash
 
@@ -164,7 +164,7 @@ file with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 *MeerKAT* Video Display System simulator
 ****************************************
 
-An example of starting the ``VDS`` simulator generated from both the ``MkatVds.xmi`` and
+An example of starting the *VDS* simulator generated from both the ``MkatVds.xmi`` and
 the ``MkatVds_SIMDD.json`` files with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 
 .. code-block:: bash
