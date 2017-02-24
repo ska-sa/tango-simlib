@@ -39,14 +39,6 @@ setup(name="tango_simlib",
           'console_scripts': [
               'tango-simlib-tango-simulator-generator'
               '= tango_simlib.tango_sim_generator:main',
-              'tango-simlib-tango-launcher = tango_simlib.tango_launcher:main',
-              'tango-simlib-tango-weather-xmi-DS'
-              '= tango_simlib.examples.weather1:main',
-              'tango-simlib-tango-weather-simdd-DS'
-              '= tango_simlib.examples.weather2:main',
-              'tango-simlib-tango-vds-xmi-simdd-DS'
-              '= tango_simlib.examples.mkat_vds:main',
-              'tango-simlib-tango-weather-xmi-simdd-DS'
-              '= tango_simlib.examples.weather3:main',
+              'tango-simlib-tango-launcher = tango_simlib.tango_launcher:main'
           ]}
       )
