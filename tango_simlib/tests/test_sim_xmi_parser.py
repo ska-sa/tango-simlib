@@ -8,7 +8,7 @@ from devicetest import TangoTestContext
 
 from katcore.testutils import cleanup_tempfile
 from katcp.testutils import start_thread_with_cleanup
-from tango_simlib import sim_xmi_parser, tango_sim_generator
+from tango_simlib import model, sim_xmi_parser, tango_sim_generator
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 
 import PyTango
@@ -413,10 +413,10 @@ class test_PopModelQuantities(GenericSetup):
         # Ensure that the SimModelException is raised when an instance of
         # PopulateModelQuantities is created with any object other than a Model
         # class instance.
-        with self.assertRaises(sim_xmi_parser.SimModelException):
-            sim_xmi_parser.PopulateModelQuantities(self.xmi_parser, device_name,
+        with self.assertRaises(model.SimModelException):
+            model.PopulateModelQuantities(self.xmi_parser, device_name,
                                                    sim_model='some_model')
-        pmq = sim_xmi_parser.PopulateModelQuantities(self.xmi_parser, device_name)
+        pmq = model.PopulateModelQuantities(self.xmi_parser, device_name)
 
         self.assertEqual(device_name, pmq.sim_model.name,
                 "The device name and the model name do not match.")
@@ -434,7 +434,7 @@ class test_PopModelActions(GenericSetup):
         device_name = 'tango/device/instance'
         cmd_info = self.xmi_parser.get_reformatted_cmd_metadata()
 
-        sim_model = (sim_xmi_parser.PopulateModelActions(self.xmi_parser, device_name).
+        sim_model = (model.PopulateModelActions(self.xmi_parser, device_name).
                      sim_model)
         self.assertEqual(len(sim_model.sim_quantities), 0,
                          "The model has some unexpected quantities")

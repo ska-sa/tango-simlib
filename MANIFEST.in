@@ -1,0 +1,8 @@
+include tango_simlib/SIMDD.schema
+include tango_simlib/tests/MkatVds_SIMDD.json
+include tango_simlib/tests/MkatVds.xmi
+include tango_simlib/tests/weather_SIMDD.json
+include tango_simlib/tests/weather_SIMDD_3.json
+include tango_simlib/tests/WeatherSimulator_CN.xml
+include tango_simlib/tests/weather_sim.xmi
+include tango_simlib/tests/weather_supplementary_SIMDD.json

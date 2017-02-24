@@ -26,7 +26,7 @@ setup(name="tango_simlib",
           'numpy',
           'nose_xunitmp',
           'python-devicetest'],
-      extras_require = {
+      extras_require={
           'docs': ["sphinx-pypi-upload",
                    "numpydoc",
                    "Sphinx"],
@@ -37,5 +37,8 @@ setup(name="tango_simlib",
           'git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
       entry_points={
           'console_scripts': [
+              'tango-simlib-tango-simulator-generator'
+              '= tango_simlib.tango_sim_generator:main',
+              'tango-simlib-tango-launcher = tango_simlib.tango_launcher:main'
           ]}
       )

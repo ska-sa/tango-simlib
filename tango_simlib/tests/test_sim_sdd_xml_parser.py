@@ -6,6 +6,7 @@ from PyTango import DevDouble
 
 from tango_simlib import sim_sdd_xml_parser
 from tango_simlib import sim_xmi_parser
+from tango_simlib import model
 
 LOGGER = logging.getLogger(__name__)
 
@@ -119,7 +120,7 @@ class test_PopModelQuantities(GenericSetup):
         the attributes specified in the XMI file.
         """
         device_name = 'tango/device/instance'
-        pmq = sim_xmi_parser.PopulateModelQuantities(self.xml_parser, device_name)
+        pmq = model.PopulateModelQuantities(self.xml_parser, device_name)
 
         self.assertEqual(device_name, pmq.sim_model.name,
                          "The device name and the model name do not match.")
@@ -136,7 +137,7 @@ class test_PopModelQuantities(GenericSetup):
         the parsed monitoring points captured in the SDD xml file.
         """
         device_name = 'tango/device/instance'
-        pmq = sim_xmi_parser.PopulateModelQuantities(self.xml_parser, device_name)
+        pmq = model.PopulateModelQuantities(self.xml_parser, device_name)
         self.assertEqual(device_name, pmq.sim_model.name,
                          "The device name and the model name do not match.")
         mnt_pt_metadata = self.xml_parser.get_reformatted_device_attr_metadata()

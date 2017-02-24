@@ -25,11 +25,11 @@ from PyTango.server import Device, DeviceMeta, device_property, command
 from functools import partial
 
 from tango_simlib.model import Model
+from tango_simlib.sim_xmi_parser import XmiParser
 from tango_simlib.simdd_json_parser import SimddParser
 from tango_simlib.sim_sdd_xml_parser import SDDParser
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
-from tango_simlib.sim_xmi_parser import (XmiParser, PopulateModelQuantities,
-                                         PopulateModelActions)
+from tango_simlib.model import PopulateModelQuantities, PopulateModelActions
 from tango_simlib import helper_module
 
 MODULE_LOGGER = logging.getLogger(__name__)
