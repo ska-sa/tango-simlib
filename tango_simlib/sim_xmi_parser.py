@@ -440,9 +440,13 @@ class XmiParser(object):
         # instead of the default PyTango.utils.DevState
         if arg_type == 'State':
             return CmdArgType.DevState
-
         try:
-            arg_type = getattr(PyTango, 'Dev' + arg_type)
+            # The DevVarTypeArray data type specified in pogo writes
+            # TypeArray in xmi file instead
+            if 'Array' in arg_type:
+                arg_type = getattr(PyTango, 'DevVar' + arg_type)
+            else:
+                arg_type = getattr(PyTango, 'Dev' + arg_type)
         except AttributeError:
             MODULE_LOGGER.debug("PyTango has no attribute 'Dev{}".format(arg_type))
             raise AttributeError("PyTango has no attribute 'Dev{}.\n Try replacing"
