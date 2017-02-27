@@ -443,7 +443,7 @@ class XmiParser(object):
         try:
             # The DevVarTypeArray data type specified in pogo writes
             # TypeArray in xmi file instead
-            if 'Array' in arg_type:
+            if 'FloatArray' == arg_type or 'DoubleArray' == arg_type:
                 arg_type = getattr(PyTango, 'DevVar' + arg_type)
             else:
                 arg_type = getattr(PyTango, 'Dev' + arg_type)
