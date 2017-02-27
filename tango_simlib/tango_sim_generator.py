@@ -174,22 +174,23 @@ def get_tango_device_server(model, sim_data_files):
         """
         return command(f=cmd_handler, **cmd_info_copy)
 
-    def add_enum_attribute(TangoDeviceServerEnumAttrs, attr_name, attr_meta):
+    def add_enum_attribute(cls, attr_name, attr_meta):
         attr = attribute(label=attr_meta['label'], dtype=DevEnum,
                          enum_labels=attr_meta['enum_labels'],
+                         doc=attr_meta['description'],
                          access=getattr(AttrWriteType, attr_meta['writable']))
         attr.__name__ = attr_name
         # Attribute read method
-        def read_meth(TangoDeviceServerEnumAttrs):
-            return TangoDeviceServerEnumAttrs.some_variable_val
+        def read_meth(cls):
+            return cls.some_variable_val
         # Attribute write method for writable attributes
         @attr.write
-        def attr(TangoDeviceServerEnumAttrs, new_val):
-            TangoDeviceServerEnumAttrs.some_variable_val = new_val
+        def attr(cls, new_val):
+            cls.some_variable_val = new_val
         read_meth.__name__ = 'read_{}'.format(attr_name)
         # Add the read method and the attribute to the class object
-        setattr(TangoDeviceServerEnumAttrs, read_meth.__name__, read_meth)
-        setattr(TangoDeviceServerEnumAttrs, attr.__name__, attr)
+        setattr(cls, read_meth.__name__, read_meth)
+        setattr(cls, attr.__name__, attr)
 
     for quantity_name, quantity_ in model.sim_quantities.items():
         d_type = quantity_.meta['data_type']
@@ -242,23 +243,25 @@ def get_tango_device_server(model, sim_data_files):
                     .format(attribute_name))
                 meta_data = model_sim_quants[attribute_name].meta
                 attr_dtype = meta_data['data_type']
-                # The return value of rwType is a string and it is required as a
-                # PyTango data type when passed to the Attr function.
-                # e.g. 'READ' -> PyTango.AttrWriteType.READ
-                rw_type = meta_data['writable']
-                rw_type = getattr(AttrWriteType, rw_type)
-                attr = Attr(attribute_name, attr_dtype, rw_type)
-                attr_props = UserDefaultAttrProp()
-                for prop in meta_data.keys():
-                    attr_prop_setter = getattr(attr_props, 'set_' + prop, None)
-                    if attr_prop_setter:
-                        attr_prop_setter(meta_data[prop])
-                    else:
-                        MODULE_LOGGER.info("No setter function for " + prop + " property")
-                attr.set_default_properties(attr_props)
-                self.add_attribute(attr, self.read_attributes)
+                if str(attr_dtype) != 'DevEnum':
+                    # The return value of rwType is a string and it is required as a
+                    # PyTango data type when passed to the Attr function.
+                    # e.g. 'READ' -> PyTango.AttrWriteType.READ
+                    rw_type = meta_data['writable']
+                    rw_type = getattr(AttrWriteType, rw_type)
+                    attr = Attr(attribute_name, attr_dtype, rw_type)
+                    attr_props = UserDefaultAttrProp()
+                    for prop in meta_data.keys():
+                        attr_prop_setter = getattr(attr_props, 'set_' + prop, None)
+                        if attr_prop_setter:
+                            attr_prop_setter(str(meta_data[prop]))
+                        else:
+                            MODULE_LOGGER.info("No setter function for " + prop + " property")
+                    attr.set_default_properties(attr_props)
+                    self.add_attribute(attr, self.read_attributes)
 
-    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerCommands):
+    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerCommands,
+                     TangoTestDeviceServerEnumAttrs):
         __metaclass__ = DeviceMeta
 
         instances = weakref.WeakValueDictionary()
