@@ -36,7 +36,7 @@ POGO_USER_DEFAULT_ATTR_PROP_MAP = {
         'dataType': 'data_type',
         'rwType': 'writable',
         'polledPeriod': 'period',
-        'attType': 'data_format',
+        'attType': 'dformat',
         'enum_labels': 'enum_labels',
         'maxX': 'max_dim_x',
         'maxY': 'max_dim_y'},

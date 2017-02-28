@@ -145,9 +145,12 @@ def get_tango_device_server(model, sim_data_files):
     class TangoTestDeviceServerCommands(object):
         pass
 
-    # Declare a Tango Device class for specifically adding enum attributes prior
-    # running the device server
+    # Declare a Tango Device class for specifically adding enum and spectrum
+    # attributes prior running the device server and controller
     class TangoDeviceServerEnumAttrs(object):
+        pass
+
+    class TangoDeviceServerSpectrumAttrs(object):
         pass
 
     class TangoTestDeviceServerEnumAttrs(object):
@@ -175,6 +178,19 @@ def get_tango_device_server(model, sim_data_files):
         return command(f=cmd_handler, **cmd_info_copy)
 
     def add_enum_attribute(cls, attr_name, attr_meta):
+        """Add an attribute of tango type DevEnum to the device server.
+
+        Parameters
+        ----------
+        cls: class
+            class object that the device server will inherit from
+        attr_name: str
+            Tango enum attribute name
+        attr_meta: dict
+            Meta data that enables the creation of a well configured enum
+            attribute
+
+        """
         attr = attribute(label=attr_meta['label'], dtype=DevEnum,
                          enum_labels=attr_meta['enum_labels'],
                          doc=attr_meta['description'],
@@ -191,6 +207,9 @@ def get_tango_device_server(model, sim_data_files):
         # Add the read method and the attribute to the class object
         setattr(cls, read_meth.__name__, read_meth)
         setattr(cls, attr.__name__, attr)
+
+    def add_spectrum_attribute(cls, attr_name, attr_meta):
+        attr = attribute(
 
     for quantity_name, quantity_ in model.sim_quantities.items():
         d_type = quantity_.meta['data_type']
@@ -234,16 +253,16 @@ def get_tango_device_server(model, sim_data_files):
                         adjustable_val = 0.0
                     setattr(simulated_quantity, attr, adjustable_val)
 
-
         def initialize_dynamic_attributes(self):
             model_sim_quants = self.model.sim_quantities
             attribute_list = set([attr for attr in model_sim_quants.keys()])
             for attribute_name in attribute_list:
                 MODULE_LOGGER.info("Added dynamic {} attribute"
-                    .format(attribute_name))
+                                   .format(attribute_name))
                 meta_data = model_sim_quants[attribute_name].meta
                 attr_dtype = meta_data['data_type']
-                if str(attr_dtype) != 'DevEnum':
+                if str(attr_dtype) != 'DevEnum' or str(
+                        meta_data['dformat']) != 'SPECTRUM':
                     # The return value of rwType is a string and it is required as a
                     # PyTango data type when passed to the Attr function.
                     # e.g. 'READ' -> PyTango.AttrWriteType.READ
