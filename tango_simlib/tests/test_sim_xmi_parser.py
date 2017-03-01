@@ -539,9 +539,9 @@ class test_XmiDevEnumAttribute(ClassCleanupUnittestMixin, unittest.TestCase):
                          "expected list!")
 
     def test_enum_attribute_properties(self):
-        """Testing wether the DevEnum attributes are well configred.
+        """Testing whether the DevEnum attributes are well configred.
 
-        Checks wether the DevEnum data type attribute properties specified
+        Checks whether the DevEnum data type attribute properties specified
         in the POGO generated xmi file are added to the TANGO device"""
         attr_name = 'adminMode'
         attributes = set(self.device.get_attribute_list())
