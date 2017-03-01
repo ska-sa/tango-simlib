@@ -6,3 +6,4 @@ include tango_simlib/tests/weather_SIMDD_3.json
 include tango_simlib/tests/WeatherSimulator_CN.xml
 include tango_simlib/tests/weather_sim.xmi
 include tango_simlib/tests/weather_supplementary_SIMDD.json
+include tango_simlib/tests/DishElementMaster.xmi
