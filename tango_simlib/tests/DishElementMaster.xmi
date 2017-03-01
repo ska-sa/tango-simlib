@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="ASCII"?>
+<pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
+  <classes name="DishElementMaster" pogoRevision="9.1">
+    <description description="The DSH shall provide a self-description on request from the TM. Through self-description the DSH provides information that&#xA;describes the content of the interface, including a set of valid commands, parameters, monitoring points, alarms and events.&#xA;SKA_MID DSH Element MasterSKA_MID DSH Element Master.&#xA;During operations, the TM may control the DSH Dish modes and states on a higher level of abstraction (external state model)&#xA;than is implemented in the DSH Dish components (internal states)." title="Telescope Manager Control To Dish Elemet" sourcePath="/home/athanaseus/Desktop/Projects/FEB/Sprint28/LMC/Element" language="Python" filestogenerate="XMI   file,Code files,Protected Regions,html Pages" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
+      <inheritances classname="Device_Impl" sourcePath=""/>
+      <identification contact="at ska.ac.za - aramaila" author="aramaila" emailDomain="ska.ac.za" classFamily="Simulators" siteSpecific="" platform="Unix Like" bus="TCP/UDP" manufacturer="none" reference=""/>
+    </description>
+    <deviceProperties name="SkaLevel" description="Indication of importance of the device in the SKA hierarchy to support drill-down navigation: 1-6, with 1 highest.">
+      <type xsi:type="pogoDsl:ShortType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>1</DefaultPropValue>
+    </deviceProperties>
+    <commands name="Capture" description="Start/Stop capture on the configured band. Command only valide in SPFRx Data_Capture mode." execMethod="capture" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="ON, OFF">
+        <type xsi:type="pogoDsl:StringType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>STANDBY</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="ConfigureAttenuation" description="Set the global attenuation. Changing this value will set the attenuation across the system and will be applied to all bands" execMethod="configure_attenuation" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="dB TBC">
+        <type xsi:type="pogoDsl:FloatType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>ON</excludedStates>
+    </commands>
+    <commands name="ConfigureBand1" description="This command triggers the Dish to transition to the CONFIGURE Dish Element Mode, and returns to the caller. To configure the Dish to operate in frequency band 1. On completion of the band configuration, Dish will automatically revert to the previous Dish mode (OPERATE or STANDBY-FP)." execMethod="configure_band1" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="[Timestamp]">
+        <type xsi:type="pogoDsl:StringType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>STANDBY</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="ConfigureBand2" description="This command triggers the Dish to transition to the CONFIGURE Dish Element Mode, and returns to the caller. To configure the Dish to operate in frequency band 2. On completion of the band configuration, Dish will automatically revert to the previous Dish mode (OPERATE or STANDBY-FP)." execMethod="configure_band2" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="[Timestamp]">
+        <type xsi:type="pogoDsl:StringType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>STANDBY</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="ConfigureBand3" description="This command triggers the Dish to transition to the CONFIGURE Dish Element Mode, and returns to the caller. To configure the Dish to operate in frequency band 3. On completion of the band configuration, Dish will automatically revert to the previous Dish mode (OPERATE or STANDBY-FP)." execMethod="configure_band3" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="[Timestamp]">
+        <type xsi:type="pogoDsl:StringType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>STANDBY</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="ConfigureBand4" description="This command triggers the Dish to transition to the CONFIGURE Dish Element Mode, and returns to the caller. To configure the Dish to operate in frequency band 4. On completion of the band configuration, Dish will automatically revert to the previous Dish mode (OPERATE or STANDBY-FP)." execMethod="configure_band4" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="[Timestamp]">
+        <type xsi:type="pogoDsl:StringType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>STANDBY</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="ConfigureBand5" description="This command triggers the Dish to transition to the CONFIGURE Dish Element Mode, and returns to the caller. To configure the Dish to operate in frequency band 5. On completion of the band configuration, Dish will automatically revert to the previous Dish mode (OPERATE or STANDBY-FP)." execMethod="configure_band5" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="[Timestamp]">
+        <type xsi:type="pogoDsl:StringType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>STANDBY</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="ConfigureNoiseDiode" description="Set the noise diode start time, period and on/off time (duty cycle)&#xA;A start time and stop time marks the window during which periodic&#xA;noise diode firing has to occur." execMethod="configure_noise_diode" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="[NDParams]&#xA;[start time, stop time, period, duty cycle, power level]">
+        <type xsi:type="pogoDsl:FloatArrayType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>ON</excludedStates>
+    </commands>
+    <commands name="EnableEngInterface" description="Enable engineering interface." execMethod="enable_eng_interface" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="[Sub-Element]">
+        <type xsi:type="pogoDsl:StringType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>ON</excludedStates>
+      <excludedStates>STANDBY</excludedStates>
+    </commands>
+    <commands name="FlushCmdQueue" description="Flush command Queue" execMethod="flush_cmd_queue" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>ON</excludedStates>
+    </commands>
+    <commands name="LowPower" description="This command triggers the Dish to transition to the LOW power&#xA;state. All subsystems go into a low power state to power only the&#xA;essential equipment. Specifically the Helium compressor will be set&#xA;to a low power consumption, and the drives will be disabled. When&#xA;issued a STOW command while in LOW power, the DS controller&#xA;should be able to turn the drives on, stow the dish and turn the&#xA;drives off again. The purpose of this mode is to enable the&#xA;observatory to perform power management (load curtailment), and&#xA;also to conserve energy for non-operating dishes." execMethod="low_power" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>ON</excludedStates>
+      <excludedStates>STANDBY</excludedStates>
+    </commands>
+    <commands name="Scan" description="The Dish is tracking the commanded pointing positions within the&#xA;specified SCAN pointing accuracy. (TBC)&#xA;NOTE: This pointing state is currently proposed and there are&#xA;currently no requirements for this functionality." execMethod="scan" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="[Timestamp]">
+        <type xsi:type="pogoDsl:StringType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>STANDBY</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="SetMaintenanceMode" description="This command triggers the Dish to transition to the MAINTENANCE&#xA;Dish Element Mode, and returns to the caller. To go into a state that&#xA;is safe to approach the Dish by a maintainer, and to enable the&#xA;Engineering interface to allow direct access to low level control and&#xA;monitoring by engineers and maintainers. This mode will also enable&#xA;engineers and maintainers to upgrade SW and FW. Dish also enters&#xA;this mode when an emergency stop button is pressed." execMethod="set_maintenance_mode" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>ON</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="SetOperateMode" description="This command triggers the Dish to transition to the OPERATE Dish&#xA;Element Mode, and returns to the caller. This mode fulfils the main&#xA;purpose of the Dish, which is to point to designated directions while&#xA;capturing data and transmitting it to CSP." execMethod="set_operate_mode" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>ON</excludedStates>
+      <excludedStates>STANDBY</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="SetPntModelPars" description="Parameters for pointing models used by Dish to do pointing&#xA;corrections." execMethod="set_pnt_model_pars" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="[PntParams]">
+        <type xsi:type="pogoDsl:FloatArrayType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>ON</excludedStates>
+    </commands>
+    <commands name="SetStandbyFPMode" description="This command triggers the Dish to transition to the STANDBY-FP Dish&#xA;Element Mode, and returns to the caller. To prepare all subsystems&#xA;for active observation, once a command is received by TM to go to the &#xA;FULL_POWER mode." execMethod="set_standby_fpmode" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="SetStandbyLPMode" description="This command triggers the Dish to transition to the STANDBY-LP Dish Element Mode, and returns to the caller. Standby_LP is the default mode when the Dish is configured for low power consumption, and is the mode wherein Dish ends after a start up procedure." execMethod="set_standby_lpmode" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </commands>
+    <commands name="SetStowMode" description="This command triggers the Dish to transition to the STOW Dish&#xA;Element Mode, and returns to the caller. To point the dish in a&#xA;direction that minimises the wind loads on the structure, for survival&#xA;in strong wind conditions. The Dish is able to observe in the stow&#xA;position, for the purpose of transient detection." execMethod="set_stow_mode" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>ON</excludedStates>
+    </commands>
+    <commands name="Slew" description="The Dish is tracking the commanded pointing positions within the&#xA;specified TRACK pointing accuracy." execMethod="slew" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="[Timestamp]&#xA;[azimuth]&#xA;[elevation]">
+        <type xsi:type="pogoDsl:DoubleArrayType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>STANDBY</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="Synchronise" description="Reset configured band sample counters. Command only valid in&#xA;SPFRx Data_Capture mode." execMethod="synchronise" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>STANDBY</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="Track" description="The Dish moves to the commanded pointing angle at the maximum&#xA;speed, as defined by the specified slew rate. No pointing accuracy&#xA;requirements are applicable in this state. SLEW state will also be&#xA;reported while the Dish is settling onto a target and is still not within&#xA;the specified pointing accuracy. As soon as the pointing accuracy is&#xA;within specifications, the state changes to TRACK." execMethod="track" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="[Timestamp]&#xA;[azimuth]&#xA;[elevation]">
+        <type xsi:type="pogoDsl:DoubleArrayType"/>
+      </argin>
+      <argout description="N/A">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>STANDBY</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="Status" description="This command gets the device status (stored in its device_status data member) and returns it to the caller." execMethod="dev_status" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="none">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="Device status">
+        <type xsi:type="pogoDsl:ConstStringType"/>
+      </argout>
+      <status abstract="true" inherited="true" concrete="true"/>
+    </commands>
+    <commands name="State" description="This command gets the device state (stored in its device_state data member) and returns it to the caller." execMethod="dev_state" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="none">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="Device state">
+        <type xsi:type="pogoDsl:StateType"/>
+      </argout>
+      <status abstract="true" inherited="true" concrete="true"/>
+    </commands>
+    <attributes name="adminMode" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" memorized="true" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Report the current admin mode of the DSH Element. Factory defaut is MAINTENANCE." label="Admin Mode" unit="" standardUnit="" displayUnit="" format="" maxValue="4" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>ONLINE</enumLabels>
+      <enumLabels>OFFLINE</enumLabels>
+      <enumLabels>MAINTENANCE</enumLabels>
+      <enumLabels>NOT-FITTED</enumLabels>
+      <enumLabels>RESERVE</enumLabels>
+    </attributes>
+    <attributes name="band1CapabilityHealthStatus" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The band 1 capability health status of the DSH Element." label="Band1 capability health status" unit="" standardUnit="" displayUnit="" format="" maxValue="2" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>OK</enumLabels>
+      <enumLabels>DEGRADED</enumLabels>
+      <enumLabels>FAILED</enumLabels>
+      <enumLabels>UNKNOWN</enumLabels>
+    </attributes>
+    <attributes name="band1CapabilityState" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The band 1 capability state of the DSH Element." label="Band1 capability state" unit="" standardUnit="" displayUnit="" format="" maxValue="2" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>INIT</enumLabels>
+      <enumLabels>ON</enumLabels>
+      <enumLabels>OFF</enumLabels>
+    </attributes>
+    <attributes name="band2CapabilityHealthStatus" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The band 2 capability health status of the DSH Element." label="Band2 capability health status" unit="" standardUnit="" displayUnit="" format="" maxValue="3" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>OK</enumLabels>
+      <enumLabels>DEGRADED</enumLabels>
+      <enumLabels>FAILED</enumLabels>
+      <enumLabels>UNKNOWN</enumLabels>
+    </attributes>
+    <attributes name="band2CapabilityState" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The band 2 capability state of the DSH Element." label="Band2 capability state" unit="" standardUnit="" displayUnit="" format="" maxValue="2" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>INIT</enumLabels>
+      <enumLabels>ON</enumLabels>
+      <enumLabels>OFF</enumLabels>
+    </attributes>
+    <attributes name="band3CapabilityHealthStatus" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The band 3 capability health status of the DSH Element." label="Band3 capability health status" unit="" standardUnit="" displayUnit="" format="" maxValue="3" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>OK</enumLabels>
+      <enumLabels>DEGRADED</enumLabels>
+      <enumLabels>FAILED</enumLabels>
+      <enumLabels>UNKNOWN</enumLabels>
+    </attributes>
+    <attributes name="band3CapabilityState" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The band 3 capability state of the DSH Element." label="Band3 capability state" unit="" standardUnit="" displayUnit="" format="" maxValue="2" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>INIT</enumLabels>
+      <enumLabels>ON</enumLabels>
+      <enumLabels>OFF</enumLabels>
+    </attributes>
+    <attributes name="band4CapabilityHealthStatus" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The band 4 capability health status of the DSH Element." label="Band4 capability health status" unit="" standardUnit="" displayUnit="" format="" maxValue="3" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>OK</enumLabels>
+      <enumLabels>DEGRADED</enumLabels>
+      <enumLabels>FAILED</enumLabels>
+      <enumLabels>UNKNOWN</enumLabels>
+    </attributes>
+    <attributes name="band4CapabilityState" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The band 4 capability state of the DSH Element." label="Band4 capability state" unit="" standardUnit="" displayUnit="" format="" maxValue="2" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>INIT</enumLabels>
+      <enumLabels>ON</enumLabels>
+      <enumLabels>OFF</enumLabels>
+    </attributes>
+    <attributes name="band5CapabilityHealthStatus" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The band 5 capability health status of the DSH Element." label="Band5 capability health status" unit="" standardUnit="" displayUnit="" format="" maxValue="3" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>OK</enumLabels>
+      <enumLabels>DEGRADED</enumLabels>
+      <enumLabels>FAILED</enumLabels>
+      <enumLabels>UNKNOWN</enumLabels>
+    </attributes>
+    <attributes name="band5CapabilityState" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The band 5 capability state of the DSH Element." label="Band5 capability state" unit="" standardUnit="" displayUnit="" format="" maxValue="2" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>INIT</enumLabels>
+      <enumLabels>ON</enumLabels>
+      <enumLabels>OFF</enumLabels>
+    </attributes>
+    <attributes name="centralLogLevel" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The central log level of the DSH Element." label="Central log level" unit="" standardUnit="" displayUnit="" format="" maxValue="5" minValue="0" maxAlarm="5" minAlarm="" maxWarning="3" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>OFF</enumLabels>
+      <enumLabels>INFO</enumLabels>
+      <enumLabels>DEBUG</enumLabels>
+      <enumLabels>WARNING</enumLabels>
+      <enumLabels>ERROR</enumLabels>
+      <enumLabels>FATAL</enumLabels>
+    </attributes>
+    <attributes name="configurationDelayExpected" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="false" isDynamic="false">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The time it will take to prepare the requested configuration, i.e. the expected time to transition from obsState CONFIGURING to READY." label="Configuration delay expected" unit="s" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="" period="1000"/>
+    </attributes>
+    <attributes name="configurationProgress" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="false" isDynamic="false">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Percentage progress." label="Configuration Progress" unit="percent" standardUnit="" displayUnit="" format="" maxValue="100" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="" period="1000"/>
+    </attributes>
+    <attributes name="controlMode" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" memorized="true" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Report the current control mode of the DSH Element." label="Control mode" unit="" standardUnit="" displayUnit="" format="" maxValue="1" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>REMOTE</enumLabels>
+      <enumLabels>LOCAL</enumLabels>
+    </attributes>
+    <attributes name="elementLogLevel" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The log level of the DSH Element." label="Element log level" unit="" standardUnit="" displayUnit="" format="" maxValue="5" minValue="0" maxAlarm="5" minAlarm="" maxWarning="3" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>OFF</enumLabels>
+      <enumLabels>INFO</enumLabels>
+      <enumLabels>DEBUG</enumLabels>
+      <enumLabels>WARNING</enumLabels>
+      <enumLabels>ERROR</enumLabels>
+      <enumLabels>FATAL</enumLabels>
+    </attributes>
+    <attributes name="healthState" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Report the current health status of the DSH Element." label="Health status" unit="" standardUnit="" displayUnit="" format="" maxValue="2" minValue="0" maxAlarm="2" minAlarm="" maxWarning="1" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>OK</enumLabels>
+      <enumLabels>DEGRADED</enumLabels>
+      <enumLabels>FAILED</enumLabels>
+    </attributes>
+    <attributes name="obsMode" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Report the current observation mode of the DSH Element." label="Observation mode" unit="" standardUnit="" displayUnit="" format="" maxValue="8" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>IDLE</enumLabels>
+      <enumLabels>IMG-CONTINUUM</enumLabels>
+      <enumLabels>IMG-SPECTRAL-LINE</enumLabels>
+      <enumLabels>IMG-ZOOM</enumLabels>
+      <enumLabels>PULSAR-SEARCH</enumLabels>
+      <enumLabels>TRANSIENT-SEARCH-FAST</enumLabels>
+      <enumLabels>TRANSIENT-SEARCH-SLOW</enumLabels>
+      <enumLabels>PULSAR-TIMING</enumLabels>
+      <enumLabels>VLBI</enumLabels>
+    </attributes>
+    <attributes name="obsState" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Report the current observation state of the DSH Element." label="Observation state" unit="" standardUnit="" displayUnit="" format="" maxValue="4" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>IDLE</enumLabels>
+      <enumLabels>CONFIGURING</enumLabels>
+      <enumLabels>READY</enumLabels>
+      <enumLabels>SCANNING</enumLabels>
+      <enumLabels>PAUSED</enumLabels>
+      <enumLabels>ABORTED</enumLabels>
+    </attributes>
+    <attributes name="pointingState" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Report the current pointing state of the DSH Element." label="Pointing state" unit="" standardUnit="" displayUnit="" format="" maxValue="3" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>READY</enumLabels>
+      <enumLabels>SLEW</enumLabels>
+      <enumLabels>TRACK</enumLabels>
+      <enumLabels>SCAN</enumLabels>
+    </attributes>
+    <attributes name="powerState" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Report the current power state of the DSH Element." label="Power state" unit="" standardUnit="" displayUnit="" format="" maxValue="3" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <enumLabels>OFF</enumLabels>
+      <enumLabels>UPS</enumLabels>
+      <enumLabels>LOW</enumLabels>
+      <enumLabels>FULL</enumLabels>
+    </attributes>
+    <attributes name="simulationMode" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" memorized="true" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Report whether the current DSH Element mode is on simulation." label="Simulation mode" unit="" standardUnit="" displayUnit="" format="" maxValue="1" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>TRUE</enumLabels>
+      <enumLabels>FALSE</enumLabels>
+    </attributes>
+    <attributes name="storageLogLevel" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The storage log level of the DSH Element." label="Storage log level" unit="" standardUnit="" displayUnit="" format="" maxValue="5" minValue="0" maxAlarm="5" minAlarm="" maxWarning="3" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>OFF</enumLabels>
+      <enumLabels>INFO</enumLabels>
+      <enumLabels>DEBUG</enumLabels>
+      <enumLabels>WARNING</enumLabels>
+      <enumLabels>ERROR</enumLabels>
+      <enumLabels>FATAL</enumLabels>
+    </attributes>
+    <attributes name="achievedPointing" attType="Spectrum" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="3" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:FloatType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The achieved pointing of the DSH Element. [timestamp] Milliseconds since UNIX epoch, UTC ms [Azimuth] degree [Elevation] degree" label="Achieved pointing" unit="[ms, degree, degree]" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="" period="1000"/>
+    </attributes>
+    <attributes name="desiredPointing" attType="Spectrum" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="3" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The desired pointing of the DSH Element. [timestamp] Milliseconds since UNIX epoch, UTC ms [Azimuth] degree [Elevation] degree" label="Desired pointing" unit="[ms, degree, degree]" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="" period="1000"/>
+    </attributes>
+    <states name="ALARM" description="The value of an attribute of the device has crossed the alarm threshold&#xA;and the TANGO device is in state ON.">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="DISABLE" description="Corresponds to the following dishMode:&#xA;MAINTENANCE, STOW">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="FAULT" description="DSH critical fault.">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="INIT" description="Corresponds to the following dishMode&#xA;TANGO Device reports (operational) state as INIT when the TANGO Device itself&#xA;and/or the entity it models is performing initialization; in this state the entity is&#xA;not fully operational, it is not ready to perform its core functionality. Part of the&#xA;functionality may be available, e.g. ability to report state and other attributes.&#xA;This is a transient state, when initialization is completed, the entity transitions in&#xA;the next state as per state machine.&#xA;STARTUP, CONFIGURE">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="OFF" description="TANGO Device shall report (operational) state as OFF only when it can detect that&#xA;the entity is indeed OFF (switched off). When the entity is unresponsive and the&#xA;cause is unknown, TANGO device shall report state as UNKNOWN or FAULT&#xA;(during implementation analysis should be performed to identify appropriate&#xA;value for each case).&#xA;Examples:&#xA;TANGO device which reports on behalf of a software process or&#xA;application shall report state as OFF when the process is not active&#xA;(most Operating Systems are able to report the list of active processes).&#xA;TANGO device which reports on behalf of an LRU should report state as&#xA;OFF only if it is able to detect that the LRU is indeed switched off or lost&#xA;power. Otherwise, state of an unresponsive entity ( Element,&#xA;Sub-element, LRU, component) shall be reported as UNKNOWN or&#xA;24FAULT (depending on the context).&#xA;NOTE: TANGO Rev 9 defines two aliases for this state. SKA preferred mnemonic is&#xA;OFF; CLOSE and INSERT should be used only when required to model the&#xA;equipment accurately.">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="ON" description="Corresponds to the following dishMode:&#xA;OPERATE">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="STANDBY" description="Corresponds to the following dishMode:&#xA;STANDBY-LP">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="UNKNOWN" description="Device state of an entity is reported as UNKNOWN when TM or other parts of the&#xA;control system (higher in the M&amp;C hierarchy) are not able to establish&#xA;communication with the TANGO Device that reports on behalf of the entity .&#xA;When not able to detect/obtain the actual state of the entity it models, due to&#xA;loss of communication with equipment or software processes, TANGO Device&#xA;shall report state as UNKNOWN or FAULT; the choice will depend on the context&#xA;( analysis should be performed during implementation to identify appropriate&#xA;value for each case).">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <preferences docHome="./doc_html" makefileHome="/usr/share/pogo/preferences"/>
+  </classes>
+</pogoDsl:PogoSystem>
