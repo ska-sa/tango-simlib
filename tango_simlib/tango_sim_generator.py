@@ -256,6 +256,8 @@ def get_tango_device_server(model, sim_data_files):
                                    .format(attribute_name))
                 meta_data = model_sim_quants[attribute_name].meta
                 attr_dtype = meta_data['data_type']
+                # Dynamically add all attributes except those with DevEnum data type
+                # since they are added to the device class prior to start-up.
                 if str(attr_dtype) != 'DevEnum':
                     # The return value of rwType is a string and it is required as a
                     # PyTango data type when passed to the Attr function.
