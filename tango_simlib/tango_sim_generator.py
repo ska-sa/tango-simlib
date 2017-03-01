@@ -206,10 +206,10 @@ def get_tango_device_server(model, sim_data_files):
         setattr(cls, read_meth.__name__, read_meth)
         setattr(cls, attr.__name__, attr)
 
-    for quantity_name, quantity_ in model.sim_quantities.items():
-        d_type = quantity_.meta['data_type']
+    for quantity_name, quantity in model.sim_quantities.items():
+        d_type = quantity.meta['data_type']
         if d_type == DevEnum:
-            add_enum_attribute(TangoDeviceServerEnumAttrs, quantity_name, quantity_.meta)
+            add_enum_attribute(TangoDeviceServerEnumAttrs, quantity_name, quantity.meta)
 
     for action_name, action_handler in model.sim_actions.items():
         cmd_handler = generate_cmd_handler(action_name, action_handler)

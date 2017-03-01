@@ -487,9 +487,10 @@ class test_PopModelActions(GenericSetup):
                                 (cmd_name))
 
 class test_XmiDevEnumAttribute(ClassCleanupUnittestMixin, unittest.TestCase):
-    """A test class that tests the use of xmi to generate a tango simulator
-    ensuring that the devEnum attribute type is well configure from the
-    specified parameters."""
+    """A test class that tests the use of xmi to generate a tango simulator.
+
+    This class specifically ensures that the devEnum attribute type are well
+    configured from the specified parameters in the POGO xmi."""
 
     longMessage = True
 
@@ -497,7 +498,7 @@ class test_XmiDevEnumAttribute(ClassCleanupUnittestMixin, unittest.TestCase):
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.xmi_file = [pkg_resources.resource_filename(
-                            'tango_simlib.tests', 'DishElementMaster.xmi')]
+                            'tango_simlib.tests', 'devenum_test_case.xmi')]
         # Since the sim_xmi_parser gets the xmi file from the device properties
         # in the tango database, here the method is mocked to return the xmi
         # file that found using the pkg_resources since it is included in the
@@ -530,15 +531,17 @@ class test_XmiDevEnumAttribute(ClassCleanupUnittestMixin, unittest.TestCase):
         """
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
-        default_attributes = {'State', 'Status'}
         for attribute_data in self.xmi_parser.device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
-        self.assertEqual(set(expected_attributes), attributes - default_attributes,
-                         "Actual tango device attribute list differs from expected "
-                         "list!")
+        self.assertEqual(set(expected_attributes), attributes -
+                         helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES,
+                         "Actual tango device attribute list differs from "
+                         "expected list!")
 
     def test_enum_attribute_proberties(self):
-        """Testing wether the DevEnum data type attribute properties specified
+        """Testing wether the DevEnum attributes are well configred.
+
+        Checks wether the DevEnum data type attribute properties specified
         in the POGO generated xmi file are added to the TANGO device"""
         attr_name = 'adminMode'
         attributes = set(self.device.get_attribute_list())
