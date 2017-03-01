@@ -538,7 +538,7 @@ class test_XmiDevEnumAttribute(ClassCleanupUnittestMixin, unittest.TestCase):
                          "Actual tango device attribute list differs from "
                          "expected list!")
 
-    def test_enum_attribute_proberties(self):
+    def test_enum_attribute_properties(self):
         """Testing wether the DevEnum attributes are well configred.
 
         Checks wether the DevEnum data type attribute properties specified
