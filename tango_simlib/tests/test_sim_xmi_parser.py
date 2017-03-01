@@ -115,7 +115,7 @@ expected_admin_mode_devenum_attr_info = {
     'delta_val': '',
     'description': ('Report the current admin mode of the DSH Element. '
                     'Factory defaut is MAINTENANCE.'),
-    'dformat': PyTango.AttrDataFormat.SCALAR,
+    'data_format': PyTango.AttrDataFormat.SCALAR,
     'display_unit': '',
     'enum_labels': [
         'ONLINE',
