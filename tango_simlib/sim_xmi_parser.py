@@ -36,7 +36,8 @@ POGO_USER_DEFAULT_ATTR_PROP_MAP = {
         'dataType': 'data_type',
         'rwType': 'writable',
         'polledPeriod': 'period',
-        'attType': 'data_format',
+        'attType': 'dformat',
+        'enum_labels': 'enum_labels',
         'maxX': 'max_dim_x',
         'maxY': 'max_dim_y'},
     'eventArchiveCriteria': {
@@ -338,6 +339,13 @@ class XmiParser(object):
 
         attribute_data['dynamicAttributes']['dataType'] = (
             self._get_arg_type(description_data))
+        if str(attribute_data['dynamicAttributes']['dataType']) == 'DevEnum':
+            enum_labels = []
+            for child in description_data.getchildren():
+                if child.tag == 'enumLabels':
+                    enum_labels.append(child.text)
+            attribute_data['dynamicAttributes']['enum_labels'] = enum_labels
+
         attribute_data['properties'] = description_data.find('properties').attrib
 
         try:
@@ -432,9 +440,13 @@ class XmiParser(object):
         # instead of the default PyTango.utils.DevState
         if arg_type == 'State':
             return CmdArgType.DevState
-
         try:
-            arg_type = getattr(PyTango, 'Dev' + arg_type)
+            # The DevVarTypeArray data type specified in pogo writes
+            # TypeArray in xmi file instead
+            if arg_type in ['FloatArray', 'DoubleArray', 'StringArray']:
+                arg_type = getattr(PyTango, 'DevVar' + arg_type)
+            else:
+                arg_type = getattr(PyTango, 'Dev' + arg_type)
         except AttributeError:
             MODULE_LOGGER.debug("PyTango has no attribute 'Dev{}".format(arg_type))
             raise AttributeError("PyTango has no attribute 'Dev{}.\n Try replacing"
@@ -481,7 +493,8 @@ class XmiParser(object):
                 'rel_change': '',
                 'standard_unit': '',
                 'unit': '',
-                'writable': 'READ'},
+                'writable': 'READ',
+                'enum_labels': []}, # If attribute data type is DevEnum
             }
 
         """

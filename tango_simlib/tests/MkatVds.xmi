@@ -25,7 +25,7 @@
     </commands>
     <commands name="Focus" description="Focuses camera to a specified direction or specified position." execMethod="focus" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
       <argin description="focus_direction : string (focus to the specific direction.), focus_position (optional) : int (focus to the specific position)">
-        <type xsi:type="pogoDsl:VarStringArrayType"/>
+        <type xsi:type="pogoDsl:StringArrayType"/>
       </argin>
       <argout description="">
         <type xsi:type="pogoDsl:VoidType"/>
@@ -34,7 +34,7 @@
     </commands>
     <commands name="Pan" description="Drive camera to a pan direction(left or right) or pan to specified position." execMethod="pan" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
       <argin description="pan_position_time (optional) : float (pan to the specific position.), pan_direction : string (pan to the specified direction.)">
-        <type xsi:type="pogoDsl:VarStringArrayType"/>
+        <type xsi:type="pogoDsl:StringArrayType"/>
       </argin>
       <argout description="">
         <type xsi:type="pogoDsl:VoidType"/>
@@ -52,7 +52,7 @@
     </commands>
     <commands name="PresetGoto" description="Go to preset stored position(pan, tilt, zoom)" execMethod="preset_goto" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
       <argin description="receptor_name : str (receptor name (from m000 to m063)), clear_set_flag : str (Flag that determine if we have to write to screen or clear text)">
-        <type xsi:type="pogoDsl:VarStringArrayType"/>
+        <type xsi:type="pogoDsl:StringArrayType"/>
       </argin>
       <argout description="">
         <type xsi:type="pogoDsl:VoidType"/>
@@ -79,7 +79,7 @@
     </commands>
     <commands name="Tilt" description="Drive camera to a tilt direction or specified position." execMethod="tilt" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
       <argin description="tilt_direction : string (tilt to the specific direction.), tilt_position_time (optional) : float (tilt to the specific position.)">
-        <type xsi:type="pogoDsl:VarStringArrayType"/>
+        <type xsi:type="pogoDsl:StringArrayType"/>
       </argin>
       <argout description="">
         <type xsi:type="pogoDsl:VoidType"/>
