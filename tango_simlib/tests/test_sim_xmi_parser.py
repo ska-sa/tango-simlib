@@ -199,7 +199,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         """
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
-        default_attributes = {'State', 'Status'}
+        default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
         for attribute_data in self.xmi_parser.device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
         self.assertEqual(set(expected_attributes), attributes - default_attributes,
