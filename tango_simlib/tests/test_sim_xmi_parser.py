@@ -8,8 +8,8 @@ from devicetest import TangoTestContext
 
 from katcore.testutils import cleanup_tempfile
 from katcp.testutils import start_thread_with_cleanup
-from tango_simlib import model, sim_xmi_parser, tango_sim_generator
 from tango_simlib.testutils import ClassCleanupUnittestMixin
+from tango_simlib import model, sim_xmi_parser, tango_sim_generator, helper_module
 
 import PyTango
 
@@ -550,7 +550,7 @@ class test_XmiDevEnumAttribute(ClassCleanupUnittestMixin, unittest.TestCase):
             if device_attr_prop_val:
                 # Tango device return attribute properties with Not pecified
                 # or No `property name` value if no info is provided
-                if 'No' in str(device_attr_prop_val):
+                if str(device_attr_prop_val) in helper_module.TANGO_NOT_SPECIFIED_PROPS:
                     device_attr_prop_val = ''
                 # In the case of enum labels we assert the set of the lists
                 if type(attr_prop_val) == list:
