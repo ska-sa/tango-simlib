@@ -489,7 +489,7 @@ class test_PopModelActions(GenericSetup):
 class test_XmiDevEnumAttribute(ClassCleanupUnittestMixin, unittest.TestCase):
     """A test class that tests the use of xmi to generate a tango simulator.
 
-    This class specifically ensures that the devEnum attribute type are well
+    This class specifically ensures that the devEnum attribute type is well
     configured from the specified parameters in the POGO xmi."""
 
     longMessage = True
