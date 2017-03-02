@@ -98,17 +98,12 @@ def get_tango_device_server(model, sim_data_files):
     class TangoTestDeviceServerCommands(object):
         pass
 
-    # Declare a Tango Device class for specifically adding enum
+    # Declare a Tango Device class for specifically adding static
     # attributes prior running the device server and controller
-    class TangoDeviceServerEnumAttrs(object):
+    class TangoDeviceServerStaticAttrs(object):
         pass
 
-    class TangoTestDeviceServerEnumAttrs(object):
-        pass
-
-    # Declare a Tango Device class for specifically adding spectrum
-    # attributes prior running the device server and controller
-    class TangoDeviceServerSpectrumAttrs(object):
+    class TangoTestDeviceServerStaticAttrs(object):
         pass
 
     def generate_cmd_handler(action_name, action_handler):
@@ -133,17 +128,21 @@ def get_tango_device_server(model, sim_data_files):
         return command(f=cmd_handler, **cmd_info_copy)
 
     def add_static_attribute(cls, attr_name, attr_meta):
-        """Add an attribute of tango type DevEnum or SPECTRUM to the device server.
+        """Add any TANGO attribute of to the device server before start-up.
 
         Parameters
         ----------
         cls: class
             class object that the device server will inherit from
         attr_name: str
-            Tango enum/spectrum attribute name
+            Tango attribute name
         attr_meta: dict
-            Meta data that enables the creation of a well configured enum
-            attribute
+            Meta data that enables the creation of a well configured attribute
+
+
+        Note
+        ----
+        This is needed for DevEnum and spectrum type attribues
 
         """
         attr = attribute(label=attr_meta['label'], dtype=attr_meta['data_type'],
@@ -168,15 +167,19 @@ def get_tango_device_server(model, sim_data_files):
         setattr(cls, read_meth.__name__, read_meth)
         setattr(cls, attr.__name__, attr)
 
+    # We use the `add_static_attribute` method to add DevEnum and Spectrum type
+    # attributes statically to the tango device before start-up since the
+    # cannot be well configured when added dynamically. This is suspected
+    # to be a bug.
+    # TODO(AR 02-03-2017): Ask the tango community on the upcoming Stack
+    # Exchange community (AskTango) and also make follow ups on the next tango
+    # releases.
     for quantity_name, quantity in model.sim_quantities.items():
         d_type = quantity.meta['data_type']
         d_type = str(quantity.meta['data_type'])
         d_format = str(quantity.meta['data_format'])
-        if d_type == 'DevEnum':
-            add_static_attribute(TangoDeviceServerEnumAttrs, quantity_name,
-                                 quantity.meta)
-        elif d_format == 'SPECTRUM':
-            add_static_attribute(TangoDeviceServerSpectrumAttrs, quantity_name,
+        if d_type == 'DevEnum' or d_format == 'SPECTRUM':
+            add_static_attribute(TangoDeviceServerStaticAttrs, quantity_name,
                                  quantity.meta)
 
     for action_name, action_handler in model.sim_actions.items():
@@ -192,7 +195,7 @@ def get_tango_device_server(model, sim_data_files):
         setattr(TangoTestDeviceServerCommands, action_name, cmd_handler)
 
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerCommands,
-                            TangoDeviceServerEnumAttrs, TangoDeviceServerSpectrumAttrs):
+                            TangoDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
 
         def init_device(self):
@@ -226,7 +229,7 @@ def get_tango_device_server(model, sim_data_files):
                 attr_dtype = meta_data['data_type']
                 d_format = meta_data['data_format']
                 # Dynamically add all attributes except those with DevEnum data type
-                # and SPECTRUM data format since they are added statically to the 
+                # and SPECTRUM data format since they are added statically to the
                 # device class prior to start-up.
                 if str(attr_dtype) != 'DevEnum' and str(d_format) != 'SPECTRUM':
                     # The return value of rwType is a string and it is required as a
@@ -246,7 +249,7 @@ def get_tango_device_server(model, sim_data_files):
                     self.add_attribute(attr, self.read_attributes)
 
     class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerCommands,
-                     TangoTestDeviceServerEnumAttrs):
+                     TangoTestDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
 
         instances = weakref.WeakValueDictionary()
