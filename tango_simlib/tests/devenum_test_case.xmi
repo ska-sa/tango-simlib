@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ASCII"?>
+<pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
+  <classes name="DishElementMaster" pogoRevision="9.1">
+    <description description="The DSH shall provide a self-description on request from the TM" sourcePath="/home/athanaseus/Desktop/Projects/FEB/Sprint28/LMC/Element" language="Python" filestogenerate="XMI   file,Code files,Protected Regions,html Pages" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
+      <inheritances classname="Device_Impl" sourcePath=""/>
+      <identification contact="at ska.ac.za - aramaila" author="aramaila" emailDomain="ska.ac.za" classFamily="Simulators" siteSpecific="" platform="Unix Like" bus="TCP/UDP" manufacturer="none" reference=""/>
+    </description>
+    <attributes name="adminMode" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" memorized="true" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Report the current admin mode of the DSH Element. Factory defaut is MAINTENANCE." label="Admin Mode" unit="" standardUnit="" displayUnit="" format="" maxValue="4" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="1" period=""/>
+      <evArchiveCriteria relChange="" absChange="1" period=""/>
+      <enumLabels>ONLINE</enumLabels>
+      <enumLabels>OFFLINE</enumLabels>
+      <enumLabels>MAINTENANCE</enumLabels>
+      <enumLabels>NOT-FITTED</enumLabels>
+      <enumLabels>RESERVE</enumLabels>
+    </attributes>
+    <attributes name="achievedPointing" attType="Spectrum" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="3" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:FloatType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The achieved pointing of the DSH Element. [timestamp] Milliseconds since UNIX epoch, UTC ms [Azimuth] degree [Elevation] degree" label="Achieved pointing" unit="[ms, degree, degree]" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="" period="1000"/>
+    </attributes>
+    <preferences docHome="./doc_html" makefileHome="/usr/share/pogo/preferences"/>
+  </classes>
+</pogoDsl:PogoSystem>

@@ -46,6 +46,7 @@ DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE = {
     'writable': ''
 }
 
+TANGO_NOT_SPECIFIED_PROPS = ['Not specified', 'No display unit', 'No standard unit']
 
 def get_server_name():
     """Gets the TANGO server name from the command line arguments

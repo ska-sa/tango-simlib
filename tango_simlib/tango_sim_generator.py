@@ -19,9 +19,10 @@ import logging
 import argparse
 
 from PyTango import Attr, AttrWriteType, UserDefaultAttrProp, AttrQuality, Database
-from PyTango import DevState
-from PyTango.server import Device, DeviceMeta, device_property, command
+from PyTango import DevState, DevEnum
+from PyTango.server import Device, DeviceMeta, device_property, command, attribute
 
+from enum import Enum
 from functools import partial
 
 from tango_simlib.model import Model
@@ -45,8 +46,8 @@ POGO_USER_DEFAULT_CMD_PROP_MAP = {
 class TangoDeviceServerBase(Device):
     instances = weakref.WeakValueDictionary()
 
-    sim_xmi_description_file = device_property(dtype=str,
-            doc='Complete path name of the POGO xmi file to be parsed')
+    sim_xmi_description_file = device_property(
+            dtype=str, doc='Complete path name of the POGO xmi file to be parsed')
 
     def init_device(self):
         super(TangoDeviceServerBase, self).init_device()
@@ -144,6 +145,14 @@ def get_tango_device_server(model, sim_data_files):
     class TangoTestDeviceServerCommands(object):
         pass
 
+    # Declare a Tango Device class for specifically adding enum
+    # attributes prior running the device server and controller
+    class TangoDeviceServerEnumAttrs(object):
+        pass
+
+    class TangoTestDeviceServerEnumAttrs(object):
+        pass
+
     def generate_cmd_handler(action_name, action_handler):
         def cmd_handler(tango_device, input_parameters=None):
             return action_handler(tango_dev=tango_device, data_input=input_parameters)
@@ -165,6 +174,43 @@ def get_tango_device_server(model, sim_data_files):
         """
         return command(f=cmd_handler, **cmd_info_copy)
 
+    def add_enum_attribute(cls, attr_name, attr_meta):
+        """Add an attribute of tango type DevEnum to the device server.
+
+        Parameters
+        ----------
+        cls: class
+            class object that the device server will inherit from
+        attr_name: str
+            Tango enum attribute name
+        attr_meta: dict
+            Meta data that enables the creation of a well configured enum
+            attribute
+
+        """
+        attr = attribute(label=attr_meta['label'], dtype=attr_meta['data_type'],
+                         enum_labels=attr_meta['enum_labels'],
+                         doc=attr_meta['description'],
+                         access=getattr(AttrWriteType, attr_meta['writable']))
+        attr.__name__ = attr_name
+        # Attribute read method
+        def read_meth(cls):
+            return cls.some_variable_val
+        # Attribute write method for writable attributes
+        if str(attr_meta['writable']) == 'READ_WRITE':
+            @attr.write
+            def attr(cls, new_val):
+                cls.some_variable_val = new_val
+        read_meth.__name__ = 'read_{}'.format(attr_name)
+        # Add the read method and the attribute to the class object
+        setattr(cls, read_meth.__name__, read_meth)
+        setattr(cls, attr.__name__, attr)
+
+    for quantity_name, quantity in model.sim_quantities.items():
+        d_type = quantity.meta['data_type']
+        if d_type == DevEnum:
+            add_enum_attribute(TangoDeviceServerEnumAttrs, quantity_name, quantity.meta)
+
     for action_name, action_handler in model.sim_actions.items():
         cmd_handler = generate_cmd_handler(action_name, action_handler)
         # You might need to turn cmd_handler into an unbound method before you add
@@ -177,7 +223,8 @@ def get_tango_device_server(model, sim_data_files):
         # it to the class
         setattr(TangoTestDeviceServerCommands, action_name, cmd_handler)
 
-    class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerCommands):
+    class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerCommands,
+                            TangoDeviceServerEnumAttrs):
         __metaclass__ = DeviceMeta
 
         def init_device(self):
@@ -201,32 +248,35 @@ def get_tango_device_server(model, sim_data_files):
                         adjustable_val = 0.0
                     setattr(simulated_quantity, attr, adjustable_val)
 
-
         def initialize_dynamic_attributes(self):
             model_sim_quants = self.model.sim_quantities
             attribute_list = set([attr for attr in model_sim_quants.keys()])
             for attribute_name in attribute_list:
                 MODULE_LOGGER.info("Added dynamic {} attribute"
-                    .format(attribute_name))
+                                   .format(attribute_name))
                 meta_data = model_sim_quants[attribute_name].meta
                 attr_dtype = meta_data['data_type']
-                # The return value of rwType is a string and it is required as a
-                # PyTango data type when passed to the Attr function.
-                # e.g. 'READ' -> PyTango.AttrWriteType.READ
-                rw_type = meta_data['writable']
-                rw_type = getattr(AttrWriteType, rw_type)
-                attr = Attr(attribute_name, attr_dtype, rw_type)
-                attr_props = UserDefaultAttrProp()
-                for prop in meta_data.keys():
-                    attr_prop_setter = getattr(attr_props, 'set_' + prop, None)
-                    if attr_prop_setter:
-                        attr_prop_setter(meta_data[prop])
-                    else:
-                        MODULE_LOGGER.info("No setter function for " + prop + " property")
-                attr.set_default_properties(attr_props)
-                self.add_attribute(attr, self.read_attributes)
+                # Dynamically add all attributes except those with DevEnum data type
+                # since they are added to the device class prior to start-up.
+                if str(attr_dtype) != 'DevEnum':
+                    # The return value of rwType is a string and it is required as a
+                    # PyTango data type when passed to the Attr function.
+                    # e.g. 'READ' -> PyTango.AttrWriteType.READ
+                    rw_type = meta_data['writable']
+                    rw_type = getattr(AttrWriteType, rw_type)
+                    attr = Attr(attribute_name, attr_dtype, rw_type)
+                    attr_props = UserDefaultAttrProp()
+                    for prop in meta_data.keys():
+                        attr_prop_setter = getattr(attr_props, 'set_' + prop, None)
+                        if attr_prop_setter:
+                            attr_prop_setter(str(meta_data[prop]))
+                        else:
+                            MODULE_LOGGER.info("No setter function for " + prop + " property")
+                    attr.set_default_properties(attr_props)
+                    self.add_attribute(attr, self.read_attributes)
 
-    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerCommands):
+    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerCommands,
+                     TangoTestDeviceServerEnumAttrs):
         __metaclass__ = DeviceMeta
 
         instances = weakref.WeakValueDictionary()
