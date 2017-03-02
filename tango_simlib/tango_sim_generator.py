@@ -19,10 +19,9 @@ import logging
 import argparse
 
 from PyTango import Attr, AttrWriteType, UserDefaultAttrProp, AttrQuality, Database
-from PyTango import DevState, DevEnum
-from PyTango.server import Device, DeviceMeta, device_property, command, attribute
+from PyTango.server import Device, DeviceMeta, command, attribute
+from PyTango import DevState
 
-from enum import Enum
 from functools import partial
 
 from tango_simlib.model import Model
@@ -45,9 +44,6 @@ POGO_USER_DEFAULT_CMD_PROP_MAP = {
 
 class TangoDeviceServerBase(Device):
     instances = weakref.WeakValueDictionary()
-
-    sim_xmi_description_file = device_property(
-            dtype=str, doc='Complete path name of the POGO xmi file to be parsed')
 
     def init_device(self):
         super(TangoDeviceServerBase, self).init_device()
