@@ -153,6 +153,11 @@ def get_tango_device_server(model, sim_data_files):
     class TangoTestDeviceServerEnumAttrs(object):
         pass
 
+    # Declare a Tango Device class for specifically adding spectrum
+    # attributes prior running the device server and controller
+    class TangoDeviceServerSpectrumAttrs(object):
+        pass
+
     def generate_cmd_handler(action_name, action_handler):
         def cmd_handler(tango_device, input_parameters=None):
             return action_handler(tango_dev=tango_device, data_input=input_parameters)
@@ -174,23 +179,27 @@ def get_tango_device_server(model, sim_data_files):
         """
         return command(f=cmd_handler, **cmd_info_copy)
 
-    def add_enum_attribute(cls, attr_name, attr_meta):
-        """Add an attribute of tango type DevEnum to the device server.
+    def add_static_attribute(cls, attr_name, attr_meta):
+        """Add an attribute of tango type DevEnum or SPECTRUM to the device server.
 
         Parameters
         ----------
         cls: class
             class object that the device server will inherit from
         attr_name: str
-            Tango enum attribute name
+            Tango enum/spectrum attribute name
         attr_meta: dict
             Meta data that enables the creation of a well configured enum
             attribute
 
         """
         attr = attribute(label=attr_meta['label'], dtype=attr_meta['data_type'],
-                         enum_labels=attr_meta['enum_labels'],
+                         enum_labels=attr_meta['enum_labels'] if 'enum_labels'
+                         in attr_meta.keys() else '',
                          doc=attr_meta['description'],
+                         dformat=attr_meta['data_format'],
+                         max_dim_x=attr_meta['max_dim_x'],
+                         max_dim_y=attr_meta['max_dim_y'],
                          access=getattr(AttrWriteType, attr_meta['writable']))
         attr.__name__ = attr_name
         # Attribute read method
@@ -208,8 +217,14 @@ def get_tango_device_server(model, sim_data_files):
 
     for quantity_name, quantity in model.sim_quantities.items():
         d_type = quantity.meta['data_type']
-        if d_type == DevEnum:
-            add_enum_attribute(TangoDeviceServerEnumAttrs, quantity_name, quantity.meta)
+        d_type = str(quantity.meta['data_type'])
+        d_format = str(quantity.meta['data_format'])
+        if d_type == 'DevEnum':
+            add_static_attribute(TangoDeviceServerEnumAttrs, quantity_name,
+                                 quantity.meta)
+        elif d_format == 'SPECTRUM':
+            add_static_attribute(TangoDeviceServerSpectrumAttrs, quantity_name,
+                                 quantity.meta)
 
     for action_name, action_handler in model.sim_actions.items():
         cmd_handler = generate_cmd_handler(action_name, action_handler)
@@ -224,7 +239,7 @@ def get_tango_device_server(model, sim_data_files):
         setattr(TangoTestDeviceServerCommands, action_name, cmd_handler)
 
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerCommands,
-                            TangoDeviceServerEnumAttrs):
+                            TangoDeviceServerEnumAttrs, TangoDeviceServerSpectrumAttrs):
         __metaclass__ = DeviceMeta
 
         def init_device(self):
@@ -256,9 +271,11 @@ def get_tango_device_server(model, sim_data_files):
                                    .format(attribute_name))
                 meta_data = model_sim_quants[attribute_name].meta
                 attr_dtype = meta_data['data_type']
+                d_format = meta_data['data_format']
                 # Dynamically add all attributes except those with DevEnum data type
-                # since they are added to the device class prior to start-up.
-                if str(attr_dtype) != 'DevEnum':
+                # and SPECTRUM data format since they are added statically to the 
+                # device class prior to start-up.
+                if str(attr_dtype) != 'DevEnum' and str(d_format) != 'SPECTRUM':
                     # The return value of rwType is a string and it is required as a
                     # PyTango data type when passed to the Attr function.
                     # e.g. 'READ' -> PyTango.AttrWriteType.READ
