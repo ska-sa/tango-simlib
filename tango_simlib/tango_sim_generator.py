@@ -72,49 +72,6 @@ class TangoDeviceServerBase(Device):
             self.info_stream("Reading attribute %s", name)
             attr.set_value_date_quality(value, update_time, quality)
 
-def get_data_description_file_name():
-    """Gets the xmi/xml/json description file name from the tango-db device properties
-
-    Returns
-    =======
-    sim_data_description_file_list : list
-        Tango device server description file(s) (POGO xmi or SDD xml or SIMDD json)
-        e.g. ['home/user/weather.xmi']
-
-    """
-
-    # TODO (NM 2016-11-04) At the moment this is hardcoded to assume only the
-    # first class and first device configures the XMI file. But more
-    # fundamentally, this is a chicken and egg problem. TANGO usually assumes
-    # that a device server knows what TANGO classes it supports even before any
-    # device have been registered to the device server, allowing e.g. the Jive
-    # server wizard to work. Now we are forcing the user to register a device
-    # first to specify the XMI file. Passing the XMI file on the command line is
-    # problematic since we still want to use the TANGO main function.
-    #
-    # Potential solutions
-    #
-    # 1) Generate a script that hardcodes the name of the XMI file for each
-    #    dynamic device (perhaps a good simple solution, also gives you unique
-    #    device server names)
-    #
-    # 2) Use an OS environment variable (probably too magic)
-    #
-    # 3) Perhaps define a "DynamicControl" class that is always exposed by the
-    #    dynamic simulator. A property can then be defined on a DynamicControl
-    #    instance, that is used to find the XMI file. Once the device is
-    #    restarted, the classes defined in the XMI file can be exposed.
-
-    #This function should perhaps take the device name
-
-    server_name = helper_module.get_server_name()
-    db_instance = Database()
-    server_class = db_instance.get_server_class_list(server_name).value_string[0]
-    device_name = db_instance.get_device_name(server_name, server_class).value_string[0]
-    sim_data_description_file_list = db_instance.get_device_property(device_name,
-        'sim_data_description_file')['sim_data_description_file']
-    return sim_data_description_file_list
-
 
 def get_tango_device_server(model, sim_data_files):
     """Declares a tango device class that inherits the Device class and then

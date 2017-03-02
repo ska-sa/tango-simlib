@@ -559,7 +559,7 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
         self.xmi_parser.parse(self.xmi_file[0])
 
     def test_attribute_list(self):
-        """ Test device attribute list.
+        """Test device attribute list.
 
         Check whether the attributes specified in the POGO generated xmi file
         are added to the TANGO device
