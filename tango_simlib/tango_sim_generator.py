@@ -19,10 +19,9 @@ import logging
 import argparse
 
 from PyTango import Attr, AttrWriteType, UserDefaultAttrProp, AttrQuality, Database
-from PyTango import DevState, DevEnum
-from PyTango.server import Device, DeviceMeta, device_property, command, attribute
+from PyTango.server import Device, DeviceMeta, command, attribute
+from PyTango import DevState
 
-from enum import Enum
 from functools import partial
 
 from tango_simlib.model import Model
@@ -45,9 +44,6 @@ POGO_USER_DEFAULT_CMD_PROP_MAP = {
 
 class TangoDeviceServerBase(Device):
     instances = weakref.WeakValueDictionary()
-
-    sim_xmi_description_file = device_property(
-            dtype=str, doc='Complete path name of the POGO xmi file to be parsed')
 
     def init_device(self):
         super(TangoDeviceServerBase, self).init_device()
@@ -76,49 +72,6 @@ class TangoDeviceServerBase(Device):
             self.info_stream("Reading attribute %s", name)
             attr.set_value_date_quality(value, update_time, quality)
 
-def get_data_description_file_name():
-    """Gets the xmi/xml/json description file name from the tango-db device properties
-
-    Returns
-    =======
-    sim_data_description_file_list : list
-        Tango device server description file(s) (POGO xmi or SDD xml or SIMDD json)
-        e.g. ['home/user/weather.xmi']
-
-    """
-
-    # TODO (NM 2016-11-04) At the moment this is hardcoded to assume only the
-    # first class and first device configures the XMI file. But more
-    # fundamentally, this is a chicken and egg problem. TANGO usually assumes
-    # that a device server knows what TANGO classes it supports even before any
-    # device have been registered to the device server, allowing e.g. the Jive
-    # server wizard to work. Now we are forcing the user to register a device
-    # first to specify the XMI file. Passing the XMI file on the command line is
-    # problematic since we still want to use the TANGO main function.
-    #
-    # Potential solutions
-    #
-    # 1) Generate a script that hardcodes the name of the XMI file for each
-    #    dynamic device (perhaps a good simple solution, also gives you unique
-    #    device server names)
-    #
-    # 2) Use an OS environment variable (probably too magic)
-    #
-    # 3) Perhaps define a "DynamicControl" class that is always exposed by the
-    #    dynamic simulator. A property can then be defined on a DynamicControl
-    #    instance, that is used to find the XMI file. Once the device is
-    #    restarted, the classes defined in the XMI file can be exposed.
-
-    #This function should perhaps take the device name
-
-    server_name = helper_module.get_server_name()
-    db_instance = Database()
-    server_class = db_instance.get_server_class_list(server_name).value_string[0]
-    device_name = db_instance.get_device_name(server_name, server_class).value_string[0]
-    sim_data_description_file_list = db_instance.get_device_property(device_name,
-        'sim_data_description_file')['sim_data_description_file']
-    return sim_data_description_file_list
-
 
 def get_tango_device_server(model, sim_data_files):
     """Declares a tango device class that inherits the Device class and then
@@ -145,12 +98,12 @@ def get_tango_device_server(model, sim_data_files):
     class TangoTestDeviceServerCommands(object):
         pass
 
-    # Declare a Tango Device class for specifically adding enum
+    # Declare a Tango Device class for specifically adding static
     # attributes prior running the device server and controller
-    class TangoDeviceServerEnumAttrs(object):
+    class TangoDeviceServerStaticAttrs(object):
         pass
 
-    class TangoTestDeviceServerEnumAttrs(object):
+    class TangoTestDeviceServerStaticAttrs(object):
         pass
 
     def generate_cmd_handler(action_name, action_handler):
@@ -174,23 +127,31 @@ def get_tango_device_server(model, sim_data_files):
         """
         return command(f=cmd_handler, **cmd_info_copy)
 
-    def add_enum_attribute(cls, attr_name, attr_meta):
-        """Add an attribute of tango type DevEnum to the device server.
+    def add_static_attribute(cls, attr_name, attr_meta):
+        """Add any TANGO attribute of to the device server before start-up.
 
         Parameters
         ----------
         cls: class
             class object that the device server will inherit from
         attr_name: str
-            Tango enum attribute name
+            Tango attribute name
         attr_meta: dict
-            Meta data that enables the creation of a well configured enum
-            attribute
+            Meta data that enables the creation of a well configured attribute
+
+
+        Note
+        ----
+        This is needed for DevEnum and spectrum type attribues
 
         """
         attr = attribute(label=attr_meta['label'], dtype=attr_meta['data_type'],
-                         enum_labels=attr_meta['enum_labels'],
+                         enum_labels=attr_meta['enum_labels'] if 'enum_labels'
+                         in attr_meta.keys() else '',
                          doc=attr_meta['description'],
+                         dformat=attr_meta['data_format'],
+                         max_dim_x=attr_meta['max_dim_x'],
+                         max_dim_y=attr_meta['max_dim_y'],
                          access=getattr(AttrWriteType, attr_meta['writable']))
         attr.__name__ = attr_name
         # Attribute read method
@@ -206,10 +167,20 @@ def get_tango_device_server(model, sim_data_files):
         setattr(cls, read_meth.__name__, read_meth)
         setattr(cls, attr.__name__, attr)
 
+    # We use the `add_static_attribute` method to add DevEnum and Spectrum type
+    # attributes statically to the tango device before start-up since the
+    # cannot be well configured when added dynamically. This is suspected
+    # to be a bug.
+    # TODO(AR 02-03-2017): Ask the tango community on the upcoming Stack
+    # Exchange community (AskTango) and also make follow ups on the next tango
+    # releases.
     for quantity_name, quantity in model.sim_quantities.items():
         d_type = quantity.meta['data_type']
-        if d_type == DevEnum:
-            add_enum_attribute(TangoDeviceServerEnumAttrs, quantity_name, quantity.meta)
+        d_type = str(quantity.meta['data_type'])
+        d_format = str(quantity.meta['data_format'])
+        if d_type == 'DevEnum' or d_format == 'SPECTRUM':
+            add_static_attribute(TangoDeviceServerStaticAttrs, quantity_name,
+                                 quantity.meta)
 
     for action_name, action_handler in model.sim_actions.items():
         cmd_handler = generate_cmd_handler(action_name, action_handler)
@@ -224,7 +195,7 @@ def get_tango_device_server(model, sim_data_files):
         setattr(TangoTestDeviceServerCommands, action_name, cmd_handler)
 
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerCommands,
-                            TangoDeviceServerEnumAttrs):
+                            TangoDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
 
         def init_device(self):
@@ -256,9 +227,11 @@ def get_tango_device_server(model, sim_data_files):
                                    .format(attribute_name))
                 meta_data = model_sim_quants[attribute_name].meta
                 attr_dtype = meta_data['data_type']
+                d_format = meta_data['data_format']
                 # Dynamically add all attributes except those with DevEnum data type
-                # since they are added to the device class prior to start-up.
-                if str(attr_dtype) != 'DevEnum':
+                # and SPECTRUM data format since they are added statically to the
+                # device class prior to start-up.
+                if str(attr_dtype) != 'DevEnum' and str(d_format) != 'SPECTRUM':
                     # The return value of rwType is a string and it is required as a
                     # PyTango data type when passed to the Attr function.
                     # e.g. 'READ' -> PyTango.AttrWriteType.READ
@@ -276,7 +249,7 @@ def get_tango_device_server(model, sim_data_files):
                     self.add_attribute(attr, self.read_attributes)
 
     class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerCommands,
-                     TangoTestDeviceServerEnumAttrs):
+                     TangoTestDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
 
         instances = weakref.WeakValueDictionary()

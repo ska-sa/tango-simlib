@@ -28,6 +28,7 @@ DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE = {
     'delta_val': '',
     'description': '',
     'display_level': '',
+    'enum_lables': [],
     'event_period': '',
     'label': '',
     'max_alarm': '',
