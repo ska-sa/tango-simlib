@@ -592,7 +592,7 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
                                      "actual value" % (attr_prop))
 
     def test_spectrum_attribute_properties(self):
-        """Test wether the Spectrum attributes are well configred.
+        """Test whether the Spectrum attributes are well configred.
 
         Checks whether the Spectrum data format attribute properties specified
         in the POGO generated xmi file are added to the TANGO device
