@@ -38,7 +38,7 @@ class TangoTestDeviceServerBase(Device):
 
         self.model = None
         self._attribute_name = ''
-        self.model_quantities = None
+        self.model_quantity = None
         self._pause_active = False
         self.sim_device_attributes = None
         self.init_device()
@@ -87,7 +87,7 @@ class TangoTestDeviceServerBase(Device):
     def attribute_name(self, name):
         if name in self.sim_device_attributes:
             self._attribute_name = name
-            self.model_quantities = self.model.sim_quantities[self._attribute_name]
+            self.model_quantity = self.model.sim_quantities[self._attribute_name]
         else:
             raise NameError('Name does not exist in the attribute list {}'.
                             format(self.sim_device_attributes))
@@ -110,7 +110,7 @@ class TangoTestDeviceServerBase(Device):
         '''
         name = attr.get_name()
         self.info_stream("Reading attribute %s", name)
-        attr.set_value(getattr(self.model_quantities, name))
+        attr.set_value(getattr(self.model_quantity, name))
 
     def write_attributes(self, attr):
         '''Method writing an attribute value
@@ -122,9 +122,8 @@ class TangoTestDeviceServerBase(Device):
         name = attr.get_name()
         data = attr.get_write_value()
         self.info_stream("Writing attribute {} with value: {}".format(name, data))
-        attr.set_value(data)
-        setattr(self.model_quantities, name, data)
-        if name == 'last_val' and self._pause_active:
-            self.model.quantity_state[self._attribute_name] = data, time.time()
+
+        if name == 'last_val':
+            self.model_quantity.set_val(data, self.model.time_func())
         else:
-            setattr(self.model_quantities, name, data)
+            setattr(self.model_quantity, name, data)
