@@ -346,7 +346,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # Testing a ConstantQuantity type attribute
         # Check if the model is in an unpaused state
         self.assertEqual(
-            getattr(self.sim_control_device.read_attribute(simctrl_attr1_name), 'value'),
+            self.sim_control_device.read_attribute(simctrl_attr1_name).value,
             False, 'The model is in a paused state.')
         # Get the input_comms_ok default value and ensure it is True
         sim_attr2_val = getattr(self.sim_device.read_attribute(sim_attr2_name), 'value')
@@ -355,7 +355,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # Set the model to a paused state
         self.sim_control_device.write_attribute(simctrl_attr1_name, True)
         self.assertEqual(
-            getattr(self.sim_control_device.read_attribute(simctrl_attr1_name), 'value'),
+            self.sim_control_device.read_attribute(simctrl_attr1_name).value,
             True, 'The model is not in a paused state.')
         # Select attribute to control e.g. input_comms_ok
         self.sim_control_device.write_attribute(simctrl_attr2_name, sim_attr2_name)
@@ -363,7 +363,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         self.sim_control_device.write_attribute('last_val', True)
         # Check if the changes appear in the sim device attributes
         self.assertEqual(
-            getattr(self.sim_device.read_attribute(sim_attr2_name), 'value'), True,
+            self.sim_device.read_attribute(sim_attr2_name).value, True,
             "The model was not updated")
 
         # Unpause the model
@@ -372,14 +372,14 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # Testing a GaussianSlewLimited type quantity
         # Check if the model is in an unpaused state
         self.assertEqual(
-            getattr(self.sim_control_device.read_attribute(simctrl_attr1_name), 'value'),
+            self.sim_control_device.read_attribute(simctrl_attr1_name).value,
             False, 'The model is in a paused state.')
         # Select the attribute to control
         self.sim_control_device.write_attribute(simctrl_attr2_name, sim_attr1_name)
         # Pause the model
         self.sim_control_device.write_attribute(simctrl_attr1_name, True)
         # Read the attribute's value
-        sim_attr1_val = getattr(self.sim_device.read_attribute(sim_attr1_name), 'value')
+        sim_attr1_val = self.sim_device.read_attribute(sim_attr1_name).value
         # Write a new value to the quantity/attribute (choose a very big number which
         # is outside the default simulation value range).
         sim_attr1_new_val = 200000
@@ -390,6 +390,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         self.sim_control_device.write_attribute('last_val', sim_attr1_new_val)
         # Check if the changes appear in the sim device attribute under test
         self.assertEqual(
-            getattr(self.sim_device.read_attribute(sim_attr1_name), 'value'),
+            self.sim_device.read_attribute(sim_attr1_name).value,
             sim_attr1_new_val, 'The model was not updated')
 
