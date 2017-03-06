@@ -162,6 +162,9 @@ def get_tango_device_server(model, sim_data_files):
             @attr.write
             def attr(cls, new_val):
                 cls.some_variable_val = new_val
+                # For the sim test interface when selecting a model quantity we
+                # use the enum labels list indexing to return the string values
+                # of the enums since an integer value is returned by device server
                 if (hasattr(cls, 'model_quantities') and
                     'enum_labels' in attr_meta.keys()):
                     cls.model_quantities = cls.model.sim_quantities[
@@ -171,7 +174,8 @@ def get_tango_device_server(model, sim_data_files):
         setattr(cls, read_meth.__name__, read_meth)
         setattr(cls, attr.__name__, attr)
 
-    attr_name = 'attribute_names'
+    # Sim test interface static attribute `attribute_name' info
+    attr_name = 'attribute_name'
     controllable_attribute_names = model.sim_quantities.keys()
     attr_control_meta = dict()
     attr_control_meta['enum_labels'] = controllable_attribute_names
