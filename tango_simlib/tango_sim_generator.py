@@ -20,7 +20,7 @@ import argparse
 
 from PyTango import Attr, AttrWriteType, UserDefaultAttrProp, AttrQuality, Database
 from PyTango.server import Device, DeviceMeta, command, attribute
-from PyTango import DevState
+from PyTango import DevState, AttrDataFormat, CmdArgType
 
 from functools import partial
 
@@ -162,10 +162,28 @@ def get_tango_device_server(model, sim_data_files):
             @attr.write
             def attr(cls, new_val):
                 cls.some_variable_val = new_val
+                if (hasattr(cls, 'model_quantities') and
+                    'enum_labels' in attr_meta.keys()):
+                    cls.model_quantities = cls.model.sim_quantities[
+                            attr_meta['enum_labels'][new_val]]
         read_meth.__name__ = 'read_{}'.format(attr_name)
         # Add the read method and the attribute to the class object
         setattr(cls, read_meth.__name__, read_meth)
         setattr(cls, attr.__name__, attr)
+
+    attr_name = 'attribute_names'
+    controllable_attribute_names = model.sim_quantities.keys()
+    attr_control_meta = dict()
+    attr_control_meta['enum_labels'] = controllable_attribute_names
+    attr_control_meta['data_format'] = AttrDataFormat.SCALAR
+    attr_control_meta['data_type'] = CmdArgType.DevEnum
+    attr_control_meta['label'] = 'Attribute name'
+    attr_control_meta['description'] = 'Attribute name to control'
+    attr_control_meta['max_dim_x'] = 1
+    attr_control_meta['max_dim_y'] = 0
+    attr_control_meta['writable'] = 'READ_WRITE'
+    add_static_attribute(TangoTestDeviceServerStaticAttrs,
+                         attr_name, attr_control_meta)
 
     # We use the `add_static_attribute` method to add DevEnum and Spectrum type
     # attributes statically to the tango device before start-up since the

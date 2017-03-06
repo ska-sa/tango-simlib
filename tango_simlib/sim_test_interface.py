@@ -77,21 +77,8 @@ class TangoTestDeviceServerBase(Device):
             attr = Attr(attribute_name, DevDouble, AttrWriteType.READ_WRITE)
             attr.set_default_properties(attr_props)
             self.add_attribute(attr, self.read_attributes, self.write_attributes)
+
     # Static attributes of the device
-
-    @attribute(dtype=str)
-    def attribute_name(self):
-        return self._attribute_name
-
-    @attribute_name.write
-    def attribute_name(self, name):
-        if name in self.sim_device_attributes:
-            self._attribute_name = name
-            self.model_quantities = self.model.sim_quantities[self._attribute_name]
-        else:
-            raise NameError('Name does not exist in the attribute list {}'.
-                            format(self.sim_device_attributes))
-
     @attribute(dtype=bool)
     def pause_active(self):
         return self._pause_active
