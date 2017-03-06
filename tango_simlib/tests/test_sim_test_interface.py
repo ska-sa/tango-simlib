@@ -7,7 +7,7 @@ import pkg_resources
 import devicetest
 
 from functools import partial
-
+from mock import Mock
 from devicetest import DeviceTestCase
 
 from tango_simlib import sim_test_interface, model, quantities
@@ -57,6 +57,7 @@ def control_attributes(test_model):
                 if attr not in control_attributes]
     return control_attributes
 
+
 class test_SimControl(DeviceTestCase):
     device = sim_test_interface.TangoTestDeviceServerBase
     properties = dict(model_key='the_test_model')
@@ -72,6 +73,10 @@ class test_SimControl(DeviceTestCase):
         self.control_attributes = control_attributes(self.test_model)
         self.device_instance = sim_test_interface.TangoTestDeviceServerBase.instances[
                 self.device.name()]
+
+        self.mock_time = Mock()
+        self.mock_time.return_value = time.time()
+        self.device_instance.model.time_func = self.mock_time
         def cleanup_refs(): del self.device_instance
         self.addCleanup(cleanup_refs)
 
@@ -127,7 +132,8 @@ class test_SimControl(DeviceTestCase):
         control_attr_dict['desired_std_dev'] = 200
         control_attr_dict['desired_max_slew_rate'] = 200
         control_attr_dict['desired_last_val'] = 62
-        control_attr_dict['desired_last_update_time'] = time.time()
+        control_attr_dict['desired_last_update_time'] = (
+            self.device_instance.model.time_func())
         return control_attr_dict
 
     def _quants_before_dict(self, test_model):
