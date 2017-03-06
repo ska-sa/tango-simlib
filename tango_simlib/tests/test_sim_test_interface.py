@@ -7,14 +7,17 @@ import pkg_resources
 import devicetest
 
 from functools import partial
+from mock import Mock
 
-from devicetest import DeviceTestCase
+from devicetest import TangoTestContext
 
-from tango_simlib import sim_test_interface, model, quantities
+from katcore.testutils import cleanup_tempfile
+from katcp.testutils import start_thread_with_cleanup
+from tango_simlib import model, quantities
 from tango_simlib import tango_sim_generator, helper_module
 from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
 
-from PyTango import DevState
+from PyTango import DevState, AttrDataFormat
 
 class FixtureModel(model.Model):
 
@@ -25,16 +28,45 @@ class FixtureModel(model.Model):
         ConstantQuantity = partial(
             quantities.ConstantQuantity, start_time=start_time)
 
-        self.sim_quantities['relative-humidity'] = GaussianSlewLimited(
+        self.sim_quantities['relative_humidity'] = GaussianSlewLimited(
             mean=65, std_dev=10, max_slew_rate=10,
-            min_bound=0, max_bound=150)
-        self.sim_quantities['wind-speed'] = GaussianSlewLimited(
+            min_bound=0, max_bound=150, meta=dict(
+                label="Air humidity",
+                data_type=float,
+                data_format=AttrDataFormat.SCALAR,
+                description="Relative humidity in central telescope area.",
+                max_warning=98, max_alarm=99,
+                max_value=100, min_value=0,
+                unit="percent",
+                period=1000))
+        self.sim_quantities['wind_speed'] = GaussianSlewLimited(
             mean=1, std_dev=20, max_slew_rate=3,
-            min_bound=0, max_bound=100)
-        self.sim_quantities['wind-direction'] = GaussianSlewLimited(
+            min_bound=0, max_bound=100, meta=dict(
+                label="Wind speed",
+                data_type=float,
+                data_format=AttrDataFormat.SCALAR,
+                description="Wind speed in central telescope area.",
+                max_warning=15, max_alarm=25,
+                max_value=30, min_value=0,
+                unit="m/s",
+                period=100))
+        self.sim_quantities['wind_direction'] = GaussianSlewLimited(
             mean=0, std_dev=150, max_slew_rate=60,
-            min_bound=0, max_bound=359.9999)
-        self.sim_quantities['input-comms-ok'] = ConstantQuantity(start_value=True)
+            min_bound=0, max_bound=359.9999, meta=dict(
+                label="Wind direction",
+                data_type=float,
+                data_format=AttrDataFormat.SCALAR,
+                description="Wind direction in central telescope area.",
+                max_value=360, min_value=0,
+                unit="Degrees",
+                period=100))
+        self.sim_quantities['input_comms_ok'] = ConstantQuantity(
+            start_value=True, meta=dict(
+                label="Input communication OK",
+                data_type=bool,
+                data_format=AttrDataFormat.SCALAR,
+                description="Communications with all weather sensors are nominal.",
+                period=100))
         super(FixtureModel, self).setup_sim_quantities()
 
     def reset_model(self):
@@ -51,27 +83,40 @@ def control_attributes(test_model):
     """
     control_attributes = []
     models = set([quant.__class__
-            for quant in test_model.sim_quantities.values()])
+                 for quant in test_model.sim_quantities.values()])
     for cls in models:
         control_attributes += [attr for attr in cls.adjustable_attributes
-                if attr not in control_attributes]
+                               if attr not in control_attributes]
     return control_attributes
 
-class test_SimControl(DeviceTestCase):
-    device = sim_test_interface.TangoTestDeviceServerBase
-    properties = dict(model_key='the_test_model')
+class test_SimControl(ClassCleanupUnittestMixin, unittest.TestCase):
+
+    longMessage = True
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClassWithCleanup(cls):
+        cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
+        cls.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
+                                                        'weather_sim.xmi')]
         cls.test_model = FixtureModel('the_test_model')
-        super(test_SimControl, cls).setUpClass()
+        cls.properties = dict(model_key='the_test_model')
+        cls.device_name = 'test/nodb/tangodeviceserver'
+        cls.TangoTestDeviceServer = tango_sim_generator.get_tango_device_server(
+                                             cls.test_model, cls.xmi_file)[-1]
+        cls.tango_context = TangoTestContext(cls.TangoTestDeviceServer,
+                                             device_name=cls.device_name,
+                                             db=cls.tango_db,
+                                             properties=cls.properties)
+        start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
         super(test_SimControl, self).setUp()
-        self.addCleanup(self.test_model.reset_model)
+        self.device = self.tango_context.device
+        self.device_instance = self.TangoTestDeviceServer.instances[self.device.name()]
         self.control_attributes = control_attributes(self.test_model)
-        self.device_instance = sim_test_interface.TangoTestDeviceServerBase.instances[
-                self.device.name()]
+        self.mock_time = Mock()
+        self.mock_time.return_value = time.time()
+        self.device_instance.model.time_func = self.mock_time
         def cleanup_refs(): del self.device_instance
         self.addCleanup(cleanup_refs)
 
@@ -80,7 +125,7 @@ class test_SimControl(DeviceTestCase):
             helper_module.SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR)
         attributes = set(self.device.get_attribute_list())
         self.assertEqual(attributes - sim_control_static_attributes,
-                        set(self.control_attributes))
+                         set(self.control_attributes))
 
     def test_model_defaults(self):
         device_model = self.device_instance.model
@@ -101,8 +146,9 @@ class test_SimControl(DeviceTestCase):
         """
         # test that expected values from the instantiated model match that of sim control
         for quantity in expected_model.sim_quantities.keys():
-            self.device.attribute_name = quantity  # sets the sensor name for which
-            # to evaluate the quantities to be controlled
+            # sets the sensor name for which to evaluate the quantities to be controlled
+            enum_labels = list(self.device.attribute_query('attribute_name').enum_labels)
+            self.device.attribute_name = enum_labels.index(quantity)
             desired_quantity = expected_model.sim_quantities[quantity]
             for attr in desired_quantity.adjustable_attributes:
                 attribute_value = getattr(self.device, attr)
@@ -127,7 +173,8 @@ class test_SimControl(DeviceTestCase):
         control_attr_dict['desired_std_dev'] = 200
         control_attr_dict['desired_max_slew_rate'] = 200
         control_attr_dict['desired_last_val'] = 62
-        control_attr_dict['desired_last_update_time'] = time.time()
+        control_attr_dict['desired_last_update_time'] = (
+            self.device_instance.model.time_func())
         return control_attr_dict
 
     def _quants_before_dict(self, test_model):
@@ -152,8 +199,9 @@ class test_SimControl(DeviceTestCase):
         expected_model = FixtureModel('random_test1_name',
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(expected_model)
-        desired_attribute_name = 'relative-humidity'
-        self.device.attribute_name = desired_attribute_name
+        desired_attribute_name = 'relative_humidity'
+        enum_labels = list(self.device.attribute_query('attribute_name').enum_labels)
+        self.device.attribute_name = enum_labels.index(desired_attribute_name)
         for attr in self.control_attributes:
             new_val = self.generate_test_attribute_values()[
                     'desired_' + attr]
@@ -171,8 +219,8 @@ class test_SimControl(DeviceTestCase):
         expected_model = FixtureModel('random_test2_name',
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(self.test_model)
-        desired_attribute_name = 'wind-speed'
-        self.device.attribute_name = desired_attribute_name
+        desired_attribute_name = 'wind_speed'
+        self.device.attribute_name = enum_labels.index(desired_attribute_name)
         for attr in self.control_attributes:
             new_val = self.generate_test_attribute_values()[
                     'desired_' + attr]
