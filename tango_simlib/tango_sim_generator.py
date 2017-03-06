@@ -61,7 +61,7 @@ class TangoDeviceServerBase(Device):
         Parameters
         ==========
 
-        attr : PyTango.DevAttr
+       attr : PyTango.DevAttr
             The attribute to read from.
 
         """
@@ -161,12 +161,12 @@ def get_tango_device_server(model, sim_data_files):
         if str(attr_meta['writable']) == 'READ_WRITE':
             @attr.write
             def attr(cls, new_val):
-                cls.some_variable_val = new_val
                 # For the sim test interface when selecting a model quantity we
                 # use the enum labels list indexing to return the string values
                 # of the enums since an integer value is returned by device server
+                cls.some_variable_val = new_val
                 if (hasattr(cls, 'model_quantities') and
-                    'enum_labels' in attr_meta.keys()):
+                        'enum_labels' in attr_meta.keys()):
                     cls.model_quantities = cls.model.sim_quantities[
                             attr_meta['enum_labels'][new_val]]
         read_meth.__name__ = 'read_{}'.format(attr_name)
@@ -336,11 +336,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
     -------
     model : model.Model instance
     """
-    if sim_data_file is None:
-        data_file = get_data_description_file_name()
-    else:
-        data_file = sim_data_file
-
+    data_file = sim_data_file
     server_name = helper_module.get_server_name()
     klass_name = get_device_class(data_file)
 
