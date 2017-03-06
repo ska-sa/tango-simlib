@@ -61,7 +61,7 @@ class TangoDeviceServerBase(Device):
         Parameters
         ==========
 
-       attr : PyTango.DevAttr
+        attr : PyTango.DevAttr
             The attribute to read from.
 
         """

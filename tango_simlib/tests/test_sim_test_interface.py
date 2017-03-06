@@ -114,6 +114,8 @@ class test_SimControl(ClassCleanupUnittestMixin, unittest.TestCase):
         self.device = self.tango_context.device
         self.device_instance = self.TangoTestDeviceServer.instances[self.device.name()]
         self.control_attributes = control_attributes(self.test_model)
+        self.attr_name_enum_labels = list(self.device.attribute_query(
+                                        'attribute_name').enum_labels)
         self.mock_time = Mock()
         self.mock_time.return_value = time.time()
         self.device_instance.model.time_func = self.mock_time
@@ -147,8 +149,7 @@ class test_SimControl(ClassCleanupUnittestMixin, unittest.TestCase):
         # test that expected values from the instantiated model match that of sim control
         for quantity in expected_model.sim_quantities.keys():
             # sets the sensor name for which to evaluate the quantities to be controlled
-            enum_labels = list(self.device.attribute_query('attribute_name').enum_labels)
-            self.device.attribute_name = enum_labels.index(quantity)
+            self.device.attribute_name = self.attr_name_enum_labels.index(quantity)
             desired_quantity = expected_model.sim_quantities[quantity]
             for attr in desired_quantity.adjustable_attributes:
                 attribute_value = getattr(self.device, attr)
@@ -200,8 +201,8 @@ class test_SimControl(ClassCleanupUnittestMixin, unittest.TestCase):
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(expected_model)
         desired_attribute_name = 'relative_humidity'
-        enum_labels = list(self.device.attribute_query('attribute_name').enum_labels)
-        self.device.attribute_name = enum_labels.index(desired_attribute_name)
+        self.device.attribute_name = self.attr_name_enum_labels.index(
+                                                desired_attribute_name)
         for attr in self.control_attributes:
             new_val = self.generate_test_attribute_values()[
                     'desired_' + attr]
@@ -220,7 +221,8 @@ class test_SimControl(ClassCleanupUnittestMixin, unittest.TestCase):
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(self.test_model)
         desired_attribute_name = 'wind_speed'
-        self.device.attribute_name = enum_labels.index(desired_attribute_name)
+        self.device.attribute_name = self.attr_name_enum_labels.index(
+                                        desired_attribute_name)
         for attr in self.control_attributes:
             new_val = self.generate_test_attribute_values()[
                     'desired_' + attr]
@@ -297,6 +299,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
 
     def setUp(self):
         super(test_TangoSimGenDeviceIntegration, self).setUp()
+        self.attr_name_enum_labels = list(self.sim_control_device.attribute_query(
+                                          'attribute_name').enum_labels)
 
     def test_sim_control_command_list(self):
         device_commands = self.sim_control_device.get_command_list()
@@ -356,7 +360,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         max_rainfall_value = 3.45
         test_max_slew_rate = 1000
         self.assertIn('rainfall', self.sim_device.get_attribute_list())
-        self.sim_control_device.write_attribute('attribute_name', 'rainfall')
+        self.sim_control_device.write_attribute(
+                'attribute_name', self.attr_name_enum_labels.index('rainfall'))
         self.sim_control_device.write_attribute('max_slew_rate', test_max_slew_rate)
         self.sim_control_device.command_inout(command_name)
         # The model needs 'dt' to be greater than the min_update_period for it to update
