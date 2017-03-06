@@ -49,7 +49,7 @@ class FixtureModel(model.Model):
                 max_warning=15, max_alarm=25,
                 max_value=30, min_value=0,
                 unit="m/s",
-                period=100))
+                period=1000))
         self.sim_quantities['wind_direction'] = GaussianSlewLimited(
             mean=0, std_dev=150, max_slew_rate=60,
             min_bound=0, max_bound=359.9999, meta=dict(
@@ -59,14 +59,14 @@ class FixtureModel(model.Model):
                 description="Wind direction in central telescope area.",
                 max_value=360, min_value=0,
                 unit="Degrees",
-                period=100))
+                period=1000))
         self.sim_quantities['input_comms_ok'] = ConstantQuantity(
             start_value=True, meta=dict(
                 label="Input communication OK",
                 data_type=bool,
                 data_format=AttrDataFormat.SCALAR,
                 description="Communications with all weather sensors are nominal.",
-                period=100))
+                period=1000))
         super(FixtureModel, self).setup_sim_quantities()
 
     def reset_model(self):
