@@ -161,9 +161,10 @@ def get_tango_device_server(model, sim_data_files):
         if str(attr_meta['writable']) == 'READ_WRITE':
             @attr.write
             def attr(cls, new_val):
-                # For the sim test interface when selecting a model quantity we
-                # use the enum labels list indexing to return the string values
-                # of the enums since an integer value is returned by device server
+                # When selecting a model quantity we use the enum labels list indexing
+                # to return the string value corresponding to the respective enum value
+                # since an integer value is returned by device server when
+                # attribute value is read
                 cls.some_variable_val = new_val
                 if (hasattr(cls, 'model_quantities') and
                         'enum_labels' in attr_meta.keys()):
