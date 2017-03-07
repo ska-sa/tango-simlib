@@ -112,8 +112,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         """
         desired_attribute_name = 'temperature'
         input_value = 100.0
-        self.sim_control_device.pause_active = True
         self.sim_control_device.attribute_name = self.attr_name_enum_labels.index(
                                                     desired_attribute_name)
+        self.sim_control_device.pause_active = True
         setattr(self.sim_control_device, 'last_val', input_value)
         self.assertEqual(self.sim_device.temperature, input_value)

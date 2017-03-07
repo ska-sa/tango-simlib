@@ -2,7 +2,6 @@ import os
 import time
 import unittest
 import subprocess
-
 import pkg_resources
 import devicetest
 
@@ -98,7 +97,9 @@ class test_SimControl(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
                                                         'weather_sim.xmi')]
-        cls.test_model = FixtureModel('the_test_model')
+        cls.mock_time = Mock()
+        cls.mock_time.return_value = time.time()
+        cls.test_model = FixtureModel('the_test_model', time_func=cls.mock_time)
         cls.properties = dict(model_key='the_test_model')
         cls.device_name = 'test/nodb/tangodeviceserver'
         cls.TangoTestDeviceServer = tango_sim_generator.get_tango_device_server(
@@ -116,8 +117,6 @@ class test_SimControl(ClassCleanupUnittestMixin, unittest.TestCase):
         self.control_attributes = control_attributes(self.test_model)
         self.attr_name_enum_labels = list(self.device.attribute_query(
                                         'attribute_name').enum_labels)
-        self.mock_time = Mock()
-        self.mock_time.return_value = time.time()
         self.device_instance.model.time_func = self.mock_time
         def cleanup_refs(): del self.device_instance
         self.addCleanup(cleanup_refs)

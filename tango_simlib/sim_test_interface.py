@@ -109,9 +109,8 @@ class TangoTestDeviceServerBase(Device):
         name = attr.get_name()
         data = attr.get_write_value()
         self.info_stream("Writing attribute {} with value: {}".format(name, data))
-        attr.set_value(data)
-        setattr(self.model_quantities, name, data)
-        if name == 'last_val' and self._pause_active:
-            self.model.quantity_state[self._attribute_name] = data, time.time()
+
+        if name == 'last_val':
+            self.model_quantities.set_val(data, self.model.time_func())
         else:
             setattr(self.model_quantities, name, data)
