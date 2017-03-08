@@ -72,9 +72,7 @@
         "attributeErrorChecking": {
           "min_value": 0,
           "max_value": 1200,
-          "min_alarm": 0,
           "max_alarm": 1100,
-          "min_warning": 0,
           "max_warning": 1000
         },
         "attributeInterlocks": {
@@ -125,9 +123,7 @@
         "attributeErrorChecking": {
           "min_value": 500,
           "max_value": 1100,
-          "min_alarm": 0,
           "max_alarm": 1000,
-          "min_warning": 0,
           "max_warning": 900
         },
         "attributeInterlocks": {
@@ -178,9 +174,7 @@
         "attributeErrorChecking": {
           "min_value": 0,
           "max_value": 3.2,
-          "min_alarm": 0,
           "max_alarm": 3.1,
-          "min_warning": 0,
           "max_warning": 3
         },
         "attributeInterlocks": {
@@ -231,9 +225,7 @@
         "attributeErrorChecking": {
           "min_value": 0,
           "max_value": 100,
-          "min_alarm": 0,
           "max_alarm": 99,
-          "min_warning": 0,
           "max_warning": 98
         },
         "attributeInterlocks": {
@@ -284,9 +276,7 @@
         "attributeErrorChecking": {
           "min_value": 0,
           "max_value": 30,
-          "min_alarm": 0,
           "max_alarm": 25,
-          "min_warning": 0,
           "max_warning": 20
         },
         "attributeInterlocks": {

@@ -87,6 +87,10 @@ class Model(object):
         sim_time = self.time_func()
         dt = sim_time - self.last_update_time
         if dt < self.min_update_period or self.paused:
+            # Updating the _sim_state in case the the test interface or external
+            # command updated the quantities.
+            for var, quant in self.sim_quantities.items():
+                self._sim_state[var] = (quant.last_val, quant.last_update_time)
             MODULE_LOGGER.debug(
                 "Sim {} skipping update at {}, dt {} < {} and pause {}"
                 .format(self.name, sim_time, dt, self.min_update_period, self.paused))
