@@ -166,9 +166,9 @@ def get_tango_device_server(model, sim_data_files):
                 # since an integer value is returned by device server when
                 # attribute value is read
                 cls.some_variable_val = new_val
-                if (hasattr(cls, 'model_quantities') and
+                if (hasattr(cls, 'model_quantity') and
                         'enum_labels' in attr_meta.keys()):
-                    cls.model_quantities = cls.model.sim_quantities[
+                    cls.model_quantity = cls.model.sim_quantities[
                             attr_meta['enum_labels'][new_val]]
         read_meth.__name__ = 'read_{}'.format(attr_name)
         # Add the read method and the attribute to the class object
@@ -267,7 +267,8 @@ def get_tango_device_server(model, sim_data_files):
                         if attr_prop_setter:
                             attr_prop_setter(str(meta_data[prop]))
                         else:
-                            MODULE_LOGGER.info("No setter function for " + prop + " property")
+                            MODULE_LOGGER.info(
+                                "No setter function for " + prop + " property")
                     attr.set_default_properties(attr_props)
                     self.add_attribute(attr, self.read_attributes)
 

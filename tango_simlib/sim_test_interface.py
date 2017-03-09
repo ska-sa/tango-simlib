@@ -10,8 +10,6 @@
 """
 @author MeerKAT CAM team <cam@ska.ac.za>
 """
-
-import time
 import weakref
 
 from PyTango import UserDefaultAttrProp
@@ -38,7 +36,7 @@ class TangoTestDeviceServerBase(Device):
 
         self.model = None
         self._attribute_name = ''
-        self.model_quantities = None
+        self.model_quantity = None
         self._pause_active = False
         self.sim_device_attributes = None
         self.init_device()
@@ -84,9 +82,9 @@ class TangoTestDeviceServerBase(Device):
         return self._pause_active
 
     @pause_active.write
-    def pause_active(self, isActive):
-        self._pause_active = isActive
-        setattr(self.model, 'paused', isActive)
+    def pause_active(self, is_active):
+        self._pause_active = is_active
+        setattr(self.model, 'paused', is_active)
 
     def read_attributes(self, attr):
         '''Method reading an attribute value
@@ -97,7 +95,7 @@ class TangoTestDeviceServerBase(Device):
         '''
         name = attr.get_name()
         self.info_stream("Reading attribute %s", name)
-        attr.set_value(getattr(self.model_quantities, name))
+        attr.set_value(getattr(self.model_quantity, name))
 
     def write_attributes(self, attr):
         '''Method writing an attribute value
@@ -111,6 +109,6 @@ class TangoTestDeviceServerBase(Device):
         self.info_stream("Writing attribute {} with value: {}".format(name, data))
 
         if name == 'last_val':
-            self.model_quantities.set_val(data, self.model.time_func())
+            self.model_quantity.set_val(data, self.model.time_func())
         else:
-            setattr(self.model_quantities, name, data)
+            setattr(self.model_quantity, name, data)

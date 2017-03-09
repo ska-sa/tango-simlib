@@ -7,11 +7,8 @@ import devicetest
 
 from functools import partial
 from mock import Mock
+from devicetest import DeviceTestCase
 
-from devicetest import TangoTestContext
-
-from katcore.testutils import cleanup_tempfile
-from katcp.testutils import start_thread_with_cleanup
 from tango_simlib import model, quantities
 from tango_simlib import tango_sim_generator, helper_module
 from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
@@ -88,33 +85,31 @@ def control_attributes(test_model):
                                if attr not in control_attributes]
     return control_attributes
 
-class test_SimControl(ClassCleanupUnittestMixin, unittest.TestCase):
 
-    longMessage = True
+class test_SimControl(DeviceTestCase):
+    device = None
+    properties = dict(model_key='the_test_model')
 
     @classmethod
-    def setUpClassWithCleanup(cls):
-        cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
-        cls.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                        'weather_sim.xmi')]
+    def setUpClass(cls):
         cls.test_model = FixtureModel('the_test_model')
-        cls.properties = dict(model_key='the_test_model')
-        cls.device_name = 'test/nodb/tangodeviceserver'
-        cls.TangoTestDeviceServer = tango_sim_generator.get_tango_device_server(
-                                             cls.test_model, cls.xmi_file)[-1]
-        cls.tango_context = TangoTestContext(cls.TangoTestDeviceServer,
-                                             device_name=cls.device_name,
-                                             db=cls.tango_db,
-                                             properties=cls.properties)
-        start_thread_with_cleanup(cls, cls.tango_context)
+        # The get_tango_device_server function requires  data file which it uses to
+        # extract the device class name. However for this test we don't need  it,
+        # hence the use of the dummy sim data file.
+        cls.device_klass = tango_sim_generator.get_tango_device_server(
+            cls.test_model, ['dummy_sim_data_file.txt'])[-1]
+        cls.device = cls.device_klass
+        super(test_SimControl, cls).setUpClass()
 
     def setUp(self):
         super(test_SimControl, self).setUp()
-        self.device = self.tango_context.device
-        self.device_instance = self.TangoTestDeviceServer.instances[self.device.name()]
+        self.addCleanup(self.test_model.reset_model)
         self.control_attributes = control_attributes(self.test_model)
         self.attr_name_enum_labels = list(self.device.attribute_query(
                                         'attribute_name').enum_labels)
+        self.device_instance = self.device_klass.instances[
+                self.device.name()]
+
         self.mock_time = Mock()
         self.mock_time.return_value = time.time()
         self.device_instance.model.time_func = self.mock_time
@@ -376,3 +371,68 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         self.assertEqual(self.sim_device.State(), DevState.ALARM,
                          "The rainfall levels are higher than the maximun allowed value"
                          " but the device is not in ALARM state.")
+
+    def test_model_update_paused_via_attrs(self):
+        """Testing that the model's quantities values get updated when the model is in a
+        paused state.
+        """
+        # Sim control device attributes under test
+        simctrl_attr1_name = 'pause_active'
+        simctrl_attr2_name = 'attribute_name'
+
+        # Get the sim device attributes under test
+        sim_attr1_name = 'temperature'
+        sim_attr2_name = 'input_comms_ok'
+
+        # Testing a ConstantQuantity type attribute
+        # Check if the model is in an unpaused state
+        self.assertEqual(
+            self.sim_control_device.read_attribute(simctrl_attr1_name).value,
+            False, 'The model is in a paused state.')
+        # Get the input_comms_ok default value and ensure it is True
+        sim_attr2_val = getattr(self.sim_device.read_attribute(sim_attr2_name), 'value')
+        self.assertEqual(sim_attr2_val, False, "The attribute {}'s value is not the"
+                         " expected value 'False'".format(sim_attr2_name))
+        # Set the model to a paused state
+        self.sim_control_device.write_attribute(simctrl_attr1_name, True)
+        self.assertEqual(
+            self.sim_control_device.read_attribute(simctrl_attr1_name).value,
+            True, 'The model is not in a paused state.')
+        # Select attribute to control e.g. input_comms_ok
+        self.sim_control_device.write_attribute(
+            simctrl_attr2_name, self.attr_name_enum_labels.index(sim_attr2_name))
+        # Write a new value to the quantity/attribute
+        self.sim_control_device.write_attribute('last_val', True)
+        # Check if the changes appear in the sim device attributes
+        self.assertEqual(
+            self.sim_device.read_attribute(sim_attr2_name).value, True,
+            "The model was not updated")
+
+        # Unpause the model
+        self.sim_control_device.write_attribute(simctrl_attr1_name, False)
+
+        # Testing a GaussianSlewLimited type quantity
+        # Check if the model is in an unpaused state
+        self.assertEqual(
+            self.sim_control_device.read_attribute(simctrl_attr1_name).value,
+            False, 'The model is in a paused state.')
+        # Select the attribute to control
+        self.sim_control_device.write_attribute(
+            simctrl_attr2_name, self.attr_name_enum_labels.index(sim_attr1_name))
+        # Pause the model
+        self.sim_control_device.write_attribute(simctrl_attr1_name, True)
+        # Read the attribute's value
+        sim_attr1_val = self.sim_device.read_attribute(sim_attr1_name).value
+        # Write a new value to the quantity/attribute (choose a very big number which
+        # is outside the default simulation value range).
+        sim_attr1_new_val = 200000
+        # First check that the current attribute value is not equal to the proposed
+        # new value
+        self.assertNotEqual(sim_attr1_val, sim_attr1_new_val,
+                            "The proposed new value is the same as the current value.")
+        self.sim_control_device.write_attribute('last_val', sim_attr1_new_val)
+        # Check if the changes appear in the sim device attribute under test
+        self.assertEqual(
+            self.sim_device.read_attribute(sim_attr1_name).value,
+            sim_attr1_new_val, 'The model was not updated')
+
