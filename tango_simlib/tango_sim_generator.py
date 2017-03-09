@@ -106,6 +106,14 @@ def get_tango_device_server(model, sim_data_files):
     class TangoTestDeviceServerStaticAttrs(object):
         pass
 
+    def read_fn(self):
+        return self._attribute_name_index
+
+    def write_fn(self, val):
+        self._attribute_name_index = val
+        self.model_quantity = self.model.sim_quantities[
+            self.model.sim_quantities.keys()[val]]
+
     def generate_cmd_handler(action_name, action_handler):
         def cmd_handler(tango_device, input_parameters=None):
             return action_handler(tango_dev=tango_device, data_input=input_parameters)
@@ -166,10 +174,6 @@ def get_tango_device_server(model, sim_data_files):
                 # since an integer value is returned by device server when
                 # attribute value is read
                 cls.some_variable_val = new_val
-                if (hasattr(cls, 'model_quantity') and
-                        'enum_labels' in attr_meta.keys()):
-                    cls.model_quantity = cls.model.sim_quantities[
-                            attr_meta['enum_labels'][new_val]]
         read_meth.__name__ = 'read_{}'.format(attr_name)
         # Add the read method and the attribute to the class object
         setattr(cls, read_meth.__name__, read_meth)
@@ -187,9 +191,21 @@ def get_tango_device_server(model, sim_data_files):
     attr_control_meta['max_dim_x'] = 1
     attr_control_meta['max_dim_y'] = 0
     attr_control_meta['writable'] = 'READ_WRITE'
-    add_static_attribute(TangoTestDeviceServerStaticAttrs,
-                         attr_name, attr_control_meta)
 
+    TangoTestDeviceServerStaticAttrs.read_fn = read_fn
+    TangoTestDeviceServerStaticAttrs.write_fn = write_fn
+    attr = attribute(
+        label=attr_control_meta['label'], dtype=attr_control_meta['data_type'],
+        enum_labels=attr_control_meta['enum_labels'] if 'enum_labels'
+        in attr_control_meta.keys() else '',
+        doc=attr_control_meta['description'],
+        dformat=attr_control_meta['data_format'],
+        max_dim_x=attr_control_meta['max_dim_x'],
+        max_dim_y=attr_control_meta['max_dim_y'],
+        access=getattr(AttrWriteType, attr_control_meta['writable']),
+        fget=TangoTestDeviceServerStaticAttrs.read_fn,
+        fset=TangoTestDeviceServerStaticAttrs.write_fn)
+    TangoTestDeviceServerStaticAttrs.attribute_name = attr
     # We use the `add_static_attribute` method to add DevEnum and Spectrum type
     # attributes statically to the tango device before start-up since the
     # cannot be well configured when added dynamically. This is suspected
@@ -283,6 +299,7 @@ def get_tango_device_server(model, sim_data_files):
 
             name = self.get_name()
             self.instances[name] = self
+
 
     klass_name = get_device_class(sim_data_files)
     TangoDeviceServer.TangoClassName = klass_name
