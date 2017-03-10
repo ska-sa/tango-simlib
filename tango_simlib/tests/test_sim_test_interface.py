@@ -105,8 +105,8 @@ class test_SimControl(DeviceTestCase):
         super(test_SimControl, self).setUp()
         self.addCleanup(self.test_model.reset_model)
         self.control_attributes = control_attributes(self.test_model)
-        self.attr_name_enum_labels = list(self.device.attribute_query(
-                                        'attribute_name').enum_labels)
+        self.attr_name_enum_labels = sorted(list(self.device.attribute_query(
+                                            'attribute_name').enum_labels))
         self.device_instance = self.device_klass.instances[
                 self.device.name()]
 

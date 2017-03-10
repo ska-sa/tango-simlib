@@ -112,7 +112,7 @@ def get_tango_device_server(model, sim_data_files):
     def write_fn(self, val):
         self._attribute_name_index = val
         self.model_quantity = self.model.sim_quantities[
-            self.model.sim_quantities.keys()[val]]
+            sorted(self.model.sim_quantities.keys())[val]]
 
     def generate_cmd_handler(action_name, action_handler):
         def cmd_handler(tango_device, input_parameters=None):
@@ -154,8 +154,8 @@ def get_tango_device_server(model, sim_data_files):
 
         """
         attr = attribute(label=attr_meta['label'], dtype=attr_meta['data_type'],
-                         enum_labels=attr_meta['enum_labels'] if 'enum_labels'
-                         in attr_meta.keys() else '',
+                         enum_labels=sorted(attr_meta['enum_labels'])
+                         if 'enum_labels' in attr_meta.keys() else '',
                          doc=attr_meta['description'],
                          dformat=attr_meta['data_format'],
                          max_dim_x=attr_meta['max_dim_x'],
@@ -164,7 +164,7 @@ def get_tango_device_server(model, sim_data_files):
         attr.__name__ = attr_name
         # Attribute read method
         def read_meth(cls):
-            return cls.some_variable_val
+            return getattr(cls, '_{}'.format(attr_name))
         # Attribute write method for writable attributes
         if str(attr_meta['writable']) == 'READ_WRITE':
             @attr.write
@@ -173,17 +173,19 @@ def get_tango_device_server(model, sim_data_files):
                 # to return the string value corresponding to the respective enum value
                 # since an integer value is returned by device server when
                 # attribute value is read
-                cls.some_variable_val = new_val
+                setattr(cls, '_{}'.format(attr_name), new_val)
         read_meth.__name__ = 'read_{}'.format(attr_name)
         # Add the read method and the attribute to the class object
         setattr(cls, read_meth.__name__, read_meth)
         setattr(cls, attr.__name__, attr)
+        # Add the attribute name cache variable with intial value of first item
+        # int enum labels
+        setattr(cls, '_{}'.format(attr_name), 0)
 
-    # Sim test interface static attribute `attribute_name' info
-    attr_name = 'attribute_name'
+    # Sim test interface static attribute `attribute_name` info
     controllable_attribute_names = model.sim_quantities.keys()
     attr_control_meta = dict()
-    attr_control_meta['enum_labels'] = controllable_attribute_names
+    attr_control_meta['enum_labels'] = sorted(controllable_attribute_names)
     attr_control_meta['data_format'] = AttrDataFormat.SCALAR
     attr_control_meta['data_type'] = CmdArgType.DevEnum
     attr_control_meta['label'] = 'Attribute name'
@@ -196,8 +198,8 @@ def get_tango_device_server(model, sim_data_files):
     TangoTestDeviceServerStaticAttrs.write_fn = write_fn
     attr = attribute(
         label=attr_control_meta['label'], dtype=attr_control_meta['data_type'],
-        enum_labels=attr_control_meta['enum_labels'] if 'enum_labels'
-        in attr_control_meta.keys() else '',
+        enum_labels=sorted(attr_control_meta['enum_labels'])
+        if 'enum_labels' in attr_control_meta.keys() else '',
         doc=attr_control_meta['description'],
         dformat=attr_control_meta['data_format'],
         max_dim_x=attr_control_meta['max_dim_x'],
