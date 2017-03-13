@@ -113,6 +113,7 @@ def get_tango_device_server(model, sim_data_files):
         self._attribute_name_index = val
         self.model_quantity = self.model.sim_quantities[
             self.model.sim_quantities.keys()[val]]
+        self.model_quantity.set_val(val, self.model.time_func())
 
     def generate_cmd_handler(action_name, action_handler):
         def cmd_handler(tango_device, input_parameters=None):
@@ -303,7 +304,6 @@ def get_tango_device_server(model, sim_data_files):
 
             name = self.get_name()
             self.instances[name] = self
-
 
     klass_name = get_device_class(sim_data_files)
     TangoDeviceServer.TangoClassName = klass_name

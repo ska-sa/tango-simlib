@@ -5,8 +5,9 @@ import subprocess
 import pkg_resources
 import devicetest
 
+import mock
+
 from functools import partial
-from mock import Mock
 from devicetest import DeviceTestCase
 
 from tango_simlib import model, quantities
@@ -25,8 +26,8 @@ class FixtureModel(model.Model):
             quantities.ConstantQuantity, start_time=start_time)
 
         self.sim_quantities['relative_humidity'] = GaussianSlewLimited(
-            mean=65, std_dev=10, max_slew_rate=10,
-            min_bound=0, max_bound=150, meta=dict(
+            mean=65.0, std_dev=10.0, max_slew_rate=10.0,
+            min_bound=0.0, max_bound=150.0, meta=dict(
                 label="Air humidity",
                 data_type=float,
                 data_format=AttrDataFormat.SCALAR,
@@ -36,8 +37,8 @@ class FixtureModel(model.Model):
                 unit="percent",
                 period=1000))
         self.sim_quantities['wind_speed'] = GaussianSlewLimited(
-            mean=1, std_dev=20, max_slew_rate=3,
-            min_bound=0, max_bound=100, meta=dict(
+            mean=1.0, std_dev=20.0, max_slew_rate=3.0,
+            min_bound=0.0, max_bound=100.0, meta=dict(
                 label="Wind speed",
                 data_type=float,
                 data_format=AttrDataFormat.SCALAR,
@@ -47,8 +48,8 @@ class FixtureModel(model.Model):
                 unit="m/s",
                 period=1000))
         self.sim_quantities['wind_direction'] = GaussianSlewLimited(
-            mean=0, std_dev=150, max_slew_rate=60,
-            min_bound=0, max_bound=359.9999, meta=dict(
+            mean=0.0, std_dev=150.0, max_slew_rate=60.0,
+            min_bound=0.0, max_bound=359.9999, meta=dict(
                 label="Wind direction",
                 data_type=float,
                 data_format=AttrDataFormat.SCALAR,
@@ -105,14 +106,13 @@ class test_SimControl(DeviceTestCase):
         super(test_SimControl, self).setUp()
         self.addCleanup(self.test_model.reset_model)
         self.control_attributes = control_attributes(self.test_model)
-        self.attr_name_enum_labels = list(self.device.attribute_query(
-                                          'attribute_name').enum_labels)
+        self.attr_name_enum_labels = sorted(self.device.attribute_query(
+                                            'attribute_name').enum_labels)
         self.device_instance = self.device_klass.instances[
                 self.device.name()]
 
-        self.mock_time = Mock()
-        self.mock_time.return_value = time.time()
-        self.device_instance.model.time_func = self.mock_time
+        with mock.patch(model.__name__ + '.Model') as model_mock:
+            model_mock.return_value.time_func = time.time()
         def cleanup_refs(): del self.device_instance
         self.addCleanup(cleanup_refs)
 
