@@ -177,8 +177,8 @@ def get_tango_device_server(model, sim_data_files):
                 # to return the string value corresponding to the respective enum value
                 # since an integer value is returned by device server when
                 # attribute value is read
-                cls.model_quantity = cls.model.sim_quantities[
-                        cls.model.sim_quantities.keys()[new_val]]
+                cls.model_quantity = cls.model.sim_quantities[attr_name]
+                cls.model_quantity.set_val(new_val, cls.model.time_func())
         read_meth.__name__ = 'read_{}'.format(attr_name)
         # Add the read method and the attribute to the class object
         setattr(cls, read_meth.__name__, read_meth)

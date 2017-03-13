@@ -8,11 +8,10 @@ from PyTango import Database
 DEFAULT_TANGO_DEVICE_COMMANDS = frozenset(['State', 'Status', 'Init'])
 DEFAULT_TANGO_DEVICE_ATTRIBUTES = frozenset(['State', 'Status'])
 SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR = set([
-    'Status',   # Tango library attribute
-    'State',    # Tango library attribute
+    'Status',            # Tango library attribute
+    'State',             # Tango library attribute
     'attribute_name',    # Attribute indentifier for attribute to be controlled
-    'pause_active',    # Flag for pausing the model updates
-    'control_attribute_list_names',  # List of attributes to control
+    'pause_active'       # Flag for pausing the model updates
     ])
 
 # Mandatory parameters required to create a well configure Tango attribute.
