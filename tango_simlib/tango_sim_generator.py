@@ -183,9 +183,6 @@ def get_tango_device_server(model, sim_data_files):
         # Add the read method and the attribute to the class object
         setattr(cls, read_meth.__name__, read_meth)
         setattr(cls, attr.__name__, attr)
-        # Add the attribute name cache variable with intial value of first item
-        # int enum labels
-        setattr(cls, '_{}'.format(attr_name), 0)
 
     # Sim test interface static attribute `attribute_name` info
     controllable_attribute_names = model.sim_quantities.keys()
@@ -203,8 +200,8 @@ def get_tango_device_server(model, sim_data_files):
     TangoTestDeviceServerStaticAttrs.write_fn = write_fn
     attr = attribute(
         label=attr_control_meta['label'], dtype=attr_control_meta['data_type'],
-        enum_labels=sorted(attr_control_meta['enum_labels'])
-        if 'enum_labels' in attr_control_meta.keys() else '',
+        enum_labels=attr_control_meta['enum_labels']
+        if 'enum_labels' in attr_control_meta else '',
         doc=attr_control_meta['description'],
         dformat=attr_control_meta['data_format'],
         max_dim_x=attr_control_meta['max_dim_x'],
