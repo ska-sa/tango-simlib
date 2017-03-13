@@ -112,8 +112,7 @@ def get_tango_device_server(model, sim_data_files):
     def write_fn(self, val):
         self._attribute_name_index = val
         self.model_quantity = self.model.sim_quantities[
-            self.model.sim_quantities.keys()[val]]
-        self.model_quantity.set_val(val, self.model.time_func())
+            sorted(self.model.sim_quantities.keys())[val]]
 
     def generate_cmd_handler(action_name, action_handler):
         def cmd_handler(tango_device, input_parameters=None):
@@ -156,7 +155,7 @@ def get_tango_device_server(model, sim_data_files):
         """
         attr = attribute(label=attr_meta['label'], dtype=attr_meta['data_type'],
                          enum_labels=attr_meta['enum_labels']
-                         if 'enum_labels' in attr_meta.keys() else '',
+                         if 'enum_labels' in attr_meta else '',
                          doc=attr_meta['description'],
                          dformat=attr_meta['data_format'],
                          max_dim_x=attr_meta['max_dim_x'],
@@ -184,6 +183,9 @@ def get_tango_device_server(model, sim_data_files):
         # Add the read method and the attribute to the class object
         setattr(cls, read_meth.__name__, read_meth)
         setattr(cls, attr.__name__, attr)
+        # Add the attribute name cache variable with intial value of first item
+        # int enum labels
+        setattr(cls, '_{}'.format(attr_name), 0)
 
     # Sim test interface static attribute `attribute_name` info
     controllable_attribute_names = model.sim_quantities.keys()
@@ -201,8 +203,8 @@ def get_tango_device_server(model, sim_data_files):
     TangoTestDeviceServerStaticAttrs.write_fn = write_fn
     attr = attribute(
         label=attr_control_meta['label'], dtype=attr_control_meta['data_type'],
-        enum_labels=attr_control_meta['enum_labels']
-        if 'enum_labels' in attr_control_meta else '',
+        enum_labels=sorted(attr_control_meta['enum_labels'])
+        if 'enum_labels' in attr_control_meta.keys() else '',
         doc=attr_control_meta['description'],
         dformat=attr_control_meta['data_format'],
         max_dim_x=attr_control_meta['max_dim_x'],
@@ -304,6 +306,7 @@ def get_tango_device_server(model, sim_data_files):
 
             name = self.get_name()
             self.instances[name] = self
+
 
     klass_name = get_device_class(sim_data_files)
     TangoDeviceServer.TangoClassName = klass_name

@@ -69,8 +69,9 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         self.xmi_parser.parse(self.data_descr_file[0])
         self.expected_model = tango_sim_generator.configure_device_model(
                 self.data_descr_file)
-        self.attr_name_enum_labels = list(self.sim_control_device.attribute_query(
-                                          'attribute_name').enum_labels)
+        self.attr_name_enum_labels = sorted(
+                list(self.sim_control_device.attribute_query(
+                     'attribute_name').enum_labels))
 
     def test_device_attribute_list(self):
         """ Testing whether the attributes specified in the POGO generated xmi file

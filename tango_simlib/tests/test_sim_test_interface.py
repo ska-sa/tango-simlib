@@ -5,10 +5,9 @@ import subprocess
 import pkg_resources
 import devicetest
 
-import mock
-
 from functools import partial
 from devicetest import DeviceTestCase
+from mock import Mock
 
 from tango_simlib import model, quantities
 from tango_simlib import tango_sim_generator, helper_module
@@ -106,13 +105,15 @@ class test_SimControl(DeviceTestCase):
         super(test_SimControl, self).setUp()
         self.addCleanup(self.test_model.reset_model)
         self.control_attributes = control_attributes(self.test_model)
-        self.attr_name_enum_labels = sorted(self.device.attribute_query(
-                                            'attribute_name').enum_labels)
+        self.attr_name_enum_labels = self.device.attribute_query(
+                                          'attribute_name').enum_labels
         self.device_instance = self.device_klass.instances[
                 self.device.name()]
 
-        with mock.patch(model.__name__ + '.Model') as model_mock:
-            model_mock.return_value.time_func = time.time()
+        self.mock_time = Mock()
+        self.mock_time.return_value = time.time()
+        self.device_instance.model.time_func = self.mock_time
+
         def cleanup_refs(): del self.device_instance
         self.addCleanup(cleanup_refs)
 
@@ -143,7 +144,7 @@ class test_SimControl(DeviceTestCase):
         # test that expected values from the instantiated model match that of sim control
         for quantity in expected_model.sim_quantities.keys():
             # sets the sensor name for which to evaluate the quantities to be controlled
-            self.device.attribute_name = self.attr_name_enum_labels.index(quantity)
+            self.device.attribute_name = list(self.attr_name_enum_labels).index(quantity)
             desired_quantity = expected_model.sim_quantities[quantity]
             for attr in desired_quantity.adjustable_attributes:
                 attribute_value = getattr(self.device, attr)
@@ -195,7 +196,7 @@ class test_SimControl(DeviceTestCase):
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(expected_model)
         desired_attribute_name = 'relative_humidity'
-        self.device.attribute_name = self.attr_name_enum_labels.index(
+        self.device.attribute_name = list(self.attr_name_enum_labels).index(
                                                 desired_attribute_name)
         for attr in self.control_attributes:
             new_val = self.generate_test_attribute_values()[
@@ -215,7 +216,7 @@ class test_SimControl(DeviceTestCase):
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(self.test_model)
         desired_attribute_name = 'wind_speed'
-        self.device.attribute_name = self.attr_name_enum_labels.index(
+        self.device.attribute_name = list(self.attr_name_enum_labels).index(
                                         desired_attribute_name)
         for attr in self.control_attributes:
             new_val = self.generate_test_attribute_values()[
