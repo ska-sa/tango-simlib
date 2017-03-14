@@ -87,8 +87,8 @@ class Model(object):
         sim_time = self.time_func()
         dt = sim_time - self.last_update_time
         if dt < self.min_update_period or self.paused:
-            # Updating the _sim_state in case the the test interface or external
-            # command updated the quantities.
+            # Updating the sim_state in case the test interface or external command
+            # updated the quantities.
             for var, quant in self.sim_quantities.items():
                 self._sim_state[var] = (quant.last_val, quant.last_update_time)
             MODULE_LOGGER.debug(
@@ -239,6 +239,8 @@ class PopulateModelQuantities(object):
             else:
                 self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
                         start_time=start_time, meta=model_attr_props, start_value=True)
+
+            self.sim_model.setup_sim_quantities()
 
     def sim_attribute_quantities(self, min_bound, max_bound, max_slew_rate,
                                  mean, std_dev):

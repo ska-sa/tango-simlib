@@ -2,19 +2,18 @@ import os
 import time
 import unittest
 import subprocess
-
 import pkg_resources
 import devicetest
 
 from functools import partial
-from mock import Mock
 from devicetest import DeviceTestCase
+from mock import Mock
 
-from tango_simlib import sim_test_interface, model, quantities
+from tango_simlib import model, quantities
 from tango_simlib import tango_sim_generator, helper_module
 from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
 
-from PyTango import DevState
+from PyTango import DevState, AttrDataFormat
 
 class FixtureModel(model.Model):
 
@@ -25,16 +24,45 @@ class FixtureModel(model.Model):
         ConstantQuantity = partial(
             quantities.ConstantQuantity, start_time=start_time)
 
-        self.sim_quantities['relative-humidity'] = GaussianSlewLimited(
-            mean=65, std_dev=10, max_slew_rate=10,
-            min_bound=0, max_bound=150)
-        self.sim_quantities['wind-speed'] = GaussianSlewLimited(
-            mean=1, std_dev=20, max_slew_rate=3,
-            min_bound=0, max_bound=100)
-        self.sim_quantities['wind-direction'] = GaussianSlewLimited(
-            mean=0, std_dev=150, max_slew_rate=60,
-            min_bound=0, max_bound=359.9999)
-        self.sim_quantities['input-comms-ok'] = ConstantQuantity(start_value=True)
+        self.sim_quantities['relative_humidity'] = GaussianSlewLimited(
+            mean=65.0, std_dev=10.0, max_slew_rate=10.0,
+            min_bound=0.0, max_bound=150.0, meta=dict(
+                label="Air humidity",
+                data_type=float,
+                data_format=AttrDataFormat.SCALAR,
+                description="Relative humidity in central telescope area.",
+                max_warning=98, max_alarm=99,
+                max_value=100, min_value=0,
+                unit="percent",
+                period=1000))
+        self.sim_quantities['wind_speed'] = GaussianSlewLimited(
+            mean=1.0, std_dev=20.0, max_slew_rate=3.0,
+            min_bound=0.0, max_bound=100.0, meta=dict(
+                label="Wind speed",
+                data_type=float,
+                data_format=AttrDataFormat.SCALAR,
+                description="Wind speed in central telescope area.",
+                max_warning=15, max_alarm=25,
+                max_value=30, min_value=0,
+                unit="m/s",
+                period=1000))
+        self.sim_quantities['wind_direction'] = GaussianSlewLimited(
+            mean=0.0, std_dev=150.0, max_slew_rate=60.0,
+            min_bound=0.0, max_bound=359.9999, meta=dict(
+                label="Wind direction",
+                data_type=float,
+                data_format=AttrDataFormat.SCALAR,
+                description="Wind direction in central telescope area.",
+                max_value=360, min_value=0,
+                unit="Degrees",
+                period=1000))
+        self.sim_quantities['input_comms_ok'] = ConstantQuantity(
+            start_value=True, meta=dict(
+                label="Input communication OK",
+                data_type=bool,
+                data_format=AttrDataFormat.SCALAR,
+                description="Communications with all weather sensors are nominal.",
+                period=1000))
         super(FixtureModel, self).setup_sim_quantities()
 
     def reset_model(self):
@@ -51,32 +79,41 @@ def control_attributes(test_model):
     """
     control_attributes = []
     models = set([quant.__class__
-            for quant in test_model.sim_quantities.values()])
+                 for quant in test_model.sim_quantities.values()])
     for cls in models:
         control_attributes += [attr for attr in cls.adjustable_attributes
-                if attr not in control_attributes]
+                               if attr not in control_attributes]
     return control_attributes
 
 
 class test_SimControl(DeviceTestCase):
-    device = sim_test_interface.TangoTestDeviceServerBase
+    device = None
     properties = dict(model_key='the_test_model')
 
     @classmethod
     def setUpClass(cls):
         cls.test_model = FixtureModel('the_test_model')
+        # The get_tango_device_server function requires  data file which it uses to
+        # extract the device class name. However for this test we don't need  it,
+        # hence the use of the dummy sim data file.
+        cls.device_klass = tango_sim_generator.get_tango_device_server(
+            cls.test_model, ['dummy_sim_data_file.txt'])[-1]
+        cls.device = cls.device_klass
         super(test_SimControl, cls).setUpClass()
 
     def setUp(self):
         super(test_SimControl, self).setUp()
         self.addCleanup(self.test_model.reset_model)
         self.control_attributes = control_attributes(self.test_model)
-        self.device_instance = sim_test_interface.TangoTestDeviceServerBase.instances[
+        self.attr_name_enum_labels = self.device.attribute_query(
+                                          'attribute_name').enum_labels
+        self.device_instance = self.device_klass.instances[
                 self.device.name()]
 
         self.mock_time = Mock()
         self.mock_time.return_value = time.time()
         self.device_instance.model.time_func = self.mock_time
+
         def cleanup_refs(): del self.device_instance
         self.addCleanup(cleanup_refs)
 
@@ -85,7 +122,7 @@ class test_SimControl(DeviceTestCase):
             helper_module.SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR)
         attributes = set(self.device.get_attribute_list())
         self.assertEqual(attributes - sim_control_static_attributes,
-                        set(self.control_attributes))
+                         set(self.control_attributes))
 
     def test_model_defaults(self):
         device_model = self.device_instance.model
@@ -106,8 +143,8 @@ class test_SimControl(DeviceTestCase):
         """
         # test that expected values from the instantiated model match that of sim control
         for quantity in expected_model.sim_quantities.keys():
-            self.device.attribute_name = quantity  # sets the sensor name for which
-            # to evaluate the quantities to be controlled
+            # sets the sensor name for which to evaluate the quantities to be controlled
+            self.device.attribute_name = list(self.attr_name_enum_labels).index(quantity)
             desired_quantity = expected_model.sim_quantities[quantity]
             for attr in desired_quantity.adjustable_attributes:
                 attribute_value = getattr(self.device, attr)
@@ -158,8 +195,9 @@ class test_SimControl(DeviceTestCase):
         expected_model = FixtureModel('random_test1_name',
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(expected_model)
-        desired_attribute_name = 'relative-humidity'
-        self.device.attribute_name = desired_attribute_name
+        desired_attribute_name = 'relative_humidity'
+        self.device.attribute_name = list(self.attr_name_enum_labels).index(
+                                                desired_attribute_name)
         for attr in self.control_attributes:
             new_val = self.generate_test_attribute_values()[
                     'desired_' + attr]
@@ -177,8 +215,9 @@ class test_SimControl(DeviceTestCase):
         expected_model = FixtureModel('random_test2_name',
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(self.test_model)
-        desired_attribute_name = 'wind-speed'
-        self.device.attribute_name = desired_attribute_name
+        desired_attribute_name = 'wind_speed'
+        self.device.attribute_name = list(self.attr_name_enum_labels).index(
+                                        desired_attribute_name)
         for attr in self.control_attributes:
             new_val = self.generate_test_attribute_values()[
                     'desired_' + attr]
@@ -255,6 +294,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
 
     def setUp(self):
         super(test_TangoSimGenDeviceIntegration, self).setUp()
+        self.attr_name_enum_labels = list(self.sim_control_device.attribute_query(
+                                          'attribute_name').enum_labels)
 
     def test_sim_control_command_list(self):
         device_commands = self.sim_control_device.get_command_list()
@@ -314,7 +355,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         max_rainfall_value = 3.45
         test_max_slew_rate = 1000
         self.assertIn('rainfall', self.sim_device.get_attribute_list())
-        self.sim_control_device.write_attribute('attribute_name', 'rainfall')
+        self.sim_control_device.write_attribute(
+                'attribute_name', self.attr_name_enum_labels.index('rainfall'))
         self.sim_control_device.write_attribute('max_slew_rate', test_max_slew_rate)
         self.sim_control_device.command_inout(command_name)
         # The model needs 'dt' to be greater than the min_update_period for it to update
@@ -358,7 +400,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
             self.sim_control_device.read_attribute(simctrl_attr1_name).value,
             True, 'The model is not in a paused state.')
         # Select attribute to control e.g. input_comms_ok
-        self.sim_control_device.write_attribute(simctrl_attr2_name, sim_attr2_name)
+        self.sim_control_device.write_attribute(
+            simctrl_attr2_name, self.attr_name_enum_labels.index(sim_attr2_name))
         # Write a new value to the quantity/attribute
         self.sim_control_device.write_attribute('last_val', True)
         # Check if the changes appear in the sim device attributes
@@ -375,7 +418,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
             self.sim_control_device.read_attribute(simctrl_attr1_name).value,
             False, 'The model is in a paused state.')
         # Select the attribute to control
-        self.sim_control_device.write_attribute(simctrl_attr2_name, sim_attr1_name)
+        self.sim_control_device.write_attribute(
+            simctrl_attr2_name, self.attr_name_enum_labels.index(sim_attr1_name))
         # Pause the model
         self.sim_control_device.write_attribute(simctrl_attr1_name, True)
         # Read the attribute's value

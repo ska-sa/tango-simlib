@@ -69,6 +69,9 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         self.xmi_parser.parse(self.data_descr_file[0])
         self.expected_model = tango_sim_generator.configure_device_model(
                 self.data_descr_file)
+        self.attr_name_enum_labels = sorted(
+                self.sim_control_device.attribute_query(
+                     'attribute_name').enum_labels)
 
     def test_device_attribute_list(self):
         """ Testing whether the attributes specified in the POGO generated xmi file
@@ -110,7 +113,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         """
         desired_attribute_name = 'temperature'
         input_value = 100.0
+        self.sim_control_device.attribute_name = self.attr_name_enum_labels.index(
+                                                    desired_attribute_name)
         self.sim_control_device.pause_active = True
-        self.sim_control_device.attribute_name = desired_attribute_name
         setattr(self.sim_control_device, 'last_val', input_value)
         self.assertEqual(self.sim_device.temperature, input_value)
