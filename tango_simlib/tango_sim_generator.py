@@ -106,13 +106,13 @@ def get_tango_device_server(model, sim_data_files):
     class TangoTestDeviceServerStaticAttrs(object):
         pass
 
-    def read_fn(self):
-        return self._attribute_name_index
+    def read_fn(tango_device_instance):
+        return tango_device_instance._attribute_name_index
 
-    def write_fn(self, val):
-        self._attribute_name_index = val
-        self.model_quantity = self.model.sim_quantities[
-            sorted(self.model.sim_quantities.keys())[val]]
+    def write_fn(tango_device_instance, val):
+        tango_device_instance._attribute_name_index = val
+        tango_device_instance.model_quantity = tango_device_instance.model.sim_quantities[
+            sorted(tango_device_instance.model.sim_quantities.keys())[val]]
 
     def generate_cmd_handler(action_name, action_handler):
         def cmd_handler(tango_device, input_parameters=None):
@@ -135,7 +135,7 @@ def get_tango_device_server(model, sim_data_files):
         """
         return command(f=cmd_handler, **cmd_info_copy)
 
-    def add_static_attribute(cls, attr_name, attr_meta):
+    def add_static_attribute(tango_device_class, attr_name, attr_meta):
         """Add any TANGO attribute of to the device server before start-up.
 
         Parameters
@@ -163,26 +163,28 @@ def get_tango_device_server(model, sim_data_files):
                          access=getattr(AttrWriteType, attr_meta['writable']))
         attr.__name__ = attr_name
         # Attribute read method
-        def read_meth(cls, attr):
+        def read_meth(tango_device_instance, attr):
             name = attr.get_name()
-            value, update_time = cls.model.quantity_state[name]
+            value, update_time = tango_device_instance.model.quantity_state[name]
             quality = AttrQuality.ATTR_VALID
-            cls.info_stream("Reading attribute %s", name)
+            tango_device_instance.info_stream("Reading attribute %s", name)
             attr.set_value_date_quality(int(value), update_time, quality)
         # Attribute write method for writable attributes
         if str(attr_meta['writable']) == 'READ_WRITE':
             @attr.write
-            def attr(cls, new_val):
+            def attr(tango_device_instance, new_val):
                 # When selecting a model quantity we use the enum labels list indexing
                 # to return the string value corresponding to the respective enum value
                 # since an integer value is returned by device server when
                 # attribute value is read
-                cls.model_quantity = cls.model.sim_quantities[attr_name]
-                cls.model_quantity.set_val(new_val, cls.model.time_func())
+                tango_device_instance.model_quantity = (
+                        tango_device_instance.model.sim_quantities[attr_name])
+                tango_device_instance.model_quantity.set_val(
+                        new_val, tango_device_instance.model.time_func())
         read_meth.__name__ = 'read_{}'.format(attr_name)
         # Add the read method and the attribute to the class object
-        setattr(cls, read_meth.__name__, read_meth)
-        setattr(cls, attr.__name__, attr)
+        setattr(tango_device_class, read_meth.__name__, read_meth)
+        setattr(tango_device_class, attr.__name__, attr)
 
     # Sim test interface static attribute `attribute_name` info
     controllable_attribute_names = model.sim_quantities.keys()
