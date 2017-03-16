@@ -28,6 +28,11 @@ class VdsSimError(Exception):
     """
 
 
+class DishSimError(Exception):
+    """Raised when a Dish simulator action could not be executed.
+    """
+
+
 class OverrideWeather(object):
     """An example of the override class for the TANGO device class 'Weather'. It
     provides all the implementations of the command handler functions for the commands
@@ -490,3 +495,240 @@ class OverrideWeatherSimControl(object):
         else:
             quant_rainfall.max_bound = float(quant_rainfall.meta['max_bound'])
             quant_rainfall.mean = 1.00
+
+
+class OverrideDish(object):
+
+    def action_capture(self, model, tango_dev=None, data_input=None):
+        """Start/Stop capture on the configured band. Command only valide in SPFRx
+        Data_Capture mode.
+
+        data_input: str
+            ON/OFF value
+        """
+        pass
+
+    def action_configureattenuation(self, model, tango_dev=None, data_input=None):
+        """Set the global attenuation. Changing this value will set the attenuation
+        across the system and will be applied to all bands.
+
+        data_input: float
+            db TBC
+        """
+        pass
+
+    def action_configureband1(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 1. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        pass
+
+    def action_configureband2(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 1. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        pass
+
+    def action_configureband3(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 1. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        pass
+
+    def action_configureband4(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 1. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        pass
+
+    def action_configureband5(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 1. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        pass
+
+    def action_configurenoisediode(self, model, tango_dev=None, data_input=None):
+        """Set the noise diode start time, period and on/off time (duty cycle)
+        A start time and stop time marks the window during which periodic
+        noise diode firing has to occur.
+
+        data_input: list
+           [NDParams]
+           [start time, stop time, period, duty cycle, power level]
+        """
+        pass
+
+    def action_enableenginterface(self, model, tango_dev=None, data_input=None):
+        """Enable engineering interface.
+
+        data_input: str
+            [Sub-Element]
+        """
+        pass
+
+    def action_flushcmdqueue(self, model, tango_dev=None, data_input=None):
+        """Flush command Queue
+
+        data_input: None
+        """
+        pass
+
+    def action_lowpower(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the LOW power
+        state. All subsystems go into a low power state to power only the
+        essential equipment. Specifically the Helium compressor will be set
+        to a low power consumption, and the drives will be disabled. When
+        issued a STOW command while in LOW power, the DS controller
+        should be able to turn the drives on, stow the dish and turn the
+        drives off again. The purpose of this mode is to enable the
+        observatory to perform power management (load curtailment), and
+        also to conserve energy for non-operating dishes.
+
+        data_input: None
+
+        """
+        pass
+
+    def action_scan(self, model, tango_dev=None, data_input=None):
+        """The Dish is tracking the commanded pointing positions within the
+        specified SCAN pointing accuracy. (TBC)
+        NOTE: This pointing state is currently proposed and there are
+        currently no requirements for this functionality.
+
+        data_input: str
+            [Timestamp]
+        """
+        pass
+
+    def action_setmaintenancemode(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the MAINTENANCE
+        Dish Element Mode, and returns to the caller. To go into a state that
+        is safe to approach the Dish by a maintainer, and to enable the
+        Engineering interface to allow direct access to low level control and
+        monitoring by engineers and maintainers. This mode will also enable
+        engineers and maintainers to upgrade SW and FW. Dish also enters
+        this mode when an emergency stop button is pressed.
+
+        data_input: None
+        """
+        pass
+
+    def action_setoperatemode(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the OPERATE Dish
+        Element Mode, and returns to the caller. This mode fulfils the main
+        purpose of the Dish, which is to point to designated directions while
+        capturing data and transmitting it to CSP.
+
+        data_input: None
+        """
+        pass
+
+    def action_pntmodelpars(self, model, tango_dev=None, data_input=None):
+        """Parameters for pointing models used by Dish to do pointing
+        corrections.
+
+        data_input: list
+            [PntParams]
+        """
+        pass
+
+    def action_setstandbyfpmode(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the STANDBY-FP Dish
+        Element Mode, and returns to the caller. To prepare all subsystems
+        for active observation, once a command is received by TM to go to the
+        FULL_POWER mode.
+
+        data_input: None
+        """
+        pass
+
+    def action_setstandbylpmode(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the STANDBY-LP Dish Element
+        Mode, and returns to the caller. Standby_LP is the default mode when the Dish
+        is configured for low power consumption, and is the mode wherein Dish ends after
+        a start up procedure.
+
+        data_input: None
+        """
+        pass
+
+    def action_setstowmode(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the STOW Dish
+        Element Mode, and returns to the caller. To point the dish in a
+        direction that minimises the wind loads on the structure, for survival
+        in strong wind conditions. The Dish is able to observe in the stow
+        position, for the purpose of transient detection.
+
+        data_input: None
+        """
+        self.slew(model, data_input[-185, 90])
+
+    def action_slew(self, model, tango_dev=None, data_input=None):
+        """The Dish is tracking the commanded pointing positions within the
+        specified TRACK pointing accuracy.
+
+        data_input: list
+            [Timestamp]
+            [azimuth]
+            [elevation]
+        """
+        try:
+            quant_pointing_state = model.sim_quantities['pointingState']
+        except KeyError:
+            raise DishSimError("The quantity 'pointingState' is not in the Dish model.")
+
+        if quant_pointing_state.last_val != 1:
+            quant_pointing_state.set_val(2, model.time_func())
+        else:
+            raise DishSimError("Dish pointing state already in slew mode")
+
+        model.sim_quantities['desiredState'].set_val(
+            (data_input[1], data_input[2]), model.time_func())
+
+    def action_synchronise(self, model, tango_dev=None, data_input=None):
+        """Reset configured band sample counters. Command only valid in
+        SPFRx Data_Capture mode.
+
+        data_input: None
+        """
+        pass
+
+    def action_track(self, model, tango_dev=None, data_input=None):
+        """The Dish moves to the commanded pointing angle at the maximum
+        speed, as defined by the specified slew rate. No pointing accuracy
+        requirements are applicable in this state. SLEW state will also be
+        reported while the Dish is settling onto a target and is still not within
+        the specified pointing accuracy. As soon as the pointing accuracy is
+        within specifications, the state changes to TRACK.
+
+        data_input: list
+            [Timestamp]
+            [azimuth]
+            [elevation]
+        """
+        pass

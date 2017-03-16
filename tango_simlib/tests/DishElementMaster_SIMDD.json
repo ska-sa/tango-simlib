@@ -191,5 +191,15 @@
         }
       }
     }
+  ],
+  "class_overrides": [
+    {
+      "override_class": {
+        "name": "Override_Dish",
+        "module_directory": "None",
+        "module_name": "tango_simlib.examples.override_class",
+        "class_name": "OverrideDish"
+      }
+    }
   ]
 }
