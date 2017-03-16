@@ -192,10 +192,327 @@
       }
     }
   ],
+  "commands": [
+    {
+      "basicCommandData": {
+        "name": "Capture",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "ON, OFF",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "ConfigureAttenuation",
+        "input_parameters": {
+          "dtype_in": "Float",
+          "doc_in": "dB TBC",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "ConfigureBand1",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "Timestamp",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "ConfigureBand2",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "Timestamp",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "ConfigureBand3",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "Timestamp",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "ConfigureBand4",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "Timestamp",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "ConfigureBand5",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "Timestamp",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "ConfigureNoiseDiode",
+        "input_parameters": {
+          "dtype_in": "VarFloatArray",
+          "doc_in": "[start time, stop time, period, duty cycle, power level]",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "EnableEngInterface",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "Sub-Element",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "FlushCmdQueue",
+        "input_parameters": {
+          "dtype_in": "Void",
+          "doc_in": "",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "LowPower",
+        "input_parameters": {
+          "dtype_in": "Void",
+          "doc_in": "",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "Scan",
+        "input_parameters": {
+          "dtype_in": "String",
+          "doc_in": "Timestamp",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "SetMaintenanceMode",
+        "input_parameters": {
+          "dtype_in": "Void",
+          "doc_in": "",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "SetOperateMode",
+        "input_parameters": {
+          "dtype_in": "Void",
+          "doc_in": "",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "SetPntModelPars",
+        "input_parameters": {
+          "dtype_in": "VarFloatArray",
+          "doc_in": "[PntParams]",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "SetStandbyFPMode",
+        "input_parameters": {
+          "dtype_in": "Void",
+          "doc_in": "",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "SetStandbyLPMode",
+        "input_parameters": {
+          "dtype_in": "Void",
+          "doc_in": "",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "SetStowMode",
+        "input_parameters": {
+          "dtype_in": "Void",
+          "doc_in": "",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "Slew",
+        "input_parameters": {
+          "dtype_in": "VarDoubleArray",
+          "doc_in": "[Timestamp, azimuth, elevation]",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "Synchronise",
+        "input_parameters": {
+          "dtype_in": "Void",
+          "doc_in": "",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    },
+    {
+      "basicCommandData": {
+        "name": "Track",
+        "input_parameters": {
+          "dtype_in": "VarDoubleArray",
+          "doc_in": "[Timestamp, azimuth, elevation]",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
+    }
+  ],
   "class_overrides": [
     {
       "override_class": {
-        "name": "Override_Dish",
+        "name": "Sim_Dish_Override",
         "module_directory": "None",
         "module_name": "tango_simlib.examples.override_class",
         "class_name": "OverrideDish"
