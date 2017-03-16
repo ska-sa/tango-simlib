@@ -17,7 +17,7 @@ import importlib
 from functools import partial
 from tango_simlib import quantities
 
-from PyTango import (DevBoolean, DevString,
+from PyTango import (DevBoolean, DevString, DevEnum,
                      DevDouble, DevFloat, DevLong, DevVoid)
 
 
@@ -38,10 +38,12 @@ ARBITRARY_DATA_TYPE_RETURN_VALUES = {
 # In the case where an attribute with contant quantity simulation type is
 # specified, this dict is used to convert the initial value if specified to
 # the data-type corresponding to the attribute data-type.
-INITIAL_CONTANT_VALUE_TYPES = {
+INITIAL_CONSTANT_VALUE_TYPES = {
     DevString: (str, ""),
-    DevDouble: (float, 0),
-    DevBoolean: (bool, False)}
+    DevFloat: (float, 0.0),
+    DevDouble: (float, 0.0),
+    DevBoolean: (bool, False),
+    DevEnum: (int, 0)}
 
 
 class Model(object):
@@ -210,8 +212,8 @@ class PopulateModelQuantities(object):
                                 model_attr_props['name']))
                     attr_data_type = model_attr_props['data_type']
                     init_val = (initial_value if initial_value not in [None, ""]
-                                else INITIAL_CONTANT_VALUE_TYPES[attr_data_type][-1])
-                    start_val = INITIAL_CONTANT_VALUE_TYPES[attr_data_type][0](init_val)
+                                else INITIAL_CONSTANT_VALUE_TYPES[attr_data_type][-1])
+                    start_val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type][0](init_val)
                     quantity_factory = (
                             quantities.registry[attr_props['quantity_simulation_type']])
                     self.sim_model.sim_quantities[attr_name] = quantity_factory(
