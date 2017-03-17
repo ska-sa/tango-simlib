@@ -697,7 +697,18 @@ class OverrideDish(object):
         data_input: None
 
         """
-        pass
+        _allowed_modes = ('STOW', 'MAINTENANCE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            power_state_quant = model.sim_quantities['powerState']
+            set_mode = power_state_quant.meta['enum_labels'].index('LOW')
+            power_state_quant.set_val(set_mode, model.time_func())
+            MODULE_LOGGER.info("Dish transitioning to LOW power state.")
+        else:
+            raise DishSimError("Dish is not in 'STOW' or 'MAINTENANCE' mode.")
 
     def action_scan(self, model, tango_dev=None, data_input=None):
         """The Dish is tracking the commanded pointing positions within the
