@@ -500,6 +500,9 @@ class OverrideWeatherSimControl(object):
 
 class OverrideDish(object):
 
+    def _wait_while_configuring(self):
+        time.sleep(2)
+
     def action_capture(self, model, tango_dev=None, data_input=None):
         """Start/Stop capture on the configured band. Command only valide in SPFRx
         Data_Capture mode.
@@ -527,7 +530,24 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        pass
+        _allowed_modes = ('STANDBY-FP', 'OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('CONFIG')
+            model.sim_quantities['dishMode'].set_val(set_mode, long(data_input[0]))
+            MODULE_LOGGER.info("Configuring DISH to operate in frequency band 1.")
+            self._wait_while_configuring()
+            MODULE_LOGGER.info("Done configuring DISH to operate in frequency band 1.")
+            MODULE_LOGGER.info("Dish reverting back to '{}' mode.".format(
+                current_mode_str_val))
+            model.sim_quantities['dishMode'].set_val(
+                current_mode_enum_val, model.time_func())
+        else:
+            raise DishSimError("Dish is not in 'standby-fp' or 'operate' mode.")
+
 
     def action_configureband2(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -538,7 +558,23 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        pass
+        _allowed_modes = ('STANDBY-FP', 'OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('CONFIG')
+            model.sim_quantities['dishMode'].set_val(set_mode, long(data_input[0]))
+            MODULE_LOGGER.info("Configuring DISH to operate in frequency band 2.")
+            self._wait_while_configuring()
+            MODULE_LOGGER.info("Done configuring DISH to operate in frequency band 2.")
+            MODULE_LOGGER.info("Dish reverting back to '{}' mode.".format(
+                current_mode_str_val))
+            model.sim_quantities['dishMode'].set_val(
+                current_mode_enum_val, model.time_func())
+        else:
+            raise DishSimError("Dish is not in 'standby-fp' or 'operate' mode.")
 
     def action_configureband3(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -549,7 +585,23 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        pass
+        _allowed_modes = ('STANDBY-FP', 'OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('CONFIG')
+            model.sim_quantities['dishMode'].set_val(set_mode, long(data_input[0]))
+            MODULE_LOGGER.info("Configuring DISH to operate in frequency band 3.")
+            self._wait_while_configuring()
+            MODULE_LOGGER.info("Done configuring DISH to operate in frequency band 3.")
+            MODULE_LOGGER.info("Dish reverting back to '{}' mode.".format(
+                current_mode_str_val))
+            model.sim_quantities['dishMode'].set_val(
+                current_mode_enum_val, model.time_func())
+        else:
+            raise DishSimError("Dish is not in 'standby-fp' or 'operate' mode.")
 
     def action_configureband4(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -560,7 +612,23 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        pass
+        _allowed_modes = ('STANDBY-FP', 'OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('CONFIG')
+            model.sim_quantities['dishMode'].set_val(set_mode, long(data_input[0]))
+            MODULE_LOGGER.info("Configuring DISH to operate in frequency band 4.")
+            self._wait_while_configuring()
+            MODULE_LOGGER.info("Done configuring DISH to operate in frequency band 4.")
+            MODULE_LOGGER.info("Dish reverting back to '{}' mode.".format(
+                current_mode_str_val))
+            model.sim_quantities['dishMode'].set_val(
+                current_mode_enum_val, model.time_func())
+        else:
+            raise DishSimError("Dish is not in 'standby-fp' or 'operate' mode.")
 
     def action_configureband5(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -571,7 +639,23 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        pass
+        _allowed_modes = ('STANDBY-FP', 'OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('CONFIG')
+            model.sim_quantities['dishMode'].set_val(set_mode, long(data_input[0]))
+            MODULE_LOGGER.info("Configuring DISH to operate in frequency band 5.")
+            self._wait_while_configuring()
+            MODULE_LOGGER.info("Done configuring DISH to operate in frequency band 5.")
+            MODULE_LOGGER.info("Dish reverting back to '{}' mode.".format(
+                current_mode_str_val))
+            model.sim_quantities['dishMode'].set_val(
+                current_mode_enum_val, model.time_func())
+        else:
+            raise DishSimError("Dish is not in 'standby-fp' or 'operate' mode.")
 
     def action_configurenoisediode(self, model, tango_dev=None, data_input=None):
         """Set the noise diode start time, period and on/off time (duty cycle)
@@ -687,7 +771,16 @@ class OverrideDish(object):
 
         data_input: None
         """
-        self.action_slew(model, data_input=['-', -185, 90])
+        if hasattr(model, 'thread_set'):
+            pass
+        else:
+            model.pointing_thread = threading.Thread(target=self._update_positions,
+                                                     args=(model,))
+            setattr(model, 'thread_set', True)
+            model.pointing_thread.setDaemon(True)
+            model.pointing_thread.start()
+        model_time = model.time_func()
+        model.sim_quantities['desiredElevation'].set_val(90, model_time)
 
     def action_slew(self, model, tango_dev=None, data_input=None):
         """The Dish is tracking the commanded pointing positions within the
@@ -701,7 +794,8 @@ class OverrideDish(object):
         if hasattr(model, 'thread_set'):
             pass
         else:
-            model.pointing_thread = threading.Thread(target=self._update_positions)
+            model.pointing_thread = threading.Thread(target=self._update_positions,
+                                                     args=(model,))
             setattr(model, 'thread_set', True)
             model.pointing_thread.setDaemon(True)
             model.pointing_thread.start()
@@ -720,10 +814,44 @@ class OverrideDish(object):
         model.sim_quantities['desiredAzimuth'].set_val(data_input[1], model_time)
         model.sim_quantities['desiredElevation'].set_val(data_input[2], model_time)
 
-    def _update_positions(self):
+    def _update_positions(self, *args):
+        model = args[0]
         while True:
-            print '***********updating positions************'
-            time.sleep(1)
+            if model.sim_quantities['pointingState'].last_val == 0:
+                time.sleep(1)
+                continue
+            else:
+                last_update_time = model.time_func()
+                time.sleep(1)
+
+            sim_time = model.time_func()
+            dt = sim_time - last_update_time
+            try:
+                slew_rate = 2.0
+                max_slew = slew_rate * dt
+                achieved_azim = model.sim_quantities['achievedAzimuth'].last_val
+                achieved_elev = model.sim_quantities['achievedElevation'].last_val
+                desired_azim = model.sim_quantities['desiredAzimuth'].last_val
+                desired_elev = model.sim_quantities['desiredElevation'].last_val
+                current_delta_azim = abs(achieved_azim - desired_azim)
+                current_delta_elev = abs(achieved_elev - desired_elev)
+                move_delta_azim = min(max_slew, current_delta_azim)
+                move_delta_elev = min(max_slew, current_delta_elev)
+                new_position_azim = (
+                    achieved_azim + cmp(desired_azim, achieved_azim) * move_delta_azim)
+                model.sim_quantities['achievedAzimuth'].set_val(
+                    new_position_azim, sim_time)
+                new_position_elev = (
+                    achieved_elev + cmp(desired_elev, achieved_elev) * move_delta_elev)
+                model.sim_quantities['achievedElevation'].set_val(
+                    new_position_elev, sim_time)
+                last_update_time = sim_time
+            except Exception:
+                pass
+
+    def _almost_equal(self, x, y, abs_threshold=1e-2):
+        '''Takes two values return true if they are almost equal'''
+        return abs(x - y) <= abs_threshold
 
     def action_synchronise(self, model, tango_dev=None, data_input=None):
         """Reset configured band sample counters. Command only valid in

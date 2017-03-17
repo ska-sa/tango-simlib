@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
   <classes name="DishElementMaster" pogoRevision="9.1">
-    <description description="The DSH shall provide a self-description on request from the TM. Through self-description the DSH provides information that&#xA;describes the content of the interface, including a set of valid commands, parameters, monitoring points, alarms and events.&#xA;SKA_MID DSH Element MasterSKA_MID DSH Element Master.&#xA;During operations, the TM may control the DSH Dish modes and states on a higher level of abstraction (external state model)&#xA;than is implemented in the DSH Dish components (internal states)." title="Telescope Manager Control To Dish Elemet" sourcePath="/home/athanaseus/Desktop/Projects/FEB/Sprint28/LMC/Element" language="Python" filestogenerate="XMI   file,Code files,Protected Regions,html Pages" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
+    <description description="The DSH shall provide a self-description on request from the TM. Through self-description the DSH provides information that&#xA;describes the content of the interface, including a set of valid commands, parameters, monitoring points, alarms and events.&#xA;SKA_MID DSH Element MasterSKA_MID DSH Element Master.&#xA;During operations, the TM may control the DSH Dish modes and states on a higher level of abstraction (external state model)&#xA;than is implemented in the DSH Dish components (internal states)." title="Telescope Manager Control To Dish Elemet" sourcePath="/home/kmadisa/Documents/github/tango-simlib/tango_simlib/tests" language="Python" filestogenerate="XMI   file,Protected Regions" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
       <inheritances classname="Device_Impl" sourcePath=""/>
       <identification contact="at ska.ac.za - aramaila" author="aramaila" emailDomain="ska.ac.za" classFamily="Simulators" siteSpecific="" platform="Unix Like" bus="TCP/UDP" manufacturer="none" reference=""/>
     </description>
@@ -565,6 +565,23 @@
       <enumLabels>WARNING</enumLabels>
       <enumLabels>ERROR</enumLabels>
       <enumLabels>FATAL</enumLabels>
+    </attributes>
+    <attributes name="dishMode" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:EnumType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="" label="dish mode" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <enumLabels>OFF</enumLabels>
+      <enumLabels>STARTUP</enumLabels>
+      <enumLabels>SHUTDOWN</enumLabels>
+      <enumLabels>STANDBY-LP</enumLabels>
+      <enumLabels>STANDBY-FP</enumLabels>
+      <enumLabels>MAINTENANCE</enumLabels>
+      <enumLabels>STOW</enumLabels>
+      <enumLabels>CONFIG</enumLabels>
+      <enumLabels>OPERATE</enumLabels>
     </attributes>
     <attributes name="achievedPointing" attType="Spectrum" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="3" maxY="" allocReadMember="true" isDynamic="false">
       <dataType xsi:type="pogoDsl:FloatType"/>
