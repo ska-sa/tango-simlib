@@ -760,7 +760,17 @@ class OverrideDish(object):
 
         data_input: None
         """
-        pass
+        _allowed_modes = ('STANDBY-LP', 'STOW', 'OPERATE', 'MAINTENANCE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('STANDBY-FP')
+            model.sim_quantities['dishMode'].set_val(set_mode, model.time_func())
+            MODULE_LOGGER.info("Dish transition to the STANDBY-FP Dish Element Mode.")
+        else:
+            raise DishSimError("Dish is not in 'STANDBY-FP' mode.")
 
     def action_setstandbylpmode(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the STANDBY-LP Dish Element
@@ -770,7 +780,18 @@ class OverrideDish(object):
 
         data_input: None
         """
-        pass
+        _allowed_modes = ('OFF', 'STARTUP', 'SHUTDOWN', 'STANDBY-LP', 'STANDBY-FP',
+                          'MAINTENANCE', 'STOW', 'CONFIG', 'OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('STANDBY-LP')
+            model.sim_quantities['dishMode'].set_val(set_mode, model.time_func())
+            MODULE_LOGGER.info("Dish transition to the STANDBY-LP Dish Element Mode.")
+        else:
+            raise DishSimError("Dish is not in an allowed mode.")
 
     def action_setstowmode(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the STOW Dish
@@ -781,16 +802,29 @@ class OverrideDish(object):
 
         data_input: None
         """
-        if hasattr(model, 'thread_set'):
-            pass
-        else:
-            model.pointing_thread = threading.Thread(target=self._update_positions,
+        _allowed_modes = ('OFF', 'STARTUP', 'SHUTDOWN', 'STANDBY-LP', 'STANDBY-FP',
+                          'MAINTENANCE', 'STOW', 'CONFIG', 'OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            if hasattr(model, 'pointing_thread'):
+                pass
+            else:
+                model.pointing_thread = threading.Thread(target=self._update_positions,
                                                      args=(model,))
-            setattr(model, 'thread_set', True)
-            model.pointing_thread.setDaemon(True)
-            model.pointing_thread.start()
-        model_time = model.time_func()
-        model.sim_quantities['desiredElevation'].set_val(90, model_time)
+                model.pointing_thread.setDaemon(True)
+                model.pointing_thread.start()
+            model_time = model.time_func()
+            model.sim_quantities['desiredElevation'].set_val(90, model_time)
+
+            set_mode = dish_mode_quant.meta['enum_labels'].index('STOW')
+            model.sim_quantities['dishMode'].set_val(set_mode, model_time)
+            print 'Dish transitioning to STOW mode'
+            MODULE_LOGGER.info("Dish transition to the STOW Dish Element Mode.")
+        else:
+            raise DishSimError("Dish is not in '{}' mode.".format(_allowed_modes))
 
     def action_slew(self, model, tango_dev=None, data_input=None):
         """The Dish is tracking the commanded pointing positions within the
@@ -801,14 +835,22 @@ class OverrideDish(object):
             [azimuth]
             [elevation]
         """
-        if hasattr(model, 'thread_set'):
-            pass
-        else:
-            model.pointing_thread = threading.Thread(target=self._update_positions,
+        _allowed_modes = ('OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            if hasattr(model, 'pointing_thread'):
+                pass
+            else:
+                model.pointing_thread = threading.Thread(target=self._update_positions,
                                                      args=(model,))
-            setattr(model, 'thread_set', True)
-            model.pointing_thread.setDaemon(True)
-            model.pointing_thread.start()
+                model.pointing_thread.setDaemon(True)
+                model.pointing_thread.start()
+
+        else:
+            raise DishSimError("Dish is not in 'OPERATE' mode.")
 
         try:
             quant_pointing_state = model.sim_quantities['pointingState']
@@ -827,7 +869,7 @@ class OverrideDish(object):
     def _update_positions(self, *args):
         model = args[0]
         while True:
-            if model.sim_quantities['pointingState'].last_val == 0:
+            if model.sim_quantities['pointingState'].last_val == -1:
                 time.sleep(1)
                 continue
             else:
