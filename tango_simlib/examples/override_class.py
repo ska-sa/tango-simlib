@@ -731,7 +731,17 @@ class OverrideDish(object):
 
         data_input: None
         """
-        pass
+        _allowed_modes = ('STANDBY-FP')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('OPERATE')
+            model.sim_quantities['dishMode'].set_val(set_mode, model.time_func())
+            MODULE_LOGGER.info("Dish transition to the OPERATE Dish Element Mode.")
+        else:
+            raise DishSimError("Dish is not in 'STANDBY-FP' mode.")
 
     def action_pntmodelpars(self, model, tango_dev=None, data_input=None):
         """Parameters for pointing models used by Dish to do pointing
