@@ -13,7 +13,8 @@ An example of the user-defined override class.
 """
 
 import logging
-
+import threading
+import time
 from PyTango import DevState
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -697,6 +698,14 @@ class OverrideDish(object):
             [azimuth]
             [elevation]
         """
+        if hasattr(model, 'thread_set'):
+            pass
+        else:
+            model.pointing_thread = threading.Thread(target=self._update_positions)
+            setattr(model, 'thread_set', True)
+            model.pointing_thread.setDaemon(True)
+            model.pointing_thread.start()
+
         try:
             quant_pointing_state = model.sim_quantities['pointingState']
         except KeyError:
@@ -708,8 +717,13 @@ class OverrideDish(object):
             raise DishSimError("Dish pointing state already in slew mode")
 
         model_time = model.time_func()
-        model.sim_quantities['desiredAzimuth'].set_val(data_input[1], model_time))
+        model.sim_quantities['desiredAzimuth'].set_val(data_input[1], model_time)
         model.sim_quantities['desiredElevation'].set_val(data_input[2], model_time)
+
+    def _update_positions(self):
+        while True:
+            print '***********updating positions************'
+            time.sleep(1)
 
     def action_synchronise(self, model, tango_dev=None, data_input=None):
         """Reset configured band sample counters. Command only valid in
