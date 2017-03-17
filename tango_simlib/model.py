@@ -242,7 +242,7 @@ class PopulateModelQuantities(object):
                 self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
                         start_time=start_time, meta=model_attr_props, start_value=True)
 
-            self.sim_model.setup_sim_quantities()
+        self.sim_model.setup_sim_quantities()
 
     def sim_attribute_quantities(self, min_bound, max_bound, max_slew_rate,
                                  mean, std_dev):

@@ -190,6 +190,70 @@
           "quantity_simulation_type": "ConstantQuantity"
         }
       }
+    },
+    {
+      "basicAttributeData": {
+        "name": "desiredAzimuth",
+        "unit": "Degrees",
+        "label": "requested-azimuth",
+        "description": "",
+        "data_type": "Double",
+        "data_format": "Scalar",
+        "attributeInterlocks": {
+          "writable": "READ"
+        },
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity"
+        }
+      }
+    },
+    {
+      "basicAttributeData": {
+        "name": "desiredElevation",
+        "unit": "Degrees",
+        "label": "requested-elevation",
+        "description": "",
+        "data_type": "Double",
+        "data_format": "Scalar",
+        "attributeInterlocks": {
+          "writable": "READ"
+        },
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity"
+        }
+      }
+    },
+    {
+      "basicAttributeData": {
+        "name": "achievedAzimuth",
+        "unit": "Degrees",
+        "label": "actual-azimuth",
+        "description": "",
+        "data_type": "Double",
+        "data_format": "Scalar",
+        "attributeInterlocks": {
+          "writable": "READ"
+        },
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity"
+        }
+      }
+    },
+    {
+      "basicAttributeData": {
+        "name": "achievedElevation",
+        "unit": "Degrees",
+        "label": "actual-elevation",
+        "description": "",
+        "data_type": "Double",
+        "data_format": "Scalar",
+        "attributeInterlocks": {
+          "writable": "READ"
+        },
+        "dataSimulationParameters": {
+          "quantity_simulation_type": "ConstantQuantity"
+        }
+      }
     }
   ],
   "commands": [

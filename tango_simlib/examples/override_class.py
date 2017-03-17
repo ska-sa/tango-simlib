@@ -686,7 +686,7 @@ class OverrideDish(object):
 
         data_input: None
         """
-        self.slew(model, data_input[-185, 90])
+        self.action_slew(model, data_input=['-', -185, 90])
 
     def action_slew(self, model, tango_dev=None, data_input=None):
         """The Dish is tracking the commanded pointing positions within the
@@ -707,8 +707,9 @@ class OverrideDish(object):
         else:
             raise DishSimError("Dish pointing state already in slew mode")
 
-        model.sim_quantities['desiredState'].set_val(
-            (data_input[1], data_input[2]), model.time_func())
+        model_time = model.time_func()
+        model.sim_quantities['desiredAzimuth'].set_val(data_input[1], model_time))
+        model.sim_quantities['desiredElevation'].set_val(data_input[2], model_time)
 
     def action_synchronise(self, model, tango_dev=None, data_input=None):
         """Reset configured band sample counters. Command only valid in
