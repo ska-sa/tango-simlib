@@ -33,7 +33,7 @@ setup(name="tango_simlib",
           },
       zip_safe=False,
       include_package_data=True,
-      package_data={'tango-simlib': ['tests/*.xmi', 'tests/*.json']},
+      package_data={'tango_simlib': ['tests/*.xmi', 'tests/*.json']},
       dependency_links=[
           'git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
       entry_points={
