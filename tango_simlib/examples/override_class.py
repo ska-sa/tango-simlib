@@ -887,6 +887,9 @@ class OverrideDish(object):
         model.sim_quantities['desiredAzimuth'].set_val(data_input[1], model_time)
         model.sim_quantities['desiredElevation'].set_val(data_input[2], model_time)
 
+        model.sim_quantities['desiredPointing'].set_val(
+            [data_input[1], data_input[2]], model_time)
+
     def _update_positions(self, *args):
         model = args[0]
         while True:
@@ -918,6 +921,8 @@ class OverrideDish(object):
                     achieved_elev + cmp(desired_elev, achieved_elev) * move_delta_elev)
                 model.sim_quantities['achievedElevation'].set_val(
                     new_position_elev, sim_time)
+                model.sim_quantities['achievedPointing'].set_val(
+                    [new_position_azim, new_position_elev], sim_time)
                 last_update_time = sim_time
             except Exception:
                 pass
