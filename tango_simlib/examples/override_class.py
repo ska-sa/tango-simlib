@@ -510,7 +510,8 @@ class OverrideDish(object):
         data_input: str
             ON/OFF value
         """
-        pass
+        raise NotImplementedError("The command handler for the command Capture"
+                                  " is not implemented.")
 
     def action_configureattenuation(self, model, tango_dev=None, data_input=None):
         """Set the global attenuation. Changing this value will set the attenuation
@@ -519,7 +520,8 @@ class OverrideDish(object):
         data_input: float
             db TBC
         """
-        pass
+        raise NotImplementedError("The command handler for the command"
+                                  " ConfigureAttenuation is not implemented.")
 
     def action_configureband1(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -546,7 +548,7 @@ class OverrideDish(object):
             model.sim_quantities['dishMode'].set_val(
                 current_mode_enum_val, model.time_func())
         else:
-            raise DishSimError("Dish is not in 'standby-fp' or 'operate' mode.")
+            raise DishSimError("Dish is not in {} mode.".format(_allowed_modes))
 
 
     def action_configureband2(self, model, tango_dev=None, data_input=None):
@@ -574,7 +576,7 @@ class OverrideDish(object):
             model.sim_quantities['dishMode'].set_val(
                 current_mode_enum_val, model.time_func())
         else:
-            raise DishSimError("Dish is not in 'standby-fp' or 'operate' mode.")
+            raise DishSimError("Dish is not in {} mode.".format(_allowed_modes))
 
     def action_configureband3(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -601,7 +603,7 @@ class OverrideDish(object):
             model.sim_quantities['dishMode'].set_val(
                 current_mode_enum_val, model.time_func())
         else:
-            raise DishSimError("Dish is not in 'standby-fp' or 'operate' mode.")
+            raise DishSimError("Dish is not in {} mode.".format(_allowed_modes))
 
     def action_configureband4(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -628,7 +630,7 @@ class OverrideDish(object):
             model.sim_quantities['dishMode'].set_val(
                 current_mode_enum_val, model.time_func())
         else:
-            raise DishSimError("Dish is not in 'standby-fp' or 'operate' mode.")
+            raise DishSimError("Dish is not in {} mode.".format(_allowed_modes))
 
     def action_configureband5(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -655,7 +657,7 @@ class OverrideDish(object):
             model.sim_quantities['dishMode'].set_val(
                 current_mode_enum_val, model.time_func())
         else:
-            raise DishSimError("Dish is not in 'standby-fp' or 'operate' mode.")
+            raise DishSimError("Dish is not in {} mode.".format(_allowed_modes))
 
     def action_configurenoisediode(self, model, tango_dev=None, data_input=None):
         """Set the noise diode start time, period and on/off time (duty cycle)
@@ -666,7 +668,8 @@ class OverrideDish(object):
            [NDParams]
            [start time, stop time, period, duty cycle, power level]
         """
-        pass
+        raise NotImplementedError("The command handler for the command"
+                                  " ConfigureNoiseDiode is not implemented.")
 
     def action_enableenginterface(self, model, tango_dev=None, data_input=None):
         """Enable engineering interface.
@@ -674,14 +677,16 @@ class OverrideDish(object):
         data_input: str
             [Sub-Element]
         """
-        pass
+        raise NotImplementedError("The command handler for the command"
+                                  " EnableEngInterface is not implemented.")
 
     def action_flushcmdqueue(self, model, tango_dev=None, data_input=None):
         """Flush command Queue
 
         data_input: None
         """
-        pass
+        raise NotImplementedError("The command handler for the command"
+                                  " FlushCmdQueue is not implemented.")
 
     def action_lowpower(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the LOW power
@@ -708,7 +713,7 @@ class OverrideDish(object):
             power_state_quant.set_val(set_mode, model.time_func())
             MODULE_LOGGER.info("Dish transitioning to LOW power state.")
         else:
-            raise DishSimError("Dish is not in 'STOW' or 'MAINTENANCE' mode.")
+            raise DishSimError("Dish is not in {} mode.".format(_allowed_modes))
 
     def action_scan(self, model, tango_dev=None, data_input=None):
         """The Dish is tracking the commanded pointing positions within the
@@ -719,7 +724,8 @@ class OverrideDish(object):
         data_input: str
             [Timestamp]
         """
-        pass
+        raise NotImplementedError("The command handler for the command Scan"
+                                  " is not implemented.")
 
     def action_setmaintenancemode(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the MAINTENANCE
@@ -742,7 +748,7 @@ class OverrideDish(object):
             model.sim_quantities['dishMode'].set_val(set_mode, model.time_func())
             MODULE_LOGGER.info("Dish transition to the OPERATE Dish Element mode.")
         else:
-            raise DishSimError("Dish is not in 'STANDBY-LP' or 'STANDBY-FP' mode.")
+            raise DishSimError("Dish is not in {} mode.".format(_allowed_modes))
 
     def action_setoperatemode(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the OPERATE Dish
@@ -762,7 +768,7 @@ class OverrideDish(object):
             model.sim_quantities['dishMode'].set_val(set_mode, model.time_func())
             MODULE_LOGGER.info("Dish transition to the OPERATE Dish Element Mode.")
         else:
-            raise DishSimError("Dish is not in 'STANDBY-FP' mode.")
+            raise DishSimError("Dish is not in {} mode.".format(_allowed_modes))
 
     def action_pntmodelpars(self, model, tango_dev=None, data_input=None):
         """Parameters for pointing models used by Dish to do pointing
@@ -771,7 +777,8 @@ class OverrideDish(object):
         data_input: list
             [PntParams]
         """
-        pass
+        raise NotImplementedError("The command handler for the command PntModelPars"
+                                  " is not implemented.")
 
     def action_setstandbyfpmode(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the STANDBY-FP Dish
@@ -791,7 +798,7 @@ class OverrideDish(object):
             model.sim_quantities['dishMode'].set_val(set_mode, model.time_func())
             MODULE_LOGGER.info("Dish transition to the STANDBY-FP Dish Element Mode.")
         else:
-            raise DishSimError("Dish is not in 'STANDBY-FP' mode.")
+            raise DishSimError("Dish is not in {} mode.".format(_allowed_modes))
 
     def action_setstandbylpmode(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the STANDBY-LP Dish Element
@@ -812,7 +819,8 @@ class OverrideDish(object):
             model.sim_quantities['dishMode'].set_val(set_mode, model.time_func())
             MODULE_LOGGER.info("Dish transition to the STANDBY-LP Dish Element Mode.")
         else:
-            raise DishSimError("Dish is not in an allowed mode.")
+            raise DishSimError("Dish is not in the allowed mode {}."
+                               .format(_allowed_modes))
 
     def action_setstowmode(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the STOW Dish
@@ -834,7 +842,7 @@ class OverrideDish(object):
                 pass
             else:
                 model.pointing_thread = threading.Thread(target=self._update_positions,
-                                                     args=(model,))
+                                                         args=(model,))
                 model.pointing_thread.setDaemon(True)
                 model.pointing_thread.start()
             model_time = model.time_func()
@@ -842,10 +850,9 @@ class OverrideDish(object):
 
             set_mode = dish_mode_quant.meta['enum_labels'].index('STOW')
             model.sim_quantities['dishMode'].set_val(set_mode, model_time)
-            print 'Dish transitioning to STOW mode'
             MODULE_LOGGER.info("Dish transition to the STOW Dish Element Mode.")
         else:
-            raise DishSimError("Dish is not in '{}' mode.".format(_allowed_modes))
+            raise DishSimError("Dish is not in {} mode.".format(_allowed_modes))
 
     def action_slew(self, model, tango_dev=None, data_input=None):
         """The Dish is tracking the commanded pointing positions within the
@@ -871,7 +878,8 @@ class OverrideDish(object):
                 model.pointing_thread.start()
 
         else:
-            raise DishSimError("Dish is not in 'OPERATE' mode.")
+            raise DishSimError("Dish is not in the allowed mode [{}]."
+                               .format(_allowed_modes))
 
         try:
             quant_pointing_state = model.sim_quantities['pointingState']
@@ -937,7 +945,8 @@ class OverrideDish(object):
 
         data_input: None
         """
-        pass
+        raise NotImplementedError("The command handler for the command Synchronise"
+                                  " is not implemented.")
 
     def action_track(self, model, tango_dev=None, data_input=None):
         """The Dish moves to the commanded pointing angle at the maximum
@@ -952,4 +961,5 @@ class OverrideDish(object):
             [azimuth]
             [elevation]
         """
-        pass
+        raise NotImplementedError("The command handler for the command Track is not"
+                                  " implemented.")
