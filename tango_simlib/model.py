@@ -88,8 +88,8 @@ class Model(object):
              for var, quant in self.sim_quantities.items()})
 
     def update(self):
-        for _update_override in self.override_pre_updates:
-            _update_override(self)
+        for override_update in self.override_pre_updates:
+            override_update(self)
 
         sim_time = self.time_func()
         dt = sim_time - self.last_update_time
@@ -111,8 +111,8 @@ class Model(object):
         except Exception:
             MODULE_LOGGER.exception('Exception in update loop')
 
-        for _update_override in self.override_post_updates:
-            _update_override(self)
+        for override_update in self.override_post_updates:
+            override_update(self)
 
     def set_sim_action(self, name, handler):
         """Add an action handler function
