@@ -838,16 +838,8 @@ class OverrideDish(object):
         current_mode_str_val = (
             dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
         if current_mode_str_val in _allowed_modes:
-            if hasattr(model, 'pointing_thread'):
-                pass
-            else:
-                model.pointing_thread = threading.Thread(target=self._update_positions,
-                                                         args=(model,))
-                model.pointing_thread.setDaemon(True)
-                model.pointing_thread.start()
             model_time = model.time_func()
             model.sim_quantities['desiredElevation'].set_val(90, model_time)
-
             set_mode = dish_mode_quant.meta['enum_labels'].index('STOW')
             model.sim_quantities['dishMode'].set_val(set_mode, model_time)
             MODULE_LOGGER.info("Dish transition to the STOW Dish Element Mode.")
@@ -868,28 +860,23 @@ class OverrideDish(object):
         current_mode_enum_val = dish_mode_quant.last_val
         current_mode_str_val = (
             dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
-        if current_mode_str_val in _allowed_modes:
-            if hasattr(model, 'pointing_thread'):
-                pass
-            else:
-                model.pointing_thread = threading.Thread(target=self._update_positions,
-                                                     args=(model,))
-                model.pointing_thread.setDaemon(True)
-                model.pointing_thread.start()
-
-        else:
+        if current_mode_str_val not in _allowed_modes:
             raise DishSimError("Dish is not in the allowed mode [{}]."
                                .format(_allowed_modes))
 
         try:
-            quant_pointing_state = model.sim_quantities['pointingState']
+            pointing_state_quant = model.sim_quantities['pointingState']
         except KeyError:
             raise DishSimError("The quantity 'pointingState' is not in the Dish model.")
 
-        if quant_pointing_state.last_val != 1:
-            quant_pointing_state.set_val(2, model.time_func())
+        pointing_state_enum_val = pointing_state_quant.last_val
+        pointing_state_str_val = (
+            pointing_state_quant.meta['enum_labels'][int(pointing_state_enum_val)])
+        if pointing_state_str_val != 'SLEW':
+            set_mode = pointing_state_quant.meta['enum_labels'].index('SLEW')
+            pointing_state_quant.set_val(set_mode, model.time_func())
         else:
-            raise DishSimError("Dish pointing state already in slew mode")
+            raise DishSimError("Dish pointing state already in SLEW mode")
 
         model_time = model.time_func()
         model.sim_quantities['desiredAzimuth'].set_val(data_input[1], model_time)
@@ -898,42 +885,8 @@ class OverrideDish(object):
         model.sim_quantities['desiredPointing'].set_val(
             [data_input[1], data_input[2]], model_time)
 
-    def _update_positions(self, *args):
-        model = args[0]
-        while True:
-            if model.sim_quantities['pointingState'].last_val == -1:
-                time.sleep(1)
-                continue
-            else:
-                last_update_time = model.time_func()
-                time.sleep(1)
-
-            sim_time = model.time_func()
-            dt = sim_time - last_update_time
-            try:
-                slew_rate = 2.0
-                max_slew = slew_rate * dt
-                achieved_azim = model.sim_quantities['achievedAzimuth'].last_val
-                achieved_elev = model.sim_quantities['achievedElevation'].last_val
-                desired_azim = model.sim_quantities['desiredAzimuth'].last_val
-                desired_elev = model.sim_quantities['desiredElevation'].last_val
-                current_delta_azim = abs(achieved_azim - desired_azim)
-                current_delta_elev = abs(achieved_elev - desired_elev)
-                move_delta_azim = min(max_slew, current_delta_azim)
-                move_delta_elev = min(max_slew, current_delta_elev)
-                new_position_azim = (
-                    achieved_azim + cmp(desired_azim, achieved_azim) * move_delta_azim)
-                model.sim_quantities['achievedAzimuth'].set_val(
-                    new_position_azim, sim_time)
-                new_position_elev = (
-                    achieved_elev + cmp(desired_elev, achieved_elev) * move_delta_elev)
-                model.sim_quantities['achievedElevation'].set_val(
-                    new_position_elev, sim_time)
-                model.sim_quantities['achievedPointing'].set_val(
-                    [new_position_azim, new_position_elev], sim_time)
-                last_update_time = sim_time
-            except Exception:
-                pass
+    def _update(self):
+        MODULE_LOGGER.info("***Updating from the override class***")
 
     def _almost_equal(self, x, y, abs_threshold=1e-2):
         '''Takes two values return true if they are almost equal'''
