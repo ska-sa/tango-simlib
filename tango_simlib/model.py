@@ -62,6 +62,8 @@ class Model(object):
         self.sim_actions_meta = {}
         self._sim_state = {}
         self.setup_sim_quantities()
+        self.override_pre_updates = []
+        self.override_post_updates = []
         self.paused = False  # Flag to pause updates
         # Making a public reference to _sim_state. Allows us to hook read-only views
         # or updates or whatever the future requires of this humble public attribute.
@@ -86,8 +88,9 @@ class Model(object):
              for var, quant in self.sim_quantities.items()})
 
     def update(self):
-        if hasattr(self, '_update'):
-            self._update()
+        for _update_override in self.override_pre_updates:
+            _update_override(self)
+
         sim_time = self.time_func()
         dt = sim_time - self.last_update_time
         if dt < self.min_update_period or self.paused:
@@ -107,6 +110,9 @@ class Model(object):
                 self._sim_state[var] = (quant.next_val(sim_time), sim_time)
         except Exception:
             MODULE_LOGGER.exception('Exception in update loop')
+
+        for _update_override in self.override_post_updates:
+            _update_override(self)
 
     def set_sim_action(self, name, handler):
         """Add an action handler function
@@ -313,14 +319,27 @@ class PopulateModelActions(object):
             instances = self._get_class_instances(override_info)
 
         # Need to override the model's update method if the override class provides one.
-        instance = None
+        instance = []
         for instance_ in instances:
             if instance_.startswith('Sim'):
-                instance = instances[instance_]
-        if instance:
-            self._check_override_action_presence('_update', instance, '{}')
-            update_overwrite = getattr(instance, '_update')
-            setattr(self.sim_model, '_update', update_overwrite)
+                instance.append(instances[instance_])
+
+        for inst in instance:
+            try:
+                pre_update_overwrite = getattr(inst, 'pre_update')
+            except AttributeError:
+                MODULE_LOGGER.info("No pre-update method defined in the '{}'"
+                                   " override class.".format(type(inst).__name__))
+            else:
+                self.sim_model.override_pre_updates.append(pre_update_overwrite)
+
+            try:
+                post_update_overwrite = getattr(inst, 'post_update')
+            except AttributeError:
+                MODULE_LOGGER.info("No pre-update method defined in the '{}'"
+                                   " override class.".format(type(inst).__name__))
+            else:
+                self.sim_model.override_post_updates.append(post_update_overwrite)
 
         for cmd_name, cmd_meta in command_info.items():
             # Exclude the TANGO default commands as they have their own built in handlers

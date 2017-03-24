@@ -885,7 +885,7 @@ class OverrideDish(object):
         model.sim_quantities['desiredPointing'].set_val(
             [data_input[1], data_input[2]], model_time)
 
-    def _update(self):
+    def pre_update(self, sim_model):
         MODULE_LOGGER.info("***Updating from the override class***")
 
     def _almost_equal(self, x, y, abs_threshold=1e-2):
