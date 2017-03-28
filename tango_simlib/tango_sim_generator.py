@@ -168,7 +168,13 @@ def get_tango_device_server(model, sim_data_files):
             value, update_time = tango_device_instance.model.quantity_state[name]
             quality = AttrQuality.ATTR_VALID
             tango_device_instance.info_stream("Reading attribute %s", name)
-            attr.set_value_date_quality(int(value), update_time, quality)
+            # For attributes that have a SPECTRUM data format, there is no need to
+            # type cast them to an integer data type. we need assign the list of values
+            # to the attribute value parameter.
+            if type(value) == list:
+                attr.set_value_date_quality(value, update_time, quality)
+            else:
+                attr.set_value_date_quality(int(value), update_time, quality)
         # Attribute write method for writable attributes
         if str(attr_meta['writable']) == 'READ_WRITE':
             @attr.write
@@ -185,6 +191,7 @@ def get_tango_device_server(model, sim_data_files):
         # Add the read method and the attribute to the class object
         setattr(tango_device_class, read_meth.__name__, read_meth)
         setattr(tango_device_class, attr.__name__, attr)
+        MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
 
     # Sim test interface static attribute `attribute_name` info
     controllable_attribute_names = model.sim_quantities.keys()
@@ -268,8 +275,6 @@ def get_tango_device_server(model, sim_data_files):
             model_sim_quants = self.model.sim_quantities
             attribute_list = set([attr for attr in model_sim_quants.keys()])
             for attribute_name in attribute_list:
-                MODULE_LOGGER.info("Added dynamic {} attribute"
-                                   .format(attribute_name))
                 meta_data = model_sim_quants[attribute_name].meta
                 attr_dtype = meta_data['data_type']
                 d_format = meta_data['data_format']
@@ -293,6 +298,8 @@ def get_tango_device_server(model, sim_data_files):
                                 "No setter function for " + prop + " property")
                     attr.set_default_properties(attr_props)
                     self.add_attribute(attr, self.read_attributes)
+                    MODULE_LOGGER.info("Added dynamic {} attribute"
+                                       .format(attribute_name))
 
     class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerCommands,
                      TangoTestDeviceServerStaticAttrs):

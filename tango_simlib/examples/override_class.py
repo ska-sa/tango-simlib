@@ -14,7 +14,7 @@ An example of the user-defined override class.
 
 import logging
 
-from PyTango import DevState
+from PyTango import DevState, Except, ErrSeverity
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -25,6 +25,11 @@ class WeatherSimError(Exception):
 
 class VdsSimError(Exception):
     """Raised when a Video Display System simulator action could not be executed.
+    """
+
+
+class DishSimError(Exception):
+    """Raised when a Dish simulator action could not be executed.
     """
 
 
@@ -490,3 +495,291 @@ class OverrideWeatherSimControl(object):
         else:
             quant_rainfall.max_bound = float(quant_rainfall.meta['max_bound'])
             quant_rainfall.mean = 1.00
+
+
+class OverrideDish(object):
+
+    def _configureband(self, model, timestamp, band_number):
+        _allowed_modes = ('STANDBY-FP', 'OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('CONFIG')
+            model.sim_quantities['dishMode'].set_val(set_mode, float(timestamp))
+            MODULE_LOGGER.info("Configuring DISH to operate in frequency band {}."
+                               .format(band_number))
+            MODULE_LOGGER.info("Done configuring DISH to operate in frequency band {}."
+                               .format(band_number))
+            MODULE_LOGGER.info("Dish reverting back to '{}' mode.".format(
+                current_mode_str_val))
+            model.sim_quantities['dishMode'].set_val(
+                current_mode_enum_val, model.time_func())
+        else:
+            Except.throw_exception("DISH Command Failed",
+                                   "DISH is not in {} mode.".format(_allowed_modes),
+                                   "ConfigureBand{}()".format(band_number),
+                                   ErrSeverity.WARN)
+
+    def action_configureband1(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 1. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        self._configureband(model, data_input[0], 1)
+
+    def action_configureband2(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 2. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        self._configureband(model, data_input[0], 2)
+
+    def action_configureband3(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 3. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        self._configureband(model, data_input[0], 3)
+
+    def action_configureband4(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 4. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        self._configureband(model, data_input[0], 4)
+
+    def action_configureband5(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 5. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        self._configureband(model, data_input[0], 5)
+
+    def action_lowpower(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the LOW power
+        state. All subsystems go into a low power state to power only the
+        essential equipment. Specifically the Helium compressor will be set
+        to a low power consumption, and the drives will be disabled. When
+        issued a STOW command while in LOW power, the DS controller
+        should be able to turn the drives on, stow the dish and turn the
+        drives off again. The purpose of this mode is to enable the
+        observatory to perform power management (load curtailment), and
+        also to conserve energy for non-operating dishes.
+
+        data_input: None
+
+        """
+        _allowed_modes = ('STOW', 'MAINTENANCE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            power_state_quant = model.sim_quantities['powerState']
+            set_mode = power_state_quant.meta['enum_labels'].index('LOW')
+            power_state_quant.set_val(set_mode, model.time_func())
+            MODULE_LOGGER.info("Dish transitioning to LOW power state.")
+        else:
+            Except.throw_exception("DISH Command Failed",
+                                   "DISH is not in {} mode.".format(_allowed_modes),
+                                   "LowPower()",
+                                   ErrSeverity.WARN)
+
+    def action_setmaintenancemode(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the MAINTENANCE
+        Dish Element Mode, and returns to the caller. To go into a state that
+        is safe to approach the Dish by a maintainer, and to enable the
+        Engineering interface to allow direct access to low level control and
+        monitoring by engineers and maintainers. This mode will also enable
+        engineers and maintainers to upgrade SW and FW. Dish also enters
+        this mode when an emergency stop button is pressed.
+
+        data_input: None
+        """
+        _allowed_modes = ('STANDBY-LP', 'STANDBY-FP')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('MAINTENANCE')
+            model.sim_quantities['dishMode'].set_val(set_mode, model.time_func())
+            MODULE_LOGGER.info("Dish transition to the OPERATE Dish Element mode.")
+        else:
+            Except.throw_exception("DISH Command Failed",
+                                   "DISH is not in {} mode.".format(_allowed_modes),
+                                   "SetMaintenanceMode()",
+                                   ErrSeverity.WARN)
+
+    def action_setoperatemode(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the OPERATE Dish
+        Element Mode, and returns to the caller. This mode fulfils the main
+        purpose of the Dish, which is to point to designated directions while
+        capturing data and transmitting it to CSP.
+
+        data_input: None
+        """
+        _allowed_modes = ('STANDBY-FP')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('OPERATE')
+            model.sim_quantities['dishMode'].set_val(set_mode, model.time_func())
+            MODULE_LOGGER.info("Dish transition to the OPERATE Dish Element Mode.")
+        else:
+            Except.throw_exception("DISH Command Failed",
+                                   "DISH is not in {} mode.".format(_allowed_modes),
+                                   "SetOperateMode()",
+                                   ErrSeverity.WARN)
+
+    def action_setstandbyfpmode(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the STANDBY-FP Dish
+        Element Mode, and returns to the caller. To prepare all subsystems
+        for active observation, once a command is received by TM to go to the
+        FULL_POWER mode.
+
+        data_input: None
+        """
+        _allowed_modes = ('STANDBY-LP', 'STOW', 'OPERATE', 'MAINTENANCE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('STANDBY-FP')
+            model.sim_quantities['dishMode'].set_val(set_mode, model.time_func())
+            MODULE_LOGGER.info("Dish transition to the STANDBY-FP Dish Element Mode.")
+        else:
+            Except.throw_exception("DISH Command Failed",
+                                   "DISH is not in {} mode.".format(_allowed_modes),
+                                   "SetStandbyFPMode()",
+                                   ErrSeverity.WARN)
+
+    def action_setstandbylpmode(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the STANDBY-LP Dish Element
+        Mode, and returns to the caller. Standby_LP is the default mode when the Dish
+        is configured for low power consumption, and is the mode wherein Dish ends after
+        a start up procedure.
+
+        data_input: None
+        """
+        _allowed_modes = ('OFF', 'STARTUP', 'SHUTDOWN', 'STANDBY-LP', 'STANDBY-FP',
+                          'MAINTENANCE', 'STOW', 'CONFIG', 'OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            set_mode = dish_mode_quant.meta['enum_labels'].index('STANDBY-LP')
+            model.sim_quantities['dishMode'].set_val(set_mode, model.time_func())
+            MODULE_LOGGER.info("Dish transition to the STANDBY-LP Dish Element Mode.")
+        else:
+            Except.throw_exception("DISH Command Failed",
+                                   "DISH is not in {} mode.".format(_allowed_modes),
+                                   "SetStandbyLPMode()",
+                                   ErrSeverity.WARN)
+
+    def action_setstowmode(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the STOW Dish
+        Element Mode, and returns to the caller. To point the dish in a
+        direction that minimises the wind loads on the structure, for survival
+        in strong wind conditions. The Dish is able to observe in the stow
+        position, for the purpose of transient detection.
+
+        data_input: None
+        """
+        _allowed_modes = ('OFF', 'STARTUP', 'SHUTDOWN', 'STANDBY-LP', 'STANDBY-FP',
+                          'MAINTENANCE', 'STOW', 'CONFIG', 'OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val in _allowed_modes:
+            model_time = model.time_func()
+            model.sim_quantities['desiredElevation'].set_val(90, model_time)
+            set_mode = dish_mode_quant.meta['enum_labels'].index('STOW')
+            model.sim_quantities['dishMode'].set_val(set_mode, model_time)
+            MODULE_LOGGER.info("Dish transition to the STOW Dish Element Mode.")
+        else:
+            Except.throw_exception("DISH Command Failed",
+                                   "DISH is not in {} mode.".format(_allowed_modes),
+                                   "SetStowMode()",
+                                   ErrSeverity.WARN)
+
+    def action_slew(self, model, tango_dev=None, data_input=None):
+        """The Dish is tracking the commanded pointing positions within the
+        specified TRACK pointing accuracy.
+
+        data_input: list
+            [Timestamp]
+            [azimuth]
+            [elevation]
+        """
+        _allowed_modes = ('OPERATE')
+        dish_mode_quant = model.sim_quantities['dishMode']
+        current_mode_enum_val = dish_mode_quant.last_val
+        current_mode_str_val = (
+            dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
+        if current_mode_str_val not in _allowed_modes:
+            Except.throw_exception("DISH Command Failed",
+                                   "DISH is not in {} mode.".format(_allowed_modes),
+                                   "Slew()",
+                                   ErrSeverity.WARN)
+
+        try:
+            pointing_state_quant = model.sim_quantities['pointingState']
+        except KeyError:
+            Except.throw_exception(
+                "DISH Command Failed",
+                "The quantity 'pointingState' is not in the Dish model.",
+                "Slew()", ErrSeverity.WARN)
+
+        pointing_state_enum_val = pointing_state_quant.last_val
+        pointing_state_str_val = (
+            pointing_state_quant.meta['enum_labels'][int(pointing_state_enum_val)])
+        if pointing_state_str_val != 'SLEW':
+            set_mode = pointing_state_quant.meta['enum_labels'].index('SLEW')
+            pointing_state_quant.set_val(set_mode, model.time_func())
+        else:
+            Except.throw_exception(
+                "DISH Command Failed",
+                "Dish pointing state already in SLEW mode.",
+                "Slew()", ErrSeverity.WARN)
+
+        model_time = model.time_func()
+        model.sim_quantities['desiredAzimuth'].set_val(data_input[1], model_time)
+        model.sim_quantities['desiredElevation'].set_val(data_input[2], model_time)
+
+        model.sim_quantities['desiredPointing'].set_val(
+            [data_input[1], data_input[2]], model_time)
+
+    def pre_update(self, sim_model):
+        MODULE_LOGGER.info("***Updating from the override class***")
+
+    def _almost_equal(self, x, y, abs_threshold=1e-2):
+        '''Takes two values return true if they are almost equal'''
+        return abs(x - y) <= abs_threshold

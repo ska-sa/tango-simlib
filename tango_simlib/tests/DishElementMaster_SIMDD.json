@@ -2,7 +2,15 @@
   "dynamicAttributes": [
     {
       "basicAttributeData": {
-        "name": "adminMode",
+        "name": "desiredAzimuth",
+        "unit": "Degrees",
+        "label": "requested-azimuth",
+        "description": "",
+        "data_type": "Double",
+        "data_format": "Scalar",
+        "attributeInterlocks": {
+          "writable": "READ"
+        },
         "dataSimulationParameters": {
           "quantity_simulation_type": "ConstantQuantity"
         }
@@ -10,7 +18,15 @@
     },
     {
       "basicAttributeData": {
-        "name": "band1CapabilityHealthStatus",
+        "name": "desiredElevation",
+        "unit": "Degrees",
+        "label": "requested-elevation",
+        "description": "",
+        "data_type": "Double",
+        "data_format": "Scalar",
+        "attributeInterlocks": {
+          "writable": "READ"
+        },
         "dataSimulationParameters": {
           "quantity_simulation_type": "ConstantQuantity"
         }
@@ -18,7 +34,15 @@
     },
     {
       "basicAttributeData": {
-        "name": "band1CapabilityState",
+        "name": "achievedAzimuth",
+        "unit": "Degrees",
+        "label": "actual-azimuth",
+        "description": "",
+        "data_type": "Double",
+        "data_format": "Scalar",
+        "attributeInterlocks": {
+          "writable": "READ"
+        },
         "dataSimulationParameters": {
           "quantity_simulation_type": "ConstantQuantity"
         }
@@ -26,166 +50,15 @@
     },
     {
       "basicAttributeData": {
-        "name": "band2CapabilityHealthStatus",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "band2CapabilityState",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "band3CapabilityHealthStatus",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "band3CapabilityState",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "band4CapabilityHealthStatus",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "band4CapabilityState",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "band5CapabilityHealthStatus",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "band5CapabilityState",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "centralLogLevel",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "configurationDelayExpected",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "configurationProgress",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "controlMode",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "elementLogLevel",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "healthState",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "obsMode",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "obsState",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "pointingState",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "simulationMode",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "storageLogLevel",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },    {
-      "basicAttributeData": {
-        "name": "achievedPointing",
-        "dataSimulationParameters": {
-          "quantity_simulation_type": "ConstantQuantity"
-        }
-      }
-    },
-    {
-      "basicAttributeData": {
-        "name": "desiredPointing",
+        "name": "achievedElevation",
+        "unit": "Degrees",
+        "label": "actual-elevation",
+        "description": "",
+        "data_type": "Double",
+        "data_format": "Scalar",
+        "attributeInterlocks": {
+          "writable": "READ"
+        },
         "dataSimulationParameters": {
           "quantity_simulation_type": "ConstantQuantity"
         }
