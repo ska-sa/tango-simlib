@@ -498,6 +498,8 @@ class OverrideWeatherSimControl(object):
 
 
 class OverrideDish(object):
+    AZIM_DRIVE_MAX_RATE = 2.0
+    ELEV_DRIVE_MAX_RATE = 1.0
 
     def _configureband(self, model, timestamp, band_number):
         _allowed_modes = ('STANDBY-FP', 'OPERATE')
@@ -777,8 +779,56 @@ class OverrideDish(object):
         model.sim_quantities['desiredPointing'].set_val(
             [data_input[1], data_input[2]], model_time)
 
+    def post_update(self, sim_model):
+        MODULE_LOGGER.info("***Post-updating from the override class***")
+
     def pre_update(self, sim_model):
-        MODULE_LOGGER.info("***Updating from the override class***")
+        MODULE_LOGGER.info("***Pre-updating from the override class***")
+
+        pointing_state_quant = sim_model.sim_quantities['pointingState']
+        current_pnt_state_enum_val = pointing_state_quant.last_val
+        current_pnt_state_str_val = (
+            pointing_state_quant.meta['enum_labels'][int(current_pnt_state_enum_val)])
+
+        if current_pnt_state_str_val == 'READY':
+            MODULE_LOGGER.info("Skipping quantity updates. Dish quantity state"
+                               " already in READY mode.")
+            return
+
+        sim_time = sim_model.time_func()
+        last_update_time = sim_model.last_update_time
+        dt = sim_time - last_update_time
+
+        try:
+            azim_slew_rate = self.AZIM_DRIVE_MAX_RATE
+            elev_slew_rate = self.ELEV_DRIVE_MAX_RATE
+
+            azim_max_slew = azim_slew_rate * dt
+            elev_max_slew = elev_slew_rate * dt
+
+            achieved_azim = sim_model.sim_quantities['achievedAzimuth'].last_val
+            achieved_elev = sim_model.sim_quantities['achievedElevation'].last_val
+
+            desired_azim = sim_model.sim_quantities['desiredAzimuth'].last_val
+            desired_elev = sim_model.sim_quantities['desiredElevation'].last_val
+
+            current_delta_azim = abs(achieved_azim - desired_azim)
+            current_delta_elev = abs(achieved_elev - desired_elev)
+
+            move_delta_azim = min(azim_max_slew, current_delta_azim)
+            move_delta_elev = min(elev_max_slew, current_delta_elev)
+
+            new_position_azim = (
+                achieved_azim + cmp(desired_azim, achieved_azim) * move_delta_azim)
+            sim_model.sim_quantities['achievedAzimuth'].set_val(new_position_azim,
+                                                                sim_time)
+
+            new_position_elev = (
+                achieved_elev + cmp(desired_elev, achieved_elev) * move_delta_elev)
+            sim_model.sim_quantities['achievedElevation'].set_val(new_position_elev,
+                                                                  sim_time)
+        except Exception:
+            pass
 
     def _almost_equal(self, x, y, abs_threshold=1e-2):
         '''Takes two values return true if they are almost equal'''
