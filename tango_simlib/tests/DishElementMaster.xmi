@@ -162,16 +162,6 @@
       <excludedStates>STANDBY</excludedStates>
       <excludedStates>DISABLE</excludedStates>
     </commands>
-    <commands name="SetPntModelPars" description="Parameters for pointing models used by Dish to do pointing&#xA;corrections." execMethod="set_pnt_model_pars" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
-      <argin description="[PntParams]">
-        <type xsi:type="pogoDsl:FloatArrayType"/>
-      </argin>
-      <argout description="N/A">
-        <type xsi:type="pogoDsl:VoidType"/>
-      </argout>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <excludedStates>ON</excludedStates>
-    </commands>
     <commands name="SetStandbyFPMode" description="This command triggers the Dish to transition to the STANDBY-FP Dish&#xA;Element Mode, and returns to the caller. To prepare all subsystems&#xA;for active observation, once a command is received by TM to go to the &#xA;FULL_POWER mode." execMethod="set_standby_fpmode" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
       <argin description="N/A">
         <type xsi:type="pogoDsl:VoidType"/>
@@ -600,6 +590,14 @@
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <properties description="The desired pointing of the DSH Element. [timestamp] Milliseconds since UNIX epoch, UTC ms [Azimuth] degree [Elevation] degree" label="Desired pointing" unit="[ms, degree, degree]" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <eventCriteria relChange="" absChange="" period="1000"/>
+    </attributes>
+    <attributes name="pointModelPars" attType="Spectrum" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="2" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="" label="pointing_model_parameters" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
     </attributes>
     <states name="ALARM" description="The value of an attribute of the device has crossed the alarm threshold&#xA;and the TANGO device is in state ON.">
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
