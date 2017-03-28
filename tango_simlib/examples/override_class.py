@@ -507,7 +507,7 @@ class OverrideDish(object):
             dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
         if current_mode_str_val in _allowed_modes:
             set_mode = dish_mode_quant.meta['enum_labels'].index('CONFIG')
-            model.sim_quantities['dishMode'].set_val(set_mode, long(timestamp))
+            model.sim_quantities['dishMode'].set_val(set_mode, float(timestamp))
             MODULE_LOGGER.info("Configuring DISH to operate in frequency band {}."
                                .format(band_number))
             MODULE_LOGGER.info("Done configuring DISH to operate in frequency band {}."
