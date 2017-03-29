@@ -498,8 +498,8 @@ class OverrideWeatherSimControl(object):
 
 
 class OverrideDish(object):
-    AZIM_DRIVE_MAX_RATE = 0.5
-    ELEV_DRIVE_MAX_RATE = 0.25
+    AZIM_DRIVE_MAX_RATE = 2.0
+    ELEV_DRIVE_MAX_RATE = 1.0
 
     def _configureband(self, model, timestamp, band_number):
         _allowed_modes = ('STANDBY-FP', 'OPERATE')
@@ -720,13 +720,7 @@ class OverrideDish(object):
         current_mode_enum_val = dish_mode_quant.last_val
         current_mode_str_val = (
             dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
-        if current_mode_str_val in _allowed_modes:
-            model_time = model.time_func()
-            model.sim_quantities['desiredElevation'].set_val(90, model_time)
-            set_mode = dish_mode_quant.meta['enum_labels'].index('STOW')
-            model.sim_quantities['dishMode'].set_val(set_mode, model_time)
-            MODULE_LOGGER.info("Dish transition to the STOW Dish Element Mode.")
-        else:
+        if current_mode_str_val not in _allowed_modes:
             Except.throw_exception("DISH Command Failed",
                                    "DISH is not in {} mode.".format(_allowed_modes),
                                    "SetStowMode()",
@@ -739,18 +733,23 @@ class OverrideDish(object):
                 "The quantity 'pointingState' is not in the Dish model.",
                 "Slew()", ErrSeverity.WARN)
 
+        model_time = model.time_func()
         pointing_state_enum_val = pointing_state_quant.last_val
         pointing_state_str_val = (
             pointing_state_quant.meta['enum_labels'][int(pointing_state_enum_val)])
-        if pointing_state_str_val != 'SLEW':
-            set_mode = pointing_state_quant.meta['enum_labels'].index('SLEW')
-            pointing_state_quant.set_val(set_mode, model.time_func())
+        if pointing_state_str_val != 'STOW':
+            set_mode = pointing_state_quant.meta['enum_labels'].index('STOW')
+            pointing_state_quant.set_val(set_mode, model_time)
         else:
             Except.throw_exception(
                 "DISH Command Failed",
-                "Dish pointing state already in SLEW mode.",
-                "Slew()", ErrSeverity.WARN)
+                "Dish pointing state already in STOW mode.",
+                "SetStowMode()", ErrSeverity.WARN)
 
+        model.sim_quantities['desiredElevation'].set_val(90, model_time)
+        set_mode = dish_mode_quant.meta['enum_labels'].index('STOW')
+        model.sim_quantities['dishMode'].set_val(set_mode, model_time)
+        MODULE_LOGGER.info("Dish transition to the STOW Dish Element Mode.")
 
     def action_slew(self, model, tango_dev=None, data_input=None):
         """The Dish is tracking the commanded pointing positions within the
@@ -780,27 +779,23 @@ class OverrideDish(object):
                 "The quantity 'pointingState' is not in the Dish model.",
                 "Slew()", ErrSeverity.WARN)
 
+        model_time = model.time_func()
         pointing_state_enum_val = pointing_state_quant.last_val
         pointing_state_str_val = (
             pointing_state_quant.meta['enum_labels'][int(pointing_state_enum_val)])
         if pointing_state_str_val != 'SLEW':
             set_mode = pointing_state_quant.meta['enum_labels'].index('SLEW')
-            pointing_state_quant.set_val(set_mode, model.time_func())
+            pointing_state_quant.set_val(set_mode, model_time)
         else:
             Except.throw_exception(
                 "DISH Command Failed",
                 "Dish pointing state already in SLEW mode.",
                 "Slew()", ErrSeverity.WARN)
 
-        model_time = model.time_func()
         model.sim_quantities['desiredAzimuth'].set_val(data_input[1], model_time)
         model.sim_quantities['desiredElevation'].set_val(data_input[2], model_time)
-
         model.sim_quantities['desiredPointing'].set_val(
             [data_input[1], data_input[2]], model_time)
-
-    def post_update(self, sim_model, sim_time, dt):
-        MODULE_LOGGER.info("***Post-updating from the override class***")
 
     def pre_update(self, sim_model, sim_time, dt):
         MODULE_LOGGER.info("***Pre-updating from the override class***")
