@@ -88,11 +88,9 @@ class Model(object):
              for var, quant in self.sim_quantities.items()})
 
     def update(self):
-        for override_update in self.override_pre_updates:
-            override_update(self)
-
         sim_time = self.time_func()
         dt = sim_time - self.last_update_time
+
         if dt < self.min_update_period or self.paused:
             # Updating the sim_state in case the test interface or external command
             # updated the quantities.
@@ -103,6 +101,9 @@ class Model(object):
                 .format(self.name, sim_time, dt, self.min_update_period, self.paused))
             return
 
+        for override_update in self.override_pre_updates:
+            override_update(self, sim_time, dt)
+
         MODULE_LOGGER.info("Stepping at {}, dt: {}".format(sim_time, dt))
         self.last_update_time = sim_time
         try:
@@ -112,7 +113,7 @@ class Model(object):
             MODULE_LOGGER.exception('Exception in update loop')
 
         for override_update in self.override_post_updates:
-            override_update(self)
+            override_update(self, sim_time, dt)
 
     def set_sim_action(self, name, handler):
         """Add an action handler function
