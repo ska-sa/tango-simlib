@@ -515,6 +515,7 @@
       <enumLabels>SLEW</enumLabels>
       <enumLabels>TRACK</enumLabels>
       <enumLabels>SCAN</enumLabels>
+      <enumLabels>STOW</enumLabels>
     </attributes>
     <attributes name="powerState" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
       <dataType xsi:type="pogoDsl:EnumType"/>

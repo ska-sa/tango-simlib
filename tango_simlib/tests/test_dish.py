@@ -153,3 +153,35 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
                                  'MAINTENANCE', 'CONFIG', 'OPERATE']:
             dish_mode_quant.last_val = dish_mode_enum_labels.index(not_allowed_mode)
             self.assertRaises(DevFailed, self.model.sim_actions['SetOperateMode'])
+
+    def test_set_operate_mode(self):
+        dish_mode_quant = self.model.sim_quantities['dishMode']
+        dish_mode_enum_labels = dish_mode_quant.meta['enum_labels']
+
+        # Write a value to the quantity to override the default one which is a boolean
+        # True value. Pick any value except for 'MAINTENACE'.
+        dish_mode_quant.last_val = dish_mode_enum_labels.index('STANDBY-LP')
+
+        for allowed_mode in ['STANDBY-FP']:
+            dish_mode_quant.last_val = dish_mode_enum_labels.index(allowed_mode)
+            self.model.sim_actions['SetOperateMode']()
+            self.assertEqual(dish_mode_quant.last_val, dish_mode_enum_labels.index('OPERATE'))
+
+        for not_allowed_mode in ['OFF', 'STARTUP', 'SHUTDOWN', 'STOW', 'STANDBY-LP',
+                                 'MAINTENANCE', 'CONFIG', 'OPERATE']:
+            dish_mode_quant.last_val = dish_mode_enum_labels.index(not_allowed_mode)
+            self.assertRaises(DevFailed, self.model.sim_actions['SetOperateMode'])
+
+    def test_set_stow_mode(self):
+        dish_mode_quant = self.model.sim_quantities['dishMode']
+        dish_mode_enum_labels = dish_mode_quant.meta['enum_labels']
+        pointing_state_quant = self.model.sim_quantities['pointingState']
+        pointing_state_enum_labels = pointing_state_quant.meta['enum_labels']
+
+        self.model.sim_actions['SetStowMode']()
+        self.assertEqual(dish_mode_quant.last_val, dish_mode_enum_labels.index('STOW'))
+        #self.assertEqual(pointing_state_quant.last_val,
+        #                  pointing_state_enum_labels.index('STOW'))
+
+        # Need to test that the the elevation position is changing. Can possibly do this
+        # by testing the TANGO device.
