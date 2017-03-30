@@ -116,5 +116,22 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         for not_allowed_mode in ['OFF', 'STARTUP', 'SHUTDOWN', 'STANDBY-LP',
                                  'STANDBY-FP', 'CONFIG', 'OPERATE']:
             dish_mode_quant.last_val = dish_mode_enum_labels.index(not_allowed_mode)
-            import IPython; IPython.embed()
             self.assertRaises(DevFailed, self.model.sim_actions['LowPower'])
+
+    def test_set_maintenance_mode(self):
+        dish_mode_quant = self.model.sim_quantities['dishMode']
+        dish_mode_enum_labels = dish_mode_quant.meta['enum_labels']
+
+        # Write a value to the quantity to override the default one which is a boolean
+        # True value. Pick any value except for 'MAINTENACE'.
+        dish_mode_quant.last_val = dish_mode_enum_labels.index('STANDBY-LP')
+
+        for allowed_mode in ['STANDBY-LP', 'STANDBY-FP']:
+            dish_mode_quant.last_val = dish_mode_enum_labels.index(allowed_mode)
+            self.model.sim_actions['SetMaintenanceMode']()
+            self.assertEqual(dish_mode_quant.last_val, dish_mode_enum_labels.index('MAINTENANCE'))
+
+        for not_allowed_mode in ['OFF', 'STARTUP', 'SHUTDOWN', 'STOW',
+                                 'MAINTENANCE', 'CONFIG', 'OPERATE']:
+            dish_mode_quant.last_val = dish_mode_enum_labels.index(not_allowed_mode)
+            self.assertRaises(DevFailed, self.model.sim_actions['SetMaintenanceMode'])
