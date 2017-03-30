@@ -6,6 +6,8 @@ from mock import Mock, call
 from tango_simlib import tango_sim_generator
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 
+from PyTango import DevFailed
+
 DISH_ELEMENT_MASTER_COMMAND_LIST = frozenset([
     'Capture', 'ConfigureAttenuation', 'ConfigureBand1', 'ConfigureBand2',
     'ConfigureBand3', 'ConfigureBand4', 'ConfigureBand5', 'ConfigureNoiseDiode',
@@ -95,3 +97,24 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             self.assertEquals(calls, mock_set_val.mock_calls)
             mock_set_val.reset_mock()
 
+    def test_low_power(self):
+        power_state_quant = self.model.sim_quantities['powerState']
+        power_state_enum_labels = power_state_quant.meta['enum_labels']
+
+        # Write a value to the quantity to override the default one which is a boolean
+        # True value. Pick any value except for 'LOW'.
+        power_state_quant.last_val = power_state_enum_labels.index('OFF')
+
+        dish_mode_quant = self.model.sim_quantities['dishMode']
+        dish_mode_enum_labels = dish_mode_quant.meta['enum_labels']
+
+        for allowed_mode in ['STOW', 'MAINTENANCE']:
+            dish_mode_quant.last_val = dish_mode_enum_labels.index(allowed_mode)
+            self.model.sim_actions['LowPower']()
+            self.assertEqual(power_state_quant.last_val, power_state_enum_labels.index('LOW'))
+
+        for not_allowed_mode in ['OFF', 'STARTUP', 'SHUTDOWN', 'STANDBY-LP',
+                                 'STANDBY-FP', 'CONFIG', 'OPERATE']:
+            dish_mode_quant.last_val = dish_mode_enum_labels.index(not_allowed_mode)
+            import IPython; IPython.embed()
+            self.assertRaises(DevFailed, self.model.sim_actions['LowPower'])
