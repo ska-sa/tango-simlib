@@ -1,85 +1,95 @@
-import os
-import time
 import unittest
-import subprocess
 import pkg_resources
-import devicetest
 
-from functools import partial
-from devicetest import DeviceTestCase
-from mock import Mock
+from mock import Mock, call
 
-from tango_simlib import model, quantities
-from tango_simlib import tango_sim_generator, helper_module
-from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
+from tango_simlib import tango_sim_generator
+from tango_simlib.testutils import ClassCleanupUnittestMixin
 
-from PyTango import DevState, AttrDataFormat
+DISH_ELEMENT_MASTER_COMMAND_LIST = frozenset([
+    'Capture', 'ConfigureAttenuation', 'ConfigureBand1', 'ConfigureBand2',
+    'ConfigureBand3', 'ConfigureBand4', 'ConfigureBand5', 'ConfigureNoiseDiode',
+    'EnableEngInterface', 'LowPower', 'FlushCmdQueue', 'Scan', 'Slew',
+    'SetMaintenanceMode', 'SetOperateMode', 'SetStandbyFPMode', 'SetStandbyLPMode',
+    'SetStowMode', 'SetPntModelPars', 'Synchronise', 'Track'])
 
+DISH_ELEMENT_MASTER_ATTRIBUTE_LIST = frozenset([
+    'adminMode', 'band1CapabilityHealthStatus', 'band1CapabilityState',
+    'band2CapabilityHealthStatus', 'band2CapabilityState',
+    'band3CapabilityHealthStatus', 'band3CapabilityState',
+    'band4CapabilityHealthStatus', 'band4CapabilityState',
+    'band5CapabilityHealthStatus', 'band5CapabilityState',
+    'centralLogLevel', 'configurationDelayExpected',
+    'configurationProgress', 'controlMode', 'elementLogLevel',
+    'healthState', 'obsMode', 'obsState', 'pointingState', 'powerState',
+    'simulationMode', 'storageLogLevel', 'dishMode', 'achievedAzimuth',
+    'achievedElevation', 'desiredAzimuth', 'desiredElevation', 'pointModelPars',
+    'desiredPointing', 'achievedPointing'])
 
-class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
+class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
 
     longMessage = True
 
     @classmethod
     def setUpClassWithCleanup(cls):
-        cls.port = helper_module.get_port()
-        cls.host = helper_module.get_host_address()
         cls.data_descr_files = []
-        cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'DishElementMaster.xmi'))
+        cls.data_descr_files.append(
+            pkg_resources.resource_filename('tango_simlib.tests',
+                                            'DishElementMaster.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
             'tango_simlib.tests', 'DishElementMaster_SIMDD.json'))
-        cls.temp_dir = cleanup_tempdir(cls)
-        cls.sim_device_class = tango_sim_generator.get_device_class(cls.data_descr_files)
-        device_name = 'test/nodb/tangodeviceserver'
-        server_name = 'dish_ds'
-        server_instance = 'test'
-        database_filename = os.path.join('{}', '{}_tango.db').format(
-            cls.temp_dir, server_name)
-        sim_device_prop = dict(sim_data_description_file=cls.data_descr_files[0])
-        sim_test_device_prop = dict(model_key=device_name)
-        # Cannot create an instance of the DeviceProxy inside the test because the
-        # devicetest module patches it as a side effect at import time. It does
-        # save the original DeviceProxy class in the Patcher singleton, so get it
-        # from there
-        patcher = devicetest.patch.Patcher()
-        device_proxy = patcher.ActualDeviceProxy
-        tango_sim_generator.generate_device_server(
-                server_name, cls.data_descr_files, cls.temp_dir)
-        helper_module.append_device_to_db_file(
-                server_name, server_instance, device_name,
-                database_filename, cls.sim_device_class, sim_device_prop)
-        helper_module.append_device_to_db_file(
-                server_name, server_instance, '%scontrol' % device_name,
-                database_filename, '%sSimControl' % cls.sim_device_class,
-                sim_test_device_prop)
-        cls.sub_proc = subprocess.Popen(["python", "{}/{}.py".format(
-                                            cls.temp_dir, server_name),
-                                        server_instance, "-file={}".format(
-                                            database_filename),
-                                        "-ORBendPoint", "giop:tcp::{}".format(
-                                            cls.port)])
-        cls.addCleanupClass(cls.sub_proc.kill)
-        # Note that tango demands that connection to the server must
-        # be delayed by atleast 1000 ms of device server start up.
-        time.sleep(1)
-        cls.sim_device = device_proxy(
-                '%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
-                    cls.host, cls.port))
-        cls.sim_control_device = device_proxy(
-                '%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
-                    cls.host, cls.port))
+        cls.device_name = 'test/nodb/tangodeviceserver'
+        cls.model = tango_sim_generator.configure_device_model(
+            cls.data_descr_files, cls.device_name)
 
     def setUp(self):
-        super(test_TangoSimGenDeviceIntegration, self).setUp()
-        self.attr_name_enum_labels = list(self.sim_control_device.attribute_query(
-                                          'attribute_name').enum_labels)
+        super(test_DishElementMaster, self).setUp()
 
-    def test_sim_control_command_list(self):
-        device_commands = self.sim_control_device.get_command_list()
-        self.assertEqual(
-            EXPECTED_COMMAND_LIST,
-            set(device_commands) - helper_module.DEFAULT_TANGO_DEVICE_COMMANDS)
-        self.assertEqual(
-            set(self.sim_device.get_command_list()) & EXPECTED_COMMAND_LIST,
-            set(), "The device has commands meant for the test sim control device.")
+    def test_attribute_list(self):
+        """Test device attribute list.
+
+        Check whether the attributes specified in the POGO generated xmi file
+        are added to the TANGO device
+
+        """
+        attributes = set(self.model.sim_quantities.keys())
+        self.assertEqual(DISH_ELEMENT_MASTER_ATTRIBUTE_LIST, attributes,
+                         "Actual tango device attribute list differs from expected "
+                         "list! \n\n Missing attributes: \n {}".format(
+                            DISH_ELEMENT_MASTER_ATTRIBUTE_LIST - attributes))
+
+    def test_command_list(self):
+        """Testing device command list.
+
+        Check that the command list in the Tango device matches with the one
+        specified in the SIMDD data description file.
+
+        """
+        actual_device_commands = set(self.model.sim_actions.keys())
+        self.assertEquals(actual_device_commands,
+                          DISH_ELEMENT_MASTER_COMMAND_LIST,
+                         "Actual TANGO device command list differs from expected "
+                         "list! \n\n Missing commands: \n {}".format(
+                            DISH_ELEMENT_MASTER_COMMAND_LIST - actual_device_commands))
+
+    def test_configure_band_x(self):
+        timestamp = '2134231.30131'
+        dish_mode_quant = self.model.sim_quantities['dishMode']
+        dish_mode_enum_labels = dish_mode_quant.meta['enum_labels']
+        set_mode = dish_mode_enum_labels.index('OPERATE')
+        dish_mode_quant.last_val = set_mode
+        mock_time = Mock(return_value=float(timestamp))
+        self.model.time_func = mock_time
+        mock_set_val = Mock(
+            side_effect=dish_mode_quant.set_val)
+        dish_mode_quant.set_val = mock_set_val
+        calls = [call(dish_mode_enum_labels.index('CONFIG'), float(timestamp)),
+                 call(dish_mode_enum_labels.index('OPERATE'), float(timestamp))]
+        for cmd_name in ['ConfigureBand1', 'ConfigureBand2', 'ConfigureBand3',
+                         'ConfigureBand4', 'ConfigureBand5']:
+            self.model.sim_actions[cmd_name](data_input=timestamp)
+            num_method_calls = mock_set_val.call_count
+            self.assertEquals(num_method_calls, 2)
+            self.assertEquals(calls, mock_set_val.mock_calls)
+            mock_set_val.reset_mock()
+

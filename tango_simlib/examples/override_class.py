@@ -531,7 +531,7 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        self._configureband(model, data_input[0], 1)
+        self._configureband(model, data_input, 1)
 
     def action_configureband2(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -542,7 +542,7 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        self._configureband(model, data_input[0], 2)
+        self._configureband(model, data_input, 2)
 
     def action_configureband3(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -553,7 +553,7 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        self._configureband(model, data_input[0], 3)
+        self._configureband(model, data_input, 3)
 
     def action_configureband4(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -564,7 +564,7 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        self._configureband(model, data_input[0], 4)
+        self._configureband(model, data_input, 4)
 
     def action_configureband5(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -575,7 +575,7 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        self._configureband(model, data_input[0], 5)
+        self._configureband(model, data_input, 5)
 
     def action_lowpower(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the LOW power
