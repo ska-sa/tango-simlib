@@ -76,6 +76,8 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         timestamp = '2134231.30131'
         dish_mode_quant = self.model.sim_quantities['dishMode']
         dish_mode_enum_labels = dish_mode_quant.meta['enum_labels']
+        # Pick one of the allowed modes ('OPERATE', 'STANDBY-FP') to test the successful
+        # execution of the command.
         set_mode = dish_mode_enum_labels.index('OPERATE')
         dish_mode_quant.last_val = set_mode
         mock_time = Mock(return_value=float(timestamp))
