@@ -498,6 +498,8 @@ class OverrideWeatherSimControl(object):
 
 
 class OverrideDish(object):
+    AZIM_DRIVE_MAX_RATE = 2.0
+    ELEV_DRIVE_MAX_RATE = 1.0
 
     def _configureband(self, model, timestamp, band_number):
         _allowed_modes = ('STANDBY-FP', 'OPERATE')
@@ -718,17 +720,36 @@ class OverrideDish(object):
         current_mode_enum_val = dish_mode_quant.last_val
         current_mode_str_val = (
             dish_mode_quant.meta['enum_labels'][int(current_mode_enum_val)])
-        if current_mode_str_val in _allowed_modes:
-            model_time = model.time_func()
-            model.sim_quantities['desiredElevation'].set_val(90, model_time)
-            set_mode = dish_mode_quant.meta['enum_labels'].index('STOW')
-            model.sim_quantities['dishMode'].set_val(set_mode, model_time)
-            MODULE_LOGGER.info("Dish transition to the STOW Dish Element Mode.")
-        else:
+        if current_mode_str_val not in _allowed_modes:
             Except.throw_exception("DISH Command Failed",
                                    "DISH is not in {} mode.".format(_allowed_modes),
                                    "SetStowMode()",
                                    ErrSeverity.WARN)
+        try:
+            pointing_state_quant = model.sim_quantities['pointingState']
+        except KeyError:
+            Except.throw_exception(
+                "DISH Command Failed",
+                "The quantity 'pointingState' is not in the Dish model.",
+                "Slew()", ErrSeverity.WARN)
+
+        model_time = model.time_func()
+        pointing_state_enum_val = pointing_state_quant.last_val
+        pointing_state_str_val = (
+            pointing_state_quant.meta['enum_labels'][int(pointing_state_enum_val)])
+        if pointing_state_str_val != 'STOW':
+            set_mode = pointing_state_quant.meta['enum_labels'].index('STOW')
+            pointing_state_quant.set_val(set_mode, model_time)
+        else:
+            Except.throw_exception(
+                "DISH Command Failed",
+                "Dish pointing state already in STOW mode.",
+                "SetStowMode()", ErrSeverity.WARN)
+
+        model.sim_quantities['desiredElevation'].set_val(90, model_time)
+        set_mode = dish_mode_quant.meta['enum_labels'].index('STOW')
+        model.sim_quantities['dishMode'].set_val(set_mode, model_time)
+        MODULE_LOGGER.info("Dish transition to the STOW Dish Element Mode.")
 
     def action_slew(self, model, tango_dev=None, data_input=None):
         """The Dish is tracking the commanded pointing positions within the
@@ -758,27 +779,67 @@ class OverrideDish(object):
                 "The quantity 'pointingState' is not in the Dish model.",
                 "Slew()", ErrSeverity.WARN)
 
+        model_time = model.time_func()
         pointing_state_enum_val = pointing_state_quant.last_val
         pointing_state_str_val = (
             pointing_state_quant.meta['enum_labels'][int(pointing_state_enum_val)])
         if pointing_state_str_val != 'SLEW':
             set_mode = pointing_state_quant.meta['enum_labels'].index('SLEW')
-            pointing_state_quant.set_val(set_mode, model.time_func())
+            pointing_state_quant.set_val(set_mode, model_time)
         else:
             Except.throw_exception(
                 "DISH Command Failed",
                 "Dish pointing state already in SLEW mode.",
                 "Slew()", ErrSeverity.WARN)
 
-        model_time = model.time_func()
         model.sim_quantities['desiredAzimuth'].set_val(data_input[1], model_time)
         model.sim_quantities['desiredElevation'].set_val(data_input[2], model_time)
-
         model.sim_quantities['desiredPointing'].set_val(
             [data_input[1], data_input[2]], model_time)
 
-    def pre_update(self, sim_model):
-        MODULE_LOGGER.info("***Updating from the override class***")
+    def pre_update(self, sim_model, sim_time, dt):
+        MODULE_LOGGER.info("***Pre-updating from the override class***")
+
+        pointing_state_quant = sim_model.sim_quantities['pointingState']
+        current_pnt_state_enum_val = pointing_state_quant.last_val
+        current_pnt_state_str_val = (
+            pointing_state_quant.meta['enum_labels'][int(current_pnt_state_enum_val)])
+
+        if current_pnt_state_str_val == 'READY':
+            MODULE_LOGGER.info("Skipping quantity updates. Dish quantity state"
+                               " already in READY mode.")
+            return
+
+        azim_slew_rate = self.AZIM_DRIVE_MAX_RATE
+        elev_slew_rate = self.ELEV_DRIVE_MAX_RATE
+
+        azim_max_slew = azim_slew_rate * dt
+        elev_max_slew = elev_slew_rate * dt
+
+        try:
+            achieved_azim = sim_model.sim_quantities['achievedAzimuth'].last_val
+            achieved_elev = sim_model.sim_quantities['achievedElevation'].last_val
+            desired_azim = sim_model.sim_quantities['desiredAzimuth'].last_val
+            desired_elev = sim_model.sim_quantities['desiredElevation'].last_val
+        except KeyError:
+            Except.throw_exception(
+                "Dish pre-update method failed",
+                "One of these quantities (achievedAzimuth, achievedElevation"
+                ", desiredAzimuth, desiredElevation) is not in the Dish model.",
+                "update()", ErrSeverity.WARN)
+
+        current_delta_azim = abs(achieved_azim - desired_azim)
+        current_delta_elev = abs(achieved_elev - desired_elev)
+        move_delta_azim = min(azim_max_slew, current_delta_azim)
+        move_delta_elev = min(elev_max_slew, current_delta_elev)
+        new_position_azim = (
+            achieved_azim + cmp(desired_azim, achieved_azim) * move_delta_azim)
+        sim_model.sim_quantities['achievedAzimuth'].set_val(new_position_azim,
+                                                            sim_time)
+        new_position_elev = (
+            achieved_elev + cmp(desired_elev, achieved_elev) * move_delta_elev)
+        sim_model.sim_quantities['achievedElevation'].set_val(new_position_elev,
+                                                              sim_time)
 
     def _almost_equal(self, x, y, abs_threshold=1e-2):
         '''Takes two values return true if they are almost equal'''
