@@ -180,8 +180,8 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
 
         self.model.sim_actions['SetStowMode']()
         self.assertEqual(dish_mode_quant.last_val, dish_mode_enum_labels.index('STOW'))
-        #self.assertEqual(pointing_state_quant.last_val,
-        #                  pointing_state_enum_labels.index('STOW'))
+        self.assertEqual(pointing_state_quant.last_val,
+                         pointing_state_enum_labels.index('STOW'))
 
         # Need to test that the the elevation position is changing. Can possibly do this
         # by testing the TANGO device.
