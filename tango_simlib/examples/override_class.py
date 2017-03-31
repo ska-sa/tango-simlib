@@ -799,7 +799,6 @@ class OverrideDish(object):
 
     def pre_update(self, sim_model, sim_time, dt):
         MODULE_LOGGER.info("***Pre-updating from the override class***")
-
         pointing_state_quant = sim_model.sim_quantities['pointingState']
         current_pnt_state_enum_val = pointing_state_quant.last_val
         current_pnt_state_str_val = (
@@ -840,6 +839,11 @@ class OverrideDish(object):
             achieved_elev + cmp(desired_elev, achieved_elev) * move_delta_elev)
         sim_model.sim_quantities['achievedElevation'].set_val(new_position_elev,
                                                               sim_time)
+
+        sim_model.sim_quantities['achievedPointing'].set_val(
+            [sim_model.sim_quantities['achievedAzimuth'].last_val,
+             sim_model.sim_quantities['achievedElevation'].last_val],
+            sim_time)
 
         if (self._almost_equal(sim_model.sim_quantities['achievedAzimuth'].last_val,
                               sim_model.sim_quantities['desiredAzimuth'].last_val) and

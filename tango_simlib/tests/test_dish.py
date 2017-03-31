@@ -1,3 +1,4 @@
+import time
 import unittest
 import pkg_resources
 
@@ -211,5 +212,26 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         self.assertEqual(pointing_state_quant.last_val,
                          pointing_state_enum_labels.index('STOW'))
 
-        # Need to test that the the elevation position is changing. Can possibly do this
-        # by testing the TANGO device.
+        self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val, 0.0)
+        self.assertEqual(self.model.sim_quantities['desiredElevation'].last_val, 90.0)
+
+        def t():
+            num = 1.0
+            while True:
+                yield num
+                num += 2.0
+        mock_time = Mock(side_effect=t().next)
+        self.model.time_func = mock_time
+        self.model.last_update_time = 0.0
+
+        while pointing_state_quant.last_val == pointing_state_enum_labels.index('STOW'):
+            initial_actual_elevation = self.model.sim_quantities['achievedElevation'].last_val
+            self.model.update()
+            self.assertGreater(self.model.sim_quantities['achievedElevation'].last_val,
+                                   initial_actual_elevation)
+            self.assertEqual(self.model.sim_quantities['achievedAzimuth'].last_val, 0.0)
+
+        self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val,
+                         self.model.sim_quantities['desiredElevation'].last_val)
+        self.assertEqual(pointing_state_quant.last_val,
+                         pointing_state_enum_labels.index('READY'))
