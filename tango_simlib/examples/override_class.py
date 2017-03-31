@@ -841,6 +841,14 @@ class OverrideDish(object):
         sim_model.sim_quantities['achievedElevation'].set_val(new_position_elev,
                                                               sim_time)
 
+        if (self._almost_equal(sim_model.sim_quantities['achievedAzimuth'].last_val,
+                              sim_model.sim_quantities['desiredAzimuth'].last_val) and
+           self._almost_equal(sim_model.sim_quantities['achievedElevation'].last_val,
+                              sim_model.sim_quantities['desiredElevation'].last_val)):
+            pointing_state_quant.set_val(
+                pointing_state_quant.meta['enum_labels'].index("READY"),
+                sim_model.time_func())
+
     def _almost_equal(self, x, y, abs_threshold=1e-2):
         '''Takes two values return true if they are almost equal'''
         return abs(x - y) <= abs_threshold
