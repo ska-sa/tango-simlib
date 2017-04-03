@@ -44,6 +44,12 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.device_name = 'test/nodb/tangodeviceserver'
         cls.model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)
+        cls.addCleanupClass(cls._reset_quantities_values)
+
+    def _reset_quantities_values(self):
+        print "****here****"
+        for quantity in self.model.sim_quantities.values():
+            quantity.last_val = 0.0
 
     def test_attribute_list(self):
         """Test device attribute list.
@@ -222,13 +228,61 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         mock_time = Mock(side_effect=sim_time_update)
         self.model.time_func = mock_time
 
-        for update_x in range(len(sim_time_update)):
+        for update_x in sim_time_update:
             initial_actual_elevation = self.model.sim_quantities['achievedElevation'].last_val
             self.model.update()
             self.assertGreater(self.model.sim_quantities['achievedElevation'].last_val,
                                    initial_actual_elevation)
             self.assertEqual(self.model.sim_quantities['achievedAzimuth'].last_val, 0.0)
 
+        self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val,
+                         self.model.sim_quantities['desiredElevation'].last_val)
+        self.assertEqual(pointing_state_quant.last_val,
+                         pointing_state_enum_labels.index('READY'))
+
+
+    def test_slew(self):
+        dish_mode_quant = self.model.sim_quantities['dishMode']
+        dish_mode_enum_labels = dish_mode_quant.meta['enum_labels']
+        pointing_state_quant = self.model.sim_quantities['pointingState']
+        pointing_state_enum_labels = pointing_state_quant.meta['enum_labels']
+
+        dish_mode_quant.last_val = dish_mode_enum_labels.index('OPERATE')
+        self.assertNotEqual(pointing_state_quant.last_val,
+                            pointing_state_enum_labels.index('SLEW'))
+
+        print 'azim ', self.model.sim_quantities['achievedAzimuth'].last_val
+        print 'elev ', self.model.sim_quantities['achievedElevation'].last_val
+        dummy_timestamp = '31351.131'
+        target_azim = 180.0
+        target_elev = 90.0
+        self.model.sim_actions['Slew'](data_input=
+                                       [dummy_timestamp, target_azim, target_elev])
+        self.assertEqual(self.model.sim_quantities['desiredAzimuth'].last_val, target_azim)
+        self.assertEqual(self.model.sim_quantities['desiredElevation'].last_val, target_elev)
+        self.assertEqual(self.model.sim_quantities['desiredPointing'].last_val,
+                         [target_azim, target_elev])
+
+        self.model.last_update_time = 0.0
+        # Fixed time updates for the model with the MAX_ELEV_DRIVE_RATE of 1.0 and
+        # MAX_AZIM_DRIVE_RATE of 2.0
+        sim_time_update = [0.99, 10.99, 20.99, 30.99, 40.99,
+                           50.99, 60.99, 70.99, 80.99, 90.99]
+        mock_time = Mock(side_effect=sim_time_update)
+        self.model.time_func = mock_time
+
+        for update_x in range(len(sim_time_update)):
+            print update_x
+            initial_actual_azimuth = self.model.sim_quantities['achievedAzimuth'].last_val
+            initial_actual_elevation = self.model.sim_quantities['achievedElevation'].last_val
+            self.model.update()
+            self.assertGreater(self.model.sim_quantities['achievedAzimuth'].last_val,
+                               initial_actual_azimuth)
+            self.assertGreater(self.model.sim_quantities['achievedElevation'].last_val,
+                               initial_actual_elevation)
+
+        self.assertEqual(self.model.sim_quantities['achievedAzimuth'].last_val,
+                         self.model.sim_quantities['desiredAzimuth'].last_val)
         self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val,
                          self.model.sim_quantities['desiredElevation'].last_val)
         self.assertEqual(pointing_state_quant.last_val,
