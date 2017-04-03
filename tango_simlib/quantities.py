@@ -85,6 +85,9 @@ class Quantity(object):
         self.last_update_time = t
         self.last_val = val
 
+    def default_val(self, t):
+        self.last_val = 0
+        self.last_update_time = t
 
 class GaussianSlewLimited(Quantity):
     """A Gaussian random variable a slew-rate limit and clipping

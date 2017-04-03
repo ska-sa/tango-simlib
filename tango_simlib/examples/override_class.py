@@ -533,7 +533,7 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        self._configureband(model, data_input[0], 1)
+        self._configureband(model, data_input, 1)
 
     def action_configureband2(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -544,7 +544,7 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        self._configureband(model, data_input[0], 2)
+        self._configureband(model, data_input, 2)
 
     def action_configureband3(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -555,7 +555,7 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        self._configureband(model, data_input[0], 3)
+        self._configureband(model, data_input, 3)
 
     def action_configureband4(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -566,7 +566,7 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        self._configureband(model, data_input[0], 4)
+        self._configureband(model, data_input, 4)
 
     def action_configureband5(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the CONFIGURE Dish Element
@@ -577,7 +577,7 @@ class OverrideDish(object):
         data_input: str
             timestamp
         """
-        self._configureband(model, data_input[0], 5)
+        self._configureband(model, data_input, 5)
 
     def action_lowpower(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the LOW power
@@ -799,7 +799,6 @@ class OverrideDish(object):
 
     def pre_update(self, sim_model, sim_time, dt):
         MODULE_LOGGER.info("***Pre-updating from the override class***")
-
         pointing_state_quant = sim_model.sim_quantities['pointingState']
         current_pnt_state_enum_val = pointing_state_quant.last_val
         current_pnt_state_str_val = (
@@ -840,6 +839,19 @@ class OverrideDish(object):
             achieved_elev + cmp(desired_elev, achieved_elev) * move_delta_elev)
         sim_model.sim_quantities['achievedElevation'].set_val(new_position_elev,
                                                               sim_time)
+
+        sim_model.sim_quantities['achievedPointing'].set_val(
+            [sim_model.sim_quantities['achievedAzimuth'].last_val,
+             sim_model.sim_quantities['achievedElevation'].last_val],
+            sim_time)
+
+        if (self._almost_equal(sim_model.sim_quantities['achievedAzimuth'].last_val,
+                              sim_model.sim_quantities['desiredAzimuth'].last_val) and
+           self._almost_equal(sim_model.sim_quantities['achievedElevation'].last_val,
+                              sim_model.sim_quantities['desiredElevation'].last_val)):
+            pointing_state_quant.set_val(
+                pointing_state_quant.meta['enum_labels'].index("READY"),
+                sim_time)
 
     def _almost_equal(self, x, y, abs_threshold=1e-2):
         '''Takes two values return true if they are almost equal'''
