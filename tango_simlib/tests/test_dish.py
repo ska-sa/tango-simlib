@@ -115,7 +115,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             self.model.sim_actions['LowPower']()
             self.assertEqual(power_state_quant.last_val,
                              power_state_enum_labels.index('LOW'))
-            # Reset the powerState to any other value except for 'LOw'.
+            # Reset the powerState to any other value except for 'LOW'.
             power_state_quant.last_val = power_state_enum_labels.index('OFF')
 
         for not_allowed_mode in ['OFF', 'STARTUP', 'SHUTDOWN', 'STANDBY-LP',
@@ -136,7 +136,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             self.model.sim_actions['SetMaintenanceMode']()
             self.assertEqual(dish_mode_quant.last_val,
                              dish_mode_enum_labels.index('MAINTENANCE'))
-            # Reset the dishMode to any other value except for 'MAINTENANCE'.
+            # Reset the dishMode an allowed value, not 'MAINTENANCE'.
             dish_mode_quant.last_val = dish_mode_enum_labels.index('STANDBY-LP')
 
         for not_allowed_mode in ['OFF', 'STARTUP', 'SHUTDOWN', 'STOW',
@@ -223,11 +223,14 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         self.model.time_func = mock_time
 
         for update_x in range(len(sim_time_update)):
-            initial_actual_elevation = self.model.sim_quantities['achievedElevation'].last_val
+            initial_actual_elevation = (
+                self.model.sim_quantities['achievedElevation'].last_val)
             self.model.update()
-            self.assertGreater(self.model.sim_quantities['achievedElevation'].last_val,
-                                   initial_actual_elevation)
-            self.assertEqual(self.model.sim_quantities['achievedAzimuth'].last_val, 0.0)
+            self.assertGreater(
+                self.model.sim_quantities['achievedElevation'].last_val,
+                initial_actual_elevation)
+            self.assertEqual(
+                self.model.sim_quantities['achievedAzimuth'].last_val, 0.0)
 
         self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val,
                          self.model.sim_quantities['desiredElevation'].last_val)
