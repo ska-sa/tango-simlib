@@ -215,16 +215,14 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val, 0.0)
         self.assertEqual(self.model.sim_quantities['desiredElevation'].last_val, 90.0)
 
-        def t():
-            num = 1.0
-            while True:
-                yield num
-                num += 2.0
-        mock_time = Mock(side_effect=t().next)
-        self.model.time_func = mock_time
         self.model.last_update_time = 0.0
+        # Fixed time updates for the model with the MAX_ELEV_DRIVE_RATE of 1.0.
+        sim_time_update = [0.99, 10.99, 20.99, 30.99, 40.99,
+                           50.99, 60.99, 70.99, 80.99, 90.99]
+        mock_time = Mock(side_effect=sim_time_update)
+        self.model.time_func = mock_time
 
-        while pointing_state_quant.last_val == pointing_state_enum_labels.index('STOW'):
+        for update_x in range(len(sim_time_update)):
             initial_actual_elevation = self.model.sim_quantities['achievedElevation'].last_val
             self.model.update()
             self.assertGreater(self.model.sim_quantities['achievedElevation'].last_val,
