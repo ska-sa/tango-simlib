@@ -45,7 +45,11 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)
 
-    def tearDown(self):
+    def setUp(self):
+        super(test_DishElementMaster, self).setUp()
+        self.addCleanup(self._reset_model_defaults)
+
+    def _reset_model_defaults(self):
         for quantity in self.model.sim_quantities.values():
             quantity.last_val = 0.0
         self.model.time_func = time.time
@@ -271,19 +275,30 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         self.model.last_update_time = 0.0
         # Fixed time updates for the model with the MAX_ELEV_DRIVE_RATE of 1.0 and
         # MAX_AZIM_DRIVE_RATE of 2.0
-        sim_time_update = [0.99, 10.99, 20.99, 30.99, 40.99,
-                           50.99, 60.99, 70.99, 80.99, 90.99]
+        expected_azim_positions = [2.00, 22.00, 42.00, 62.00, 82.00,
+                                   102.00, 122.00, 142.00, 162.00, 180.00]
+        expected_elev_positions = [1.00, 11.00, 21.00, 31.00, 41.00,
+                                   51.00, 61.00, 71.00, 81.00, 90.00]
+        sim_time_update = [1.00, 11.00, 21.00, 31.0, 41.00,
+                           51.00, 61.00, 71.00, 81.00, 91.00]
         mock_time = Mock(side_effect=sim_time_update)
         self.model.time_func = mock_time
 
-        for update_x in sim_time_update:
-            initial_actual_azimuth = self.model.sim_quantities['achievedAzimuth'].last_val
-            initial_actual_elevation = self.model.sim_quantities['achievedElevation'].last_val
+        for update_x, expected_azim_position, expected_elev_position in zip(
+                sim_time_update, expected_azim_positions, expected_elev_positions):
+            initial_actual_azimuth = (
+                self.model.sim_quantities['achievedAzimuth'].last_val)
+            initial_actual_elevation = (
+                self.model.sim_quantities['achievedElevation'].last_val)
             self.model.update()
             self.assertGreater(self.model.sim_quantities['achievedAzimuth'].last_val,
                                initial_actual_azimuth)
             self.assertGreater(self.model.sim_quantities['achievedElevation'].last_val,
                                initial_actual_elevation)
+            self.assertEqual(self.model.sim_quantities['achievedAzimuth'].last_val,
+                             expected_azim_position)
+            self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val,
+                             expected_elev_position)
             self.assertEqual(
                 self.model.sim_quantities['achievedElevation'].last_update_time,
                 update_x)
