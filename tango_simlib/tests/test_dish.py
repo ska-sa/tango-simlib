@@ -44,7 +44,6 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.device_name = 'test/nodb/tangodeviceserver'
         cls.model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)
-        cls.addCleanupClass(cls._reset_quantities_values)
 
     def tearDown(self):
         for quantity in self.model.sim_quantities.values():
