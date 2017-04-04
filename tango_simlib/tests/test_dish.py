@@ -280,7 +280,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         expected_elev_positions = [1.00, 11.00, 21.00, 31.00, 41.00,
                                    51.00, 61.00, 71.00, 81.00, 90.00]
         sim_time_update = [1.00, 11.00, 21.00, 31.0, 41.00,
-                           51.00, 61.00, 71.00, 81.00, 91.00]
+                           51.00, 61.00, 71.00, 81.00, 91.00, 120.00]
         mock_time = Mock(side_effect=sim_time_update)
         self.model.time_func = mock_time
 
@@ -305,7 +305,15 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             self.assertEqual(
                 self.model.sim_quantities['achievedAzimuth'].last_update_time,
                 update_x)
-
+        # Update the model once more and ensure that azim/elev positions do not change.
+        self.model.update()
+        self.assertEqual(self.model.last_update_time, 120.00)
+        self.assertEqual(
+            self.model.sim_quantities['achievedAzimuth'].last_update_time,
+            sim_time_update[-2])
+        self.assertEqual(
+            self.model.sim_quantities['achievedElevation'].last_update_time,
+            sim_time_update[-2])
         self.assertEqual(self.model.sim_quantities['achievedAzimuth'].last_val,
                          self.model.sim_quantities['desiredAzimuth'].last_val)
         self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val,
