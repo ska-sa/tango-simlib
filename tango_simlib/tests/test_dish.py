@@ -1,10 +1,11 @@
 import time
 import unittest
 import pkg_resources
+import mock
 
 from mock import Mock, call
 
-from tango_simlib import tango_sim_generator
+from tango_simlib import tango_sim_generator, model
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 
 from PyTango import DevFailed
@@ -52,7 +53,6 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
     def _reset_model_defaults(self):
         for quantity in self.model.sim_quantities.values():
             quantity.last_val = 0.0
-        self.model.time_func = time.time
 
     def test_attribute_list(self):
         """Test device attribute list.
@@ -228,24 +228,24 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         # Fixed time updates for the model with the MAX_ELEV_DRIVE_RATE of 1.0.
         sim_time_update = [0.99, 10.99, 20.99, 30.99, 40.99,
                            50.99, 60.99, 70.99, 80.99, 90.99]
-        mock_time = Mock(side_effect=sim_time_update)
-        self.model.time_func = mock_time
+        with mock.patch.object(self.model, 'time_func') as mock_time:
+            mock_time.side_effect = sim_time_update
 
-        for update_x in sim_time_update:
-            initial_actual_elevation = (
-                self.model.sim_quantities['achievedElevation'].last_val)
-            self.model.update()
-            self.assertGreater(
-                self.model.sim_quantities['achievedElevation'].last_val,
-                initial_actual_elevation)
-            self.assertEqual(
-                self.model.sim_quantities['achievedAzimuth'].last_val, 0.0)
-            self.assertEqual(
-                self.model.sim_quantities['achievedElevation'].last_update_time,
-                update_x)
-            self.assertEqual(
-                self.model.sim_quantities['achievedAzimuth'].last_update_time,
-                update_x)
+            for update_x in sim_time_update:
+                initial_actual_elevation = (
+                    self.model.sim_quantities['achievedElevation'].last_val)
+                self.model.update()
+                self.assertGreater(
+                    self.model.sim_quantities['achievedElevation'].last_val,
+                    initial_actual_elevation)
+                self.assertEqual(
+                    self.model.sim_quantities['achievedAzimuth'].last_val, 0.0)
+                self.assertEqual(
+                    self.model.sim_quantities['achievedElevation'].last_update_time,
+                    update_x)
+                self.assertEqual(
+                    self.model.sim_quantities['achievedAzimuth'].last_update_time,
+                    update_x)
 
         self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val,
                          self.model.sim_quantities['desiredElevation'].last_val)
@@ -261,7 +261,6 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         dish_mode_quant.last_val = dish_mode_enum_labels.index('OPERATE')
         self.assertNotEqual(pointing_state_quant.last_val,
                             pointing_state_enum_labels.index('SLEW'))
-
         dummy_timestamp = '31351.131'
         target_azim = 180.0
         target_elev = 90.0
@@ -281,42 +280,43 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
                                    51.00, 61.00, 71.00, 81.00, 90.00]
         sim_time_update = [1.00, 11.00, 21.00, 31.0, 41.00,
                            51.00, 61.00, 71.00, 81.00, 91.00, 120.00]
-        mock_time = Mock(side_effect=sim_time_update)
-        self.model.time_func = mock_time
 
-        for update_x, expected_azim_position, expected_elev_position in zip(
-                sim_time_update, expected_azim_positions, expected_elev_positions):
-            initial_actual_azimuth = (
-                self.model.sim_quantities['achievedAzimuth'].last_val)
-            initial_actual_elevation = (
-                self.model.sim_quantities['achievedElevation'].last_val)
+        with mock.patch.object(self.model, 'time_func') as mock_time:
+            mock_time.side_effect = sim_time_update
+
+            for update_x, expected_azim_position, expected_elev_position in zip(
+                    sim_time_update, expected_azim_positions, expected_elev_positions):
+                initial_actual_azimuth = (
+                    self.model.sim_quantities['achievedAzimuth'].last_val)
+                initial_actual_elevation = (
+                    self.model.sim_quantities['achievedElevation'].last_val)
+                self.model.update()
+                self.assertGreater(self.model.sim_quantities['achievedAzimuth'].last_val,
+                                   initial_actual_azimuth)
+                self.assertGreater(self.model.sim_quantities['achievedElevation'].last_val,
+                                   initial_actual_elevation)
+                self.assertEqual(self.model.sim_quantities['achievedAzimuth'].last_val,
+                                 expected_azim_position)
+                self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val,
+                                 expected_elev_position)
+                self.assertEqual(
+                    self.model.sim_quantities['achievedElevation'].last_update_time,
+                    update_x)
+                self.assertEqual(
+                    self.model.sim_quantities['achievedAzimuth'].last_update_time,
+                    update_x)
+            # Update the model once more and ensure that azim/elev positions do not change.
             self.model.update()
-            self.assertGreater(self.model.sim_quantities['achievedAzimuth'].last_val,
-                               initial_actual_azimuth)
-            self.assertGreater(self.model.sim_quantities['achievedElevation'].last_val,
-                               initial_actual_elevation)
-            self.assertEqual(self.model.sim_quantities['achievedAzimuth'].last_val,
-                             expected_azim_position)
-            self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val,
-                             expected_elev_position)
-            self.assertEqual(
-                self.model.sim_quantities['achievedElevation'].last_update_time,
-                update_x)
+            self.assertEqual(self.model.last_update_time, 120.00)
             self.assertEqual(
                 self.model.sim_quantities['achievedAzimuth'].last_update_time,
-                update_x)
-        # Update the model once more and ensure that azim/elev positions do not change.
-        self.model.update()
-        self.assertEqual(self.model.last_update_time, 120.00)
-        self.assertEqual(
-            self.model.sim_quantities['achievedAzimuth'].last_update_time,
-            sim_time_update[-2])
-        self.assertEqual(
-            self.model.sim_quantities['achievedElevation'].last_update_time,
-            sim_time_update[-2])
-        self.assertEqual(self.model.sim_quantities['achievedAzimuth'].last_val,
-                         self.model.sim_quantities['desiredAzimuth'].last_val)
-        self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val,
-                         self.model.sim_quantities['desiredElevation'].last_val)
-        self.assertEqual(pointing_state_quant.last_val,
-                         pointing_state_enum_labels.index('READY'))
+                sim_time_update[-2])
+            self.assertEqual(
+                self.model.sim_quantities['achievedElevation'].last_update_time,
+                sim_time_update[-2])
+            self.assertEqual(self.model.sim_quantities['achievedAzimuth'].last_val,
+                             self.model.sim_quantities['desiredAzimuth'].last_val)
+            self.assertEqual(self.model.sim_quantities['achievedElevation'].last_val,
+                             self.model.sim_quantities['desiredElevation'].last_val)
+            self.assertEqual(pointing_state_quant.last_val,
+                             pointing_state_enum_labels.index('READY'))
