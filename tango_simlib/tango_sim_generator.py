@@ -17,6 +17,7 @@ import os
 import weakref
 import logging
 import argparse
+import time
 
 from PyTango import Attr, AttrWriteType, UserDefaultAttrProp, AttrQuality, Database
 from PyTango.server import Device, DeviceMeta, command, attribute
@@ -420,6 +421,7 @@ def generate_device_server(server_name, sim_data_files, directory=''):
              'from PyTango.server import server_run',
              ('from tango_simlib.tango_sim_generator import ('
               'configure_device_model, get_tango_device_server)'),
+             '\n\n# File generated on {} by tango-simlib-tango-simulator-generator'.format(time.ctime()),
              '\n\ndef main():',
              '    sim_data_files = %s' % sim_data_files,
              '    model = configure_device_model(sim_data_files)',
