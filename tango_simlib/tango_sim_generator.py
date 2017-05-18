@@ -426,8 +426,8 @@ def generate_device_server(server_name, sim_data_files, directory=''):
              '    TangoDeviceServers = get_tango_device_server(model, sim_data_files)',
              '    server_run(TangoDeviceServers)',
              '\nif __name__ == "__main__":',
-             '    main()']
-    with open(os.path.join(directory, "%s.py" % server_name), 'w') as dserver:
+             '    main()\n']
+    with open(os.path.join(directory, "%s" % server_name), 'w') as dserver:
         dserver.write('\n'.join(lines))
 
 def get_device_class(sim_data_files):
