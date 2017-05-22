@@ -5,6 +5,7 @@ import shutil
 import tempfile
 import sys
 import errno
+import os
 
 LOGGER = logging.getLogger(__name__)
 
