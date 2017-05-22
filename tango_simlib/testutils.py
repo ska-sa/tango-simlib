@@ -8,6 +8,30 @@ import errno
 
 LOGGER = logging.getLogger(__name__)
 
+def cleanup_tempfile(test_instance, unlink=False, *mkstemp_args, **mkstemp_kwargs):
+    """
+    Return filename of a new tempfile and add cleanup callback to test_instance.
+
+    Will not raise an error if the file is not present when trying to delete.
+
+    If unlink=True the actual temp file will be deleted immediately. This is
+    useful if you want to check behaviour in absence of a named file.
+
+    Extra args and kwargs are passed on to the tempfile.mkstemp call.
+    """
+    os_fh, fname = tempfile.mkstemp(*mkstemp_args, **mkstemp_kwargs)
+    os.close(os_fh)                        # Close the low-level file handle
+    if unlink:
+        os.unlinkI(fname)
+    def cleanup():
+        try:
+            os.unlink(fname)
+        except OSError, e:
+            if e.errno == errno.ENOENT:	pass
+            else: raise
+    test_instance.addCleanup(cleanup)
+    return fname
+
 def cleanup_tempdir(test_instance, *mkdtemp_args, **mkdtemp_kwargs):
     """
     Return filname of a new tempfile and add cleanup callback to test_instance.

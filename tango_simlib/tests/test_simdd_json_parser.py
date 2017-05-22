@@ -7,7 +7,7 @@ import pkg_resources
 
 from devicetest import TangoTestContext
 
-from katcore.testutils import cleanup_tempfile
+from tango_simlib.testutils import cleanup_tempfile
 from katcp.testutils import start_thread_with_cleanup
 from tango_simlib import simdd_json_parser, helper_module
 from tango_simlib import sim_xmi_parser, model
