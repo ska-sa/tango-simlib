@@ -17,6 +17,7 @@ import os
 import weakref
 import logging
 import argparse
+import time
 
 from PyTango import Attr, AttrWriteType, UserDefaultAttrProp, AttrQuality, Database
 from PyTango.server import Device, DeviceMeta, command, attribute
@@ -420,15 +421,18 @@ def generate_device_server(server_name, sim_data_files, directory=''):
              'from PyTango.server import server_run',
              ('from tango_simlib.tango_sim_generator import ('
               'configure_device_model, get_tango_device_server)'),
+             '\n\n# File generated on {} by tango-simlib-tango-simulator-generator'.format(time.ctime()),
              '\n\ndef main():',
              '    sim_data_files = %s' % sim_data_files,
              '    model = configure_device_model(sim_data_files)',
              '    TangoDeviceServers = get_tango_device_server(model, sim_data_files)',
              '    server_run(TangoDeviceServers)',
              '\nif __name__ == "__main__":',
-             '    main()']
-    with open(os.path.join(directory, "%s.py" % server_name), 'w') as dserver:
+             '    main()\n']
+    with open(os.path.join(directory, "%s" % server_name), 'w') as dserver:
         dserver.write('\n'.join(lines))
+    # Make the script executable
+    os.chmod(os.path.join(directory, "%s" % server_name), 477)
 
 def get_device_class(sim_data_files):
     """Get device class name from specified xmi/simdd description file
@@ -474,13 +478,14 @@ def get_argparser():
     required_argument('--sim-data-file', action='append',
                       help='Simulator description data files(s) '
                       '.i.e. can specify multiple files')
+    required_argument('--directory', help='TANGO server executable path', default='')
     required_argument('--dserver-name', help='TANGO server executable command')
     return parser
 
 def main():
     arg_parser = get_argparser()
     opts = arg_parser.parse_args()
-    generate_device_server(opts.dserver_name, opts.sim_data_file)
+    generate_device_server(opts.dserver_name, opts.sim_data_file, directory=opts.directory)
 
 if __name__ == "__main__":
     main()
