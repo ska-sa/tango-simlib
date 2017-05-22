@@ -275,7 +275,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                 server_name, server_instance, '%scontrol' % device_name,
                 database_filename, '%sSimControl' % cls.sim_device_class,
                 sim_test_device_prop)
-        cls.sub_proc = subprocess.Popen(["python", "{}/{}.py".format(
+        cls.sub_proc = subprocess.Popen(["python", "{}/{}".format(
                                             cls.temp_dir, server_name),
                                         server_instance, "-file={}".format(
                                             database_filename),
