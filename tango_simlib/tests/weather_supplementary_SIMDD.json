@@ -63,7 +63,7 @@
     },
     {
       "basicAttributeData": {
-        "name": "relative_humidity",
+        "name": "relative-humidity",
         "dataSimulationParameters": {
           "quantity_simulation_type": "GaussianSlewLimited",
           "min_bound": 0,
@@ -77,7 +77,7 @@
     },
     {
       "basicAttributeData": {
-        "name": "wind_speed",
+        "name": "wind-speed",
         "dataSimulationParameters": {
           "quantity_simulation_type": "GaussianSlewLimited",
           "min_bound": 0,
@@ -91,7 +91,7 @@
     },
     {
       "basicAttributeData": {
-        "name": "wind_direction",
+        "name": "wind-direction",
         "dataSimulationParameters": {
           "quantity_simulation_type": "GaussianSlewLimited",
           "min_bound": 0,
@@ -105,7 +105,7 @@
     },
     {
       "basicAttributeData": {
-        "name": "input_comms_ok",
+        "name": "input-comms-ok",
         "dataSimulationParameters": {
           "quantity_simulation_type": "ConstantQuantity",
           "initial_value": ""
