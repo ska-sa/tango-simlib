@@ -34,7 +34,7 @@ EXPECTED_MANDATORY_CMD_PARAMETERS = frozenset([
 EXPECTED_MANDATORY_OVERRIDE_CLASS_PARAMETERS = frozenset([
     'class_name', 'module_directory', 'module_name', 'name'])
 
-# The desired information for the attribute temperature when the weather_SIMDD
+# The desired information for the attribute temperature when the Weather_SIMDD
 # json file is parsed by the SimddParser.
 EXPECTED_TEMPERATURE_ATTR_INFO = {
         'abs_change': '0.5',
@@ -588,9 +588,9 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.data_descr_files = []
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'weather_sim.xmi'))
+            'tango_simlib.tests', 'Weather.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'weather_supplementary_SIMDD.json'))
+            'tango_simlib.tests', 'Weather_SIMDD_2.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)
