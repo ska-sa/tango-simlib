@@ -81,7 +81,7 @@ class GenericSetup(unittest.TestCase):
     def setUp(self):
         super(GenericSetup, self).setUp()
         self.simdd_json_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests', 'weather_SIMDD.json')]
+            'tango_simlib.tests', 'Weather_SIMDD.json')]
         self.simdd_parser = simdd_json_parser.SimddParser()
         self.simdd_parser.parse(self.simdd_json_file[0])
 
@@ -263,7 +263,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.data_descr_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                               'weather_SIMDD.json')]
+                                                               'Weather_SIMDD.json')]
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.data_descr_file,
                                                            cls.device_name)
