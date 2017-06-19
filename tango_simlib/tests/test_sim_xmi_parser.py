@@ -370,8 +370,8 @@ class test_XmiParser(GenericSetup):
         """
         actual_parsed_attrs = self.xmi_parser.get_reformatted_device_attr_metadata()
         expected_attr_list = ['insolation', 'temperature', 'pressure', 'rainfall',
-                              'relative_humidity', 'wind_direction', 'input_comms_ok',
-                              'wind_speed']
+                              'relative-humidity', 'wind-direction',
+                              'input-comms-ok', 'wind-speed']
         actual_parsed_attr_list = actual_parsed_attrs.keys()
         self.assertGreater(len(actual_parsed_attr_list), 0,
                            "There is no attribute information parsed")
