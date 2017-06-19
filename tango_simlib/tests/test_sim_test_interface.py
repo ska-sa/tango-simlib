@@ -195,7 +195,7 @@ class test_SimControl(DeviceTestCase):
         expected_model = FixtureModel('random_test1_name',
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(expected_model)
-        desired_attribute_name = 'relative_humidity'
+        desired_attribute_name = 'relative-humidity'
         self.device.attribute_name = list(self.attr_name_enum_labels).index(
                                                 desired_attribute_name)
         for attr in self.control_attributes:
