@@ -47,7 +47,7 @@
     </commands>
     <commands name="Add" description="Add two or more numbers together." execMethod="add" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
       <argin description="Takes an array of at least two numerals.">
-        <type xsi:type="pogoDsl:VarDoubleArrayType"/>
+        <type xsi:type="pogoDsl:DoubleArrayType"/>
       </argin>
       <argout description="Returns the sum of the values.">
         <type xsi:type="pogoDsl:DoubleType"/>
@@ -94,7 +94,7 @@
       <eventCriteria relChange="10" absChange="0.2" period="1000"/>
       <evArchiveCriteria relChange="10" absChange="0.2" period="1000"/>
     </dynamicAttributes>
-    <dynamicAttributes name="relative_humidity" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+    <dynamicAttributes name="relative-humidity" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
       <dataType xsi:type="pogoDsl:DoubleType"/>
       <changeEvent fire="false" libCheckCriteria="false"/>
       <archiveEvent fire="false" libCheckCriteria="false"/>
@@ -104,7 +104,7 @@
       <eventCriteria relChange="10" absChange="0.5" period="1000"/>
       <evArchiveCriteria relChange="10" absChange="0.5" period="1000"/>
     </dynamicAttributes>
-    <dynamicAttributes name="wind_direction" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+    <dynamicAttributes name="wind-direction" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
       <dataType xsi:type="pogoDsl:DoubleType"/>
       <changeEvent fire="true" libCheckCriteria="false"/>
       <archiveEvent fire="true" libCheckCriteria="false"/>
@@ -114,7 +114,7 @@
       <eventCriteria relChange="10" absChange="0.5" period="1000"/>
       <evArchiveCriteria relChange="10" absChange="0.5" period="1000"/>
     </dynamicAttributes>
-    <dynamicAttributes name="input_comms_ok" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+    <dynamicAttributes name="input-comms-ok" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
       <dataType xsi:type="pogoDsl:BooleanType"/>
       <changeEvent fire="false" libCheckCriteria="false"/>
       <archiveEvent fire="true" libCheckCriteria="false"/>
@@ -124,7 +124,7 @@
       <eventCriteria relChange="" absChange="" period="1000"/>
       <evArchiveCriteria relChange="" absChange="" period="1000"/>
     </dynamicAttributes>
-    <dynamicAttributes name="wind_speed" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+    <dynamicAttributes name="wind-speed" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
       <dataType xsi:type="pogoDsl:DoubleType"/>
       <changeEvent fire="true" libCheckCriteria="false"/>
       <archiveEvent fire="true" libCheckCriteria="false"/>

@@ -94,9 +94,9 @@ class test_SimddJsonParser(GenericSetup):
         in the SIMDD json file.
         """
         actual_parsed_attrs = self.simdd_parser.get_reformatted_device_attr_metadata()
-        expected_attr_list = ['input_comms_ok', 'insolation', 'pressure', 'rainfall',
-                              'relative_humidity', 'temperature', 'wind_direction',
-                              'wind_speed']
+        expected_attr_list = ['input-comms-ok', 'insolation', 'pressure', 'rainfall',
+                              'relative-humidity', 'temperature', 'wind-direction',
+                              'wind-speed']
         actual_parsed_attr_list = sorted(actual_parsed_attrs.keys())
         self.assertGreater(
             len(actual_parsed_attr_list), 0, "There is no attribute information parsed")
@@ -146,9 +146,9 @@ class test_PopulateModelQuantities(GenericSetup):
         self.assertEqual(device_name, pmq.sim_model.name,
                          "The device name and the model name do not match.")
         expected_quantities_list = ['insolation', 'temperature',
-                                    'pressure', 'input_comms_ok',
-                                    'rainfall', 'relative_humidity',
-                                    'wind_direction', 'wind_speed']
+                                    'pressure', 'input-comms-ok',
+                                    'rainfall', 'relative-humidity',
+                                    'wind-direction', 'wind-speed']
         actual_quantities_list = pmq.sim_model.sim_quantities.keys()
         self.assertEqual(set(expected_quantities_list), set(actual_quantities_list),
                          "The are quantities missing in the model")
