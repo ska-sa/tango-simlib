@@ -1,7 +1,0 @@
-enum
-numpy
-nose_xunitmp
-katcp-python
-katcore
-katproxy
-git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest
