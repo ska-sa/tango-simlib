@@ -5,8 +5,8 @@ tango\_simlib package
 
     tango_simlib
 
-Submodules
-----------
+Module contents
+---------------
 
 tango\_simlib\.helper\_module module
 ------------------------------------
@@ -96,11 +96,3 @@ tango\_simlib\.testutils module
     :undoc-members:
     :show-inheritance:
 
-
-Module contents
----------------
-
-.. automodule:: tango_simlib
-    :members:
-    :undoc-members:
-    :show-inheritance:

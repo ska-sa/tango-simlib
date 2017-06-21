@@ -1,8 +1,8 @@
 tango\_simlib\.examples package
 ===============================
 
-Submodules
-----------
+Module contents
+---------------
 
 tango\_simlib\.examples\.mkat\_vds module
 -----------------------------------------
@@ -44,11 +44,3 @@ tango\_simlib\.examples\.weather3 module
     :undoc-members:
     :show-inheritance:
 
-
-Module contents
----------------
-
-.. automodule:: tango_simlib.examples
-    :members:
-    :undoc-members:
-    :show-inheritance:
