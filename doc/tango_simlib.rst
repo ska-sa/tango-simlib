@@ -1,9 +1,6 @@
 tango\_simlib package
 =====================
 
-Subpackages
------------
-
 .. toctree::
 
     tango_simlib
