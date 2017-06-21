@@ -21,7 +21,6 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   modules
    tango_simlib
    tango_simlib.examples
 

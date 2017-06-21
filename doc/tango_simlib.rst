@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-    tango_simlib.examples
+    tango_simlib
 
 Submodules
 ----------
