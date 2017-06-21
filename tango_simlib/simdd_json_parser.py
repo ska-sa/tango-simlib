@@ -137,7 +137,7 @@ class SimddParser(object):
             Name of simulator descrition data file
 
         Notes
-        -----
+        =====
         - Data structures, are type dict with dictionary elements keyed with
           element name and values must be the corresponding data value.
 
@@ -176,7 +176,6 @@ class SimddParser(object):
 
         Parameters
         ----------
-
         elements: list
             List of device data elements with items in unicode format
         e.g.
@@ -236,6 +235,7 @@ class SimddParser(object):
             device_dict: dict
                 device data dictionary in the format of
                 `self._device_attributes` or `self._device_commands`
+
         """
         device_dict = dict()
         params_template = helper_module.DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE.copy()
@@ -344,6 +344,7 @@ class SimddParser(object):
             'update_period': '1',
             'writable': 'READ'
         }
+
         """
         def expand(value):
             """Method to expand values of a value if it is an instance of dict"""

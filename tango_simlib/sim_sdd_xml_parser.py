@@ -38,6 +38,7 @@ class SDDParser(object):
     monitoring_points: dict
 
     commands: dict
+
     """
     def __init__(self):
         self.data_description_file_name = ''
@@ -130,6 +131,7 @@ class SDDParser(object):
                     }
                 }
             }
+
         """
         cmds = {}
         commands = cmd_info.getchildren()
@@ -184,7 +186,7 @@ class SDDParser(object):
             </ResponseList>
 
         Notes
-        -----
+        =====
         Adds the cmd response dictionary to the cmd meta dictionary.
             e.g.
             'ResponseList': {
@@ -202,6 +204,7 @@ class SDDParser(object):
                     }
                 }
             }
+
         """
         cmd_responses = {}      # To store a list of the cmd_responses
         for response in prop:
@@ -281,6 +284,7 @@ class SDDParser(object):
                     'LoggingLevel' :''
                     }
             }
+
         """
         dev_mnt_pts = {}
         monitoring_points = mp_info.getchildren()
@@ -352,6 +356,7 @@ class SDDParser(object):
                     'logginglevel' :''
                 }
             }
+
         """
         monitoring_pts = {}
         for mpt_name, mpt_metadata in self.monitoring_points.items():

@@ -43,9 +43,8 @@ class Quantity(object):
         Subclasses should also initialise the `last_val` attribute with the initial
         quantity value.
 
-        Arguments
-        =========
-
+        Parameters
+        ----------
         start_time : float
             The initial time when a quantity is updated.
         start_value : float
@@ -93,8 +92,7 @@ class GaussianSlewLimited(Quantity):
     """A Gaussian random variable a slew-rate limit and clipping
 
     Parameters
-    ==========
-
+    ----------
     mean : float
         Gaussian mean value
     std_dev : float

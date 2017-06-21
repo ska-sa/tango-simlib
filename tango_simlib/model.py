@@ -117,6 +117,7 @@ class Model(object):
 
     def set_sim_action(self, name, handler):
         """Add an action handler function
+
         Parameters
         ----------
         name : str
@@ -124,11 +125,13 @@ class Model(object):
         handler : callable(model_instance, action_args)
             Callable that handles action (name). Is called with the model instance as
             the first parameter.
+
         """
         self.sim_actions[name] = partial(handler, self)
 
     def set_test_sim_action(self, name, handler):
         """Add an action handler function
+
         Parameters
         ----------
         name : str
@@ -136,6 +139,7 @@ class Model(object):
         handler : callable(model_instance, action_args)
             Callable that handles action (name). Is called with the model instance as
             the first parameter.
+
         """
         self.test_sim_actions[name] = partial(handler, self)
 
@@ -153,6 +157,7 @@ class PopulateModelQuantities(object):
         attributes, commands, and properties.
     sim_model:  Model instance
         An instance of the Model class which is used for simulation of simple attributes.
+
     """
     def __init__(self, parser_instance, tango_device_name, sim_model=None):
         self.parser_instance = parser_instance
@@ -258,7 +263,7 @@ class PopulateModelQuantities(object):
         """Simulate attribute quantities with a Guassian value distribution
 
         Parameters
-        ==========
+        ----------
         min_value : float
             minimum attribute value to be simulated
         max_value : float
@@ -272,7 +277,7 @@ class PopulateModelQuantities(object):
             starndard deviation value of the simulated quantity
 
         Returns
-        ======
+        -------
         sim_attribute_quantities : dict
             Dict of Gaussian simulated quantities
 
@@ -303,6 +308,7 @@ class PopulateModelActions(object):
     sim_model:  Model instance
         An instance of the Model class which is used for simulation of simple attributes
         and/or commands.
+
     """
     def __init__(self, parser_instance, tango_device_name, model_instance=None):
         self.parser_instance = parser_instance
@@ -419,7 +425,6 @@ class PopulateModelActions(object):
             except ValueError:
                 raise Exception("Only lower-case overide method names are supported.")
 
-
     def generate_action_handler(self, action_name, action_output_type, actions=None):
         """Generates and returns an action handler to manage tango commands
 
@@ -437,6 +442,7 @@ class PopulateModelActions(object):
         action_handler: function
             action handler, taking command input argument in case of tango
             commands with input arguments.
+
         """
         if actions is None:
             actions = []
@@ -455,6 +461,7 @@ class PopulateModelActions(object):
             -------
             return_value: float, string, int, etc.
                 Output value of an executed tango command
+
             """
             # TODO (KM 18-01-2016): Need to remove the tango_dev parameter from
             # action hanlder, currently used for testing functionality of the
@@ -504,6 +511,7 @@ class PopulateModelActions(object):
 
         action_handler.__name__ = action_name
         return action_handler
+
 
 class SimModelException(Exception):
     def __init__(self, message):
