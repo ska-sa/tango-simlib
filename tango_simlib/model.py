@@ -78,7 +78,6 @@ class Model(object):
 
         Notes
         =====
-
         - Must use self.start_time to set initial time values.
         - Must call super method after setting up `sim_quantities`
 
@@ -145,17 +144,17 @@ class Model(object):
 
 
 class PopulateModelQuantities(object):
-    """Used to populate/update model quantities.
+    """Used to populate/update model quantities
 
     Populates the model quantities using the data from the TANGO device information
     captured in the POGO generated xmi file.
 
     Attributes
     ----------
-    parser_instance: Parser instance
+    parser_instance : Parser instance
         The Parser object which reads an xmi/xml/json file and parses it into device
         attributes, commands, and properties.
-    sim_model:  Model instance
+    sim_model :  Model instance
         An instance of the Model class which is used for simulation of simple attributes.
 
     """
@@ -173,7 +172,7 @@ class PopulateModelQuantities(object):
         self.setup_sim_quantities()
 
     def setup_sim_quantities(self):
-        """Set up self.sim_quantities from Model with simulated quantities.
+        """Set up self.sim_quantities from Model with simulated quantities
 
         Places simulated quantities in sim_quantities dict. Keyed by name of
         quantity, value must be instances satifying the
@@ -292,20 +291,20 @@ class PopulateModelQuantities(object):
 
 
 class PopulateModelActions(object):
-    """Used to populate/update model actions.
+    """Used to populate/update model actions
 
     Populates the model actions using the data from the TANGO device information
     captured in the POGO generated xmi file.
 
     Attributes
     ----------
-    command_info: dict
+    command_info : dict
         A dictionary of all the device commands together with their
         metadata specified in the POGO generated XMI file. The key
         represents the name of the command and the value is a dictionary
         of all the attribute's metadata.
 
-    sim_model:  Model instance
+    sim_model :  Model instance
         An instance of the Model class which is used for simulation of simple attributes
         and/or commands.
 
@@ -430,11 +429,11 @@ class PopulateModelActions(object):
 
         Parameters
         ----------
-        action_name: str
+        action_name : str
             Name of action handler to generate
-        action_output_type: PyTango._PyTango.CmdArgType
+        action_output_type : PyTango._PyTango.CmdArgType
             Tango command argument type
-        actions: list
+        actions : list
             List of actions that the handler will provide
 
         Returns
@@ -452,14 +451,14 @@ class PopulateModelActions(object):
 
             Parameters
             ----------
-            model: model.Model
+            model : model.Model
                 Model instance
-            data_in: float, string, int, etc.
+            data_in : float, string, int, etc.
                 Input arguments of tango command
 
             Returns
             -------
-            return_value: float, string, int, etc.
+            return_value : float, string, int, etc.
                 Output value of an executed tango command
 
             """
