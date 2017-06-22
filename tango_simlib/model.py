@@ -47,6 +47,20 @@ INITIAL_CONSTANT_VALUE_TYPES = {
 
 
 class Model(object):
+    """Tango Device main model with quantities and actions
+
+    Parameters
+    ----------
+    name : str
+        Model name identifier
+    start_time : float
+        Time at instantiation of the model
+    min_update_period : float
+        Minimun update period of the quantites in the model
+    time_func : time function
+        Function that return current time i.e. time.time
+
+    """
 
     def __init__(self, name, start_time=None, min_update_period=0.99,
                  time_func=time.time):
@@ -438,7 +452,7 @@ class PopulateModelActions(object):
 
         Returns
         -------
-        action_handler: function
+        action_handler : function
             action handler, taking command input argument in case of tango
             commands with input arguments.
 
