@@ -1,20 +1,9 @@
-tango\_simlib package
+tango\_simlib modules
 =====================
 
 .. toctree::
 
     tango_simlib
-
-Module contents
----------------
-
-tango\_simlib\.helper\_module module
-------------------------------------
-
-.. automodule:: tango_simlib.helper_module
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 tango\_simlib\.main module
 --------------------------
@@ -92,6 +81,14 @@ tango\_simlib\.testutils module
 -------------------------------
 
 .. automodule:: tango_simlib.testutils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+tango\_simlib\.helper\_module module
+------------------------------------
+
+.. automodule:: tango_simlib.helper_module
     :members:
     :undoc-members:
     :show-inheritance:

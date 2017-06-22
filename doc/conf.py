@@ -55,7 +55,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'tango-simlib'
 copyright = u'2017, Athanaseus Ramaila'
-author = u'Athanaseus Ramaila'
+author = u'SKA SA \ncam@ska.ac.za'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

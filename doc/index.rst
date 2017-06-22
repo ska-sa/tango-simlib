@@ -19,7 +19,7 @@ Contents
    intro
    tango_simlib
    tango_simlib.examples
-   closure
+   header
 
 
 Indices and tables
