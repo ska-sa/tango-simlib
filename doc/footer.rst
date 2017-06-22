@@ -12,3 +12,11 @@ Contribute
 ==========
 
 Contributions are always welcome! Please ensure that you adhere to our coding standards CAM_Style_guide_.
+
+==========
+Contact us
+==========
+
+| SKA South Africa
+| cam@ska.ac.za
+| https://www.ska.ac.za/

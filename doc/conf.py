@@ -135,7 +135,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'tango-simlib.tex', u'tango-simlib Documentation',
-     u'SKA SA \nControl And Monitoring Team', 'manual'),
+     'SKA SA \nControl And Monitoring Team', 'manual'),
 ]
 
 
