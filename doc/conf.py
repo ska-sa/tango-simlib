@@ -54,8 +54,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'tango-simlib'
-copyright = u'2017, Athanaseus Ramaila'
-author = u'SKA SA \ncam@ska.ac.za'
+copyright = u'2017, SKA SA'
+author = u'cam@ska.ac.za'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -135,7 +135,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'tango-simlib.tex', u'tango-simlib Documentation',
-     u'Athanaseus Ramaila', 'manual'),
+     u'SKA SA \nControl And Monitoring Team', 'manual'),
 ]
 
 
