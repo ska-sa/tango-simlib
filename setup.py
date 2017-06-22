@@ -35,7 +35,7 @@ setup(name="tango_simlib",
       include_package_data=True,
       package_data={'tango_simlib': ['SIMDD.schema', 'tests/*.xmi', 'tests/*.json']},
       dependency_links=[
-          'https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
+          'git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
       entry_points={
           'console_scripts': [
               'tango-simlib-tango-simulator-generator'
