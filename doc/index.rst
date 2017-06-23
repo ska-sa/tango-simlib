@@ -10,8 +10,8 @@ tango-simlib is a library that aids the data-driven development of TANGO device
 simulators. It aims to make it easy to develop basic simulators while making it
 possible to implement more complex simulators.
 
-Contents
-========
+What is tango-simlib?
+=====================
 
 .. toctree::
    :maxdepth: 2
