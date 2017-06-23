@@ -98,15 +98,20 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-#html_theme = 'alabaster'
+# html_theme = 'alabaster'
 html_theme = 'nature'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#
-html_theme_options = {'logo': ('https://user-images.githubusercontent.com/'
-                       '16665629/27481366-83cd9bd8-581c-11e7-9949-a7329279cf02.png'}
+# html_theme_options = {}
+
+# If given, this must be the name of an image file (path relative to the
+# configuration directory) that is the logo of the docs. It is placed at the
+# top of the sidebar; its width should therefore not exceed 200 pixels.
+# Default: None.
+html_logo = ('https://user-images.githubusercontent.com/'
+             '16665629/27481766-a80070dc-581e-11e7-8dd0-0d67e37e7f8d.png')
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -148,6 +153,11 @@ latex_documents = [
      u'CAM Team @ SKA SA', 'manual'),
 ]
 
+# The name of an image file (relative to this directory) to place at the top of
+# the title page.
+#
+latex_logo = ('https://user-images.githubusercontent.com/'
+              '16665629/27481766-a80070dc-581e-11e7-8dd0-0d67e37e7f8d.png')
 
 # -- Options for manual page output ---------------------------------------
 
