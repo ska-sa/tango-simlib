@@ -18,8 +18,16 @@
 #
 import os
 import sys
+import mock
+# Project path to generate documentation
 sys.path.insert(0, os.path.abspath('../'))
-
+# Modules to mock during auto doc to avoid installation
+# The ReadTheDocs FAQ says that you can setup a pip_requirements file to install
+# any modules that are needed for your code, but this won’t work for any modules
+# that include C code
+MOCK_MODULES = ['PyTango']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
 
 # -- General configuration ------------------------------------------------
 
@@ -54,7 +62,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'tango-simlib'
-copyright = u'2017, SKA SA'
+copyright = u'2017, SKA South Africa'
 author = u'cam@ska.ac.za'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -90,7 +98,8 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+#html_theme = 'alabaster'
+html_theme = 'nature'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -135,7 +144,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'tango-simlib.tex', u'tango-simlib Documentation',
-     u'Control And Monitoring Team', 'manual'),
+     u'CAM Team @ SKA SA', 'manual'),
 ]
 
 
