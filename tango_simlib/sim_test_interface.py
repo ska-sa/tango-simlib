@@ -57,7 +57,7 @@ class TangoTestDeviceServerBase(Device):
 
 
     def initialize_dynamic_attributes(self):
-        '''The device method that sets up attributes during run time'''
+        """The device method that sets up attributes during run time"""
         # Get attributes to control the device model quantities
         # from class variables of the quantities included in the device model.
         models = set([quant.__class__
@@ -87,23 +87,27 @@ class TangoTestDeviceServerBase(Device):
         setattr(self.model, 'paused', is_active)
 
     def read_attributes(self, attr):
-        '''Method reading an attribute value
+        """Method reading an attribute value
+
         Parameters
-        ==========
+        ----------
         attr : PyTango.DevAttr
             The attribute to read from.
-        '''
+
+        """
         name = attr.get_name()
         self.info_stream("Reading attribute %s", name)
         attr.set_value(getattr(self.model_quantity, name))
 
     def write_attributes(self, attr):
-        '''Method writing an attribute value
+        """Method writing an attribute value
+
         Parameters
-        ==========
+        ----------
         attr : PyTango.DevAttr
             The attribute to write to.
-        '''
+
+        """
         name = attr.get_name()
         data = attr.get_write_value()
         self.info_stream("Writing attribute {} with value: {}".format(name, data))

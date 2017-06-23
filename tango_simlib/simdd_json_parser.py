@@ -86,8 +86,7 @@ class SimddParser(object):
 
         """
         self._device_commands = {}
-        """
-        The Data structure format is a dict containing command info in a dict
+        """The Data structure format is a dict containing command info in a dict
 
         e.g.
         {'On': {
@@ -105,8 +104,7 @@ class SimddParser(object):
         }
         """
         self._device_properties = {}
-        """
-        Data structure format is a list containing device property info in a dict
+        """Data structure format is a list containing device property info in a dict
 
         e.g.
         {'sim_data_description_file': {
@@ -121,8 +119,7 @@ class SimddParser(object):
         self._device_override_class = {}
 
     def parse(self, simdd_json_file):
-        """
-        Read simulator description data from json file into `self._device_properties`
+        """Read simulator description data from json file into `self._device_properties`
 
         Stores all the simulator description data from the json file into
         appropriate attribute, command and device property data structures.
@@ -137,7 +134,7 @@ class SimddParser(object):
             Name of simulator descrition data file
 
         Notes
-        -----
+        =====
         - Data structures, are type dict with dictionary elements keyed with
           element name and values must be the corresponding data value.
 
@@ -171,12 +168,10 @@ class SimddParser(object):
                 self._device_override_class.update(device_prop_info)
 
     def get_device_data_components_dict(self, elements, element_type):
-        """
-        Extract description data from the simdd json element
+        """Extract description data from the simdd json element
 
         Parameters
         ----------
-
         elements: list
             List of device data elements with items in unicode format
         e.g.
@@ -236,6 +231,7 @@ class SimddParser(object):
             device_dict: dict
                 device data dictionary in the format of
                 `self._device_attributes` or `self._device_commands`
+
         """
         device_dict = dict()
         params_template = helper_module.DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE.copy()
@@ -307,8 +303,8 @@ class SimddParser(object):
             }
         }
 
-        Return
-        ------
+        Returns
+        -------
         items : dict
             A more formatted and easy to read dictionary
         e.g.
@@ -344,6 +340,7 @@ class SimddParser(object):
             'update_period': '1',
             'writable': 'READ'
         }
+
         """
         def expand(value):
             """Method to expand values of a value if it is an instance of dict"""
@@ -426,8 +423,5 @@ class SimddParser(object):
         return self._device_properties
 
     def get_reformatted_override_metadata(self):
-        """Returns a more formatted device override info data structure in a format of a
-        dict.
-        """
+        """Returns more formatted device override info data structure in dict format"""
         return self._device_override_class
-

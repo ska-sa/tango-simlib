@@ -60,8 +60,7 @@ class TangoDeviceServerBase(Device):
         """Method reading an attribute value
 
         Parameters
-        ==========
-
+        ----------
         attr : PyTango.DevAttr
             The attribute to read from.
 
@@ -150,7 +149,7 @@ def get_tango_device_server(model, sim_data_files):
 
 
         Note
-        ----
+        ====
         This is needed for DevEnum and spectrum type attribues
 
         """
@@ -331,7 +330,7 @@ def get_parser_instance(sim_datafile):
     sim_datafile : str
         A direct path to the xmi/xml/json file.
 
-    return
+    Returns
     ------
     parser_instance: Parser instance
         The Parser object which reads an xmi/xml/json file and parses it into device
@@ -368,6 +367,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
     Returns
     -------
     model : model.Model instance
+
     """
     data_file = sim_data_file
     server_name = helper_module.get_server_name()
@@ -442,10 +442,11 @@ def get_device_class(sim_data_files):
     sim_data_files: list
         A list of direct paths to either xmi/xml/json data files.
 
-    Return
-    ------
+    Returns
+    -------
     klass_name: str
         Tango device class name
+
     """
     if len(sim_data_files) < 1:
         raise Exception('No simulator data file specified.')

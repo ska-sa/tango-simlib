@@ -52,7 +52,7 @@ def get_server_name():
     """Gets the TANGO server name from the command line arguments
 
     Returns
-    =======
+    -------
     server_name : str
         tango device server name
 
