@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath('../'))
 # The ReadTheDocs FAQ says that you can setup a pip_requirements file to install
 # any modules that are needed for your code, but this won’t work for any modules
 # that include C code
-MOCK_MODULES = ['PyTango', 'tango_simlib']
+MOCK_MODULES = ['PyTango']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
