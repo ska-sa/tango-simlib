@@ -16,9 +16,6 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-    What is tango-simlib?
-    =====================
-
    intro
    tango_simlib
    tango_simlib.examples
