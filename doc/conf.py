@@ -105,7 +105,8 @@ html_theme = 'nature'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {'logo': ('https://user-images.githubusercontent.com/'
+                       '16665629/27481366-83cd9bd8-581c-11e7-9949-a7329279cf02.png'}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
