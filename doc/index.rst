@@ -13,11 +13,11 @@ possible to implement more complex simulators.
 Contents
 ========
 
-What is tango-simlib?
-=====================
-
 .. toctree::
    :maxdepth: 2
+
+    What is tango-simlib?
+    =====================
 
    intro
    tango_simlib
