@@ -25,7 +25,7 @@ setup(name="tango_simlib",
           'enum',
           'numpy',
           'nose_xunitmp'],
-#          'python-devicetest'],
+          'python-devicetest'],
       extras_require={
           'docs': ["sphinx-pypi-upload",
                    "numpydoc",
@@ -34,8 +34,8 @@ setup(name="tango_simlib",
       zip_safe=False,
       include_package_data=True,
       package_data={'tango_simlib': ['SIMDD.schema', 'tests/*.xmi', 'tests/*.json']},
-#      dependency_links=[
-#          'git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
+      dependency_links=[
+          'git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
       entry_points={
           'console_scripts': [
               'tango-simlib-tango-simulator-generator'
