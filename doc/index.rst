@@ -13,6 +13,9 @@ possible to implement more complex simulators.
 Contents
 ========
 
+What is tango-simlib?
+=====================
+
 .. toctree::
    :maxdepth: 2
 
