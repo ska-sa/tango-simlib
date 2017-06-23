@@ -110,8 +110,7 @@ html_theme = 'nature'
 # configuration directory) that is the logo of the docs. It is placed at the
 # top of the sidebar; its width should therefore not exceed 200 pixels.
 # Default: None.
-html_logo = ('https://user-images.githubusercontent.com/'
-             '16665629/27481766-a80070dc-581e-11e7-8dd0-0d67e37e7f8d.png')
+html_logo = 'doc/_static/tango-simlib-logo.png'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -156,8 +155,7 @@ latex_documents = [
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 #
-latex_logo = ('https://user-images.githubusercontent.com/'
-              '16665629/27481766-a80070dc-581e-11e7-8dd0-0d67e37e7f8d.png')
+latex_logo = 'doc/_static/tango-simlib-logo.png'
 
 # -- Options for manual page output ---------------------------------------
 
