@@ -1,5 +1,4 @@
 enum
 numpy
-nose_xunitmp
 katcp	
-git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest
+PyTango
