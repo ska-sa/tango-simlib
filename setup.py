@@ -24,7 +24,7 @@ setup(name="tango_simlib",
       tests_require=[
           'enum',
           'numpy',
-          'nose_xunitmp'],
+          'nose_xunitmp',
           'python-devicetest'],
       extras_require={
           'docs': ["sphinx-pypi-upload",
