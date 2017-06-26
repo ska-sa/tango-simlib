@@ -130,7 +130,7 @@ in turn start up the device server process, all in one go.
     $ tango-simlib-tango-launcher --name mkat_sim/weather/1 --class Weather\
                           --name mkat_simcontrol/weather/1\
                           --class WeatherSimControl\
-                          --server-command weather.py --port 0\
+                          --server-command weather-DS --port 0\
                           --server-instance tango-launched\
                           --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
 
