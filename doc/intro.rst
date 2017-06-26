@@ -148,7 +148,7 @@ Change directory to tango_simlib/examples/
     $ tango-simlib-tango-launcher --name mkat_sim/weather/1 --class Weather\
                           --name mkat_simcontrol/weather/1\
                           --class WeatherSimControl\
-                          --server-command Weather1.py --port 0\
+                          --server-command weather1.py --port 0\
                           --server-instance tango-launched\
                           --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
 
@@ -160,7 +160,7 @@ file with a ``SimControl`` instance using the ``tango_launcher.py`` script.
     $ tango-simlib-tango-launcher --name mkat_sim/weather/2 --class Weather\
                            --name mkat_simcontrol/weather/2\
                            --class WeatherSimControl\
-                           --server-command Weather2.py --port 0\
+                           --server-command weather2.py --port 0\
                            --server-instance tango-launched\
                            --put-device-property mkat_simcontrol/weather/2:model_key:mkat_sim/weather/2
 

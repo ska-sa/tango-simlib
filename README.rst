@@ -2,6 +2,15 @@
 tango-simlib: Easily generate *TANGO* device simulators
 =======================================================
 
+PyTango
+=======
+
+|Doc Status|
+|Pypi Version|
+|Python Versions|
+
+Main website: http://tango-simlib.readthedocs.io
+
 ============
 Introduction
 ============
@@ -27,13 +36,26 @@ dynamic programming features. If the description files (XMI or SIMDD) are
 modified, the simulator device server only needs to be restarted for the changes
 to take effect.
 
+
+.. |Doc Status| image:: https://readthedocs.org/projects/tango-simlib/badge/?version=latest
+                :target: http://tango-simlib.readthedocs.io/en/latest
+                :alt:
+
+.. |Pypi Version| image:: https://img.shields.io/pypi/v/tango-simlib.svg
+                  :target: https://pypi.python.org/pypi/tango-simlib
+                  :alt:
+
+.. |Python Versions| image:: https://img.shields.io/pypi/pyversions/tango-simlib.svg
+                     :target: https://pypi.python.org/pypi/tango-simlib/
+                     :alt:
+
 .. _TANGO: http://www.tango-controls.org/
 .. _POGO: http://www.esrf.eu/computing/cs/tango/tango_doc/tools_doc/pogo_doc/
 .. _SIMDD: https://docs.google.com/document/d/1tkRGnKu5g8AHxVjK7UkEiukvqtqgZDzptphVCHemcIs/edit?usp=sharing
 .. _CAM_Style_guide: https://docs.google.com/document/d/1aZoIyR9tz5rCWr2qJKuMTmKp2IzHlFjrCFrpDDHFypM/edit?usp=sharing
 .. _PyTango: https://pypi.python.org/pypi/PyTango
 .. _source: https://github.com/ska-sa/tango-simlib
-.. _Documentation: http://tango-simlib.rtfd.io
+.. _documentation: http://tango-simlib.rtfd.io
 
 ===========
 Basic Usage
@@ -44,7 +66,7 @@ Installation
 
 Note that installation requires the *TANGO* binary prerequisites to be
 installed. If you cannot install the PyTango_ package you will not be able to
-install ``tango-simlib``. For more, Documentation_.
+install ``tango-simlib``. For more, documentation_.
 
 Installation from source_, working directory where source is checked out
 
@@ -57,6 +79,11 @@ This package is available on *PYPI*, allowing
 .. code-block:: bash
   
     $ pip install tango-simlib
+
+Documentation
+-------------
+
+Check out the documentation_ for more information.
 
 =======
 License
