@@ -52,7 +52,7 @@ Installation from source_, working directory where source is checked out
   
     $ pip install .
 
-This package is be available on *PYPI*, allowing
+This package is available on *PYPI*, allowing
 
 .. code-block:: bash
   
