@@ -76,6 +76,9 @@ telescope to the *TANGO* world.
 .. _KATCP: http://pythonhosted.org/katcp/
 .. _SKA: https://www.skatelescope.org/
 .. _CAM_Style_guide: https://docs.google.com/document/d/1aZoIyR9tz5rCWr2qJKuMTmKp2IzHlFjrCFrpDDHFypM/edit?usp=sharing
+.. _PyTango: https://pypi.python.org/pypi/PyTango
+.. _source: https://github.com/ska-sa/tango-simlib
+
 
 ===========
 Basic Usage
@@ -88,10 +91,7 @@ Note that installation requires the *TANGO* binary prerequisites to be
 installed. If you cannot install the PyTango_ package you will not be able to
 install ``tango-simlib``.
 
-.. _PyTango: https://pypi.python.org/pypi/PyTango
-
-
-Installation from source, working directory where source is checked out
+Installation from source_, working directory where source is checked out
 
 .. code-block:: bash
   
@@ -116,11 +116,14 @@ Give it a path to the description files (XMI or SIMDD or both).
 .. code-block:: bash
 
     $ tango-simlib-tango-simulator-generator --sim-data-file Weather.xmi\
-                                 --dserver-name weather
+                                             --dserver-name weather-DS
+                                             --directory .
 
-This will generate a python script file in your current working directory named ``weather.py``.
+This will generate a python executable file in your current working directory named ``weather-DS``.
 
-In order to run this generated device simulator code, you can execute the ``tango-launcher`` script, a helper script which will register the *TANGO* device server, setup any required device properties and in turn start up the device server process, all in one go.
+In order to run this generated device simulator code, you can execute the ``tango-launcher`` script, 
+a helper script which will register the *TANGO* device server, setup any required device properties and
+in turn start up the device server process, all in one go.
 
 .. code-block:: bash
 
@@ -129,7 +132,7 @@ In order to run this generated device simulator code, you can execute the ``tang
                           --class WeatherSimControl\
                           --server-command weather.py --port 0\
                           --server-instance tango-launched\
-   --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1                      
+                          --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
 
 Ready-made Simulators
 ---------------------
@@ -138,15 +141,16 @@ Weather simulators
 
 A code snippet of starting the ``Weather`` simulator generated from the ``Weather.xmi`` file
 with a ``SimControl`` instance using the ``tango_launcher.py`` script.
+Change directory to tango_simlib/examples/
 
 .. code-block:: bash
 
     $ tango-simlib-tango-launcher --name mkat_sim/weather/1 --class Weather\
                           --name mkat_simcontrol/weather/1\
                           --class WeatherSimControl\
-                          --server-command tango-simlib-weather-xmi-DS --port 0\
+                          --server-command Weather1.py --port 0\
                           --server-instance tango-launched\
- --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
+                          --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
 
 An example of starting the ``Weather`` simulator generated from the ``Weather_SIMDD.json``
 file with a ``SimControl`` instance using the ``tango_launcher.py`` script.
@@ -156,10 +160,9 @@ file with a ``SimControl`` instance using the ``tango_launcher.py`` script.
     $ tango-simlib-tango-launcher --name mkat_sim/weather/2 --class Weather\
                            --name mkat_simcontrol/weather/2\
                            --class WeatherSimControl\
-                           --server-command tango-simlib-weather-simdd-DS\
-                           --port 0\
+                           --server-command Weather2.py --port 0\
                            --server-instance tango-launched\
-  --put-device-property mkat_simcontrol/weather/2:model_key:mkat_sim/weather/2
+                           --put-device-property mkat_simcontrol/weather/2:model_key:mkat_sim/weather/2
 
 *MeerKAT* Video Display System simulator
 ****************************************
@@ -172,10 +175,9 @@ the ``MkatVds_SIMDD.json`` files with a ``SimControl`` instance using the ``tang
     $ tango-simlib-tango-launcher --name mkat_sim/vds/1 --class MkatVds\
                           --name mkat_simcontrol/vds/1\
                           --class MkatVdsSimControl\
-                          --server-command tango-simlib-vds-xmi-simdd-DS\
-                          --port 0\
+                          --server-command mkat_vds.py --port 0\
                           --server-instance tango-launched\
- --put-device-property mkat_simcontrol/vds/1:model_key:mkat_sim/vds/1
+                          --put-device-property mkat_simcontrol/vds/1:model_key:mkat_sim/vds/1
 
 
 Once the ``tango-simlib-tango-launcher`` script has been executed, the *TANGO* server will be created in the *TANGO* database. The *TANGO* device server will be registered along with its properties and the server process will be started. This will start the server instance which has the two classes ``Weather`` and ``WeatherSimControl`` registered under it, respectively, which in turn will start the devices from each of the *TANGO* classes.
