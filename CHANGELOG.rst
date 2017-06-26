@@ -1,6 +1,6 @@
 0.1.4
 -----
- - Package release documentation
+- Package release documentation
 
 0.1.3
 -----
