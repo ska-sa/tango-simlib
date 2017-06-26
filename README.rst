@@ -2,9 +2,6 @@
 tango-simlib: Easily generate *TANGO* device simulators
 =======================================================
 
-PyTango
-=======
-
 |Doc Status|
 |Pypi Version|
 |Python Versions|
@@ -35,7 +32,6 @@ simulator's behaviour is driven by the description data at run-time using *Pytho
 dynamic programming features. If the description files (XMI or SIMDD) are
 modified, the simulator device server only needs to be restarted for the changes
 to take effect.
-
 
 .. |Doc Status| image:: https://readthedocs.org/projects/tango-simlib/badge/?version=latest
                 :target: http://tango-simlib.readthedocs.io/en/latest
@@ -84,6 +80,7 @@ Documentation
 -------------
 
 Check out the documentation_ for more information.
+Download Manual: https://media.readthedocs.org/pdf/tango-simlib/latest/tango-simlib.pdf
 
 =======
 License
