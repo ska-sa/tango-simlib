@@ -52,6 +52,7 @@ to take effect.
 .. _PyTango: https://pypi.python.org/pypi/PyTango
 .. _source: https://github.com/ska-sa/tango-simlib
 .. _documentation: http://tango-simlib.rtfd.io
+.. _license: https://github.com/ska-sa/tango-simlib/blob/master/LICENSE
 
 ===========
 Basic Usage
@@ -86,7 +87,7 @@ Download Manual: https://media.readthedocs.org/pdf/tango-simlib/latest/tango-sim
 License
 =======
 
-This project is licensed under the BSD 3-Clause License - see https://opensource.org/licenses/BSD-3-Clause for details.
+This project is licensed under the BSD 3-Clause License - see license_ for details.
 
 ==========
 Contribute
