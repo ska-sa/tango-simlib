@@ -52,7 +52,7 @@ to take effect.
 .. _PyTango: https://pypi.python.org/pypi/PyTango
 .. _source: https://github.com/ska-sa/tango-simlib
 .. _documentation: http://tango-simlib.rtfd.io
-.. _license: https://github.com/ska-sa/tango-simlib/blob/master/LICENSE
+.. _license: https://github.com/ska-sa/tango-simlib/blob/master/LICENSE.txt
 
 ===========
 Basic Usage
