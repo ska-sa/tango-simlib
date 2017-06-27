@@ -2,8 +2,8 @@
 -----
 - Package release documentation
 - Updated console script names
- - tango-simlib-tango-launcher -> tango-simlib-launcher
- - tango-simlib-tango-simulator-generator -> tango-simlib-generator
+    - tango-simlib-tango-launcher -> tango-simlib-launcher
+    - tango-simlib-tango-simulator-generator -> tango-simlib-generator
 
 0.1.3
 -----
