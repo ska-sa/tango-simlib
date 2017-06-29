@@ -21,8 +21,7 @@ node('Slave433') {
                     sh 'sudo service tango-db restart'
                     sh 'sudo pip install --egg git+https://github.com/tango-cs/PyTango.git@develop'
                     sh 'sudo pip install . -U'
-                    sh 'sudo pip install nose_xunitmp nosexcover -U'
-                    sh 'nosetests -v --with-xunitmp --xunitmp-file=nosetests.xml  --processes=1 --process-restartworker --process-timeout=400 .'
+                    sh 'python setup.py nosetests'
                 } finally {
                     step([$class: 'JUnitResultArchiver', testResults: 'nosetests.xml'])
                 }
