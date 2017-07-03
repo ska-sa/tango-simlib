@@ -300,8 +300,8 @@ def get_tango_device_server(model, sim_data_files):
                     except Exception as e:
                         self._not_added_attributes.append(attribute_name)
                         self._not_added_attributes_num += 1
-                        MODULE_LOGGER.info("Attribute %s could not be added dynamically "
-                                           " due to an error raised %s." attribute_name,
+                        MODULE_LOGGER.info("Attribut %s could not be added dynamically"
+                                           " due to an error raised %s.", attribute_name,
                                            str(e))
                         continue
                     attr_props = UserDefaultAttrProp()
