@@ -283,17 +283,11 @@ def get_tango_device_server(model, sim_data_files):
                 # Dynamically add all attributes except those with DevEnum data type
                 # and SPECTRUM data format since they are added statically to the
                 # device class prior to start-up.
-                print 'attr_dtype ', attr_dtype
-                print 'd_format ', d_format
-                #if str(attr_dtype) == 'DevEnum':
-                #    print attribute_name
-                #    pass
-                #elif str(d_format) in ['SPECTRUM', 'IMAGE']:
-                #    print attribute_name
-                #    pass
-                #else:
-                #    print attribute_name
-                if str(attr_dtype) != 'DevEnum' and (str(d_format) != 'SPECTRUM' and str(d_format) != 'IMAGE'):
+                if str(attr_dtype) == 'DevEnum':
+                    continue
+                elif str(d_format) in ['SPECTRUM', 'IMAGE']:
+                    continue
+                else:
                     # The return value of rwType is a string and it is required as a
                     # PyTango data type when passed to the Attr function.
                     # e.g. 'READ' -> PyTango.AttrWriteType.READ
@@ -301,13 +295,15 @@ def get_tango_device_server(model, sim_data_files):
                     rw_type = getattr(AttrWriteType, rw_type)
                     # Add a try/except clause when creating an instance of Attr class
                     # as PyTango may raise an error when things go wrong.
-                    print attribute_name
                     try:
                         attr = Attr(attribute_name, attr_dtype, rw_type)
                     except Exception as e:
                         self._not_added_attributes.append(attribute_name)
                         self._not_added_attributes_num += 1
-                        print str(e)
+                        MODULE_LOGGER.info("Attribute %s could not be added dynamically "
+                                           " due to an error raised %s." attribute_name,
+                                           str(e))
+                        continue
                     attr_props = UserDefaultAttrProp()
                     for prop in meta_data.keys():
                         attr_prop_setter = getattr(attr_props, 'set_' + prop, None)
