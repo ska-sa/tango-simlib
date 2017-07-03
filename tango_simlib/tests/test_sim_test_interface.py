@@ -24,7 +24,7 @@ class FixtureModel(model.Model):
         ConstantQuantity = partial(
             quantities.ConstantQuantity, start_time=start_time)
 
-        self.sim_quantities['relative_humidity'] = GaussianSlewLimited(
+        self.sim_quantities['relative-humidity'] = GaussianSlewLimited(
             mean=65.0, std_dev=10.0, max_slew_rate=10.0,
             min_bound=0.0, max_bound=150.0, meta=dict(
                 label="Air humidity",
@@ -35,7 +35,7 @@ class FixtureModel(model.Model):
                 max_value=100, min_value=0,
                 unit="percent",
                 period=1000))
-        self.sim_quantities['wind_speed'] = GaussianSlewLimited(
+        self.sim_quantities['wind-speed'] = GaussianSlewLimited(
             mean=1.0, std_dev=20.0, max_slew_rate=3.0,
             min_bound=0.0, max_bound=100.0, meta=dict(
                 label="Wind speed",
@@ -46,7 +46,7 @@ class FixtureModel(model.Model):
                 max_value=30, min_value=0,
                 unit="m/s",
                 period=1000))
-        self.sim_quantities['wind_direction'] = GaussianSlewLimited(
+        self.sim_quantities['wind-direction'] = GaussianSlewLimited(
             mean=0.0, std_dev=150.0, max_slew_rate=60.0,
             min_bound=0.0, max_bound=359.9999, meta=dict(
                 label="Wind direction",
@@ -56,7 +56,7 @@ class FixtureModel(model.Model):
                 max_value=360, min_value=0,
                 unit="Degrees",
                 period=1000))
-        self.sim_quantities['input_comms_ok'] = ConstantQuantity(
+        self.sim_quantities['input-comms-ok'] = ConstantQuantity(
             start_value=True, meta=dict(
                 label="Input communication OK",
                 data_type=bool,
@@ -195,7 +195,7 @@ class test_SimControl(DeviceTestCase):
         expected_model = FixtureModel('random_test1_name',
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(expected_model)
-        desired_attribute_name = 'relative_humidity'
+        desired_attribute_name = 'relative-humidity'
         self.device.attribute_name = list(self.attr_name_enum_labels).index(
                                                 desired_attribute_name)
         for attr in self.control_attributes:
@@ -215,7 +215,7 @@ class test_SimControl(DeviceTestCase):
         expected_model = FixtureModel('random_test2_name',
                 time_func=lambda: self.test_model.start_time)
         quants_before = self._quants_before_dict(self.test_model)
-        desired_attribute_name = 'wind_speed'
+        desired_attribute_name = 'wind-speed'
         self.device.attribute_name = list(self.attr_name_enum_labels).index(
                                         desired_attribute_name)
         for attr in self.control_attributes:
@@ -248,9 +248,9 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         cls.host = helper_module.get_host_address()
         cls.data_descr_files = []
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'weather_sim.xmi'))
+            'tango_simlib.tests', 'Weather.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'weather_SIMDD_3.json'))
+            'tango_simlib.tests', 'Weather_SIMDD_3.json'))
         cls.temp_dir = cleanup_tempdir(cls)
         cls.sim_device_class = tango_sim_generator.get_device_class(cls.data_descr_files)
         device_name = 'test/nodb/tangodeviceserver'
@@ -275,7 +275,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                 server_name, server_instance, '%scontrol' % device_name,
                 database_filename, '%sSimControl' % cls.sim_device_class,
                 sim_test_device_prop)
-        cls.sub_proc = subprocess.Popen(["python", "{}/{}.py".format(
+        cls.sub_proc = subprocess.Popen(["python", "{}/{}".format(
                                             cls.temp_dir, server_name),
                                         server_instance, "-file={}".format(
                                             database_filename),
@@ -383,7 +383,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
 
         # Get the sim device attributes under test
         sim_attr1_name = 'temperature'
-        sim_attr2_name = 'input_comms_ok'
+        sim_attr2_name = 'input-comms-ok'
 
         # Testing a ConstantQuantity type attribute
         # Check if the model is in an unpaused state

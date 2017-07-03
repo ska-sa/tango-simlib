@@ -5,16 +5,41 @@ import shutil
 import tempfile
 import sys
 import errno
+import os
 
 LOGGER = logging.getLogger(__name__)
 
-def cleanup_tempdir(test_instance, *mkdtemp_args, **mkdtemp_kwargs):
+def cleanup_tempfile(test_instance, unlink=False, *mkstemp_args, **mkstemp_kwargs):
+    """Return filename of a new tempfile and add cleanup callback to test_instance.
+
+    Will not raise an error if the file is not present when trying to delete.
+
+    If unlink=True the actual temp file will be deleted immediately. This is
+    useful if you want to check behaviour in absence of a named file.
+
+    Extra args and kwargs are passed on to the tempfile.mkstemp call.
+
     """
-    Return filname of a new tempfile and add cleanup callback to test_instance.
+    os_fh, fname = tempfile.mkstemp(*mkstemp_args, **mkstemp_kwargs)
+    os.close(os_fh)                        # Close the low-level file handle
+    if unlink:
+        os.unlinkI(fname)
+    def cleanup():
+        try:
+            os.unlink(fname)
+        except OSError, e:
+            if e.errno == errno.ENOENT: pass
+            else: raise
+    test_instance.addCleanup(cleanup)
+    return fname
+
+def cleanup_tempdir(test_instance, *mkdtemp_args, **mkdtemp_kwargs):
+    """Return filname of a new tempfile and add cleanup callback to test_instance.
 
     Will not raise an error if the directory is not present when trying to delete.
 
     Extra args and kwargs are passed on to the tempfile.mkdtemp call
+
     """
     dirname = tempfile.mkdtemp(*mkdtemp_args, **mkdtemp_kwargs)
     def cleanup():
@@ -31,22 +56,23 @@ def set_attributes_polling(test_case, device_proxy, device_server, poll_periods)
 
     Parameters
     ----------
-
     test_case : unittest.TestCase instance
+        Unit test case class instance
     device_proxy : PyTango.DeviceProxy instance
+        The Tango device proxy instance
     device_server : PyTango.Device instance
         The instance of the device class `device_proxy` is talking to
     poll_periods : dict {"attribute_name" : poll_period}
-        `poll_poriod` in milliseconds as per Tango APIs, 0 or falsy to disable
-        polling.
+        `poll_poriod` in milliseconds as per Tango APIs, 0 or falsy to disable polling.
 
-    Return value
-    ------------
+    Returns
+    -------
 
     restore_polling : function
         This function can be used to restore polling if it is to happen before the end of
         the test. Should be idempotent if only one set_attributes_polling() is called per
         test.
+
     """
     # TODO (NM 2016-04-11) check if this is still needed after upgrade to Tango 9.x For
     # some reason it only works if the device_proxy is used to set polling, but the

@@ -25,7 +25,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         cls.port = helper_module.get_port()
         cls.host = helper_module.get_host_address()
         cls.data_descr_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests', 'weather_sim.xmi')]
+            'tango_simlib.tests', 'Weather.xmi')]
         cls.temp_dir = tempfile.mkdtemp()
         cls.sim_device_class = tango_sim_generator.get_device_class(cls.data_descr_file)
         device_name = 'test/nodb/tangodeviceserver'
@@ -45,7 +45,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                 server_name, server_instance, '%scontrol' % device_name,
                 database_filename, '%sSimControl' % cls.sim_device_class,
                 sim_test_device_prop)
-        cls.sub_proc = subprocess.Popen(["python", "{}/{}.py".format(
+        cls.sub_proc = subprocess.Popen(["python", "{}/{}".format(
                                             cls.temp_dir, server_name),
                                         server_instance, "-file={}".format(
                                             database_filename),

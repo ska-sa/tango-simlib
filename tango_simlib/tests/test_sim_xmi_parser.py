@@ -6,7 +6,7 @@ import pkg_resources
 
 from devicetest import TangoTestContext
 
-from katcore.testutils import cleanup_tempfile
+from tango_simlib.testutils import cleanup_tempfile
 from katcp.testutils import start_thread_with_cleanup
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 from tango_simlib import model, sim_xmi_parser, tango_sim_generator, helper_module
@@ -71,7 +71,7 @@ expected_mandatory_default_cmds_info = [
      }
 ]
 
-# The desired information for the atttribute pressure when the weather_sim xmi file is
+# The desired information for the atttribute pressure when the Weather.xmi file is
 # parsed by the XmiParser.
 expected_pressure_attr_info = {
     'name': 'pressure',
@@ -170,7 +170,7 @@ expected_achieved_pointing_spectrum_attr_info = {
     'unit': '[ms, degree, degree]',
     'writable': PyTango.AttrWriteType.READ_WRITE}
 
-# The desired information for the 'On' command when the weather_sim xmi file is parsed
+# The desired information for the 'On' command when the Weather.xmi file is parsed
 expected_on_cmd_info = {
     'name': 'On',
     'doc_in': 'No input parameter',
@@ -179,7 +179,7 @@ expected_on_cmd_info = {
     'dtype_out': PyTango.CmdArgType.DevVoid}
 
 # The expected information that would be obtained for the device property when the
-# weather_sim xmi file is parsed by the XmiParser.
+# Weather.xmi file is parsed by the XmiParser.
 expected_sim_xmi_file_device_property_info = {
     'name': 'sim_xmi_description_file',
     'mandatory': 'true',
@@ -194,7 +194,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                        'weather_sim.xmi')]
+                                                        'Weather.xmi')]
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.xmi_file,
                                                            cls.device_name)
@@ -359,7 +359,7 @@ class GenericSetup(unittest.TestCase):
     def setUp(self):
         super(GenericSetup, self).setUp()
         self.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                         'weather_sim.xmi')]
+                                                         'Weather.xmi')]
         self.xmi_parser = sim_xmi_parser.XmiParser()
         self.xmi_parser.parse(self.xmi_file[0])
 
@@ -370,8 +370,8 @@ class test_XmiParser(GenericSetup):
         """
         actual_parsed_attrs = self.xmi_parser.get_reformatted_device_attr_metadata()
         expected_attr_list = ['insolation', 'temperature', 'pressure', 'rainfall',
-                              'relative_humidity', 'wind_direction', 'input_comms_ok',
-                              'wind_speed']
+                              'relative-humidity', 'wind-direction',
+                              'input-comms-ok', 'wind-speed']
         actual_parsed_attr_list = actual_parsed_attrs.keys()
         self.assertGreater(len(actual_parsed_attr_list), 0,
                            "There is no attribute information parsed")
@@ -485,8 +485,8 @@ class test_PopModelQuantities(GenericSetup):
         self.assertEqual(device_name, pmq.sim_model.name,
                 "The device name and the model name do not match.")
         expected_quantities_list = ['insolation', 'temperature', 'pressure', 'rainfall',
-                                    'relative_humidity', 'wind_direction',
-                                    'input_comms_ok', 'wind_speed']
+                                    'relative-humidity', 'wind-direction',
+                                    'input-comms-ok', 'wind-speed']
         actual_quantities_list = pmq.sim_model.sim_quantities.keys()
         self.assertEqual(set(expected_quantities_list), set(actual_quantities_list),
                          "The are quantities missing in the model")

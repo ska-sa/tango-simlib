@@ -47,6 +47,20 @@ INITIAL_CONSTANT_VALUE_TYPES = {
 
 
 class Model(object):
+    """Tango Device main model with quantities and actions
+
+    Parameters
+    ----------
+    name : str
+        Model name identifier
+    start_time : float
+        Time at instantiation of the model
+    min_update_period : float
+        Minimun update period of the quantites in the model
+    time_func : time function
+        Function that return current time i.e. time.time
+
+    """
 
     def __init__(self, name, start_time=None, min_update_period=0.99,
                  time_func=time.time):
@@ -78,7 +92,6 @@ class Model(object):
 
         Notes
         =====
-
         - Must use self.start_time to set initial time values.
         - Must call super method after setting up `sim_quantities`
 
@@ -117,6 +130,7 @@ class Model(object):
 
     def set_sim_action(self, name, handler):
         """Add an action handler function
+
         Parameters
         ----------
         name : str
@@ -124,11 +138,13 @@ class Model(object):
         handler : callable(model_instance, action_args)
             Callable that handles action (name). Is called with the model instance as
             the first parameter.
+
         """
         self.sim_actions[name] = partial(handler, self)
 
     def set_test_sim_action(self, name, handler):
         """Add an action handler function
+
         Parameters
         ----------
         name : str
@@ -136,23 +152,25 @@ class Model(object):
         handler : callable(model_instance, action_args)
             Callable that handles action (name). Is called with the model instance as
             the first parameter.
+
         """
         self.test_sim_actions[name] = partial(handler, self)
 
 
 class PopulateModelQuantities(object):
-    """Used to populate/update model quantities.
+    """Used to populate/update model quantities
 
     Populates the model quantities using the data from the TANGO device information
     captured in the POGO generated xmi file.
 
     Attributes
     ----------
-    parser_instance: Parser instance
+    parser_instance : Parser instance
         The Parser object which reads an xmi/xml/json file and parses it into device
         attributes, commands, and properties.
-    sim_model:  Model instance
+    sim_model :  Model instance
         An instance of the Model class which is used for simulation of simple attributes.
+
     """
     def __init__(self, parser_instance, tango_device_name, sim_model=None):
         self.parser_instance = parser_instance
@@ -168,7 +186,7 @@ class PopulateModelQuantities(object):
         self.setup_sim_quantities()
 
     def setup_sim_quantities(self):
-        """Set up self.sim_quantities from Model with simulated quantities.
+        """Set up self.sim_quantities from Model with simulated quantities
 
         Places simulated quantities in sim_quantities dict. Keyed by name of
         quantity, value must be instances satifying the
@@ -258,7 +276,7 @@ class PopulateModelQuantities(object):
         """Simulate attribute quantities with a Guassian value distribution
 
         Parameters
-        ==========
+        ----------
         min_value : float
             minimum attribute value to be simulated
         max_value : float
@@ -272,7 +290,7 @@ class PopulateModelQuantities(object):
             starndard deviation value of the simulated quantity
 
         Returns
-        ======
+        -------
         sim_attribute_quantities : dict
             Dict of Gaussian simulated quantities
 
@@ -287,22 +305,23 @@ class PopulateModelQuantities(object):
 
 
 class PopulateModelActions(object):
-    """Used to populate/update model actions.
+    """Used to populate/update model actions
 
     Populates the model actions using the data from the TANGO device information
     captured in the POGO generated xmi file.
 
     Attributes
     ----------
-    command_info: dict
+    command_info : dict
         A dictionary of all the device commands together with their
         metadata specified in the POGO generated XMI file. The key
         represents the name of the command and the value is a dictionary
         of all the attribute's metadata.
 
-    sim_model:  Model instance
+    sim_model :  Model instance
         An instance of the Model class which is used for simulation of simple attributes
         and/or commands.
+
     """
     def __init__(self, parser_instance, tango_device_name, model_instance=None):
         self.parser_instance = parser_instance
@@ -419,24 +438,24 @@ class PopulateModelActions(object):
             except ValueError:
                 raise Exception("Only lower-case overide method names are supported.")
 
-
     def generate_action_handler(self, action_name, action_output_type, actions=None):
         """Generates and returns an action handler to manage tango commands
 
         Parameters
         ----------
-        action_name: str
+        action_name : str
             Name of action handler to generate
-        action_output_type: PyTango._PyTango.CmdArgType
+        action_output_type : PyTango._PyTango.CmdArgType
             Tango command argument type
-        actions: list
+        actions : list
             List of actions that the handler will provide
 
         Returns
         -------
-        action_handler: function
+        action_handler : function
             action handler, taking command input argument in case of tango
             commands with input arguments.
+
         """
         if actions is None:
             actions = []
@@ -446,15 +465,16 @@ class PopulateModelActions(object):
 
             Parameters
             ----------
-            model: model.Model
+            model : model.Model
                 Model instance
-            data_in: float, string, int, etc.
+            data_in : float, string, int, etc.
                 Input arguments of tango command
 
             Returns
             -------
-            return_value: float, string, int, etc.
+            return_value : float, string, int, etc.
                 Output value of an executed tango command
+
             """
             # TODO (KM 18-01-2016): Need to remove the tango_dev parameter from
             # action hanlder, currently used for testing functionality of the
@@ -504,6 +524,7 @@ class PopulateModelActions(object):
 
         action_handler.__name__ = action_name
         return action_handler
+
 
 class SimModelException(Exception):
     def __init__(self, message):

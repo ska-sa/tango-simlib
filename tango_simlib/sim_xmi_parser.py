@@ -147,6 +147,7 @@ class XmiParser(object):
              "argoutType": tango._tango.CmdArgType.DevString,
              "description": "Turn On Device"
         }]
+
         """
         self.device_properties = []
         """Data structure format is a list containing device property info in a dict
@@ -161,6 +162,7 @@ class XmiParser(object):
                 "DefaultPropValue": "<any object>"
             }
         }]
+
         """
         self.class_properties = []
         """Data structure format is a list containing class property info in a dict
@@ -175,11 +177,11 @@ class XmiParser(object):
                 "DefaultPropValue": "<any object>"
             }
         }]
+
         """
 
     def parse(self, sim_xmi_file):
-        """
-        Read simulator description data from xmi file into `self.device_properties`
+        """Read simulator description data from xmi file into `self.device_properties`
 
         Stores all the simulator description data from the xmi tree into
         appropriate attribute, command and device property data structures.
@@ -530,6 +532,7 @@ class XmiParser(object):
             e.g. { 'cmd_name': {cmd_properties}
 
                  }
+
         """
         temp_commands = {}
         for cmd_info in self.device_commands:
@@ -568,9 +571,8 @@ class XmiParser(object):
             represent the name of the device property and the value is a
             dictionary of all the property's metadata.
 
-            e.g. { 'device_property_name' : {device_property_metadata}
+            e.g. { 'device_property_name' : {device_property_metadata}}
 
-                 }
         property_group: str
             A string representing a group to which the property belongs to, either
             device properties or class properties.

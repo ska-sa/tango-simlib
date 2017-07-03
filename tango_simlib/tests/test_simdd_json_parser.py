@@ -7,7 +7,7 @@ import pkg_resources
 
 from devicetest import TangoTestContext
 
-from katcore.testutils import cleanup_tempfile
+from tango_simlib.testutils import cleanup_tempfile
 from katcp.testutils import start_thread_with_cleanup
 from tango_simlib import simdd_json_parser, helper_module
 from tango_simlib import sim_xmi_parser, model
@@ -34,7 +34,7 @@ EXPECTED_MANDATORY_CMD_PARAMETERS = frozenset([
 EXPECTED_MANDATORY_OVERRIDE_CLASS_PARAMETERS = frozenset([
     'class_name', 'module_directory', 'module_name', 'name'])
 
-# The desired information for the attribute temperature when the weather_SIMDD
+# The desired information for the attribute temperature when the Weather_SIMDD
 # json file is parsed by the SimddParser.
 EXPECTED_TEMPERATURE_ATTR_INFO = {
         'abs_change': '0.5',
@@ -81,7 +81,7 @@ class GenericSetup(unittest.TestCase):
     def setUp(self):
         super(GenericSetup, self).setUp()
         self.simdd_json_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests', 'weather_SIMDD.json')]
+            'tango_simlib.tests', 'Weather_SIMDD.json')]
         self.simdd_parser = simdd_json_parser.SimddParser()
         self.simdd_parser.parse(self.simdd_json_file[0])
 
@@ -94,9 +94,9 @@ class test_SimddJsonParser(GenericSetup):
         in the SIMDD json file.
         """
         actual_parsed_attrs = self.simdd_parser.get_reformatted_device_attr_metadata()
-        expected_attr_list = ['input_comms_ok', 'insolation', 'pressure', 'rainfall',
-                              'relative_humidity', 'temperature', 'wind_direction',
-                              'wind_speed']
+        expected_attr_list = ['input-comms-ok', 'insolation', 'pressure', 'rainfall',
+                              'relative-humidity', 'temperature', 'wind-direction',
+                              'wind-speed']
         actual_parsed_attr_list = sorted(actual_parsed_attrs.keys())
         self.assertGreater(
             len(actual_parsed_attr_list), 0, "There is no attribute information parsed")
@@ -146,9 +146,9 @@ class test_PopulateModelQuantities(GenericSetup):
         self.assertEqual(device_name, pmq.sim_model.name,
                          "The device name and the model name do not match.")
         expected_quantities_list = ['insolation', 'temperature',
-                                    'pressure', 'input_comms_ok',
-                                    'rainfall', 'relative_humidity',
-                                    'wind_direction', 'wind_speed']
+                                    'pressure', 'input-comms-ok',
+                                    'rainfall', 'relative-humidity',
+                                    'wind-direction', 'wind-speed']
         actual_quantities_list = pmq.sim_model.sim_quantities.keys()
         self.assertEqual(set(expected_quantities_list), set(actual_quantities_list),
                          "The are quantities missing in the model")
@@ -263,7 +263,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.data_descr_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                               'weather_SIMDD.json')]
+                                                               'Weather_SIMDD.json')]
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.data_descr_file,
                                                            cls.device_name)
@@ -588,9 +588,9 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.data_descr_files = []
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'weather_sim.xmi'))
+            'tango_simlib.tests', 'Weather.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'weather_supplementary_SIMDD.json'))
+            'tango_simlib.tests', 'Weather_SIMDD_2.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)

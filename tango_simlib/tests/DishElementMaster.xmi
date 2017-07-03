@@ -32,7 +32,7 @@
       <excludedStates>ON</excludedStates>
     </commands>
     <commands name="ConfigureBand1" description="This command triggers the Dish to transition to the CONFIGURE Dish Element Mode, and returns to the caller. To configure the Dish to operate in frequency band 1. On completion of the band configuration, Dish will automatically revert to the previous Dish mode (OPERATE or STANDBY-FP)." execMethod="configure_band1" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
-      <argin description="[Timestamp]">
+      <argin description="Timestamp">
         <type xsi:type="pogoDsl:StringType"/>
       </argin>
       <argout description="N/A">
@@ -43,7 +43,7 @@
       <excludedStates>DISABLE</excludedStates>
     </commands>
     <commands name="ConfigureBand2" description="This command triggers the Dish to transition to the CONFIGURE Dish Element Mode, and returns to the caller. To configure the Dish to operate in frequency band 2. On completion of the band configuration, Dish will automatically revert to the previous Dish mode (OPERATE or STANDBY-FP)." execMethod="configure_band2" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
-      <argin description="[Timestamp]">
+      <argin description="Timestamp">
         <type xsi:type="pogoDsl:StringType"/>
       </argin>
       <argout description="N/A">
@@ -54,7 +54,7 @@
       <excludedStates>DISABLE</excludedStates>
     </commands>
     <commands name="ConfigureBand3" description="This command triggers the Dish to transition to the CONFIGURE Dish Element Mode, and returns to the caller. To configure the Dish to operate in frequency band 3. On completion of the band configuration, Dish will automatically revert to the previous Dish mode (OPERATE or STANDBY-FP)." execMethod="configure_band3" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
-      <argin description="[Timestamp]">
+      <argin description="Timestamp">
         <type xsi:type="pogoDsl:StringType"/>
       </argin>
       <argout description="N/A">
@@ -65,7 +65,7 @@
       <excludedStates>DISABLE</excludedStates>
     </commands>
     <commands name="ConfigureBand4" description="This command triggers the Dish to transition to the CONFIGURE Dish Element Mode, and returns to the caller. To configure the Dish to operate in frequency band 4. On completion of the band configuration, Dish will automatically revert to the previous Dish mode (OPERATE or STANDBY-FP)." execMethod="configure_band4" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
-      <argin description="[Timestamp]">
+      <argin description="Timestamp">
         <type xsi:type="pogoDsl:StringType"/>
       </argin>
       <argout description="N/A">
@@ -76,7 +76,7 @@
       <excludedStates>DISABLE</excludedStates>
     </commands>
     <commands name="ConfigureBand5" description="This command triggers the Dish to transition to the CONFIGURE Dish Element Mode, and returns to the caller. To configure the Dish to operate in frequency band 5. On completion of the band configuration, Dish will automatically revert to the previous Dish mode (OPERATE or STANDBY-FP)." execMethod="configure_band5" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
-      <argin description="[Timestamp]">
+      <argin description="Timestamp">
         <type xsi:type="pogoDsl:StringType"/>
       </argin>
       <argout description="N/A">

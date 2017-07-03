@@ -8,6 +8,9 @@ setup(name="tango_simlib",
       author_email="cam@ska.ac.za",
       packages=find_packages(),
       url='https://github.com/ska-sa/tango-simlib',
+      download_url='https://pypi.python.org/pypi/tango-simlib',
+      home_page='http://tango-simlib.readthedocs.io',
+      license="BSD",
       classifiers=[
           "Intended Audience :: Developers",
           "Programming Language :: Python :: 2",
@@ -33,13 +36,13 @@ setup(name="tango_simlib",
           },
       zip_safe=False,
       include_package_data=True,
-      package_data={'tango_simlib': ['tests/*.xmi', 'tests/*.json']},
+      package_data={'tango_simlib': ['SIMDD.schema', 'tests/*.xmi', 'tests/*.json']},
       dependency_links=[
           'git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
       entry_points={
           'console_scripts': [
-              'tango-simlib-tango-simulator-generator'
+              'tango-simlib-generator'
               '= tango_simlib.tango_sim_generator:main',
-              'tango-simlib-tango-launcher = tango_simlib.tango_launcher:main'
+              'tango-simlib-launcher = tango_simlib.tango_launcher:main'
           ]}
       )
