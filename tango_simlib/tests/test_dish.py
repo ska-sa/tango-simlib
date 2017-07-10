@@ -13,7 +13,7 @@ from PyTango import DevFailed
 DISH_ELEMENT_MASTER_COMMAND_LIST = frozenset([
     'Capture', 'ConfigureAttenuation', 'ConfigureBand1', 'ConfigureBand2',
     'ConfigureBand3', 'ConfigureBand4', 'ConfigureBand5', 'ConfigureNoiseDiode',
-    'EnableEngInterface', 'LowPower', 'FlushCmdQueue', 'Scan', 'Slew',
+    'EnableEngInterface', 'LowPower', 'LongRun', 'FlushCmdQueue', 'Scan', 'Slew',
     'SetMaintenanceMode', 'SetOperateMode', 'SetStandbyFPMode', 'SetStandbyLPMode',
     'SetStowMode', 'SetPntModelPars', 'Synchronise', 'Track'])
 
