@@ -3,10 +3,13 @@ import unittest
 import pkg_resources
 import mock
 
+from devicetest import TangoTestContext
 from mock import Mock, call
 
+from katcp.testutils import start_thread_with_cleanup
+
 from tango_simlib import tango_sim_generator, model
-from tango_simlib.testutils import ClassCleanupUnittestMixin
+from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
 
 from PyTango import DevFailed
 
@@ -320,3 +323,50 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
                              self.model.sim_quantities['desiredElevation'].last_val)
             self.assertEqual(pointing_state_quant.last_val,
                              pointing_state_enum_labels.index('READY'))
+
+    def test_long_running(self):
+        with mock.patch('time.sleep') as sleep_mock:
+            self.model.sim_actions['LongRun'](4.5)
+            calls = [call(10)]
+            num_method_calls = sleep_mock.call_count
+            self.assertEquals(num_method_calls, 1)
+            self.assertEquals(calls, sleep_mock.mock_calls)
+
+
+
+class test_Device(ClassCleanupUnittestMixin, unittest.TestCase):
+
+    longMessage = True
+
+    @classmethod
+    def setUpClassWithCleanup(cls):
+        cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
+        cls.data_descr_files = []
+        cls.data_descr_files.append(
+            pkg_resources.resource_filename('tango_simlib.tests',
+                                            'DishElementMaster.xmi'))
+        cls.data_descr_files.append(pkg_resources.resource_filename(
+            'tango_simlib.tests', 'DishElementMaster_SIMDD.json'))
+        cls.device_name = 'test/nodb/tangodeviceserver'
+        model = tango_sim_generator.configure_device_model(cls.data_descr_files,
+                                                           cls.device_name)
+        cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
+                model, cls.data_descr_files)[0]
+        cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
+                                             device_name=cls.device_name,
+                                             db=cls.tango_db)
+        start_thread_with_cleanup(cls, cls.tango_context)
+
+    def setUp(self):
+        super(test_Device, self).setUp()
+        self.device = self.tango_context.device
+
+    def test_long_running(self):
+        """Testing the device's long running command."""
+        with mock.patch('time.sleep') as sleep_mock:
+            self.device.set_timeout_millis(10001)
+            self.device.command_inout('LongRun', 4.5)
+            calls = [call(10)]
+            num_method_calls = sleep_mock.call_count
+            self.assertEquals(num_method_calls, 1)
+            self.assertEquals(calls, sleep_mock.mock_calls)
