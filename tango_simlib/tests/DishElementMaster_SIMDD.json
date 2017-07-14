@@ -387,7 +387,7 @@
         "actions": [
 	  {
 	    "behaviour": "long_running",
-	    "execution_time_secs": "10"
+	    "execution_time_secs": "5"
           }
         ],
         "input_parameters": {

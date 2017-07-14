@@ -326,11 +326,15 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
 
     def test_long_running(self):
         with mock.patch('time.sleep') as sleep_mock:
+            # We use the value '4.5' as an arbitrary value here
             self.model.sim_actions['LongRun'](4.5)
-            calls = [call(10)]
+            # We use value '5' as the time the long_running cmd is going sleep for.
+            calls = [call(5)]
             num_method_calls = sleep_mock.call_count
-            self.assertEquals(num_method_calls, 1)
-            self.assertEquals(calls, sleep_mock.mock_calls)
+            self.assertEquals(num_method_calls, 1, "The mocked method 'sleep' was called"
+                              " more than once.")
+            self.assertEquals(calls, sleep_mock.mock_calls, "The calls made to the"
+                              " mocked method 'sleep' are not the same.")
 
 
 
@@ -363,10 +367,13 @@ class test_Device(ClassCleanupUnittestMixin, unittest.TestCase):
 
     def test_long_running(self):
         """Testing the device's long running command."""
-        with mock.patch('time.sleep') as sleep_mock:
-            self.device.set_timeout_millis(10001)
-            self.device.command_inout('LongRun', 4.5)
-            calls = [call(10)]
-            num_method_calls = sleep_mock.call_count
-            self.assertEquals(num_method_calls, 1)
-            self.assertEquals(calls, sleep_mock.mock_calls)
+        long_running_cmd_min_exec_time = 5
+        self.device.set_timeout_millis(5100)
+        initial_time = time.time()
+        # We use the value '4.5' as an arbitrary value here as the cmd is expecting
+        # an input of type DevFloat.
+        self.device.command_inout('LongRun', 4.5)
+        final_time = time.time()
+        self.assertGreater(final_time-initial_time, long_running_cmd_min_exec_time,
+                           "The long-running command 'LongRun' did not run for as long"
+                           " as expected.")
