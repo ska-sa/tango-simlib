@@ -368,12 +368,15 @@ class test_Device(ClassCleanupUnittestMixin, unittest.TestCase):
     def test_long_running(self):
         """Testing the device's long running command."""
         long_running_cmd_min_exec_time = 5
+        expected_runtime = 5.00
         self.device.set_timeout_millis(5100)
         initial_time = time.time()
         # We use the value '4.5' as an arbitrary value here as the cmd is expecting
         # an input of type DevFloat.
         self.device.command_inout('LongRun', 4.5)
         final_time = time.time()
-        self.assertGreater(final_time-initial_time, long_running_cmd_min_exec_time,
+        actual_runtime = final_time - initial_time
+        self.assertGreater(actual_runtime, long_running_cmd_min_exec_time,
                            "The long-running command 'LongRun' did not run for as long"
                            " as expected.")
+        self.assertAlmostEqual(expected_runtime, actual_runtime, delta=0.01)
