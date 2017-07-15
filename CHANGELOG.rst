@@ -1,3 +1,9 @@
+0.1.5
+-----
+- Updates to the SimDD
+    - Added a new type of behaviour in the side-effect actions suite for long-running
+      commands.
+
 0.1.4
 -----
 - Package release documentation
@@ -8,7 +14,7 @@
 0.1.3
 -----
 - DISH config files included in examples of device simulators
-- JSON Schema for SIMDD configuration file validation
+- JSON Schema for SimDD configuration file validation
 
 0.1.2
 -----
