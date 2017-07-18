@@ -381,10 +381,10 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
 
     """
     data_file = sim_data_file
-    server_name = helper_module.get_server_name()
     klass_name = get_device_class(data_file)
 
     if test_device_name is None:
+        server_name = helper_module.get_server_name()
         db_instance = Database()
         # db_datum is a PyTango.DbDatum structure with attribute name and value_string.
         # The name attribute represents the name of the device server and the

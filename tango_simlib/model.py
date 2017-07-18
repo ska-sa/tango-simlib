@@ -486,6 +486,8 @@ class PopulateModelActions(object):
             temp_variables = {}
             return_value = None
             for action in actions:
+                if action['behaviour'] == 'long_running':
+                    time.sleep(float(action['execution_time_secs']))
                 if action['behaviour'] == 'input_transform':
                     temp_variables[action['destination_variable']] = data_input
                 if action['behaviour'] == 'side_effect':
@@ -493,6 +495,7 @@ class PopulateModelActions(object):
                     temp_variables[action['source_variable']] = data_input
                     model_quantity = model.sim_quantities[quantity]
                     model_quantity.set_val(data_input, model.time_func())
+
                 if action['behaviour'] == 'output_return':
                     if 'source_variable' in action and 'source_quantity' in action:
                         raise ValueError(

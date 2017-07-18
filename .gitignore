@@ -1,0 +1,19 @@
+# Python droppings
+*.py[cod]
+
+# Packages
+build
+dist
+*.egg-info
+*.egg
+/doc/_build
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+.noseids
+
+# Developer tools
+.ropeproject
+*~
