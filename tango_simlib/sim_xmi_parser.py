@@ -400,8 +400,10 @@ class XmiParser(object):
         property_data[property_group]['type'] = (
                 self._get_arg_type(description_data))
         try:
+            default_prop_values = description_data.findall('DefaultPropValue')
+            default_values = [prop_value.text for prop_value in default_prop_values]
             property_data[property_group]['DefaultPropValue'] = (
-                description_data.find('DefaultPropValue').text)
+                    default_values if default_values else "")
         except KeyError:
             MODULE_LOGGER.info("%s has no default value(s) specified", property_group)
         except AttributeError:
