@@ -288,13 +288,12 @@
                 "type": "string"
               },
               "DefaultPropValue": {
-                "type": "string"
+                "type": ["string", "number", "array"]
               }
             },
             "required": [
               "name",
-              "type",
-              "DefaultPropValue"
+              "type"
             ]
           }
         }
