@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 ###############################################################################
 # SKA South Africa (http://ska.ac.za/)                                        #
 # Author: cam@ska.ac.za                                                       #
@@ -22,6 +22,7 @@ import time
 from PyTango import Attr, AttrWriteType, UserDefaultAttrProp, AttrQuality, Database
 from PyTango.server import Device, DeviceMeta, command, attribute
 from PyTango import DevState, AttrDataFormat, CmdArgType
+from PyTango.server import device_property, class_property
 
 from functools import partial
 
@@ -31,6 +32,7 @@ from tango_simlib.simdd_json_parser import SimddParser
 from tango_simlib.sim_sdd_xml_parser import SDDParser
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.model import PopulateModelQuantities, PopulateModelActions
+from tango_simlib.model import PopulateModelProperties
 from tango_simlib import helper_module
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -254,6 +256,8 @@ def get_tango_device_server(model, sim_data_files):
             super(TangoDeviceServer, self).init_device()
             self.model = model
             self._reset_to_default_state()
+            self.fill_new_device_properties()
+
 
         def _reset_to_default_state(self):
             """Reset the model's quantities' adjustable attributes to their default
@@ -270,6 +274,13 @@ def get_tango_device_server(model, sim_data_files):
                     except KeyError:
                         adjustable_val = 0.0
                     setattr(simulated_quantity, attr, adjustable_val)
+
+        def fill_new_device_properties(self):
+            """Fill device properties into tangoDB"""
+            db_instance = Database()
+            for prop_name, prop_meta in self.model.sim_properties.items():
+                db_instance.put_device_property(
+                    self.get_name(), {prop_name: prop_meta['DefaultPropValue']})
 
         def initialize_dynamic_attributes(self):
             model_sim_quants = self.model.sim_quantities
@@ -404,6 +415,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         model_quantity_populator = PopulateModelQuantities(parser, dev_name, model)
         sim_model = model_quantity_populator.sim_model
         PopulateModelActions(parser, dev_name, sim_model)
+        PopulateModelProperties(parser, dev_name, sim_model)
     return model
 
 def generate_device_server(server_name, sim_data_files, directory=''):
@@ -421,7 +433,7 @@ def generate_device_server(server_name, sim_data_files, directory=''):
              'from PyTango.server import server_run',
              ('from tango_simlib.tango_sim_generator import ('
               'configure_device_model, get_tango_device_server)'),
-             '\n\n# File generated on {} by tango-simlib-tango-simulator-generator'.format(time.ctime()),
+             '\n\n# File generated on {} by tango-simlib-generator'.format(time.ctime()),
              '\n\ndef main():',
              '    sim_data_files = %s' % sim_data_files,
              '    model = configure_device_model(sim_data_files)',
