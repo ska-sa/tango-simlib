@@ -447,6 +447,8 @@ class XmiParser(object):
             # TypeArray in xmi file instead
             if arg_type in ['FloatArray', 'DoubleArray', 'StringArray']:
                 arg_type = getattr(PyTango, 'DevVar' + arg_type)
+            elif arg_type in ['FloatVector', 'DoubleVector', 'StringVector']:
+                arg_type = getattr(PyTango, 'DevVar' + arg_type.replace('Vector', 'Array'))
             else:
                 arg_type = getattr(PyTango, 'Dev' + arg_type)
         except AttributeError:
