@@ -564,19 +564,12 @@ class PopulateModelProperties(object):
         """Set up self.sim_properties from Model with simulated quantities
 
         Places simulated properties in sim_quantities dict. Keyed by name of
-        quantity, value must be instances satifying the
-        :class:`quantities.Quantity` interface
-
-        Notes
-        =====
-        - Must use self.start_time to set initial time values.
-        - Must call super method after setting up `sim_quantities`
+        property, value must be a string, number or array and it is optional.
 
         """
         device_props = self.parser_instance.get_reformatted_properties_metadata(
                             'deviceProperties')
         self.sim_model.set_sim_property(device_props)
-
 
 
 class SimModelException(Exception):
