@@ -7,6 +7,7 @@ import subprocess
 
 import pkg_resources
 import devicetest
+import PyTango
 
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
@@ -94,6 +95,18 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         self.assertEquals(actual_device_commands, expected_command_list,
                           "The commands specified in the xmi file are not present in"
                           " the device")
+
+    def test_device_property_list(self):
+        """Testing whether the device properties in the model are added to
+        the TANGO sim device as expected
+        """
+        db = PyTango.Database()
+        device_properties = db.get_device_property_list(self.sim_device.name(), '*')
+        actual_property_list = set(device_properties.value_string)
+        expected_property_list = set(self.expected_model.sim_properties.keys())
+        self.assertEquals(actual_property_list, expected_property_list,
+                          "The device properties specified in the config file are "
+                          "not present in the device")
 
     def test_sim_control_attribute_list(self):
         """Testing whether the attributes quantities in the model are added to
