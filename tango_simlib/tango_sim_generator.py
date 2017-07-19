@@ -19,12 +19,11 @@ import logging
 import argparse
 import time
 
+from functools import partial
+
 from PyTango import Attr, AttrWriteType, UserDefaultAttrProp, AttrQuality, Database
 from PyTango.server import Device, DeviceMeta, command, attribute
 from PyTango import DevState, AttrDataFormat, CmdArgType
-from PyTango.server import device_property, class_property
-
-from functools import partial
 
 from tango_simlib.model import Model
 from tango_simlib.sim_xmi_parser import XmiParser
@@ -256,7 +255,7 @@ def get_tango_device_server(model, sim_data_files):
             super(TangoDeviceServer, self).init_device()
             self.model = model
             self._reset_to_default_state()
-            self.fill_new_device_properties()
+            self.write_device_properties_to_db()
 
 
         def _reset_to_default_state(self):
@@ -275,8 +274,8 @@ def get_tango_device_server(model, sim_data_files):
                         adjustable_val = 0.0
                     setattr(simulated_quantity, attr, adjustable_val)
 
-        def fill_new_device_properties(self):
-            """Fill device properties into tangoDB"""
+        def write_device_properties_to_db(self):
+            """Writes device properties, including optional default value, to tango DB"""
             db_instance = Database()
             for prop_name, prop_meta in self.model.sim_properties.items():
                 db_instance.put_device_property(
