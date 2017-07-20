@@ -1,0 +1,6 @@
+# iIf you want to use the Device Server startup scripts for the examples included in tango_simlib
+# it needs to be generated with your specific src installation, i.e.:
+# And then: sudo setup install . -U 
+tango-simlib-generator --sim-data-file $SOURCE/tango_simlib/tests/DishElementMaster.xmi --sim-data-file $SOURCE/tango-simlib/tests/DishElementMaster_SIMDD.json --dserver-name DishElementMaster-DS --directory $SORUCE/scripts/
+
+tango-simlib-generator --sim-data-file $SOURCE/tango_simlib/tests/Weather.xmi --sim-data-file $SOURCE/tango-simlib/tests/Weather_SIMDD.json --dserver-name Weather-DS --directory $SOURCE/scripts/

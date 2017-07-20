@@ -3,7 +3,7 @@ from PyTango.server import server_run
 from tango_simlib.tango_sim_generator import (configure_device_model, get_tango_device_server)
 
 
-# File generated on Thu Jul 20 09:33:11 2017 by tango-simlib-generator
+# File generated on Thu Jul 20 10:00:29 2017 by tango-simlib-tango-simulator-generator
 
 
 def main():
