@@ -254,9 +254,10 @@ def get_tango_device_server(model, sim_data_files):
         def init_device(self):
             super(TangoDeviceServer, self).init_device()
             self.model = model
+            self.db_instance = Database()
+            write_device_properties_to_db(self.get_name(), self.model,
+                                          self.db_instance)
             self._reset_to_default_state()
-            self.write_device_properties_to_db()
-
 
         def _reset_to_default_state(self):
             """Reset the model's quantities' adjustable attributes to their default
@@ -273,13 +274,6 @@ def get_tango_device_server(model, sim_data_files):
                     except KeyError:
                         adjustable_val = 0.0
                     setattr(simulated_quantity, attr, adjustable_val)
-
-        def write_device_properties_to_db(self):
-            """Writes device properties, including optional default value, to tango DB"""
-            db_instance = Database()
-            for prop_name, prop_meta in self.model.sim_properties.items():
-                db_instance.put_device_property(
-                    self.get_name(), {prop_name: prop_meta['DefaultPropValue']})
 
         def initialize_dynamic_attributes(self):
             model_sim_quants = self.model.sim_quantities
@@ -323,7 +317,6 @@ def get_tango_device_server(model, sim_data_files):
             name = self.get_name()
             self.instances[name] = self
 
-
     klass_name = get_device_class(sim_data_files)
     TangoDeviceServer.TangoClassName = klass_name
     TangoDeviceServer.__name__ = klass_name
@@ -331,6 +324,11 @@ def get_tango_device_server(model, sim_data_files):
     SimControl.__name__ = '%sSimControl' % klass_name
     return [TangoDeviceServer, SimControl]
 
+def write_device_properties_to_db(device_name, model, db_instance):
+    """Writes device properties, including optional default value, to tango DB"""
+    for prop_name, prop_meta in model.sim_properties.items():
+        db_instance.put_device_property(
+            device_name, {prop_name: prop_meta['DefaultPropValue']})
 
 def get_parser_instance(sim_datafile):
     """This method returns an appropriate parser instance to generate a Tango device
