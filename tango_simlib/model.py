@@ -182,8 +182,8 @@ class PopulateModelQuantities(object):
             if isinstance(sim_model, Model):
                 self.sim_model = sim_model
             else:
-                raise SimModelException("The sim_model object passed is not an "
-                    "instance of the class mkat_tango.simlib.model.Model")
+                raise SimModelException("The sim_model object passed is not an instance"
+                                        " of the class mkat_tango.simlib.model.Model")
 
         else:
             self.sim_model = Model(tango_device_name)
@@ -554,8 +554,8 @@ class PopulateModelProperties(object):
             if isinstance(sim_model, Model):
                 self.sim_model = sim_model
             else:
-                raise SimModelException("The sim_model object passed is not an "
-                    "instance of the class mkat_tango.simlib.model.Model")
+                raise SimModelException("The sim_model object passed is not an instance"
+                                        " of the class mkat_tango.simlib.model.Model")
         else:
             self.sim_model = Model(tango_device_name)
         self.setup_sim_properties()
