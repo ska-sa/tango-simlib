@@ -325,7 +325,17 @@ def get_tango_device_server(model, sim_data_files):
     return [TangoDeviceServer, SimControl]
 
 def write_device_properties_to_db(device_name, model, db_instance):
-    """Writes device properties, including optional default value, to tango DB"""
+    """Writes device properties, including optional default value, to tango DB
+
+    Parameters
+    ----------
+    device_name : str
+        A TANGO device name
+    model : model.Model instance
+        Device model instance
+    db_instance : tango._tango.Database instance
+        Tango database instance
+    """
     for prop_name, prop_meta in model.sim_properties.items():
         db_instance.put_device_property(
             device_name, {prop_name: prop_meta['DefaultPropValue']})
