@@ -7,7 +7,6 @@ import subprocess
 
 import pkg_resources
 import devicetest
-import PyTango
 
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
@@ -33,7 +32,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         server_name = 'weather_ds'
         server_instance = 'test'
         database_filename = '%s/%s_tango.db' % (cls.temp_dir, server_name)
-        sim_device_prop = dict(sim_data_description_file=cls.data_descr_file[0])
         sim_test_device_prop = dict(model_key=device_name)
         patcher = devicetest.patch.Patcher()
         device_proxy = patcher.ActualDeviceProxy
@@ -41,11 +39,11 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                 server_name, cls.data_descr_file, cls.temp_dir)
         helper_module.append_device_to_db_file(
                 server_name, server_instance, device_name,
-                database_filename, cls.sim_device_class, sim_device_prop)
-        helper_module.append_device_to_db_file(
-                server_name, server_instance, '%scontrol' % device_name,
-                database_filename, '%sSimControl' % cls.sim_device_class,
-                sim_test_device_prop)
+                database_filename, cls.sim_device_class)
+        cls.db_instance = helper_module.append_device_to_db_file(
+                            server_name, server_instance, '%scontrol' % device_name,
+                            database_filename, '%sSimControl' % cls.sim_device_class,
+                            sim_test_device_prop)
         cls.sub_proc = subprocess.Popen(["python", "{}/{}".format(
                                             cls.temp_dir, server_name),
                                         server_instance, "-file={}".format(
@@ -69,7 +67,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         self.xmi_parser = sim_xmi_parser.XmiParser()
         self.xmi_parser.parse(self.data_descr_file[0])
         self.expected_model = tango_sim_generator.configure_device_model(
-                self.data_descr_file)
+                self.data_descr_file, self.sim_device.name())
         self.attr_name_enum_labels = sorted(
                 self.sim_control_device.attribute_query(
                      'attribute_name').enum_labels)
@@ -96,17 +94,29 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                           "The commands specified in the xmi file are not present in"
                           " the device")
 
-    def test_device_property_list(self):
+    def test_write_device_properties_to_db(self):
         """Testing whether the device properties in the model are added to
-        the TANGO sim device as expected
+        the tangoDB
         """
-        db = PyTango.Database()
-        device_properties = db.get_device_property_list(self.sim_device.name(), '*')
-        actual_property_list = set(device_properties.value_string)
+        tango_sim_generator.write_device_properties_to_db(
+                self.sim_device.name(), self.expected_model, self.db_instance)
         expected_property_list = set(self.expected_model.sim_properties.keys())
-        self.assertEquals(actual_property_list, expected_property_list,
-                          "The device properties specified in the config file are "
-                          "not present in the device")
+        expected_properties = len(expected_property_list)
+        db_info = self.db_instance.get_info()
+        db_info_list = db_info.split('\n')
+        device_prop_str = 'Device properties defined'
+        device_control_props = 1  # One property already in data base file. line 45
+        device_properties_defined = 0
+        for item in db_info_list:
+            if device_prop_str in item:
+                device_properties_defined = item.split('=')[-1]
+        self.assertEquals(expected_properties,
+                          # device_properties_defined include all props in  db file)
+                          # There are two devices in database file with sim
+                          # control device having one (1) model_key props
+                          int(device_properties_defined) - device_control_props,
+                          "The device properties specified in the config file"
+                          " are not same number as in the database")
 
     def test_sim_control_attribute_list(self):
         """Testing whether the attributes quantities in the model are added to
