@@ -39,6 +39,8 @@ setup(name="tango_simlib",
       package_data={'tango_simlib': ['SIMDD.schema', 'tests/*.xmi', 'tests/*.json']},
       dependency_links=[
           'git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
+      scripts=['scripts/DishElementMaster-DS',
+               'scripts/Weather-DS'],
       entry_points={
           'console_scripts': [
               'tango-simlib-generator'
