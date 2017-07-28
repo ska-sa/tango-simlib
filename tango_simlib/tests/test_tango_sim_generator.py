@@ -94,29 +94,32 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                           "The commands specified in the xmi file are not present in"
                           " the device")
 
+    def _count_device_properties(self):
+        """Count device properties in tango database"""
+        db_info = self.db_instance.get_info()
+        db_info_list = db_info.split('\n')
+        num_properties = 0
+        for line in db_info_list:
+            if 'Device properties defined' in line:
+                num_properties = line.split('=')[-1]
+        return int(num_properties)
+
+    def test_initial_device_properties(self):
+        """Test initial device properties added to the tangoDB"""
+        expected_count = 1  # model_key property already present in db
+        self.assertEquals(expected_count, self._count_device_properties())
+
     def test_write_device_properties_to_db(self):
         """Testing whether the device properties in the model are added to
         the tangoDB
         """
+        initial_count = self._count_device_properties()
         tango_sim_generator.write_device_properties_to_db(
                 self.sim_device.name(), self.expected_model, self.db_instance)
-        expected_property_list = set(self.expected_model.sim_properties.keys())
-        expected_properties = len(expected_property_list)
-        db_info = self.db_instance.get_info()
-        db_info_list = db_info.split('\n')
-        device_prop_str = 'Device properties defined'
-        device_control_props = 1  # One property already in data base file. line 45
-        device_properties_defined = 0
-        for item in db_info_list:
-            if device_prop_str in item:
-                device_properties_defined = item.split('=')[-1]
-        self.assertEquals(expected_properties,
-                          # device_properties_defined include all props in  db file)
-                          # There are two devices in database file with sim
-                          # control device having one (1) model_key props
-                          int(device_properties_defined) - device_control_props,
-                          "The device properties specified in the config file"
-                          " are not same number as in the database")
+        num_expected_properties = len(self.expected_model.sim_properties.keys())
+        final_count = self._count_device_properties()
+        num_added_properties = final_count - initial_count
+        self.assertEquals(num_expected_properties, num_added_properties)
 
     def test_sim_control_attribute_list(self):
         """Testing whether the attributes quantities in the model are added to
