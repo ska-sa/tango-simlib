@@ -32,7 +32,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         server_name = 'weather_ds'
         server_instance = 'test'
         database_filename = '%s/%s_tango.db' % (cls.temp_dir, server_name)
-        sim_device_prop = dict(sim_data_description_file=cls.data_descr_file[0])
         sim_test_device_prop = dict(model_key=device_name)
         patcher = devicetest.patch.Patcher()
         device_proxy = patcher.ActualDeviceProxy
@@ -40,11 +39,11 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                 server_name, cls.data_descr_file, cls.temp_dir)
         helper_module.append_device_to_db_file(
                 server_name, server_instance, device_name,
-                database_filename, cls.sim_device_class, sim_device_prop)
-        helper_module.append_device_to_db_file(
-                server_name, server_instance, '%scontrol' % device_name,
-                database_filename, '%sSimControl' % cls.sim_device_class,
-                sim_test_device_prop)
+                database_filename, cls.sim_device_class)
+        cls.db_instance = helper_module.append_device_to_db_file(
+                            server_name, server_instance, '%scontrol' % device_name,
+                            database_filename, '%sSimControl' % cls.sim_device_class,
+                            sim_test_device_prop)
         cls.sub_proc = subprocess.Popen(["python", "{}/{}".format(
                                             cls.temp_dir, server_name),
                                         server_instance, "-file={}".format(
@@ -68,7 +67,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         self.xmi_parser = sim_xmi_parser.XmiParser()
         self.xmi_parser.parse(self.data_descr_file[0])
         self.expected_model = tango_sim_generator.configure_device_model(
-                self.data_descr_file)
+                self.data_descr_file, self.sim_device.name())
         self.attr_name_enum_labels = sorted(
                 self.sim_control_device.attribute_query(
                      'attribute_name').enum_labels)
@@ -94,6 +93,33 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         self.assertEquals(actual_device_commands, expected_command_list,
                           "The commands specified in the xmi file are not present in"
                           " the device")
+
+    def _count_device_properties(self):
+        """Count device properties in tango database"""
+        db_info = self.db_instance.get_info()
+        db_info_list = db_info.split('\n')
+        num_properties = 0
+        for line in db_info_list:
+            if 'Device properties defined' in line:
+                num_properties = line.split('=')[-1]
+        return int(num_properties)
+
+    def test_initial_device_properties(self):
+        """Test initial device properties added to the tangoDB"""
+        expected_count = 1  # model_key property already present in db
+        self.assertEquals(expected_count, self._count_device_properties())
+
+    def test_write_device_properties_to_db(self):
+        """Testing whether the device properties in the model are added to
+        the tangoDB
+        """
+        initial_count = self._count_device_properties()
+        tango_sim_generator.write_device_properties_to_db(
+                self.sim_device.name(), self.expected_model, self.db_instance)
+        num_expected_properties = len(self.expected_model.sim_properties.keys())
+        final_count = self._count_device_properties()
+        num_added_properties = final_count - initial_count
+        self.assertEquals(num_expected_properties, num_added_properties)
 
     def test_sim_control_attribute_list(self):
         """Testing whether the attributes quantities in the model are added to
