@@ -318,6 +318,8 @@ class XmiParser(object):
         output_parameter = description_data.find('argout')
         command_data['argoutDescription'] = output_parameter.attrib['description']
         command_data['argoutType'] = self._get_arg_type(output_parameter)
+        command_data['inherited'] = (
+                self.description_data.find('status').attrib['inherited'])
         return command_data
 
     def extract_attributes_description_data(self, description_data):
@@ -462,6 +464,8 @@ class XmiParser(object):
         property_data[property_group] = description_data.attrib
         property_data[property_group]['type'] = (
                 self._get_arg_type(description_data))
+        property_data[property_group]['inherited'] = (
+                description_data.find('status')['inherited'])
         try:
             default_prop_values = description_data.findall('DefaultPropValue')
             default_values = [prop_value.text for prop_value in default_prop_values]
