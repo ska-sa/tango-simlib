@@ -62,7 +62,9 @@ POGO_USER_DEFAULT_ATTR_PROP_MAP = {
         'standardUnit': 'standard_unit',
         'format': 'format',
         'label': 'label',
-        'unit': 'unit'}
+        'unit': 'unit',
+        'inherited': 'inherited'
+        }
     }
 
 POGO_USER_DEFAULT_CMD_PROP_MAP = {
@@ -408,8 +410,8 @@ class XmiParser(object):
             attribute_data['dynamicAttributes']['enum_labels'] = sorted(enum_labels)
 
         attribute_data['properties'] = description_data.find('properties').attrib
-        attribute_data['inherited'] = description_data.find('status').attrib['inherited']
-
+        attribute_data['properties']['inherited'] = description_data.find('status').attrib['inherited']
+        
         try:
             attribute_data['eventCriteria'] = description_data.find(
                 'eventCriteria').attrib
@@ -423,7 +425,7 @@ class XmiParser(object):
         except AttributeError:
             MODULE_LOGGER.info(
                 "No archive event(s) information was captured in the XMI file.")
-
+        
         return attribute_data
 
     def extract_property_description_data(self, description_data, property_group):
