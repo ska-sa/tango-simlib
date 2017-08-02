@@ -169,7 +169,7 @@ class XmiParser(object):
 
         e.g.
         [{
-            "classProperties": {
+           "classProperties": {
                 "type": DevString,
                 "mandatory": "true",
                 "description": "Path to the pogo generate xmi file",
@@ -178,6 +178,18 @@ class XmiParser(object):
             }
         }]
 
+        """
+        self.class_description = []
+        """Data structure format is a list containing the Tango class description
+        information in a dict.
+
+        e.g.
+        [{
+           "super_class_num": {
+               "parent_class_name": "",
+               "relative_path_to_parent_xmi_file": ""
+               }
+        }]
         """
 
     def parse(self, sim_xmi_file):
@@ -207,7 +219,11 @@ class XmiParser(object):
         device_class = root.find('classes')
         self.device_class_name = device_class.attrib['name']
         for class_description_data in device_class:
-            if class_description_data.tag in ['commands']:
+            if class_description_data.tag in ['description']:
+                class_description_info = (
+                        self.extract_device_class_descr(class_description_data))
+                self.class_description.append(class_description_info)
+            elif class_description_data.tag in ['commands']:
                 command_info = (
                     self.extract_command_description_data(class_description_data))
                 self.device_commands.append(command_info)
@@ -223,6 +239,49 @@ class XmiParser(object):
                 class_property_info = self.extract_property_description_data(
                     class_description_data, class_description_data.tag)
                 self.class_properties.append(class_property_info)
+
+    def extract_device_class_descr(self, description_data):
+        """Extract Tango device class description data from the xmi tree element.
+
+        Parameters
+        ----------
+        description_data: xml.etree.ElementTree.Element
+            XMI tree element with class description data, where
+            expected element tag(s) are (i.e. description_data.tag)
+            ['inheritances(s)', 'identification'] and
+            description_data.attrib contains
+            {
+                "description": "",
+                "title": "",
+                "sourcePath": "",
+                "language": "",
+                "filestogenerate": "",
+                "license": "",
+                "copyright": "",
+                "hasMandatoryProperty": "",
+                "hasConcreteProperty": "",
+                "hasAbstractCommand": "",
+                "hasAbstractAttribute" : ""
+            }
+
+        Returns
+        -------
+        class_data: dict
+            Dictionary of all the class device data required for additional device
+            information.
+
+        """
+        #class_data = description_data.attrib   # This contains the additional
+                                                # information about the Tango device
+                                                # class, however it is not useful for
+                                                # the current problem.
+        class_data = {}
+        super_classes = description_data.findall('inheritances')
+        for super_class, super_class_num in zip(
+                super_classes, range(len(super_classes))):
+            class_data["super_class_{}".format(super_class_num)] = super_class.attrib
+
+        return class_data
 
     def extract_command_description_data(self, description_data):
         """Extract command description data from the xmi tree element.
