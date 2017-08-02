@@ -408,6 +408,7 @@ class XmiParser(object):
             attribute_data['dynamicAttributes']['enum_labels'] = sorted(enum_labels)
 
         attribute_data['properties'] = description_data.find('properties').attrib
+        attribute_data['inherited'] = description_data.find('status').attrib['inherited']
 
         try:
             attribute_data['eventCriteria'] = description_data.find(
