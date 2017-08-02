@@ -655,6 +655,9 @@ class XmiParser(object):
 
         return properties
 
+    def get_reformatted_class_description_metadata(self):
+        return self.class_description[0]
+
     def get_reformatted_override_metadata(self):
         # TODO(KM 15-12-2016) The PopulateModelQuantities and PopulateModelActions
         # classes assume that the parsers we have developed have the same interface
