@@ -72,7 +72,8 @@ POGO_USER_DEFAULT_CMD_PROP_MAP = {
     'arginDescription': 'doc_in',
     'arginType': 'dtype_in',
     'argoutDescription': 'doc_out',
-    'argoutType': 'dtype_out'}
+    'argoutType': 'dtype_out',
+    'inherited': 'inherited'}
 
 class XmiParser(object):
 
