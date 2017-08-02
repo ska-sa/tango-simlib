@@ -224,7 +224,7 @@ class XmiParser(object):
         for class_description_data in device_class:
             if class_description_data.tag in ['description']:
                 class_description_info = (
-                        self.extract_device_class_descr(class_description_data))
+                    self.extract_device_class_descr(class_description_data))
                 self.class_description.append(class_description_info)
             elif class_description_data.tag in ['commands']:
                 command_info = (
