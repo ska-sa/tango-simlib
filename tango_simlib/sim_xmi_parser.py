@@ -189,8 +189,8 @@ class XmiParser(object):
         e.g.
         [{
            "super_class_num": {
-               "parent_class_name": "",
-               "relative_path_to_parent_xmi_file": ""
+               "classname": "",
+               "sourcePath": "an absolute path to the parent xmi file."
                }
         }]
         """
