@@ -279,9 +279,10 @@ class XmiParser(object):
                                                 # class, however it is not useful for
                                                 # the current problem.
         class_data = {}
+        class_data["super_classes"] = []
         super_classes = description_data.findall('inheritances')
-        for num, super_class in enumerate(super_classes):
-            class_data["super_class_{}".format(num)] = super_class.attrib
+        for super_class in super_classes:
+            class_data["super_classes"].append(super_class.attrib)
 
         return class_data
 
@@ -412,7 +413,8 @@ class XmiParser(object):
             attribute_data['dynamicAttributes']['enum_labels'] = sorted(enum_labels)
 
         attribute_data['properties'] = description_data.find('properties').attrib
-        attribute_data['properties']['inherited'] = description_data.find('status').attrib['inherited']
+        attribute_data['properties']['inherited'] = (
+            description_data.find('status').attrib['inherited'])
         
         try:
             attribute_data['eventCriteria'] = description_data.find(
