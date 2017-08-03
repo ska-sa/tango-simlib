@@ -280,9 +280,8 @@ class XmiParser(object):
                                                 # the current problem.
         class_data = {}
         super_classes = description_data.findall('inheritances')
-        for super_class, super_class_num in zip(
-                super_classes, range(len(super_classes))):
-            class_data["super_class_{}".format(super_class_num)] = super_class.attrib
+        for num, super_class in enumerate(super_classes):
+            class_data["super_class_{}".format(num)] = super_class.attrib
 
         return class_data
 
