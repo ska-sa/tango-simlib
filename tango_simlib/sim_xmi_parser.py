@@ -674,3 +674,7 @@ class XmiParser(object):
         # an implementation when the XMI file has such parameter information (provided
         # in the SIMDD file).
         return {}
+
+    def _get_xmi_tree(self):
+        tree = ET.parse(self.data_description_file_name)
+        return tree
