@@ -254,7 +254,6 @@ def get_tango_device_server(model, sim_data_files):
             super(TangoDeviceServer, self).init_device()
             self.model = model
             self._not_added_attributes = []
-            self._not_added_attributes_num = 0
             self._reset_to_default_state()
 
         def _reset_to_default_state(self):
