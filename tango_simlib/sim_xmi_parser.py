@@ -448,6 +448,10 @@ class XmiParser(object):
             if arg_type in ['FloatArray', 'DoubleArray', 'StringArray']:
                 arg_type = getattr(PyTango, 'DevVar' + arg_type)
             else:
+                # Substituting the 'Int' type with 'Long'. 'DevInt' is not a supported
+                # data type in TANGO.
+                if arg_type == 'Int':
+                    arg_type = 'Long'
                 arg_type = getattr(PyTango, 'Dev' + arg_type)
         except AttributeError:
             MODULE_LOGGER.debug("PyTango has no attribute 'Dev{}".format(arg_type))
