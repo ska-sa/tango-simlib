@@ -20,7 +20,8 @@ TANGO_CMD_PARAMS_NAME_MAP = {
     'doc_in': 'in_type_desc',
     'dtype_in': 'in_type',
     'doc_out': 'out_type_desc',
-    'dtype_out': 'out_type'}
+    'dtype_out': 'out_type',
+    'inherited': 'inherited'}
 
 # These expected values are not yet complete, see comment in sim_xmi_parser.py
 # about currently unhandled attribute and command parameters.
@@ -36,13 +37,13 @@ expected_mandatory_attr_parameters = frozenset([
     "data_type", "writable", "name", "description", "delta_val",
     "max_alarm", "max_value", "min_value", "standard_unit", "min_alarm",
     "max_warning", "unit", "display_unit", "format", "delta_t", "label",
-    "min_warning"])
+    "min_warning", "inherited"])
 
 expected_mandatory_cmd_parameters = frozenset([
-    "name", "doc_in", "dtype_in", "doc_out", "dtype_out"])
+    "name", "doc_in", "dtype_in", "doc_out", "dtype_out", "inherited"])
 
 expected_mandatory_device_property_parameters = frozenset([
-    "type", "mandatory", "description", "name"])
+    "type", "mandatory", "description", "name", "inherited"])
 
 expected_mandatory_default_cmds_info = [
     {
@@ -56,6 +57,7 @@ expected_mandatory_default_cmds_info = [
         "displayLevel": 'OPERATOR',
         "polledPeriod": '0',
         "execMethod": 'dev_state',
+        "inherited": "true"
     },
     {
         "arginDescription": 'none',
@@ -68,6 +70,7 @@ expected_mandatory_default_cmds_info = [
         "execMethod": 'dev_status',
         "name": 'Status',
         "polledPeriod": '0',
+        "inherited": 'true'
      }
 ]
 
@@ -100,7 +103,8 @@ expected_pressure_attr_info = {
     'event_period': '1000',
     'archive_abs_change': '0.5',
     'archive_period': '1000',
-    'archive_rel_change': '10'}
+    'archive_rel_change': '10',
+    'inherited': 'false'}
 
 
 # The desired information for the DevEnum data type adminMode atttribute when
@@ -139,7 +143,8 @@ expected_admin_mode_devenum_attr_info = {
     'rel_change': '',
     'standard_unit': '',
     'unit': '',
-    'writable': PyTango.AttrWriteType.READ_WRITE}
+    'writable': PyTango.AttrWriteType.READ_WRITE,
+    'inherited': 'false'}
 
 
 expected_achieved_pointing_spectrum_attr_info = {
@@ -168,7 +173,8 @@ expected_achieved_pointing_spectrum_attr_info = {
     'rel_change': '',
     'standard_unit': '',
     'unit': '[ms, degree, degree]',
-    'writable': PyTango.AttrWriteType.READ_WRITE}
+    'writable': PyTango.AttrWriteType.READ_WRITE,
+    'inherited': 'false'}
 
 # The desired information for the 'On' command when the Weather.xmi file is parsed
 expected_on_cmd_info = {
@@ -176,7 +182,8 @@ expected_on_cmd_info = {
     'doc_in': 'No input parameter',
     'dtype_in': PyTango.CmdArgType.DevVoid,
     'doc_out': 'Command responds',
-    'dtype_out': PyTango.CmdArgType.DevVoid}
+    'dtype_out': PyTango.CmdArgType.DevVoid,
+    'inherited': 'false'}
 
 # The expected information that would be obtained for the device property when the
 # Weather.xmi file is parsed by the XmiParser.
@@ -184,7 +191,8 @@ expected_sim_xmi_file_device_property_info = {
     'name': 'sim_xmi_description_file',
     'mandatory': 'true',
     'description': 'Path to the pogo generated xmi file',
-    'type': PyTango.CmdArgType.DevString}
+    'type': PyTango.CmdArgType.DevString,
+    'inherited': 'false'}
 
 class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
@@ -235,6 +243,10 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
             attr_query_data = self.device.attribute_query(attr_name)
 
             for attr_parameter in attr_metadata:
+                # The 'inherited' parameter is not part of the TANGO device attribute
+                # properties.
+                if attr_parameter == 'inherited':
+                    continue
                 expected_attr_value = attr_metadata[attr_parameter]
                 attr_prop_value = getattr(attr_query_data, attr_parameter, None)
                 # Here the writable property is checked for, since Pogo
@@ -342,6 +354,10 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         for cmd_name, cmd_metadata in command_data.items():
             cmd_config_info = self.device.get_command_config(cmd_name)
             for cmd_prop, cmd_prop_value in cmd_metadata.items():
+                # The 'inherited' parameter is not part of the TANGO device command
+                # properties.
+                if cmd_prop == 'inherited':
+                    continue
                 self.assertTrue(
                     hasattr(cmd_config_info, TANGO_CMD_PARAMS_NAME_MAP[cmd_prop]),
                     "The cmd parameter '%s' for the cmd '%s' was not translated" %

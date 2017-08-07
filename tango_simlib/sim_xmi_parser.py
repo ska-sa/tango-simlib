@@ -62,7 +62,9 @@ POGO_USER_DEFAULT_ATTR_PROP_MAP = {
         'standardUnit': 'standard_unit',
         'format': 'format',
         'label': 'label',
-        'unit': 'unit'}
+        'unit': 'unit',
+        'inherited': 'inherited'
+        }
     }
 
 POGO_USER_DEFAULT_CMD_PROP_MAP = {
@@ -70,7 +72,8 @@ POGO_USER_DEFAULT_CMD_PROP_MAP = {
     'arginDescription': 'doc_in',
     'arginType': 'dtype_in',
     'argoutDescription': 'doc_out',
-    'argoutType': 'dtype_out'}
+    'argoutType': 'dtype_out',
+    'inherited': 'inherited'}
 
 class XmiParser(object):
 
@@ -169,7 +172,7 @@ class XmiParser(object):
 
         e.g.
         [{
-            "classProperties": {
+           "classProperties": {
                 "type": DevString,
                 "mandatory": "true",
                 "description": "Path to the pogo generate xmi file",
@@ -179,6 +182,38 @@ class XmiParser(object):
         }]
 
         """
+        self.class_description = {}
+        """Data structure format is a dictionary containing the Tango class description
+        information.
+
+        e.g.
+        {
+           "super_classes [{
+               "classname": "",
+               "sourcePath": "an absolute path to the parent xmi file."
+               }],
+        }
+        """
+        # TODO (KM 07-08-2017) Update the above docstring with these items below
+        # once the code in the 'extract_device_class_descr' has been commented out.
+        #   "description": "",
+        #   "title": "",
+        #   "sourcePath": "",
+        #   "language": "",
+        #   "filestogenerate": "",
+        #   "license": "",
+        #   "copyright": "",
+        #   "hasMandatoryProperty": "",
+        #   "hasConcreteProperty": "",
+        #   "hasAbstractCommand": "",
+        #   "hasAbstractAttribute": "",
+        #   "identification": {
+        #       "author": "",
+        #       "contact": "",
+        #       "emailDomain": ""
+        #       }
+
+        self._tree = None
 
     def parse(self, sim_xmi_file):
         """Read simulator description data from xmi file into `self.device_properties`
@@ -203,11 +238,14 @@ class XmiParser(object):
         """
         self.data_description_file_name = sim_xmi_file
         tree = ET.parse(sim_xmi_file)
+        self._tree = tree
         root = tree.getroot()
         device_class = root.find('classes')
         self.device_class_name = device_class.attrib['name']
         for class_description_data in device_class:
-            if class_description_data.tag in ['commands']:
+            if class_description_data.tag in ['description']:
+                self.extract_device_class_descr(class_description_data)
+            elif class_description_data.tag in ['commands']:
                 command_info = (
                     self.extract_command_description_data(class_description_data))
                 self.device_commands.append(command_info)
@@ -223,6 +261,50 @@ class XmiParser(object):
                 class_property_info = self.extract_property_description_data(
                     class_description_data, class_description_data.tag)
                 self.class_properties.append(class_property_info)
+
+    def extract_device_class_descr(self, description_data):
+        """Extract Tango device class description data from the xmi tree element.
+
+        Parameters
+        ----------
+        description_data: xml.etree.ElementTree.Element
+            XMI tree element with class description data, where
+            expected element tag(s) are (i.e. description_data.tag)
+            ['inheritances(s)', 'identification'] and
+            description_data.attrib contains
+            {
+                "description": "",
+                "title": "",
+                "sourcePath": "",
+                "language": "",
+                "filestogenerate": "",
+                "license": "",
+                "copyright": "",
+                "hasMandatoryProperty": "",
+                "hasConcreteProperty": "",
+                "hasAbstractCommand": "",
+                "hasAbstractAttribute" : ""
+            }
+
+        """
+        #class_data = description_data.attrib   # This contains the additional
+                                                # information about the Tango device
+                                                # class, however it is not useful for
+                                                # the current problem.
+        #class_data["identification"] = {}
+        #identification = description_data.find('identification')
+        #class_data["identification"]["contact"] = identification.attrib["contact"]
+        #class_data["identification"]["author"] = identification.attrib["author"]
+        #class_data["identification"]["emailDomain"] = (
+        #    identification.attrib["emailDomain"])
+        #    class_data["identification"].append(id.attrib)
+        class_data = {}
+        class_data["super_classes"] = []
+        super_classes = description_data.findall('inheritances')
+        for super_class in super_classes:
+            class_data["super_classes"].append(super_class.attrib)
+
+        self.class_description.update(class_data)
 
     def extract_command_description_data(self, description_data):
         """Extract command description data from the xmi tree element.
@@ -256,6 +338,8 @@ class XmiParser(object):
         output_parameter = description_data.find('argout')
         command_data['argoutDescription'] = output_parameter.attrib['description']
         command_data['argoutType'] = self._get_arg_type(output_parameter)
+        command_data['inherited'] = (
+                description_data.find('status').attrib['inherited'])
         return command_data
 
     def extract_attributes_description_data(self, description_data):
@@ -349,7 +433,9 @@ class XmiParser(object):
             attribute_data['dynamicAttributes']['enum_labels'] = sorted(enum_labels)
 
         attribute_data['properties'] = description_data.find('properties').attrib
-
+        attribute_data['properties']['inherited'] = (
+            description_data.find('status').attrib['inherited'])
+        
         try:
             attribute_data['eventCriteria'] = description_data.find(
                 'eventCriteria').attrib
@@ -363,7 +449,7 @@ class XmiParser(object):
         except AttributeError:
             MODULE_LOGGER.info(
                 "No archive event(s) information was captured in the XMI file.")
-
+        
         return attribute_data
 
     def extract_property_description_data(self, description_data, property_group):
@@ -399,6 +485,8 @@ class XmiParser(object):
         property_data[property_group] = description_data.attrib
         property_data[property_group]['type'] = (
                 self._get_arg_type(description_data))
+        property_data[property_group]['inherited'] = (
+                description_data.find('status').attrib['inherited'])
         try:
             default_prop_values = description_data.findall('DefaultPropValue')
             default_values = [prop_value.text for prop_value in default_prop_values]
@@ -603,3 +691,6 @@ class XmiParser(object):
         # an implementation when the XMI file has such parameter information (provided
         # in the SIMDD file).
         return {}
+
+    def get_xmi_tree(self):
+        return self._tree
