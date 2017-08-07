@@ -643,6 +643,10 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
                           "attribute list".format(expected_quantity))
             actual_device_attr_info = sim_quantities[expected_quantity].meta
             for prop in expected_device_attr_xmi_info[expected_quantity]:
+                # The 'inherited' parameter is not part of the Tango device attribute
+                # properties.
+                if prop == 'inherited':
+                    continue
                 if prop not in simdd_specified_temperature_attr_params.keys():
                     self.assertEquals(
                             expected_device_attr_xmi_info[expected_quantity][prop],
@@ -693,6 +697,10 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
                               "command list".format(expected_action))
                 actual_device_attr_info = sim_actions[expected_action]
                 for prop in expected_device_cmd_xmi_info[expected_action]:
+                    # The 'inherited' parameter is not part of the Tango device attribute
+                    # properties.
+                    if prop == 'inherited':
+                        continue
                     if prop not in simdd_specified_on_cmd_params.keys():
                         self.assertEquals(
                                 expected_device_cmd_xmi_info[expected_action][prop],
