@@ -182,18 +182,35 @@ class XmiParser(object):
         }]
 
         """
-        self.class_description = []
-        """Data structure format is a list containing the Tango class description
-        information in a dict.
+        self.class_description = {}
+        """Data structure format is a dictionary containing the Tango class description
+        information.
 
         e.g.
-        [{
-           "super_class_num": {
+        {
+           "super_class_num": [{
                "classname": "",
                "sourcePath": "an absolute path to the parent xmi file."
+               }],
+           "description": "",
+           "title": "",
+           "sourcePath": "",
+           "language": "",
+           "filestogenerate": "",
+           "license": "",
+           "copyright": "",
+           "hasMandatoryProperty": "",
+           "hasConcreteProperty": "",
+           "hasAbstractCommand": "",
+           "hasAbstractAttribute": "",
+           "identification": {
+               "author": "",
+               "contact": "",
+               "emailDomain": ""
                }
-        }]
+        }
         """
+        self._tree = None
 
     def parse(self, sim_xmi_file):
         """Read simulator description data from xmi file into `self.device_properties`
@@ -218,14 +235,13 @@ class XmiParser(object):
         """
         self.data_description_file_name = sim_xmi_file
         tree = ET.parse(sim_xmi_file)
+        self._tree = tree
         root = tree.getroot()
         device_class = root.find('classes')
         self.device_class_name = device_class.attrib['name']
         for class_description_data in device_class:
             if class_description_data.tag in ['description']:
-                class_description_info = (
-                    self.extract_device_class_descr(class_description_data))
-                self.class_description.append(class_description_info)
+                self.extract_device_class_descr(class_description_data)
             elif class_description_data.tag in ['commands']:
                 command_info = (
                     self.extract_command_description_data(class_description_data))
@@ -278,13 +294,20 @@ class XmiParser(object):
                                                 # information about the Tango device
                                                 # class, however it is not useful for
                                                 # the current problem.
+        #class_data["identification"] = {}
+        #identification = description_data.find('identification')
+        #class_data["identification"]["contact"] = identification.attrib["contact"]
+        #class_data["identification"]["author"] = identification.attrib["author"]
+        #class_data["identification"]["emailDomain"] = (
+        #    identification.attrib["emailDomain"])
+        #    class_data["identification"].append(id.attrib)
         class_data = {}
         class_data["super_classes"] = []
         super_classes = description_data.findall('inheritances')
         for super_class in super_classes:
             class_data["super_classes"].append(super_class.attrib)
 
-        return class_data
+        self.class_description.update(class_data)
 
     def extract_command_description_data(self, description_data):
         """Extract command description data from the xmi tree element.
@@ -664,9 +687,6 @@ class XmiParser(object):
 
         return properties
 
-    def get_reformatted_class_description_metadata(self):
-        return self.class_description[0]
-
     def get_reformatted_override_metadata(self):
         # TODO(KM 15-12-2016) The PopulateModelQuantities and PopulateModelActions
         # classes assume that the parsers we have developed have the same interface
@@ -675,6 +695,5 @@ class XmiParser(object):
         # in the SIMDD file).
         return {}
 
-    def _get_xmi_tree(self):
-        tree = ET.parse(self.data_description_file_name)
-        return tree
+    def get_xmi_tree(self):
+        return self._tree
