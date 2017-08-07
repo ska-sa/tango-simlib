@@ -188,28 +188,31 @@ class XmiParser(object):
 
         e.g.
         {
-           "super_class_num": [{
+           "super_classes [{
                "classname": "",
                "sourcePath": "an absolute path to the parent xmi file."
                }],
-           "description": "",
-           "title": "",
-           "sourcePath": "",
-           "language": "",
-           "filestogenerate": "",
-           "license": "",
-           "copyright": "",
-           "hasMandatoryProperty": "",
-           "hasConcreteProperty": "",
-           "hasAbstractCommand": "",
-           "hasAbstractAttribute": "",
-           "identification": {
-               "author": "",
-               "contact": "",
-               "emailDomain": ""
-               }
         }
         """
+        # TODO (KM 07-08-2017) Update the above docstring with these items below
+        # once the code in the 'extract_device_class_descr' has been commented out.
+        #   "description": "",
+        #   "title": "",
+        #   "sourcePath": "",
+        #   "language": "",
+        #   "filestogenerate": "",
+        #   "license": "",
+        #   "copyright": "",
+        #   "hasMandatoryProperty": "",
+        #   "hasConcreteProperty": "",
+        #   "hasAbstractCommand": "",
+        #   "hasAbstractAttribute": "",
+        #   "identification": {
+        #       "author": "",
+        #       "contact": "",
+        #       "emailDomain": ""
+        #       }
+
         self._tree = None
 
     def parse(self, sim_xmi_file):
@@ -282,12 +285,6 @@ class XmiParser(object):
                 "hasAbstractCommand": "",
                 "hasAbstractAttribute" : ""
             }
-
-        Returns
-        -------
-        class_data: dict
-            Dictionary of all the class device data required for additional device
-            information.
 
         """
         #class_data = description_data.attrib   # This contains the additional
