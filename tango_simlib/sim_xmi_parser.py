@@ -443,15 +443,22 @@ class XmiParser(object):
         if arg_type == 'State':
             return CmdArgType.DevState
         try:
+            # Substituting the 'Int' type with 'Long'. 'DevInt' is not a supported
+            # data type in TANGO.
+            if arg_type == 'Int':
+                arg_type = 'Long'
+            elif arg_type == 'UInt':
+                arg_type = 'ULong'
+            elif arg_type == 'IntArray':
+                arg_type = 'LongArray'
+            elif arg_type == 'UIntArray':
+                arg_type = 'ULongArray'
+
             # The DevVarTypeArray data type specified in pogo writes
             # TypeArray in xmi file instead
-            if arg_type in ['FloatArray', 'DoubleArray', 'StringArray']:
+            if arg_type in ['FloatArray', 'DoubleArray', 'StringArray', 'LongArray', 'ULongArray']:
                 arg_type = getattr(PyTango, 'DevVar' + arg_type)
             else:
-                # Substituting the 'Int' type with 'Long'. 'DevInt' is not a supported
-                # data type in TANGO.
-                if arg_type == 'Int':
-                    arg_type = 'Long'
                 arg_type = getattr(PyTango, 'Dev' + arg_type)
         except AttributeError:
             MODULE_LOGGER.debug("PyTango has no attribute 'Dev{}".format(arg_type))
