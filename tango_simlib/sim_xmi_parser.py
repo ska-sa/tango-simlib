@@ -331,7 +331,7 @@ class XmiParser(object):
             Dictionary of all the command data required to create a tango command
 
         """
-        command_data = description_data.attrib
+        command_data = description_data.attrib.copy()
         input_parameter = description_data.find('argin')
         command_data['arginDescription'] = input_parameter.attrib['description']
         command_data['arginType'] = self._get_arg_type(input_parameter)
@@ -409,7 +409,7 @@ class XmiParser(object):
 
         """
         attribute_data = dict()
-        attribute_data['dynamicAttributes'] = description_data.attrib
+        attribute_data['dynamicAttributes'] = description_data.attrib.copy()
 
         attType = attribute_data['dynamicAttributes']['attType']
         if attType in POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP.keys():
@@ -482,7 +482,7 @@ class XmiParser(object):
 
         """
         property_data = dict()
-        property_data[property_group] = description_data.attrib
+        property_data[property_group] = description_data.attrib.copy()
         property_data[property_group]['type'] = (
                 self._get_arg_type(description_data))
         property_data[property_group]['inherited'] = (
