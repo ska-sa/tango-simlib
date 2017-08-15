@@ -528,8 +528,9 @@ class XmiParser(object):
         # For now it will be treated as normal DevString type
         if arg_type.find('Const') != -1:
             arg_type = arg_type.replace('Const', '')
-        # The out_type of the device State command is PyTango._PyTango.CmdArgType.DevState
-        # instead of the default PyTango.utils.DevState
+        # The out_type of the device State command is
+        # PyTango._PyTango.CmdArgType.DevState instead of the default
+        # PyTango.utils.DevState.
         if arg_type == 'State':
             return CmdArgType.DevState
         try:
@@ -550,7 +551,8 @@ class XmiParser(object):
                             'LongArray', 'ULongArray']:
                 arg_type = getattr(PyTango, 'DevVar' + arg_type)
             elif arg_type in ['FloatVector', 'DoubleVector', 'StringVector']:
-                arg_type = getattr(PyTango, 'DevVar' + arg_type.replace('Vector', 'Array'))
+                arg_type = (
+                    getattr(PyTango, 'DevVar' + arg_type.replace('Vector', 'Array')))
             else:
                 arg_type = getattr(PyTango, 'Dev' + arg_type)
         except AttributeError:
