@@ -512,11 +512,11 @@ class test_PopModelActions(GenericSetup):
                                 (cmd_name))
 
 class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
-    """Test the use of xmi to generate a tango simulator.
+    """Test the use of XMI to generate a TANGO simulator.
 
     This class specifically ensures that the devEnum attribute type and
     spectrum data format attributes added statically prior to device start-up
-    are well configured using the specified parameters in the POGO xmi.
+    are well configured using the specified parameters in the POGO XMI.
 
     """
 
@@ -561,16 +561,17 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
                          "expected list!")
 
     def test_enum_attribute_properties(self):
-        """Test whether the DevEnum attributes are well configred.
+        """Test whether the DevEnum attributes are well configured.
 
         Checks whether the DevEnum data type attribute properties specified
-        in the POGO generated xmi file are added to the TANGO device
+        in the POGO generated XMI file are added to the TANGO device
 
         """
         attr_name = 'adminMode'
         attributes = set(self.device.get_attribute_list())
         self.assertIn(attr_name, attributes,
-                      "The attribute adminMode is not in the device attribute list")
+                      "The attribute {} is not in the device attribute list".
+                      format(attr_name))
         attr_config = self.device.get_attribute_config(attr_name)
         for attr_prop, attr_prop_val in expected_admin_mode_devenum_attr_info.items():
             device_attr_prop_val = getattr(attr_config, attr_prop, None)
@@ -595,30 +596,24 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
         """Test whether the Spectrum attributes are well configred.
 
         Checks whether the Spectrum data format attribute properties specified
-        in the POGO generated xmi file are added to the TANGO device
+        in the POGO generated XMI file are added to the TANGO device
 
         """
         attr_name = 'achievedPointing'
         attributes = set(self.device.get_attribute_list())
         self.assertIn(attr_name, attributes,
-                      "The attribute adminMode is not in the device attribute list")
+                      "The attribute {} is not in the device attribute list".
+                      format(attr_name))
         attr_config = self.device.get_attribute_config(attr_name)
         for attr_prop, attr_prop_val in (
                 expected_achieved_pointing_spectrum_attr_info.items()):
             device_attr_prop_val = getattr(attr_config, attr_prop, None)
             if device_attr_prop_val:
-                # Tango device return attribute properties with Not pecified
+                # Tango device return attribute properties with 'Not specified'
                 # or No `property name` value if no info is provided
                 if str(device_attr_prop_val) in helper_module.TANGO_NOT_SPECIFIED_PROPS:
                     device_attr_prop_val = ''
-                # In the case of enum labels we assert the set of the lists
-                if type(attr_prop_val) == list:
-                    self.assertEqual(set(device_attr_prop_val), set(attr_prop_val),
-                                     "The expected value for the device property "
-                                     "parameter '%s' does not match with the "
-                                     "actual value" % (attr_prop))
-                else:
-                    self.assertEqual(device_attr_prop_val, attr_prop_val,
-                                     "The expected value for the device property "
-                                     "parameter '%s' does not match with the "
-                                     "actual value" % (attr_prop))
+                self.assertEqual(device_attr_prop_val, attr_prop_val,
+                                 "The expected value for the device property "
+                                 "parameter '%s' does not match with the "
+                                 "actual value" % (attr_prop))

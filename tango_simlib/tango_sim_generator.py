@@ -284,7 +284,10 @@ def get_tango_device_server(model, sim_data_files):
                 # device class prior to start-up.
                 if str(attr_dtype) == 'DevEnum':
                     continue
-                elif str(d_format) in ['SPECTRUM', 'IMAGE']:
+                elif str(d_format) == 'SPECTRUM':
+                    continue
+                elif str(d_format) == 'IMAGE':
+                    self._not_added_attributes.append(attribute_name)
                     continue
                 else:
                     # The return value of rwType is a string and it is required as a
