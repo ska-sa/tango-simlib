@@ -72,6 +72,7 @@ class Model(object):
         self.last_update_time = self.start_time
         self.sim_quantities = {}
         self.sim_actions = {}
+        self.sim_properties = {}
         self.test_sim_actions = {}
         self.sim_actions_meta = {}
         self._sim_state = {}
@@ -156,6 +157,9 @@ class Model(object):
         """
         self.test_sim_actions[name] = partial(handler, self)
 
+    def set_sim_property(self, device_prop):
+        self.sim_properties.update(device_prop)
+
 
 class PopulateModelQuantities(object):
     """Used to populate/update model quantities
@@ -178,8 +182,8 @@ class PopulateModelQuantities(object):
             if isinstance(sim_model, Model):
                 self.sim_model = sim_model
             else:
-                raise SimModelException("The sim_model object passed is not an "
-                    "instance of the class mkat_tango.simlib.model.Model")
+                raise SimModelException("The sim_model object passed is not an instance"
+                                        " of the class mkat_tango.simlib.model.Model")
 
         else:
             self.sim_model = Model(tango_device_name)
@@ -482,6 +486,8 @@ class PopulateModelActions(object):
             temp_variables = {}
             return_value = None
             for action in actions:
+                if action['behaviour'] == 'long_running':
+                    time.sleep(float(action['execution_time_secs']))
                 if action['behaviour'] == 'input_transform':
                     temp_variables[action['destination_variable']] = data_input
                 if action['behaviour'] == 'side_effect':
@@ -489,6 +495,7 @@ class PopulateModelActions(object):
                     temp_variables[action['source_variable']] = data_input
                     model_quantity = model.sim_quantities[quantity]
                     model_quantity.set_val(data_input, model.time_func())
+
                 if action['behaviour'] == 'output_return':
                     if 'source_variable' in action and 'source_quantity' in action:
                         raise ValueError(
@@ -524,6 +531,45 @@ class PopulateModelActions(object):
 
         action_handler.__name__ = action_name
         return action_handler
+
+
+class PopulateModelProperties(object):
+    """Used to populate/update model properties
+
+    Populates the model properties using the data from the TANGO device information
+    captured in the POGO generated xmi file.
+
+    Attributes
+    ----------
+    parser_instance : Parser instance
+        The Parser object which reads an xmi/xml/json file and parses it into device
+        attributes, commands, and properties.
+    sim_model :  Model instance
+        An instance of the Model class which is used for simulation of simple attributes.
+
+    """
+    def __init__(self, parser_instance, tango_device_name, sim_model=None):
+        self.parser_instance = parser_instance
+        if sim_model:
+            if isinstance(sim_model, Model):
+                self.sim_model = sim_model
+            else:
+                raise SimModelException("The sim_model object passed is not an instance"
+                                        " of the class mkat_tango.simlib.model.Model")
+        else:
+            self.sim_model = Model(tango_device_name)
+        self.setup_sim_properties()
+
+    def setup_sim_properties(self):
+        """Set up self.sim_properties from Model with simulated quantities
+
+        Places simulated properties in sim_quantities dict. Keyed by name of
+        property, value must be a string, number or array and it is optional.
+
+        """
+        device_props = self.parser_instance.get_reformatted_properties_metadata(
+                            'deviceProperties')
+        self.sim_model.set_sim_property(device_props)
 
 
 class SimModelException(Exception):

@@ -19,11 +19,11 @@ import logging
 import argparse
 import time
 
+from functools import partial
+
 from PyTango import Attr, AttrWriteType, UserDefaultAttrProp, AttrQuality, Database
 from PyTango.server import Device, DeviceMeta, command, attribute
 from PyTango import DevState, AttrDataFormat, CmdArgType
-
-from functools import partial
 
 from tango_simlib.model import Model
 from tango_simlib.sim_xmi_parser import XmiParser
@@ -31,6 +31,7 @@ from tango_simlib.simdd_json_parser import SimddParser
 from tango_simlib.sim_sdd_xml_parser import SDDParser
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.model import PopulateModelQuantities, PopulateModelActions
+from tango_simlib.model import PopulateModelProperties
 from tango_simlib import helper_module
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -254,6 +255,7 @@ def get_tango_device_server(model, sim_data_files):
             super(TangoDeviceServer, self).init_device()
             self.model = model
             self._not_added_attributes = []
+            write_device_properties_to_db(self.get_name(), self.model)
             self._reset_to_default_state()
 
         def _reset_to_default_state(self):
@@ -341,7 +343,6 @@ def get_tango_device_server(model, sim_data_files):
             name = self.get_name()
             self.instances[name] = self
 
-
     klass_name = get_device_class(sim_data_files)
     TangoDeviceServer.TangoClassName = klass_name
     TangoDeviceServer.__name__ = klass_name
@@ -349,6 +350,23 @@ def get_tango_device_server(model, sim_data_files):
     SimControl.__name__ = '%sSimControl' % klass_name
     return [TangoDeviceServer, SimControl]
 
+def write_device_properties_to_db(device_name, model, db_instance=None):
+    """Writes device properties, including optional default value, to tango DB
+
+    Parameters
+    ----------
+    device_name : str
+        A TANGO device name
+    model : model.Model instance
+        Device model instance
+    db_instance : tango._tango.Database instance
+        Tango database instance
+    """
+    if not db_instance:
+        db_instance = Database()
+    for prop_name, prop_meta in model.sim_properties.items():
+        db_instance.put_device_property(
+            device_name, {prop_name: prop_meta['DefaultPropValue']})
 
 def get_parser_instance(sim_datafile):
     """This method returns an appropriate parser instance to generate a Tango device
@@ -398,10 +416,10 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
 
     """
     data_file = sim_data_file
-    server_name = helper_module.get_server_name()
     klass_name = get_device_class(data_file)
 
     if test_device_name is None:
+        server_name = helper_module.get_server_name()
         db_instance = Database()
         # db_datum is a PyTango.DbDatum structure with attribute name and value_string.
         # The name attribute represents the name of the device server and the
@@ -432,6 +450,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         model_quantity_populator = PopulateModelQuantities(parser, dev_name, model)
         sim_model = model_quantity_populator.sim_model
         PopulateModelActions(parser, dev_name, sim_model)
+        PopulateModelProperties(parser, dev_name, sim_model)
     return model
 
 def generate_device_server(server_name, sim_data_files, directory=''):
@@ -449,7 +468,7 @@ def generate_device_server(server_name, sim_data_files, directory=''):
              'from PyTango.server import server_run',
              ('from tango_simlib.tango_sim_generator import ('
               'configure_device_model, get_tango_device_server)'),
-             '\n\n# File generated on {} by tango-simlib-tango-simulator-generator'.format(time.ctime()),
+             '\n\n# File generated on {} by tango-simlib-generator'.format(time.ctime()),
              '\n\ndef main():',
              '    sim_data_files = %s' % sim_data_files,
              '    model = configure_device_model(sim_data_files)',

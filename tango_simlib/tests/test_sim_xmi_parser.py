@@ -20,7 +20,8 @@ TANGO_CMD_PARAMS_NAME_MAP = {
     'doc_in': 'in_type_desc',
     'dtype_in': 'in_type',
     'doc_out': 'out_type_desc',
-    'dtype_out': 'out_type'}
+    'dtype_out': 'out_type',
+    'inherited': 'inherited'}
 
 # These expected values are not yet complete, see comment in sim_xmi_parser.py
 # about currently unhandled attribute and command parameters.
@@ -36,13 +37,13 @@ expected_mandatory_attr_parameters = frozenset([
     "data_type", "writable", "name", "description", "delta_val",
     "max_alarm", "max_value", "min_value", "standard_unit", "min_alarm",
     "max_warning", "unit", "display_unit", "format", "delta_t", "label",
-    "min_warning"])
+    "min_warning", "inherited"])
 
 expected_mandatory_cmd_parameters = frozenset([
-    "name", "doc_in", "dtype_in", "doc_out", "dtype_out"])
+    "name", "doc_in", "dtype_in", "doc_out", "dtype_out", "inherited"])
 
 expected_mandatory_device_property_parameters = frozenset([
-    "type", "mandatory", "description", "name"])
+    "type", "mandatory", "description", "name", "inherited"])
 
 expected_mandatory_default_cmds_info = [
     {
@@ -56,6 +57,7 @@ expected_mandatory_default_cmds_info = [
         "displayLevel": 'OPERATOR',
         "polledPeriod": '0',
         "execMethod": 'dev_state',
+        "inherited": "true"
     },
     {
         "arginDescription": 'none',
@@ -68,6 +70,7 @@ expected_mandatory_default_cmds_info = [
         "execMethod": 'dev_status',
         "name": 'Status',
         "polledPeriod": '0',
+        "inherited": 'true'
      }
 ]
 
@@ -100,7 +103,8 @@ expected_pressure_attr_info = {
     'event_period': '1000',
     'archive_abs_change': '0.5',
     'archive_period': '1000',
-    'archive_rel_change': '10'}
+    'archive_rel_change': '10',
+    'inherited': 'false'}
 
 
 # The desired information for the DevEnum data type adminMode atttribute when
@@ -139,7 +143,8 @@ expected_admin_mode_devenum_attr_info = {
     'rel_change': '',
     'standard_unit': '',
     'unit': '',
-    'writable': PyTango.AttrWriteType.READ_WRITE}
+    'writable': PyTango.AttrWriteType.READ_WRITE,
+    'inherited': 'false'}
 
 
 expected_achieved_pointing_spectrum_attr_info = {
@@ -168,7 +173,8 @@ expected_achieved_pointing_spectrum_attr_info = {
     'rel_change': '',
     'standard_unit': '',
     'unit': '[ms, degree, degree]',
-    'writable': PyTango.AttrWriteType.READ_WRITE}
+    'writable': PyTango.AttrWriteType.READ_WRITE,
+    'inherited': 'false'}
 
 # The desired information for the 'On' command when the Weather.xmi file is parsed
 expected_on_cmd_info = {
@@ -176,7 +182,8 @@ expected_on_cmd_info = {
     'doc_in': 'No input parameter',
     'dtype_in': PyTango.CmdArgType.DevVoid,
     'doc_out': 'Command responds',
-    'dtype_out': PyTango.CmdArgType.DevVoid}
+    'dtype_out': PyTango.CmdArgType.DevVoid,
+    'inherited': 'false'}
 
 # The expected information that would be obtained for the device property when the
 # Weather.xmi file is parsed by the XmiParser.
@@ -184,7 +191,12 @@ expected_sim_xmi_file_device_property_info = {
     'name': 'sim_xmi_description_file',
     'mandatory': 'true',
     'description': 'Path to the pogo generated xmi file',
-    'type': PyTango.CmdArgType.DevString}
+    'type': PyTango.CmdArgType.DevString,
+    'inherited': 'false'}
+
+EXPECTED_QUANTITIES_LIST = ['insolation', 'temperature', 'pressure', 'rainfall',
+                            'relative-humidity', 'wind-direction',
+                            'input-comms-ok', 'wind-speed', 'image1']
 
 class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
@@ -216,12 +228,25 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         """ Test whether the attributes specified in the POGO generated xmi file
         are added to the TANGO device
         """
+        # First testing that the attribute with data format "IMAGE" is not in the device.
+        attribute_name = 'image1'
+        device_attributes = set(self.device.get_attribute_list())
+        self.assertNotIn(attribute_name, device_attributes,
+                         "The attribute {} has been added to the device.".
+                         format(attribute_name))
+        not_added_attr = self.device.read_attribute('AttributesNotAdded')
+        not_added_attr_names = getattr(not_added_attr, 'value')
+        self.assertIn(attribute_name, not_added_attr_names,
+                      "The attribute {} was not added to the list of attributes that"
+                      " could not be added to the device.".format(attribute_name))
+
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
         for attribute_data in self.xmi_parser.device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
-        self.assertEqual(set(expected_attributes), attributes - default_attributes,
+        self.assertEqual(set(expected_attributes) - set(not_added_attr_names),
+                         attributes - default_attributes,
                          "Actual tango device attribute list differs from expected "
                          "list!")
 
@@ -230,11 +255,17 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         attribute_data = self.xmi_parser.get_reformatted_device_attr_metadata()
 
         for attr_name, attr_metadata in attribute_data.items():
+            if attr_name == 'image1':
+                continue
             self.assertIn(attr_name, attribute_list,
                           "Device does not have the attribute %s" % (attr_name))
             attr_query_data = self.device.attribute_query(attr_name)
 
             for attr_parameter in attr_metadata:
+                # The 'inherited' parameter is not part of the TANGO device attribute
+                # properties.
+                if attr_parameter == 'inherited':
+                    continue
                 expected_attr_value = attr_metadata[attr_parameter]
                 attr_prop_value = getattr(attr_query_data, attr_parameter, None)
                 # Here the writable property is checked for, since Pogo
@@ -342,6 +373,10 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         for cmd_name, cmd_metadata in command_data.items():
             cmd_config_info = self.device.get_command_config(cmd_name)
             for cmd_prop, cmd_prop_value in cmd_metadata.items():
+                # The 'inherited' parameter is not part of the TANGO device command
+                # properties.
+                if cmd_prop == 'inherited':
+                    continue
                 self.assertTrue(
                     hasattr(cmd_config_info, TANGO_CMD_PARAMS_NAME_MAP[cmd_prop]),
                     "The cmd parameter '%s' for the cmd '%s' was not translated" %
@@ -369,13 +404,10 @@ class test_XmiParser(GenericSetup):
         XMI file.
         """
         actual_parsed_attrs = self.xmi_parser.get_reformatted_device_attr_metadata()
-        expected_attr_list = ['insolation', 'temperature', 'pressure', 'rainfall',
-                              'relative-humidity', 'wind-direction',
-                              'input-comms-ok', 'wind-speed']
         actual_parsed_attr_list = actual_parsed_attrs.keys()
         self.assertGreater(len(actual_parsed_attr_list), 0,
                            "There is no attribute information parsed")
-        self.assertEquals(set(expected_attr_list), set(actual_parsed_attr_list),
+        self.assertEquals(set(EXPECTED_QUANTITIES_LIST), set(actual_parsed_attr_list),
                           'There are missing attributes')
 
         # Test if all the parsed attributes have the mandatory properties
@@ -484,11 +516,8 @@ class test_PopModelQuantities(GenericSetup):
 
         self.assertEqual(device_name, pmq.sim_model.name,
                 "The device name and the model name do not match.")
-        expected_quantities_list = ['insolation', 'temperature', 'pressure', 'rainfall',
-                                    'relative-humidity', 'wind-direction',
-                                    'input-comms-ok', 'wind-speed']
         actual_quantities_list = pmq.sim_model.sim_quantities.keys()
-        self.assertEqual(set(expected_quantities_list), set(actual_quantities_list),
+        self.assertEqual(set(EXPECTED_QUANTITIES_LIST), set(actual_quantities_list),
                          "The are quantities missing in the model")
 
 class test_PopModelActions(GenericSetup):

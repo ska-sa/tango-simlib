@@ -380,6 +380,27 @@
           "dformat_out": "Scalar"
         }
       }
+    },
+    {
+      "basicCommandData": {
+        "name": "LongRun",
+        "actions": [
+	  {
+	    "behaviour": "long_running",
+	    "execution_time_secs": "5"
+          }
+        ],
+        "input_parameters": {
+          "dtype_in": "Float",
+          "doc_in": "Average time",
+          "dformat_in": "Scalar"
+        },
+        "output_parameters": {
+          "dtype_out": "Void",
+          "doc_out": "",
+          "dformat_out": "Scalar"
+        }
+      }
     }
   ],
   "class_overrides": [

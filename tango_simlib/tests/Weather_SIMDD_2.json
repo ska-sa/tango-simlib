@@ -252,7 +252,7 @@
       "propertyData": {
         "name": "simulated_values",
         "type": "VarStringArray",
-        "DefaultPropValue": "temperature, insolation, pressure, rainfall, relative_humidity, wind_direction, wind_speed"
+        "DefaultPropValue": ["temperature", "insolation", "pressure", "rainfall", "relative_humidity", "wind_direction", "wind_speed"]
       }
     }
   ],
