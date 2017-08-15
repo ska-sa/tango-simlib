@@ -73,15 +73,29 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                      'attribute_name').enum_labels)
 
     def test_device_attribute_list(self):
-        """ Testing whether the attributes specified in the POGO generated xmi file
-        are added to the TANGO device
+        """ Testing whether the attributes specified in the POGO generated XMI file
+        are added to the TANGO device.
         """
-        attributes = set(self.sim_device.get_attribute_list())
+        # First testing that the attribute with data format "IMAGE" is not in the device.
+        attribute_name = 'image1'
+        device_attributes = set(self.sim_device.get_attribute_list())
+        self.assertNotIn(attribute_name, device_attributes,
+                         "The attribute {} has been added to the device.".
+                         format(attribute_name))
+        not_added_attr = self.sim_device.read_attribute('AttributesNotAdded')
+        not_added_attr_names = not_added_attr.value
+        self.assertIn(attribute_name, not_added_attr_names,
+                      "The attribute {} was not added to the list of attributes that"
+                      " could not be added to the device.".format(attribute_name))
+
         expected_attributes = []
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
+
         for attribute_data in self.xmi_parser.device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
-        self.assertEqual(set(expected_attributes), attributes - default_attributes,
+
+        self.assertEqual(set(expected_attributes) - set(not_added_attr_names),
+                         device_attributes - default_attributes,
                          "Actual tango device attribute list differs from expected "
                          "list!")
 

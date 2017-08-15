@@ -28,6 +28,12 @@ POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP = {
     'Scalar': AttrDataFormat.SCALAR,
     'Spectrum': AttrDataFormat.SPECTRUM}
 
+INT_TYPE_MAP = {
+    'Int': 'Long',
+    'UInt': 'ULong',
+    'IntArray': 'LongArray',
+    'UIntArray': 'ULongArray'
+    }
 # TODO(KM 31-10-2016): Need to add xmi attributes' properties that are currently
 # not being handled by the parser e.g. [displayLevel, enumLabels] etc.
 POGO_USER_DEFAULT_ATTR_PROP_MAP = {
@@ -339,7 +345,7 @@ class XmiParser(object):
         command_data['argoutDescription'] = output_parameter.attrib['description']
         command_data['argoutType'] = self._get_arg_type(output_parameter)
         command_data['inherited'] = (
-                description_data.find('status').attrib['inherited'])
+            description_data.find('status').attrib['inherited'])
         return command_data
 
     def extract_attributes_description_data(self, description_data):
@@ -416,12 +422,12 @@ class XmiParser(object):
             attribute_data['dynamicAttributes']['attType'] = (
                 POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP[attType])
 
-        attribute_data['dynamicAttributes']['maxX'] = (1
-                if attribute_data['dynamicAttributes']['maxX'] == ''
-                else int(attribute_data['dynamicAttributes']['maxX']))
-        attribute_data['dynamicAttributes']['maxY'] = (0
-                if attribute_data['dynamicAttributes']['maxY'] == ''
-                else int(attribute_data['dynamicAttributes']['maxY']))
+        attribute_data['dynamicAttributes']['maxX'] = (
+            1 if attribute_data['dynamicAttributes']['maxX'] == ''
+            else int(attribute_data['dynamicAttributes']['maxX']))
+        attribute_data['dynamicAttributes']['maxY'] = (
+            0 if attribute_data['dynamicAttributes']['maxY'] == ''
+            else int(attribute_data['dynamicAttributes']['maxY']))
 
         attribute_data['dynamicAttributes']['dataType'] = (
             self._get_arg_type(description_data))
@@ -435,7 +441,7 @@ class XmiParser(object):
         attribute_data['properties'] = description_data.find('properties').attrib
         attribute_data['properties']['inherited'] = (
             description_data.find('status').attrib['inherited'])
-        
+
         try:
             attribute_data['eventCriteria'] = description_data.find(
                 'eventCriteria').attrib
@@ -449,7 +455,7 @@ class XmiParser(object):
         except AttributeError:
             MODULE_LOGGER.info(
                 "No archive event(s) information was captured in the XMI file.")
-        
+
         return attribute_data
 
     def extract_property_description_data(self, description_data, property_group):
@@ -484,14 +490,14 @@ class XmiParser(object):
         property_data = dict()
         property_data[property_group] = description_data.attrib.copy()
         property_data[property_group]['type'] = (
-                self._get_arg_type(description_data))
+            self._get_arg_type(description_data))
         property_data[property_group]['inherited'] = (
-                description_data.find('status').attrib['inherited'])
+            description_data.find('status').attrib['inherited'])
         try:
             default_prop_values = description_data.findall('DefaultPropValue')
             default_values = [prop_value.text for prop_value in default_prop_values]
             property_data[property_group]['DefaultPropValue'] = (
-                    default_values if default_values else "")
+                default_values if default_values else "")
         except KeyError:
             MODULE_LOGGER.info("%s has no default value(s) specified", property_group)
         except AttributeError:
@@ -528,17 +534,28 @@ class XmiParser(object):
         # For now it will be treated as normal DevString type
         if arg_type.find('Const') != -1:
             arg_type = arg_type.replace('Const', '')
-        # The out_type of the device State command is PyTango._PyTango.CmdArgType.DevState
-        # instead of the default PyTango.utils.DevState
+        # The out_type of the device State command is
+        # PyTango._PyTango.CmdArgType.DevState instead of the default
+        # PyTango.utils.DevState.
         if arg_type == 'State':
             return CmdArgType.DevState
         try:
+            # Substituting the 'Int' type with 'Long'. 'DevInt' is not a supported
+            # data type in TANGO.
+            try:
+                arg_type = INT_TYPE_MAP[arg_type]
+            except KeyError:
+                MODULE_LOGGER.info("arg_type {} is not an integer type.".
+                                   format(arg_type))
+
             # The DevVarTypeArray data type specified in pogo writes
-            # TypeArray in xmi file instead
-            if arg_type in ['FloatArray', 'DoubleArray', 'StringArray']:
+            # TypeArray in xmi file instead.
+            if arg_type in ['FloatArray', 'DoubleArray', 'StringArray', 'LongArray',
+                            'ULongArray']:
                 arg_type = getattr(PyTango, 'DevVar' + arg_type)
             elif arg_type in ['FloatVector', 'DoubleVector', 'StringVector']:
-                arg_type = getattr(PyTango, 'DevVar' + arg_type.replace('Vector', 'Array'))
+                arg_type = (
+                    getattr(PyTango, 'DevVar' + arg_type.replace('Vector', 'Array')))
             else:
                 arg_type = getattr(PyTango, 'Dev' + arg_type)
         except AttributeError:
@@ -680,7 +697,7 @@ class XmiParser(object):
 
         for properties_info in props:
             properties[properties_info[property_group]['name']] = (
-                    properties_info[property_group])
+                properties_info[property_group])
 
         return properties
 

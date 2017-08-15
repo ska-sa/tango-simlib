@@ -303,7 +303,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         """
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
-        default_attributes = {'State', 'Status'}
+        default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
         expected_attributes = (
             self.simdd_json_parser.get_reformatted_device_attr_metadata().keys())
 
@@ -453,7 +453,7 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
 
         """
         attributes = set(self.device.get_attribute_list())
-        default_attributes = {'State', 'Status'}
+        default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
         self.assertEqual(MKAT_VDS_ATTRIBUTE_LIST, attributes - default_attributes,
                          "Actual tango device attribute list differs from expected "
                          "list! \n\n Missing attributes: \n {}".format(

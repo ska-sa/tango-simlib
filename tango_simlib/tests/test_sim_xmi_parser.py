@@ -194,6 +194,10 @@ expected_sim_xmi_file_device_property_info = {
     'type': PyTango.CmdArgType.DevString,
     'inherited': 'false'}
 
+EXPECTED_QUANTITIES_LIST = frozenset([
+    'insolation', 'temperature', 'pressure', 'rainfall', 'relative-humidity',
+    'wind-direction', 'integer2', 'input-comms-ok', 'wind-speed', 'image1', 'integer1'])
+
 class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
     longMessage = True
@@ -224,20 +228,37 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         """ Test whether the attributes specified in the POGO generated xmi file
         are added to the TANGO device
         """
+        # First testing that the attribute with data format "IMAGE" is not in the device.
+        attribute_name = 'image1'
+        device_attributes = set(self.device.get_attribute_list())
+        self.assertNotIn(attribute_name, device_attributes,
+                         "The attribute {} has been added to the device.".
+                         format(attribute_name))
+        not_added_attr = self.device.read_attribute('AttributesNotAdded')
+        not_added_attr_names = not_added_attr.value
+        self.assertIn(attribute_name, not_added_attr_names,
+                      "The attribute {} was not added to the list of attributes that"
+                      " could not be added to the device.".format(attribute_name))
+
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
         for attribute_data in self.xmi_parser.device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
-        self.assertEqual(set(expected_attributes), attributes - default_attributes,
+        self.assertEqual(set(expected_attributes) - set(not_added_attr_names),
+                         attributes - default_attributes,
                          "Actual tango device attribute list differs from expected "
                          "list!")
 
     def test_attribute_properties(self):
         attribute_list = self.device.get_attribute_list()
         attribute_data = self.xmi_parser.get_reformatted_device_attr_metadata()
+        not_added_attr = self.device.read_attribute('AttributesNotAdded')
+        not_added_attr_names = not_added_attr.value
 
         for attr_name, attr_metadata in attribute_data.items():
+            if attr_name in not_added_attr_names:
+                continue
             self.assertIn(attr_name, attribute_list,
                           "Device does not have the attribute %s" % (attr_name))
             attr_query_data = self.device.attribute_query(attr_name)
@@ -385,13 +406,10 @@ class test_XmiParser(GenericSetup):
         XMI file.
         """
         actual_parsed_attrs = self.xmi_parser.get_reformatted_device_attr_metadata()
-        expected_attr_list = ['insolation', 'temperature', 'pressure', 'rainfall',
-                              'relative-humidity', 'wind-direction',
-                              'input-comms-ok', 'wind-speed']
         actual_parsed_attr_list = actual_parsed_attrs.keys()
         self.assertGreater(len(actual_parsed_attr_list), 0,
                            "There is no attribute information parsed")
-        self.assertEquals(set(expected_attr_list), set(actual_parsed_attr_list),
+        self.assertEquals(set(EXPECTED_QUANTITIES_LIST), set(actual_parsed_attr_list),
                           'There are missing attributes')
 
         # Test if all the parsed attributes have the mandatory properties
@@ -423,7 +441,7 @@ class test_XmiParser(GenericSetup):
 
         """
         actual_parsed_cmds = self.xmi_parser.get_reformatted_cmd_metadata()
-        expected_cmd_list = ['On', 'Off', 'Add'] + default_pogo_commands
+        expected_cmd_list = ['On', 'Off', 'Add', 'cmd1'] + default_pogo_commands
         actual_parsed_cmd_list = actual_parsed_cmds.keys()
         self.assertGreater(len(actual_parsed_cmd_list), len(default_pogo_commands),
                            "There are missing commands in the parsed list")
@@ -500,11 +518,8 @@ class test_PopModelQuantities(GenericSetup):
 
         self.assertEqual(device_name, pmq.sim_model.name,
                 "The device name and the model name do not match.")
-        expected_quantities_list = ['insolation', 'temperature', 'pressure', 'rainfall',
-                                    'relative-humidity', 'wind-direction',
-                                    'input-comms-ok', 'wind-speed']
         actual_quantities_list = pmq.sim_model.sim_quantities.keys()
-        self.assertEqual(set(expected_quantities_list), set(actual_quantities_list),
+        self.assertEqual(set(EXPECTED_QUANTITIES_LIST), set(actual_quantities_list),
                          "The are quantities missing in the model")
 
 class test_PopModelActions(GenericSetup):
@@ -514,8 +529,7 @@ class test_PopModelActions(GenericSetup):
         device_name = 'tango/device/instance'
         cmd_info = self.xmi_parser.get_reformatted_cmd_metadata()
 
-        sim_model = (model.PopulateModelActions(self.xmi_parser, device_name).
-                     sim_model)
+        sim_model = (model.PopulateModelActions(self.xmi_parser, device_name).sim_model)
         self.assertEqual(len(sim_model.sim_quantities), 0,
                          "The model has some unexpected quantities")
 
@@ -528,11 +542,11 @@ class test_PopModelActions(GenericSetup):
                                 (cmd_name))
 
 class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
-    """Test the use of xmi to generate a tango simulator.
+    """Test the use of XMI to generate a TANGO simulator.
 
     This class specifically ensures that the devEnum attribute type and
     spectrum data format attributes added statically prior to device start-up
-    are well configured using the specified parameters in the POGO xmi.
+    are well configured using the specified parameters in the POGO XMI.
 
     """
 
@@ -577,16 +591,17 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
                          "expected list!")
 
     def test_enum_attribute_properties(self):
-        """Test whether the DevEnum attributes are well configred.
+        """Test whether the DevEnum attributes are well configured.
 
         Checks whether the DevEnum data type attribute properties specified
-        in the POGO generated xmi file are added to the TANGO device
+        in the POGO generated XMI file are added to the TANGO device
 
         """
         attr_name = 'adminMode'
         attributes = set(self.device.get_attribute_list())
         self.assertIn(attr_name, attributes,
-                      "The attribute adminMode is not in the device attribute list")
+                      "The attribute {} is not in the device attribute list".
+                      format(attr_name))
         attr_config = self.device.get_attribute_config(attr_name)
         for attr_prop, attr_prop_val in expected_admin_mode_devenum_attr_info.items():
             device_attr_prop_val = getattr(attr_config, attr_prop, None)
@@ -611,30 +626,24 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
         """Test whether the Spectrum attributes are well configred.
 
         Checks whether the Spectrum data format attribute properties specified
-        in the POGO generated xmi file are added to the TANGO device
+        in the POGO generated XMI file are added to the TANGO device
 
         """
         attr_name = 'achievedPointing'
         attributes = set(self.device.get_attribute_list())
         self.assertIn(attr_name, attributes,
-                      "The attribute adminMode is not in the device attribute list")
+                      "The attribute {} is not in the device attribute list".
+                      format(attr_name))
         attr_config = self.device.get_attribute_config(attr_name)
         for attr_prop, attr_prop_val in (
                 expected_achieved_pointing_spectrum_attr_info.items()):
             device_attr_prop_val = getattr(attr_config, attr_prop, None)
             if device_attr_prop_val:
-                # Tango device return attribute properties with Not pecified
+                # Tango device return attribute properties with 'Not specified'
                 # or No `property name` value if no info is provided
                 if str(device_attr_prop_val) in helper_module.TANGO_NOT_SPECIFIED_PROPS:
                     device_attr_prop_val = ''
-                # In the case of enum labels we assert the set of the lists
-                if type(attr_prop_val) == list:
-                    self.assertEqual(set(device_attr_prop_val), set(attr_prop_val),
-                                     "The expected value for the device property "
-                                     "parameter '%s' does not match with the "
-                                     "actual value" % (attr_prop))
-                else:
-                    self.assertEqual(device_attr_prop_val, attr_prop_val,
-                                     "The expected value for the device property "
-                                     "parameter '%s' does not match with the "
-                                     "actual value" % (attr_prop))
+                self.assertEqual(device_attr_prop_val, attr_prop_val,
+                                 "The expected value for the device property "
+                                 "parameter '%s' does not match with the "
+                                 "actual value" % (attr_prop))
