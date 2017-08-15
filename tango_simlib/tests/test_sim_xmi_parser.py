@@ -441,7 +441,7 @@ class test_XmiParser(GenericSetup):
 
         """
         actual_parsed_cmds = self.xmi_parser.get_reformatted_cmd_metadata()
-        expected_cmd_list = ['On', 'Off', 'Add'] + default_pogo_commands
+        expected_cmd_list = ['On', 'Off', 'Add', 'cmd1'] + default_pogo_commands
         actual_parsed_cmd_list = actual_parsed_cmds.keys()
         self.assertGreater(len(actual_parsed_cmd_list), len(default_pogo_commands),
                            "There are missing commands in the parsed list")
