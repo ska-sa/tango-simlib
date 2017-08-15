@@ -28,6 +28,12 @@ POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP = {
     'Scalar': AttrDataFormat.SCALAR,
     'Spectrum': AttrDataFormat.SPECTRUM}
 
+INT_TYPE_MAP = {
+    'Int': 'Long',
+    'UInt': 'ULong',
+    'IntArray': 'LongArray',
+    'UIntArray': 'ULongArray'
+    }
 # TODO(KM 31-10-2016): Need to add xmi attributes' properties that are currently
 # not being handled by the parser e.g. [displayLevel, enumLabels] etc.
 POGO_USER_DEFAULT_ATTR_PROP_MAP = {
@@ -536,14 +542,10 @@ class XmiParser(object):
         try:
             # Substituting the 'Int' type with 'Long'. 'DevInt' is not a supported
             # data type in TANGO.
-            if arg_type == 'Int':
-                arg_type = 'Long'
-            elif arg_type == 'UInt':
-                arg_type = 'ULong'
-            elif arg_type == 'IntArray':
-                arg_type = 'LongArray'
-            elif arg_type == 'UIntArray':
-                arg_type = 'ULongArray'
+            try:
+                arg_type = INT_TYPE_MAP[arg_type]
+            except KeyError:
+                MODULE_LOGGER.info("arg_type {} is not an integer type.".format(arg_type)
 
             # The DevVarTypeArray data type specified in pogo writes
             # TypeArray in xmi file instead

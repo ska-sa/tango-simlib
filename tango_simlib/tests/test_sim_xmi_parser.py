@@ -195,8 +195,8 @@ expected_sim_xmi_file_device_property_info = {
     'inherited': 'false'}
 
 EXPECTED_QUANTITIES_LIST = ['insolation', 'temperature', 'pressure', 'rainfall',
-                            'relative-humidity', 'wind-direction',
-                            'input-comms-ok', 'wind-speed', 'image1']
+                            'relative-humidity', 'wind-direction', 'integer2',
+                            'input-comms-ok', 'wind-speed', 'image1', 'integer1']
 
 class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
@@ -527,8 +527,7 @@ class test_PopModelActions(GenericSetup):
         device_name = 'tango/device/instance'
         cmd_info = self.xmi_parser.get_reformatted_cmd_metadata()
 
-        sim_model = (model.PopulateModelActions(self.xmi_parser, device_name).
-                     sim_model)
+        sim_model = (model.PopulateModelActions(self.xmi_parser, device_name).sim_model)
         self.assertEqual(len(sim_model.sim_quantities), 0,
                          "The model has some unexpected quantities")
 
