@@ -83,7 +83,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                          "The attribute {} has been added to the device.".
                          format(attribute_name))
         not_added_attr = self.sim_device.read_attribute('AttributesNotAdded')
-        not_added_attr_names = getattr(not_added_attr, 'value')
+        not_added_attr_names = not_added_attr.value
         self.assertIn(attribute_name, not_added_attr_names,
                       "The attribute {} was not added to the list of attributes that"
                       " could not be added to the device.".format(attribute_name))

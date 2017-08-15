@@ -281,9 +281,10 @@ def get_tango_device_server(model, sim_data_files):
                 meta_data = model_sim_quants[attribute_name].meta
                 attr_dtype = meta_data['data_type']
                 d_format = meta_data['data_format']
-                # Dynamically add all attributes except those with DevEnum data type
-                # and SPECTRUM data format since they are added statically to the
-                # device class prior to start-up.
+                # Dynamically add all attributes except those with DevEnum data type,
+                # and SPECTRUM data format since they are added statically to the device
+                # class prior to start-up. Also exclude attributes with a data format
+                # 'IMAGE' as we currently do not handle them.
                 if str(attr_dtype) == 'DevEnum':
                     continue
                 elif str(d_format) == 'SPECTRUM':

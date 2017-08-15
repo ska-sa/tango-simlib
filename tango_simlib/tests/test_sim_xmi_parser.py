@@ -194,9 +194,9 @@ expected_sim_xmi_file_device_property_info = {
     'type': PyTango.CmdArgType.DevString,
     'inherited': 'false'}
 
-EXPECTED_QUANTITIES_LIST = ['insolation', 'temperature', 'pressure', 'rainfall',
-                            'relative-humidity', 'wind-direction', 'integer2',
-                            'input-comms-ok', 'wind-speed', 'image1', 'integer1']
+EXPECTED_QUANTITIES_LIST = frozenset([
+    'insolation', 'temperature', 'pressure', 'rainfall', 'relative-humidity',
+    'wind-direction', 'integer2', 'input-comms-ok', 'wind-speed', 'image1', 'integer1'])
 
 class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
@@ -235,7 +235,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
                          "The attribute {} has been added to the device.".
                          format(attribute_name))
         not_added_attr = self.device.read_attribute('AttributesNotAdded')
-        not_added_attr_names = getattr(not_added_attr, 'value')
+        not_added_attr_names = not_added_attr.value
         self.assertIn(attribute_name, not_added_attr_names,
                       "The attribute {} was not added to the list of attributes that"
                       " could not be added to the device.".format(attribute_name))
@@ -253,9 +253,11 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
     def test_attribute_properties(self):
         attribute_list = self.device.get_attribute_list()
         attribute_data = self.xmi_parser.get_reformatted_device_attr_metadata()
+        not_added_attr = self.device.read_attribute('AttributesNotAdded')
+        not_added_attr_names = not_added_attr.value
 
         for attr_name, attr_metadata in attribute_data.items():
-            if attr_name == 'image1':
+            if attr_name in not_added_attr_names:
                 continue
             self.assertIn(attr_name, attribute_list,
                           "Device does not have the attribute %s" % (attr_name))
