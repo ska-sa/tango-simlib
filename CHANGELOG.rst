@@ -3,6 +3,8 @@
 - Updates to the SimDD
     - Added a new type of behaviour in the side-effect actions suite for long-running
       commands.
+- Handle vector data type from pogo
+- Populate tango-db with device properties
 
 0.1.4
 -----
