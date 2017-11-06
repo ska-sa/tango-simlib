@@ -14,6 +14,7 @@ TANGO device that exhibits the behaviour defined in the data description file.
 """
 
 import os
+import sys
 import weakref
 import logging
 import argparse
@@ -43,6 +44,8 @@ POGO_USER_DEFAULT_CMD_PROP_MAP = {
         'argoutDescription': 'doc_out',
         'argoutType': 'dtype_out'}
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 class TangoDeviceServerBase(Device):
     instances = weakref.WeakValueDictionary()
