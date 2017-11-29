@@ -105,7 +105,7 @@
       <archiveEvent fire="true" libCheckCriteria="false"/>
       <dataReadyEvent fire="true" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="Barometric pressure in central telescope area." label="Barometric pressure" unit="mbar" standardUnit="" displayUnit="" format="" maxValue="1100" minValue="500" maxAlarm="1000" minAlarm="" maxWarning="900" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="Barometric pressure in central telescope area (unicode: &#x2018;quoted&#x2019;)." label="Barometric pressure" unit="mbar" standardUnit="" displayUnit="" format="" maxValue="1100" minValue="500" maxAlarm="1000" minAlarm="" maxWarning="900" minWarning="" deltaTime="" deltaValue=""/>
       <eventCriteria relChange="10" absChange="0.5" period="1000"/>
       <evArchiveCriteria relChange="10" absChange="0.5" period="1000"/>
     </dynamicAttributes>
