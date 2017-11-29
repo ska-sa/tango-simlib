@@ -81,7 +81,9 @@ expected_pressure_attr_info = {
     'data_type': PyTango.CmdArgType.DevDouble,
     'period': '1000',
     'writable': 'READ',
-    'description': 'Barometric pressure in central telescope area.',
+    # The description in the XMI file has unicode quote characters around the word
+    # 'quoted', each must be replaced by a question mark
+    'description': 'Barometric pressure in central telescope area (unicode: ?quoted?).',
     'label': 'Barometric pressure',
     'unit': 'mbar',
     'standard_unit': '',

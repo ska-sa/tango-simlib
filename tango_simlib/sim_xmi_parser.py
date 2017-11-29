@@ -244,6 +244,14 @@ class XmiParser(object):
         """
         self.data_description_file_name = sim_xmi_file
         tree = ET.parse(sim_xmi_file)
+
+        # ensure all unicode attribute values are converted to byte strings
+        # as TANGO does not handle unicode
+        for child in tree.findall('.//'):
+            for key, value in child.attrib.items():
+                if isinstance(value, unicode):
+                    child.attrib[key] = value.encode('ascii', 'replace')
+
         self._tree = tree
         root = tree.getroot()
         device_class = root.find('classes')
