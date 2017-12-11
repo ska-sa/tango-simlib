@@ -1,3 +1,7 @@
+0.1.6
+-----
+- Force all unicode attributes in XMI files to byte strings.
+
 0.1.5
 -----
 - Updates to the SimDD
