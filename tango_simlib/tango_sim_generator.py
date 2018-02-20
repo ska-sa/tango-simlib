@@ -73,49 +73,7 @@ class TangoDeviceServerBase(Device):
             self.info_stream("Reading attribute %s", name)
             attr.set_value_date_quality(value, update_time, quality)
 
-
-def get_tango_device_server(model, sim_data_files):
-    """Declares a tango device class that inherits the Device class and then
-    adds tango commands.
-
-    Parameters
-    ----------
-    model: model.Model instance
-        Device model instance
-    sim_data_files: list
-        A list of direct paths to either xmi/xml/json data files.
-
-    Returns
-    -------
-    TangoDeviceServer : PyTango.Device
-        Tango device that has the results of the translated KATCP server
-
-    """
-    # Declare a Tango Device class for specifically adding commands prior
-    # running the device server
-    class TangoDeviceServerCommands(object):
-        pass
-
-    class TangoTestDeviceServerCommands(object):
-        pass
-
-    # Declare a Tango Device class for specifically adding static
-    # attributes prior running the device server and controller
-    class TangoDeviceServerStaticAttrs(object):
-        pass
-
-    class TangoTestDeviceServerStaticAttrs(object):
-        pass
-
-    def read_fn(tango_device_instance):
-        return tango_device_instance._attribute_name_index
-
-    def write_fn(tango_device_instance, val):
-        tango_device_instance._attribute_name_index = val
-        tango_device_instance.model_quantity = tango_device_instance.model.sim_quantities[
-            sorted(tango_device_instance.model.sim_quantities.keys())[val]]
-
-    def generate_cmd_handler(action_name, action_handler):
+def generate_cmd_handler(model, action_name, action_handler):
         def cmd_handler(tango_device, input_parameters=None):
             return action_handler(tango_dev=tango_device, data_input=input_parameters)
 
@@ -136,6 +94,39 @@ def get_tango_device_server(model, sim_data_files):
         """
         return command(f=cmd_handler, **cmd_info_copy)
 
+def get_tango_device_server(model, sim_data_files):
+    """Declares a tango device class that inherits the Device class and then
+    adds tango attributes (DevEnum and Specrum type).
+
+    Parameters
+    ----------
+    model: model.Model instance
+        Device model instance
+    sim_data_files: list
+        A list of direct paths to either xmi/xml/json data files.
+
+    Returns
+    -------
+    TangoDeviceServer : PyTango.Device
+        Tango device that has the commands dictionary populated.
+
+    """
+    # Declare a Tango Device class for specifically adding static
+    # attributes prior running the device server and controller
+    class TangoDeviceServerStaticAttrs(object):
+        pass
+
+    class TangoTestDeviceServerStaticAttrs(object):
+        pass
+
+    def read_fn(tango_device_instance):
+        return tango_device_instance._attribute_name_index
+
+    def write_fn(tango_device_instance, val):
+        tango_device_instance._attribute_name_index = val
+        tango_device_instance.model_quantity = tango_device_instance.model.sim_quantities[
+            sorted(tango_device_instance.model.sim_quantities.keys())[val]]
+    
     def add_static_attribute(tango_device_class, attr_name, attr_meta):
         """Add any TANGO attribute of to the device server before start-up.
 
@@ -235,20 +226,8 @@ def get_tango_device_server(model, sim_data_files):
             add_static_attribute(TangoDeviceServerStaticAttrs, quantity_name,
                                  quantity.meta)
 
-    for action_name, action_handler in model.sim_actions.items():
-        cmd_handler = generate_cmd_handler(action_name, action_handler)
-        # You might need to turn cmd_handler into an unbound method before you add
-        # it to the class
-        setattr(TangoDeviceServerCommands, action_name, cmd_handler)
 
-    for action_name, action_handler in model.test_sim_actions.items():
-        cmd_handler = generate_cmd_handler(action_name, action_handler)
-        # You might need to turn cmd_handler into an unbound method before you add
-        # it to the class
-        setattr(TangoTestDeviceServerCommands, action_name, cmd_handler)
-
-    class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerCommands,
-                            TangoDeviceServerStaticAttrs):
+    class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
 
         def init_device(self):
@@ -257,6 +236,8 @@ def get_tango_device_server(model, sim_data_files):
             self._not_added_attributes = []
             write_device_properties_to_db(self.get_name(), self.model)
             self._reset_to_default_state()
+            self.initialize_dynamic_commands()
+            
 
         def _reset_to_default_state(self):
             """Reset the model's quantities' adjustable attributes to their default
@@ -273,6 +254,11 @@ def get_tango_device_server(model, sim_data_files):
                     except KeyError:
                         adjustable_val = 0.0
                     setattr(simulated_quantity, attr, adjustable_val)
+
+        def initialize_dynamic_commands(self):
+            for action_name, action_handler in self.model.sim_actions.items():
+                cmd_handler = generate_cmd_handler(self.model, action_name, action_handler)
+                self.add_command(cmd_handler, device_level=True)
 
         def initialize_dynamic_attributes(self):
             model_sim_quants = self.model.sim_quantities
@@ -332,8 +318,7 @@ def get_tango_device_server(model, sim_data_files):
         def NumAttributesNotAdded(self):
             return len(self._not_added_attributes)
 
-    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerCommands,
-                     TangoTestDeviceServerStaticAttrs):
+    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
 
         instances = weakref.WeakValueDictionary()
@@ -343,6 +328,7 @@ def get_tango_device_server(model, sim_data_files):
 
             name = self.get_name()
             self.instances[name] = self
+
 
     klass_name = get_device_class(sim_data_files)
     TangoDeviceServer.TangoClassName = klass_name
