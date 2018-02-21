@@ -130,15 +130,15 @@ class DeviceDataParser(object):
 
 
     def parse(self, json_file):
-
+        self.data_description_file_name = json_file
         with open(json_file) as dev_data_file:
             device_data = json.load(dev_data_file)
 
         for data_component, elements in device_data.items():
             if data_component == 'attributes':
-                self.preprocess_attr_types(elements)
+                self.preprocess_attribute_types(elements)
             elif data_component == 'commands':
-                self.update_command_dict(elements)
+                self.preprocess_command_types(elements)
             elif data_component == 'class_properties':
                 self._device_class_properties.update(elements)
             elif data_component == 'properties':
@@ -146,7 +146,11 @@ class DeviceDataParser(object):
             elif data_component == 'dev_class':
                 self.device_class_name = elements     
 
-    def update_command_dict(self, command_data):
+    def preprocess_command_types(self, command_data):
+        """Convert the command input and output data types from strings to the TANGO
+        types and rename the command properties to match with the keyword arguments of
+        the command signature.
+        """
         for cmd_name, cmd_config in command_data.items():
             self._device_commands[cmd_name] = {}
             
@@ -163,7 +167,7 @@ class DeviceDataParser(object):
                         "The property '%s' cannot be translated to a corresponding "
                         "parameter in the TANGO library", cmd_prop)
 
-    def preprocess_attr_types(self, attribute_data):
+    def preprocess_attribute_types(self, attribute_data):
         """Convert the attribute data types from strings to the TANGO types.
         """
         for attr_config in attribute_data.values():
