@@ -20,7 +20,7 @@ from PyTango.server import Device, DeviceMeta
 from PyTango.server import attribute, device_property
 
 from tango_simlib import model
-#from tango_simlib.tango_sim_generator import generate_cmd_handler
+from tango_simlib.helper_module import generate_cmd_handler
 
 class TangoTestDeviceServerBase(Device):
     __metaclass__ = DeviceMeta
@@ -54,13 +54,15 @@ class TangoTestDeviceServerBase(Device):
                                'correct value.'.format(self.model_key))
         self.sim_device_attributes = self.model.sim_quantities.keys()
         self.set_state(DevState.ON)
+        self.initialize_dynamic_commands()
+        
 
-        #for action_name, action_handler in self.model.test_sim_actions.items():
-        #    cmd_handler = generate_cmd_handler(self.model, action_name, action_handler)
-        # You might need to turn cmd_handler into an unbound method before you add
-        # it to the class
-        ##self.add_command(cmd_handler, device_level=True)
-
+    def initialize_dynamic_commands(self):
+        for action_name, action_handler in self.model.test_sim_actions.items():
+            cmd_handler = generate_cmd_handler(self.model, action_name, action_handler)
+            #You might need to turn cmd_handler into an unbound method before you add
+            #it to the class
+            self.add_command(cmd_handler, device_level=True)
 
     def initialize_dynamic_attributes(self):
         """The device method that sets up attributes during run time"""

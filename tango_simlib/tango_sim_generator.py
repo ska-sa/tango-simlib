@@ -73,26 +73,6 @@ class TangoDeviceServerBase(Device):
             self.info_stream("Reading attribute %s", name)
             attr.set_value_date_quality(value, update_time, quality)
 
-def generate_cmd_handler(model, action_name, action_handler):
-        def cmd_handler(tango_device, input_parameters=None):
-            return action_handler(tango_dev=tango_device, data_input=input_parameters)
-
-        cmd_handler.__name__ = action_name
-        cmd_info_copy = model.sim_actions_meta[action_name].copy()
-        # Delete all the keys that are not part of the Tango command parameters.
-        cmd_info_copy.pop('name')
-        tango_cmd_prop = POGO_USER_DEFAULT_CMD_PROP_MAP.values()
-        for prop_key in model.sim_actions_meta[action_name]:
-            if prop_key not in tango_cmd_prop:
-                MODULE_LOGGER.info(
-                    "Warning! Property %s is not a tango command prop", prop_key)
-                cmd_info_copy.pop(prop_key)
-        """
-        The command method signature:
-        command(f=None, dtype_in=None, dformat_in=None, doc_in="",
-                dtype_out=None, dformat_out=None, doc_out="", green_mode=None)
-        """
-        return command(f=cmd_handler, **cmd_info_copy)
 
 def get_tango_device_server(model, sim_data_files):
     """Declares a tango device class that inherits the Device class and then
@@ -257,7 +237,8 @@ def get_tango_device_server(model, sim_data_files):
 
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():
-                cmd_handler = generate_cmd_handler(self.model, action_name, action_handler)
+                cmd_handler = helper_module.generate_cmd_handler(
+                    self.model, action_name, action_handler)
                 self.add_command(cmd_handler, device_level=True)
 
         def initialize_dynamic_attributes(self):
