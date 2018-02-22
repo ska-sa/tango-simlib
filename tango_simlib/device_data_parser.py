@@ -25,7 +25,7 @@ CMD_PROP_MAP = {
     'out_type_desc': 'doc_out'
 }
 
-class DeviceDataParser(object):
+class FandangoExportDeviceParser(object):
 
     def __init__(self):
         """Parser class handling a TANGO device data file in json format.
