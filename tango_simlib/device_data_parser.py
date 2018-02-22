@@ -6,6 +6,8 @@
 #########################################################################################
 """This module performs the parsing of the TANGO device data json file, containing the
 information needed to instantiate a useful device simulator.
+Instructions on how to create this json file can be found at the link below:
+https://github.com/tango-controls/fandango/blob/master/doc/recipes/ExportDeviceData.rst
 """
 
 import logging
