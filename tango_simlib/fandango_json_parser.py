@@ -4,8 +4,9 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-"""This module performs the parsing of the TANGO device data json file, containing the
-information needed to instantiate a useful device simulator.
+"""This module performs the parsing of the TANGO device data json file as produced by
+the fandango library, containing the information needed to instantiate a useful device
+simulator.
 Instructions on how to create this json file can be found at the link below:
 https://github.com/tango-controls/fandango/blob/master/doc/recipes/ExportDeviceData.rst
 """
@@ -35,7 +36,7 @@ class FandangoExportDeviceParser(object):
         Creating an instance of this class requires calling :meth:`parse` method
         afterwards to extract all the provided TANGO attributes, commands,
         device property and device override class information from the specified
-        file. The formated data is a dict structure and can be obtained using
+        file. The formatted data is a dict structure and can be obtained using
         :meth:`get_reformatted_device_attr_metadata`,
         :meth:`get_reformatted_cmd_metadata`,
         :meth:`get_reformatted_properties_metadata` and
@@ -46,88 +47,9 @@ class FandangoExportDeviceParser(object):
         self.data_description_file_name = ''
         self.device_class_name = ''
         self._device_attributes = {}
-        """The data structure format is a dict containing attribute info in a dict.
-
-        e.g.
-            {
-                'State': {
-                    'alarms': {
-                        'delta_t': 'Not specified',
-                        'delta_val': 'Not specified',
-                        'extensions': '[]',
-                        'max_alarm': 'Not specified',
-                        'max_warning': 'Not specified',
-                        'min_alarm': 'Not specified',
-                        'min_warning': 'Not specified'
-                    },
-                    'color': 'Lime',
-                    'data_format': tango._tango.AttrDataFormat.SCALAR,
-                    'data_type': tango._tango.CmdArgType.DevState,
-                    'database': 'monctl:10000',
-                    'description': '',
-                    'device': 'tango/admin/monctl',
-                    'display_unit': 'No display unit',
-                    'events': {
-                        'arch_event': {
-                            'archive_abs_change': 'Not specified',
-                            'archive_period': 'Not specified',
-                            'archive_rel_change': 'Not specified',
-                            'extensions': '[]'
-                        },
-                        'ch_event': {
-                            'abs_change': 'Not specified',
-                            'extensions': '[]',
-                            'rel_change': 'Not specified'
-                        },
-                        'per_event': {
-                            'extensions': '[]',
-                            'period': '1000'
-                        }
-                    },
-                    'format': 'Not specified',
-                    'label': 'State',
-                    'max_alarm': 'Not specified',
-                    'min_alarm': 'Not specified',
-                    'model': 'monctl:10000/tango/admin/monctl/State',
-                    'name': 'State',
-                    'polling': 1000,
-                    'quality': PyTango.AttrQuality.ATTR_VALID,
-                    'standard_unit': 'No standard unit',
-                    'string': 'ON',
-                    'time': 1519207194.715621,
-                    'unit': '',
-                    'value': 0,
-                    'writable': 'READ'},
-            }
-        """
         self._device_commands = {}
-        """The data structure format is a dict containing command info in a dict
-        e.g.
-            {
-                'State': {
-                    'doc_in': 'Uninitialised',
-                    'doc_out': 'Device state',
-                    'dtype_in': tango._tango.CmdArgType.DevVoid,
-                    'dtype_out': tango._tango.CmdArgType.DevState,
-                    'name': 'State'
-                },
-            }
-        """
         self._device_properties = {}
-        """The data structure format is a list containing device property info in a dict.
-        e.g.
-            {
-                '<property_name>': <property_value>,
-            }
-        """
         self._device_class_properties = {}
-        """The data structure format is a list containing device property info in a dict.
-        e.g.
-            {
-                '<property_name>': <property_value>,
-            }
-        """
-
 
     def parse(self, json_file):
         self.data_description_file_name = json_file
@@ -181,12 +103,99 @@ class FandangoExportDeviceParser(object):
         self._device_attributes.update(attribute_data)           
 
     def get_reformatted_device_attr_metadata(self):
+        """Returns the device's attributes' configuration.
+
+        Returns
+        -------
+        self._device_attributes: dict
+            The data structure format is a dict containing attribute info in a dict
+            e.g.
+                {
+                'State': {
+                    'alarms': {
+                        'delta_t': 'Not specified',
+                        'delta_val': 'Not specified',
+                        'extensions': '[]',
+                        'max_alarm': 'Not specified',
+                        'max_warning': 'Not specified',
+                        'min_alarm': 'Not specified',
+                        'min_warning': 'Not specified'
+                    },
+                    'color': 'Lime',
+                    'data_format': tango._tango.AttrDataFormat.SCALAR,
+                    'data_type': tango._tango.CmdArgType.DevState,
+                    'database': 'monctl:10000',
+                    'description': '',
+                    'device': 'tango/admin/monctl',
+                    'display_unit': 'No display unit',
+                    'events': {
+                        'arch_event': {
+                            'archive_abs_change': 'Not specified',
+                            'archive_period': 'Not specified',
+                            'archive_rel_change': 'Not specified',
+                            'extensions': '[]'
+                        },
+                        'ch_event': {
+                            'abs_change': 'Not specified',
+                            'extensions': '[]',
+                            'rel_change': 'Not specified'
+                        },
+                        'per_event': {
+                            'extensions': '[]',
+                            'period': '1000'
+                        }
+                    },
+                    'format': 'Not specified',
+                    'label': 'State',
+                    'max_alarm': 'Not specified',
+                    'min_alarm': 'Not specified',
+                    'model': 'monctl:10000/tango/admin/monctl/State',
+                    'name': 'State',
+                    'polling': 1000,
+                    'quality': PyTango.AttrQuality.ATTR_VALID,
+                    'standard_unit': 'No standard unit',
+                    'string': 'ON',
+                    'time': 1519207194.715621,
+                    'unit': '',
+                    'value': 0,
+                    'writable': 'READ'},
+            }
+        """
         return self._device_attributes
 
-    def get_reformatted_cmd_metadata(self):
+    def get_reformatted_cmd_metadata(self):"
+        """Returns the device's commands' configuration.
+        
+        Returns
+        -------
+        self._device_attributes: dict
+            The data structure format is a dict containing attribute info in a dict
+            e.g.
+            {
+                'State': {
+                    'doc_in': 'Uninitialised',
+                    'doc_out': 'Device state',
+                    'dtype_in': tango._tango.CmdArgType.DevVoid,
+                    'dtype_out': tango._tango.CmdArgType.DevState,
+                    'name': 'State'
+                },
+            }
+        """
         return self._device_commands
 
     def get_reformatted_properties_metadata(self, property_group):
+        """Returns the device's class or device property configuration.
+        
+        Returns
+        -------
+        self._device_attributes: dict
+            The data structure format is a dict containing class or device property
+            info in a dict.
+            e.g.
+            {
+                '<property_name>': <property_value>,
+            }
+        """
         return self._device_properties
 
     def get_reformatted_override_metadata(self):
