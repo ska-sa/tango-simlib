@@ -1,15 +1,11 @@
-#!/usr/bin/env python
-###############################################################################
-# SKA South Africa (http://ska.ac.za/)                                        #
-# Author: cam@ska.ac.za                                                       #
-# Copyright @ 2018 SKA SA. All rights reserved.                               #
-#                                                                             #
-# THIS SOFTWARE MAY NOT BE COPIED OR DISTRIBUTED IN ANY FORM WITHOUT THE      #
-# WRITTEN PERMISSION OF SKA SA.                                               #
-###############################################################################
-"""This module performs the parsing of the TANGO device data json file ,
-containing the information needed to instantiate a useful device simulator.
-@author MeerKAT CAM team <cam@ska.ac.za>
+######################################################################################### 
+# Author: cam@ska.ac.za                                                                 #
+# Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
+#                                                                                       #
+# BSD license - see LICENSE.txt for details                                             #
+#########################################################################################
+"""This module performs the parsing of the TANGO device data json file, containing the
+information needed to instantiate a useful device simulator.
 """
 
 import logging
