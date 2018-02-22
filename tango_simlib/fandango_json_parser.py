@@ -13,6 +13,8 @@ https://github.com/tango-controls/fandango/blob/master/doc/recipes/ExportDeviceD
 import logging
 import json
 
+from helper_module import json_load_byteified
+
 from PyTango._PyTango import CmdArgType, AttrDataFormat
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -130,7 +132,7 @@ class FandangoExportDeviceParser(object):
     def parse(self, json_file):
         self.data_description_file_name = json_file
         with open(json_file) as dev_data_file:
-            device_data = json.load(dev_data_file)
+            device_data = json_load_byteified(dev_data_file)
 
         for data_component, elements in device_data.items():
             if data_component == 'attributes':
@@ -157,7 +159,7 @@ class FandangoExportDeviceParser(object):
                     if cmd_prop in ['in_type', 'out_type']:
                         if cmd_prop_value.find('Const') != -1:
                             cmd_prop_value = cmd_prop_value.replace('Const', '')
-                        cmd_prop_value = getattr(CmdArgType, str(cmd_prop_value))
+                        cmd_prop_value = getattr(CmdArgType, cmd_prop_value)
                     self._device_commands[cmd_name].update(
                         {CMD_PROP_MAP[cmd_prop]: cmd_prop_value})
                 except KeyError:
@@ -171,10 +173,10 @@ class FandangoExportDeviceParser(object):
         for attr_config in attribute_data.values():
             for attr_prop, attr_prop_value in attr_config.items():
                 if attr_prop == 'data_type':
-                    attr_config[attr_prop] = getattr(CmdArgType, str(attr_prop_value))
+                    attr_config[attr_prop] = getattr(CmdArgType, attr_prop_value)
                 elif attr_prop == 'data_format':
                     attr_config[attr_prop] = (
-                        getattr(AttrDataFormat, str(attr_prop_value)))
+                        getattr(AttrDataFormat, attr_prop_value))
 
         self._device_attributes.update(attribute_data)           
 
