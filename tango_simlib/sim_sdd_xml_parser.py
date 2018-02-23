@@ -11,10 +11,9 @@
 file generated from the DSL.
 
 """
-
 import xml.etree.ElementTree as ET
 
-from base_parser import Parser
+from tango_simlib.base_parser import Parser
 
 from PyTango import DevDouble, DevLong, DevBoolean, DevString
 
