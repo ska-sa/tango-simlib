@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 ###############################################################################
 # SKA South Africa (http://ska.ac.za/)                                        #
 # Author: cam@ska.ac.za                                                       #
@@ -11,7 +10,6 @@
 containing the information needed to instantiate a useful device simulator.
 @author MeerKAT CAM team <cam@ska.ac.za>
 """
-
 import logging
 import json
 import pkg_resources

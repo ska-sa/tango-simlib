@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 ###############################################################################
 # SKA South Africa (http://ska.ac.za/)                                        #
 # Author: cam@ska.ac.za                                                       #
@@ -7,7 +6,6 @@
 # THIS SOFTWARE MAY NOT BE COPIED OR DISTRIBUTED IN ANY FORM WITHOUT THE      #
 # WRITTEN PERMISSION OF SKA SA.                                               #
 ###############################################################################
-
 import logging
 import time
 import weakref

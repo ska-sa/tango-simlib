@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 ###############################################################################
 # SKA South Africa (http://ska.ac.za/)                                        #
 # Author: cam@ska.ac.za                                                       #
@@ -12,7 +11,6 @@ Simlib library generic simulator generator utility to be used to generate an act
 TANGO device that exhibits the behaviour defined in the data description file.
 @author MeerKAT CAM team <cam@ska.ac.za>
 """
-
 import logging
 
 import xml.etree.ElementTree as ET

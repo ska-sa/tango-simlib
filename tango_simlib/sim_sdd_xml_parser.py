@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 ###############################################################################
 # SKA South Africa (http://ska.ac.za/)                                        #
 # Author: cam@ska.ac.za                                                       #
