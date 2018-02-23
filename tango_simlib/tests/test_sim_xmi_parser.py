@@ -585,7 +585,7 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
         """
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
-        for attribute_data in self.xmi_parser.device_attributes:
+        for attribute_data in self.xmi_parser._device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
         self.assertEqual(set(expected_attributes), attributes -
                          helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES,
