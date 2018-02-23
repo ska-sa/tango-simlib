@@ -1,3 +1,9 @@
+######################################################################################### 
+# Author: cam@ska.ac.za                                                                 #
+# Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
+#                                                                                       #
+# BSD license - see LICENSE.txt for details                                             #
+#########################################################################################
 import abc
 
 class Parser(object):
@@ -14,7 +20,6 @@ class Parser(object):
         :meth:`get_device_command_metadata`,
         :meth:`get_device_properties_metadata` and
         :meth:`get_device_cmd_override_metadata`
-
         """
         self.data_description_file_name = ''
         self.device_class_name = ''
