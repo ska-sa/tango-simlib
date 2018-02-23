@@ -16,6 +16,8 @@ TANGO device that exhibits the behaviour defined in the data description file.
 import logging
 
 import xml.etree.ElementTree as ET
+
+from base_parser import Parser
 import PyTango
 
 from PyTango import (DevBoolean, DevString, DevEnum, AttrDataFormat,
@@ -81,24 +83,20 @@ POGO_USER_DEFAULT_CMD_PROP_MAP = {
     'argoutType': 'dtype_out',
     'inherited': 'inherited'}
 
-class XmiParser(object):
+class XmiParser(Parser):
+    """Parses the XMI file generated from POGO.
+
+    Attributes
+    ----------
+    data_description_file_name: str
+
+    device_class_name: str
+
+    """
 
     def __init__(self):
-        """Parser class handling a simulator description datafile in xmi format.
-
-        Creating an instance of this class requires calling :meth:`parse`
-        afterwards to extract all the provided tango attributes, commands,
-        device property and device override class information from the specified
-        file.  The formated data is a dict structure and can be obtained using
-        :meth:`get_reformatted_device_attr_metadata`,
-        :meth:`get_reformatted_cmd_metadata`,
-        :meth:`get_reformatted_properties_metadata` and
-        :meth:`get_reformatted_override_metadata`
-
-        """
-        self.data_description_file_name = ''
-        self.device_class_name = ''
-        self.device_attributes = []
+        super(XmiParser, self).__init__()
+        self._device_attributes = []
         """The Data structure format is a list containing attribute info in a dict
 
         e.g.
@@ -144,7 +142,7 @@ class XmiParser(object):
         }]
 
         """
-        self.device_commands = []
+        self._device_commands = []
         """The Data structure format is a list containing command info in a dict
 
         e.g.
@@ -158,7 +156,7 @@ class XmiParser(object):
         }]
 
         """
-        self.device_properties = []
+        self._device_properties = []
         """Data structure format is a list containing device property info in a dict
 
         e.g.
@@ -173,7 +171,7 @@ class XmiParser(object):
         }]
 
         """
-        self.class_properties = []
+        self._device_class_properties = []
         """Data structure format is a list containing class property info in a dict
 
         e.g.
@@ -222,14 +220,14 @@ class XmiParser(object):
         self._tree = None
 
     def parse(self, sim_xmi_file):
-        """Read simulator description data from xmi file into `self.device_properties`
+        """Read simulator description data from xmi file into `self._device_properties`
 
         Stores all the simulator description data from the xmi tree into
         appropriate attribute, command and device property data structures.
         Loops through the xmi tree class elements and appends description
-        information of dynamic/attributes into `self.device_attributes`,
-        commands into `self.device_commands`, and device_properties into
-        `self.device_properties`.
+        information of dynamic/attributes into `self._device_attributes`,
+        commands into `self._device_commands`, and device_properties into
+        `self._device_properties`.
 
         Parameters
         ----------
@@ -262,19 +260,19 @@ class XmiParser(object):
             elif class_description_data.tag in ['commands']:
                 command_info = (
                     self.extract_command_description_data(class_description_data))
-                self.device_commands.append(command_info)
+                self._device_commands.append(command_info)
             elif class_description_data.tag in ['dynamicAttributes', 'attributes']:
                 attribute_info = self.extract_attributes_description_data(
                     class_description_data)
-                self.device_attributes.append(attribute_info)
+                self._device_attributes.append(attribute_info)
             elif class_description_data.tag in ['deviceProperties']:
                 device_property_info = self.extract_property_description_data(
                     class_description_data, class_description_data.tag)
-                self.device_properties.append(device_property_info)
+                self._device_properties.append(device_property_info)
             elif class_description_data.tag in ['classProperties']:
                 class_property_info = self.extract_property_description_data(
                     class_description_data, class_description_data.tag)
-                self.class_properties.append(class_property_info)
+                self._device_class_properties.append(class_property_info)
 
     def extract_device_class_descr(self, description_data):
         """Extract Tango device class description data from the xmi tree element.
@@ -575,7 +573,7 @@ class XmiParser(object):
         return arg_type
 
 
-    def get_reformatted_device_attr_metadata(self):
+    def get_device_attribute_metadata(self):
         """Converts the device_attributes data structure into a dictionary
         to make searching easier.
 
@@ -620,7 +618,7 @@ class XmiParser(object):
         """
         attributes = {}
 
-        for pogo_attribute_data in self.device_attributes:
+        for pogo_attribute_data in self._device_attributes:
             attribute_meta = {}
             for (prop_group, default_attr_props) in (
                     POGO_USER_DEFAULT_ATTR_PROP_MAP.items()):
@@ -634,7 +632,7 @@ class XmiParser(object):
             attributes[attribute_meta['name']] = attribute_meta
         return attributes
 
-    def get_reformatted_cmd_metadata(self):
+    def get_device_command_metadata(self):
         """Converts the device_commands data structure into a dictionary that
         makes searching easier.
 
@@ -652,7 +650,7 @@ class XmiParser(object):
 
         """
         temp_commands = {}
-        for cmd_info in self.device_commands:
+        for cmd_info in self._device_commands:
             temp_commands[cmd_info['name']] = cmd_info
 
         commands = {}
@@ -671,7 +669,7 @@ class XmiParser(object):
             commands[cmd_name] = commands_metadata
         return commands
 
-    def get_reformatted_properties_metadata(self, property_group):
+    def get_device_properties_metadata(self, property_group):
         """Creates a dictionary of the device properties and their metadata.
 
         Parameter
@@ -697,9 +695,9 @@ class XmiParser(object):
         """
         properties = {}
         if property_group == 'deviceProperties':
-            props = self.device_properties
+            props = self._device_properties
         elif property_group == 'classProperties':
-            props = self.class_properties
+            props = self._device_class_properties
         else:
             raise Exception("Wrong argument provided")
 
@@ -709,7 +707,7 @@ class XmiParser(object):
 
         return properties
 
-    def get_reformatted_override_metadata(self):
+    def get_device_cmd_override_metadata(self):
         # TODO(KM 15-12-2016) The PopulateModelQuantities and PopulateModelActions
         # classes assume that the parsers we have developed have the same interface
         # so this method does nothing but return an empty dictionary. Might provide

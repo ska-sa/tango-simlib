@@ -79,7 +79,7 @@ class test_Sdd_Xml_Parser(GenericSetup):
         """Testing that the monitoring points' information parsed matches with the one
         captured in the XML file.
         """
-        actual_parsed_mnt_pts = self.xml_parser.get_reformatted_device_attr_metadata()
+        actual_parsed_mnt_pts = self.xml_parser.get_device_attribute_metadata()
         expected_monitoring_points_list = ['Insolation', 'Temperature', 'Pressure',
                                            'Rainfall', 'Relative_Humidity',
                                            'Wind_Direction', 'Wind_Speed']
@@ -140,7 +140,7 @@ class test_PopModelQuantities(GenericSetup):
         pmq = model.PopulateModelQuantities(self.xml_parser, device_name)
         self.assertEqual(device_name, pmq.sim_model.name,
                          "The device name and the model name do not match.")
-        mnt_pt_metadata = self.xml_parser.get_reformatted_device_attr_metadata()
+        mnt_pt_metadata = self.xml_parser.get_device_attribute_metadata()
         for sim_quantity_name, sim_quantity in (
                 pmq.sim_model.sim_quantities.items()):
             sim_quantity_metadata = getattr(sim_quantity, 'meta')

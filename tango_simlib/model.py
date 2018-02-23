@@ -203,7 +203,7 @@ class PopulateModelQuantities(object):
 
         """
         start_time = self.sim_model.start_time
-        attributes = self.parser_instance.get_reformatted_device_attr_metadata()
+        attributes = self.parser_instance.get_device_attribute_metadata()
 
         for attr_name, attr_props in attributes.items():
             # When using more than one config file, the attribute meta data can be
@@ -336,8 +336,8 @@ class PopulateModelActions(object):
         self.add_actions()
 
     def add_actions(self):
-        command_info = self.parser_instance.get_reformatted_cmd_metadata()
-        override_info = self.parser_instance.get_reformatted_override_metadata()
+        command_info = self.parser_instance.get_device_command_metadata()
+        override_info = self.parser_instance.get_device_cmd_override_metadata()
         instances = {}
         if override_info != {}:
             instances = self._get_class_instances(override_info)
@@ -567,7 +567,7 @@ class PopulateModelProperties(object):
         property, value must be a string, number or array and it is optional.
 
         """
-        device_props = self.parser_instance.get_reformatted_properties_metadata(
+        device_props = self.parser_instance.get_device_properties_metadata(
                             'deviceProperties')
         self.sim_model.set_sim_property(device_props)
 

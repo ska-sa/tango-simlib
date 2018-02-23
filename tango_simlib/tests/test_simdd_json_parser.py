@@ -93,7 +93,7 @@ class test_SimddJsonParser(GenericSetup):
         """Testing that the attribute information parsed matches with the one captured
         in the SIMDD json file.
         """
-        actual_parsed_attrs = self.simdd_parser.get_reformatted_device_attr_metadata()
+        actual_parsed_attrs = self.simdd_parser.get_device_attribute_metadata()
         expected_attr_list = ['input-comms-ok', 'insolation', 'pressure', 'rainfall',
                               'relative-humidity', 'temperature', 'wind-direction',
                               'wind-speed']
@@ -129,7 +129,7 @@ class test_SimddJsonParser(GenericSetup):
         """Testing that the class override information parsed matches with the one
         captured in the SIMDD json file.
         """
-        actual_override_info = self.simdd_parser.get_reformatted_override_metadata()
+        actual_override_info = self.simdd_parser.get_device_cmd_override_metadata()
         for klass_info in actual_override_info.values():
             for param in EXPECTED_MANDATORY_OVERRIDE_CLASS_PARAMETERS:
                 self.assertIn(param, klass_info.keys(), "Class override info missing"
@@ -161,7 +161,7 @@ class test_PopulateModelQuantities(GenericSetup):
         pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
         self.assertEqual(device_name, pmq.sim_model.name,
                          "The device name and the model name do not match.")
-        attribute_metadata = self.simdd_parser.get_reformatted_device_attr_metadata()
+        attribute_metadata = self.simdd_parser.get_device_attribute_metadata()
         for sim_quantity_name, sim_quantity in (
                 pmq.sim_model.sim_quantities.items()):
             sim_quantity_metadata = getattr(sim_quantity, 'meta')
@@ -221,7 +221,7 @@ class test_PopulateModelActions(GenericSetup):
         device_name = 'tango/device/instance'
         pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
         sim_model = pmq.sim_model
-        cmd_info = self.simdd_parser.get_reformatted_cmd_metadata()
+        cmd_info = self.simdd_parser.get_device_command_metadata()
         model.PopulateModelActions(self.simdd_parser, device_name, sim_model)
         sim_model_actions_meta = sim_model.sim_actions_meta
 
@@ -305,7 +305,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         expected_attributes = []
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
         expected_attributes = (
-            self.simdd_json_parser.get_reformatted_device_attr_metadata().keys())
+            self.simdd_json_parser.get_device_attribute_metadata().keys())
 
         self.assertEqual(set(expected_attributes), attributes - default_attributes,
                          "Actual tango device attribute list differs from expected "
@@ -317,7 +317,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         """
         actual_device_commands = set(self.device.get_command_list())
         expected_command_list = (
-            self.simdd_json_parser.get_reformatted_cmd_metadata().keys())
+            self.simdd_json_parser.get_device_command_metadata().keys())
         expected_command_list.extend(helper_module.DEFAULT_TANGO_DEVICE_COMMANDS)
         self.assertEquals(actual_device_commands, set(expected_command_list),
                           "The commands specified in the SIMDD file are not present in"
@@ -327,7 +327,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         """Testing that the command parameter information matches with the information
         captured in the SIMDD data description file.
         """
-        command_data = self.simdd_json_parser.get_reformatted_cmd_metadata()
+        command_data = self.simdd_json_parser.get_device_command_metadata()
         extra_command_parameters = ['dformat_in', 'dformat_out', 'description',
                                     'actions']
         for cmd_name, cmd_metadata in command_data.items():
@@ -499,9 +499,9 @@ class test_SourceSimulatorInfo(unittest.TestCase):
 
         """
         xmi_parser_attributes = (
-            self.xmi_parser.get_reformatted_device_attr_metadata())
+            self.xmi_parser.get_device_attribute_metadata())
         simdd_parser_attributes = (
-            self.simdd_parser.get_reformatted_device_attr_metadata())
+            self.simdd_parser.get_device_attribute_metadata())
 
         for attribute_name in MKAT_VDS_ATTRIBUTE_LIST:
             self.assertIn(attribute_name, xmi_parser_attributes,
@@ -523,9 +523,9 @@ class test_SourceSimulatorInfo(unittest.TestCase):
 
         """
         xmi_parser_commands = (
-            self.xmi_parser.get_reformatted_cmd_metadata())
+            self.xmi_parser.get_device_command_metadata())
         simdd_parser_commands = (
-            self.simdd_parser.get_reformatted_cmd_metadata())
+            self.simdd_parser.get_device_command_metadata())
 
         for command_name in MKAT_VDS_COMMAND_LIST:
             self.assertIn(command_name, xmi_parser_commands,
@@ -547,9 +547,9 @@ class test_SourceSimulatorInfo(unittest.TestCase):
 
         """
         xmi_parser_properties = (
-            self.xmi_parser.get_reformatted_properties_metadata('deviceProperties'))
+            self.xmi_parser.get_device_properties_metadata('deviceProperties'))
         simdd_parser_properties = (
-            self.simdd_parser.get_reformatted_properties_metadata('deviceProperties'))
+            self.simdd_parser.get_device_properties_metadata('deviceProperties'))
 
         for property_name in simdd_parser_properties:
             self.assertIn(property_name, xmi_parser_properties,
@@ -562,9 +562,9 @@ class test_SourceSimulatorInfo(unittest.TestCase):
         information captured in the XMI file generated using POGO.
         """
         xmi_parser_properties = (
-            self.xmi_parser.get_reformatted_properties_metadata('classProperties'))
+            self.xmi_parser.get_device_properties_metadata('classProperties'))
         simdd_parser_properties = (
-            self.simdd_parser.get_reformatted_properties_metadata('classProperties'))
+            self.simdd_parser.get_device_properties_metadata('classProperties'))
 
         for property_name in simdd_parser_properties:
             self.assertIn(property_name, xmi_parser_properties,
@@ -624,7 +624,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
                 xmi_parser = sim_xmi_parser.XmiParser()
                 xmi_parser.parse(data_file)
         expected_device_attr_xmi_info = (
-                xmi_parser.get_reformatted_device_attr_metadata())
+                xmi_parser.get_device_attribute_metadata())
         expected_device_temperature_attr_overridden_info = dict(
                 expected_device_attr_xmi_info[attr_with_overrriden_info],
                 **simdd_specified_temperature_attr_params)
@@ -677,7 +677,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
                 xmi_parser = sim_xmi_parser.XmiParser()
                 xmi_parser.parse(data_file)
         expected_device_cmd_xmi_info = (
-                xmi_parser.get_reformatted_cmd_metadata())
+                xmi_parser.get_device_command_metadata())
         expected_device_on_cmd_overridden_info = dict(
                 expected_device_cmd_xmi_info[cmd_with_overrriden_info],
                 **simdd_specified_on_cmd_params)
