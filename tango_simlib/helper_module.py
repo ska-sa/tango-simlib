@@ -1,10 +1,12 @@
 import os
 import sys
 import socket
+import logging
 
 from PyTango import Database
 from PyTango.server import command
 
+MODULE_LOGGER = logging.getLogger(__name__)
 
 DEFAULT_TANGO_DEVICE_COMMANDS = frozenset(['State', 'Status', 'Init'])
 DEFAULT_TANGO_DEVICE_ATTRIBUTES = frozenset(['State', 'Status', 'AttributesNotAdded',
@@ -127,3 +129,4 @@ def generate_cmd_handler(model, action_name, action_handler):
                 dtype_out=None, dformat_out=None, doc_out="", green_mode=None)
         """
         return command(f=cmd_handler, **cmd_info_copy)
+
