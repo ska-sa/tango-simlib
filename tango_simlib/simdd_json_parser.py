@@ -34,7 +34,7 @@ class SimddParser(Parser):
 
     Attributes
     ----------
-    data_description_file_name: strs
+    data_description_file_name: str
 
     device_class_name: str
 
@@ -380,47 +380,53 @@ class SimddParser(Parser):
         return self._device_attributes
 
     def get_device_command_metadata(self):
-        """Returns a more formatted command data structure in a format of dict"""
-        """The Data structure format is a dict containing command info in a dict
+        """Returns a more formatted command data structure in a format of dict.
 
         e.g.
-        {'On': {
-        'actions': [{'behaviour': 'output_return',
-                     'source_variable': 'temporary_variable'}],
-        'description': 'Turns On Device',
-        'dformat_in': '',
-        'dformat_out': '',
-        'doc_in': 'No input parameter',
-        'doc_out': 'Command responds',
-        'dtype_in': PyTango._PyTango.CmdArgType.DevVoid,
-        'dtype_out': PyTango._PyTango.CmdArgType.DevString,
-        'name': 'On',
-        'override_handler': 'False'},
-        }
+            {'On': {
+                'actions': [
+                    {
+                        'behaviour': 'output_return',
+                        'source_variable': 'temporary_variable'
+                    }
+                ],
+                'description': 'Turns On Device',
+                'dformat_in': '',
+                'dformat_out': '',
+                'doc_in': 'No input parameter',
+                'doc_out': 'Command responds',
+                'dtype_in': PyTango._PyTango.CmdArgType.DevVoid,
+                'dtype_out': PyTango._PyTango.CmdArgType.DevString,
+                'name': 'On',
+                'override_handler': 'False'},
+            }
         """
         return self._device_commands
 
     def get_device_properties_metadata(self, property_group):
-        """Returns a more formatted device prop data structure in a format of dict"""
-        """Data structure format is a list containing device property info in a dict
+        """Returns a more formatted device prop data structure in a format of dict.
 
         e.g.
-        {'sim_data_description_file': {
-            'DefaultPropValue': '',          # The key was changed from 'default_value'
+            {'<property-name>': {
+                'DefaultPropValue': '',      # The key was changed from 'default_value'
                                              # so as to have the same data structures
                                              # across all the three parsers.
-            'name': 'sim_data_description_file',
-            'type': 'string'},
+                'name': '<property-name>',
+                'type': '<data-type'},
         }
 
         """
         return self._device_properties
 
     def get_device_cmd_override_metadata(self):
-        """Returns more formatted device override info data structure in dict format
+        """Returns more formatted device override info data structure in dict format.
         
-        Returns
-        -------
-        self._device
+        e.g.
+            {'Sim_<class-name>_Override': {
+                'class_name': '<override-class-name>',
+                'module_directory': '<absolute-path>',
+                'module_name': '<module_name>',
+                'name': 'Sim_<class-name>_Override'
+            }}
         """
         return self._device_override_class
