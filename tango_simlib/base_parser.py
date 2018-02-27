@@ -43,6 +43,6 @@ class Parser(object):
     def get_device_properties_metadata(self, property_group):
         pass
     
-    abc.abstractmethod
+    @abc.abstractmethod
     def get_device_cmd_override_metadata(self):
         pass
