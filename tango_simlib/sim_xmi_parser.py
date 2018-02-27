@@ -95,51 +95,6 @@ class XmiParser(Parser):
     def __init__(self):
         super(XmiParser, self).__init__()
         self._device_attributes = []
-        """The Data structure format is a list containing attribute info in a dict
-
-        e.g.
-        [{
-            "attribute": {
-                "displayLevel": "OPERATOR",
-                "maxX": "",
-                "maxY": "",
-                "attType": "Scalar",
-                "polledPeriod": "1000",
-                "dataType": DevDouble,
-                "isDynamic": "true",
-                "rwType": "READ",
-                "allocReadMember": "true",
-                "name": "temperature"
-            },
-            "eventCriteria": {
-                "relChange": "10",
-                "absChange": "0.5",
-                "period": "1000"
-            },
-            "evArchiveCriteria": {
-                "relChange": "10",
-                "absChange": "0.5",
-                "period": "1000"
-            },
-            "properties": {
-                "description": "Current temperature outside near the telescope.",
-                "deltaValue": "",
-                "maxAlarm": "50",
-                "maxValue": "51",
-                "minValue": "-10",
-                "standardUnit": "",
-                "minAlarm": "-9",
-                "maxWarning": "45",
-                "unit": "Degrees Centrigrade",
-                "displayUnit": "",
-                "format": "",
-                "deltaTime": "",
-                "label": "Outside Temperature",
-                "minWarning": "-5"
-           }
-        }]
-
-        """
         self._device_commands = []
         """The Data structure format is a list containing command info in a dict
 
@@ -575,6 +530,48 @@ class XmiParser(Parser):
         """Converts the device_attributes data structure into a dictionary
         to make searching easier.
 
+        e.g.
+            [{
+                "dynamicAttributes": {
+                    "displayLevel": "OPERATOR",
+                    "maxX": <int>,
+                    "maxY": <int>,
+                    "attType": <PyTango._PyTango.AttrDataFormat>,
+                    "polledPeriod": '',
+                    "dataType": <PyTango._PyTango.CmdArgType>,
+                    "isDynamic": '<boolean>',
+                    "rwType": '',
+                    "allocReadMember": '<boolean>',
+                    "name": '<attribute-name>'
+                },
+                "eventCriteria": {
+                    "relChange": '',
+                    "absChange": '',
+                    "period": ''
+                },
+                "evArchiveCriteria": {
+                    "relChange": '',
+                    "absChange": '',
+                    "period": ''
+                },
+                "properties": {
+                    'description': '',
+                    'deltaValue': '',
+                    'maxAlarm': '',
+                    'maxValue': '',
+                    'minValue': '',
+                    'standardUnit': '',
+                    'minAlarm': '',
+                    'maxWarning': '',
+                    'unit': '',
+                    'displayUnit': "",
+                    'format': "",
+                    'deltaTime': "",
+                    'label': '',
+                    'minWarning': ''
+                }
+            }]
+
         Returns
         -------
         attributes: dict
@@ -584,32 +581,32 @@ class XmiParser(Parser):
             of all the attribute's metadata.
 
             e.g.
-            {'input_comms_ok': {
+            {'<attribute-name>': {
                 'abs_change': '',
                 'archive_abs_change': '',
-                'archive_period': '1000',
+                'archive_period': '',
                 'archive_rel_change': '',
-                'data_type': PyTango._PyTango.CmdArgType.DevBoolean,
-                'data_format: PyTango._PyTango.AttrDataFormat.SCALAR,
+                'data_type': <PyTango._PyTango.CmdArgType>,
+                'data_format: <PyTango._PyTango.AttrDataFormat>,
                 'delta_t': '',
                 'delta_val': '',
-                'description': 'Communications with all weather sensors are nominal.',
+                'description': '',
                 'display_unit': '',
-                'event_period': '1000',
+                'event_period': '',
                 'format': '',
-                'label': 'Input communication OK',
+                'label': '',
                 'max_alarm': '',
                 'max_value': '',
                 'max_warning': '',
                 'min_alarm': '',
                 'min_value': '',
                 'min_warning': '',
-                'name': 'input_comms_ok',
-                'period': '1000',
+                'name': '<attribute-name>',
+                'period': '',
                 'rel_change': '',
                 'standard_unit': '',
                 'unit': '',
-                'writable': 'READ',
+                'writable': '',
                 'enum_labels': []}, # If attribute data type is DevEnum
             }
 
@@ -642,10 +639,18 @@ class XmiParser(Parser):
             represents the name of the command and the value is a dictionary
             of all the attribute's metadata.
 
-            e.g. { 'cmd_name': {cmd_properties}
+            e.g.
+                {
+                    '<cmd-name>': {
+                        'doc_in': '',
+                        'doc_out': '',
+                        'dtype_in': <PyTango._PyTango.CmdArgType>,
+                        'dtype_out': <PyTango._PyTango.CmdArgType>,
+                        'inherited': '<boolean>',
+                        'name': '<cmd-name'
+                    }
 
-                 }
-
+                }
         """
         temp_commands = {}
         for cmd_info in self._device_commands:
@@ -684,12 +689,17 @@ class XmiParser(Parser):
             represent the name of the device property and the value is a
             dictionary of all the property's metadata.
 
-            e.g. { 'device_property_name' : {device_property_metadata}}
-
-        property_group: str
-            A string representing a group to which the property belongs to, either
-            device properties or class properties.
-
+            e.g.
+                {
+                    '<property-name>' : {
+                        'DefaultPropValue': '<object>',
+                        'description': '',
+                        'inherited': '<boolean>',
+                        'mandatory': '<booolean>',
+                        'name': '<property-name>',
+                        'type': <tango._tango.CmdArgType>
+                    }
+                }
         """
         properties = {}
         if property_group == 'deviceProperties':
