@@ -44,14 +44,10 @@ class SimddParser(Parser):
         self._device_override_class = {}
 
     def parse(self, simdd_json_file):
-        """Read simulator description data from json file
+        '''Read simulator description data from json file.
 
-        Stores all the simulator description data from the json file into
-        appropriate attribute, command and device property data structures.
-        Loops through the json object elements and updates description
-        information of dynamic/attributes into `self._device_attributes`,
-        commands into `self._device_commands`, and device_properties into
-        `self._device_properties`.
+        Stores all the simulator description data from the json file into appropriate
+        attribute, command and device property data structures.
 
         Parameters
         ----------
@@ -60,10 +56,10 @@ class SimddParser(Parser):
 
         Notes
         =====
-        - Data structures, are type dict with dictionary elements keyed with
-          element name and values must be the corresponding data value.
+        - Data structures, are type dict with dictionary elements keyed with element name
+        and values must be the corresponding data value.
 
-        """
+        '''
         simdd_schema_file = pkg_resources.resource_filename(
                 'tango_simlib', 'SIMDD.schema')
         with open(simdd_schema_file) as simdd_schema:
@@ -100,51 +96,52 @@ class SimddParser(Parser):
         elements: list
             List of device data elements with items in unicode format
         e.g.
-        [{
-            "basicAttributeData": {
-                "name": "temperature",
-                "unit": "Degrees Centrigrade",
-                "label": "Outside Temperature",
-                "description": "Current temperature outside near the telescope.",
-                "data_type": "Double",
-                "data_format": "",
-                "delta_t": "1000",
-                "delta_val": "0.5",
-                "data_shape": {
-                    "max_dim_x": "1",
-                    "max_dim_y": "0"
-                },
-                "attributeErrorChecking": {
-                    "min_value": "-10",
-                    "max_value": "51",
-                    "min_alarm": "-9",
-                    "max_alarm": "50"
-                },
-                "attributeInterlocks": {
-                    "writable": "READ"
-                },
-                "dataSimulationParameters": {
-                    "quantity_simulation_type": "GaussianSlewLimited",
-                    "min_bound": "-10",
-                    "max_bound": "50",
-                    "mean": "25",
-                    "max_slew_rate": "1",
-                    "update_period": "1",
-                    "std_dev": "5"
-                },
-                "attributeControlSystem": {
-                    "display_level": "OPERATOR",
-                    "period": "1000",
-                    "EventSettings": {
-                        "eventArchiveCriteria": {
-                            "archive_abs_change": "0.5",
-                            "archive_period": "1000",
-                            "archive_rel_change": "10"
+            [
+                {
+                    'basicAttributeData': {
+                        'name': '<attribute-name>',
+                        'unit': '',
+                        'label': '',
+                        'description': '',
+                        'data_type': '<PyTango._PyTango.CmdArgType>',
+                        'data_format': '<PyTango._PyTango.AttrDataFormat>',
+                        'delta_t': '',
+                        'delta_val': '',
+                        'data_shape': {
+                            'max_dim_x': '<int>',
+                            'max_dim_y': '<int>'
                         },
-                        "eventCrateria": {
-                            "abs_change": "0.5",
-                            "event_period": "1000",
-                            "rel_change": "10"
+                        'attributeErrorChecking': {
+                            'min_value': '',
+                            'max_value': '',
+                            'min_alarm': '',
+                            'max_alarm': ''
+                        },
+                        'attributeInterlocks': {
+                            'writable': ''
+                        },
+                        'dataSimulationParameters': {
+                            'quantity_simulation_type': 'GaussianSlewLimited',
+                            'min_bound': '-10',
+                    'max_bound': '50',
+                    'mean': '25',
+                    'max_slew_rate': '1',
+                    'update_period': '1',
+                    'std_dev': '5'
+                },
+                'attributeControlSystem': {
+                    'display_level': 'OPERATOR',
+                    'period': '1000',
+                    'EventSettings': {
+                        'eventArchiveCriteria': {
+                            'archive_abs_change': '0.5',
+                            'archive_period': '1000',
+                            'archive_rel_change': '10'
+                        },
+                        'eventCrateria': {
+                            'abs_change': '0.5',
+                            'event_period': '1000',
+                            'rel_change': '10'
                         }
                     }
                 }
@@ -163,7 +160,7 @@ class SimddParser(Parser):
         for element_data in elements:
             for element_info in element_data.values():
                 name = element_info['name']
-                element_params = self.get_reformated_data(element_info, element_type)
+                element_params = self._get_reformated_data(element_info, element_type)
                 if 'Attributes' in element_type:
                     device_dict[str(name)] = dict(params_template.items() +
                                                   element_params.items())
@@ -171,104 +168,105 @@ class SimddParser(Parser):
                     device_dict[str(name)] = element_params
         return device_dict
 
-    def get_reformated_data(self, sim_device_element_info, element_type):
-        """Helper function for flattening the data dicts to be more readable
+    def _get_reformated_data(self, sim_device_element_info, element_type):
+        """Helper function for flattening the data dicts to be more readable.
 
         Parameters
         ----------
         sim_device_info: dict
             Data element Dict
         e.g.
-        {"basicAttributeData": {
-                "name": "temperature",
-                "unit": "Degrees Centrigrade",
-                "label": "Outside Temperature",
-                "description": "Current temperature outside near the telescope.",
-                "data_type": "Double",
-                "data_format": "",
-                "delta_t": "1000",
-                "delta_val": "0.5",
-                "data_shape": {
-                    "max_dim_x": "1",
-                    "max_dim_y": "0"
-                },
-                "attributeErrorChecking": {
-                    "min_value": "-10",
-                    "max_value": "51",
-                    "min_alarm": "-9",
-                    "max_alarm": "50"
-                },
-                "attributeInterlocks": {
-                    "writable": "READ"
-                },
-                "dataSimulationParameters": {
-                    'quantity_simulation_type': 'GaussianSlewLimited',
-                    "min_bound": "-10",
-                    "max_bound": "50",
-                    "mean": "25",
-                    "max_slew_rate": "1",
-                    "update_period": "1"
-                },
-                "attributeControlSystem": {
-                    "display_level": "OPERATOR",
-                    "period": "1000",
-                    "EventSettings": {
-                        "eventArchiveCriteria": {
-                            "archive_abs_change": "0.5",
-                            "archive_period": "1000",
-                            "archive_rel_change": "10"
-                        },
-                        "eventCrateria": {
-                            "abs_change": "0.5",
-                            "event_period": "1000",
-                            "rel_change": "10"
+            {
+                'basicAttributeData': {
+                    'name': '<attribute-name>',
+                    'unit': '',
+                    'label': '',
+                    'description': '',
+                    'data_type': '<tango._tango.CmdArgType>',
+                    'data_format': '',
+                    'delta_t': '',
+                    'delta_val': '',
+                    'data_shape': {
+                        'max_dim_x': '<int>',
+                        'max_dim_y': '<int>'
+                    },
+                    'attributeErrorChecking': {
+                        'min_value': '',
+                        'max_value': '',
+                        'min_alarm': '',
+                        'max_alarm': ''
+                    },
+                    'attributeInterlocks': {
+                        'writable': ''
+                    },
+                    'dataSimulationParameters': {
+                        'quantity_simulation_type': '<Quantity-subclass>',
+                        'min_bound': '',
+                        'max_bound': '',
+                        'mean': '',
+                        'max_slew_rate': '',
+                        'update_period': ''
+                    },
+                    'attributeControlSystem': {
+                        'display_level': '',
+                        'period': '',
+                        'EventSettings': {
+                            'eventArchiveCriteria': {
+                                'archive_abs_change': '',
+                                'archive_period': '',
+                                'archive_rel_change': ''
+                            },
+                           'eventCrateria': {
+                                'abs_change': '',
+                                'event_period': '',
+                                'rel_change': ''
+                            }
                         }
                     }
                 }
             }
-        }
 
         Returns
         -------
         items : dict
-            A more formatted and easy to read dictionary
-        e.g.
+            A more formatted and easy to read dictionary.
 
-        {
-            'abs_change': '0.5',
-            'archive_abs_change': '0.5',
-            'archive_period': '1000',
-            'archive_rel_change': '10',
-            'data_format': '',
-            'data_type': PyTango._PyTango.CmdArgType.DevDouble,
-            'delta_t': '1000',
-            'delta_val': '0.5',
-            'description': 'Current temperature outside near the telescope.',
-            'display_level': 'OPERATOR',
-            'event_period': '1000',
-            'label': 'Outside Temperature',
-            'max_alarm': '50',
-            'max_bound': '50',
-            'max_dim_x': '1',
-            'quantity_simulation_type': 'GaussianSlewLimited',
-            'max_dim_y': '0',
-            'max_slew_rate': '1',
-            'max_value': '51',
-            'mean': '25',
-            'min_alarm': '-9',
-            'min_bound': '-10',
-            'min_value': '-10',
-            'name': 'temperature',
-            'period': '1000',
-            'rel_change': '10',
-            'unit': 'Degrees Centrigrade',
-            'update_period': '1',
-            'writable': 'READ'
-        }
+        e.g.
+            {
+                'abs_change': '',
+                'archive_abs_change': '',
+                'archive_period': '',
+                'archive_rel_change': '',
+                'data_format': '',
+                'data_type': <tango._tango.CmdArgType>,
+                'delta_t': '',
+                'delta_val': '',
+                'description': '',
+                'display_level': '',
+                'event_period': '',
+                'label': '',
+                'max_alarm': '',
+                'max_bound': '',
+                'max_dim_x': '<int>','
+                'quantity_simulation_type': '<Quantity-subclass>',
+                'max_dim_y': '<int>',
+                'max_slew_rate': '',
+                'max_value': '',
+                'mean': '',
+                'min_alarm': '',
+                'min_bound': '',
+                'min_value': '',
+                'name': '<attribute-name>',
+                'period': '',
+                'rel_change': '',
+                'unit': '',
+                'update_period': '',
+                'writable': ''
+            }
 
         """
         def expand(value):
-            """Method to expand values of a value if it is an instance of dict"""
+            """Method to expand values of a value if it is an instance of dict."""
             # Recursively call get_reformated_data if value is still a dict
             return [(param_name, param_val)
                     for param_name, param_val in self.get_reformated_data(
@@ -306,7 +304,7 @@ class SimddParser(Parser):
                         # Here we extract the cmdArgType obect since
                         # for later when creating a Tango command,
                         # data type is required in this format.
-                        val = getattr(CmdArgType, "Dev%s" % str(item[1]))
+                        val = getattr(CmdArgType, 'Dev%s' % str(item[1]))
                         formated_info[property_key] = val
                     elif property_key in ['dformat_in', 'dformat_out']:
                         val = getattr(AttrDataFormat, str(item[1]).upper())
@@ -329,7 +327,7 @@ class SimddParser(Parser):
                     # Here we extract the cmdArgType obect since
                     # for later when creating a Tango attibute,
                     # data type is required in this format.
-                    val = getattr(CmdArgType, "Dev%s" % str(param_val))
+                    val = getattr(CmdArgType, 'Dev%s' % str(param_val))
                 elif str(param_name) in ['DefaultPropValue']:
                     # Default property value can be an string, number and array
                     # NB: It is also an optional parameter
@@ -340,16 +338,16 @@ class SimddParser(Parser):
         return formated_info
 
     def get_device_attribute_metadata(self):
-        """Returns a more formatted attribute data structure in a format of dict"""
-        """The Data structure format is a dict containing attribute info in a dict
+        """Returns a more formatted attribute data structure in a format of dict.
 
         e.g.
-        {'temperature': {
-            'abs_change': '0.5',
-            'archive_abs_change': '0.5',
-            'archive_period': '1000',
-            'archive_rel_change': '10',
-            'data_format': '',
+            {
+                '<attribute-name>': {
+                    'abs_change': '',
+                    'archive_abs_change': '',
+                    'archive_period': '',
+                    'archive_rel_change': '',
+                    'data_format': '',
                     'data_type': <tango._tango.CmdArgType>,
                     'delta_t': '',
                     'delta_val': '',
@@ -374,8 +372,7 @@ class SimddParser(Parser):
                     'unit': '',
                     'update_period': '',
                     'writable': ''},
-        }
-
+            }
         """
         return self._device_attributes
 
@@ -383,22 +380,23 @@ class SimddParser(Parser):
         """Returns a more formatted command data structure in a format of dict.
 
         e.g.
-            {'On': {
-                'actions': [
-                    {
-                        'behaviour': 'output_return',
-                        'source_variable': 'temporary_variable'
-                    }
-                ],
-                'description': 'Turns On Device',
-                'dformat_in': '',
-                'dformat_out': '',
-                'doc_in': 'No input parameter',
-                'doc_out': 'Command responds',
-                'dtype_in': PyTango._PyTango.CmdArgType.DevVoid,
-                'dtype_out': PyTango._PyTango.CmdArgType.DevString,
-                'name': 'On',
-                'override_handler': 'False'},
+            {
+                '<command-name>': {
+                    'actions': [
+                        {
+                            'behaviour': '',
+                            'source_variable': ''
+                        }
+                    ],
+                    'description': '',
+                    'dformat_in': '',
+                    'dformat_out': '',
+                    'doc_in': '',
+                    'doc_out': '',
+                    'dtype_in': <tango._tango.CmdArgType>,
+                    'dtype_out': <tango._tango.CmdArgType>,
+                    'name': '<command-name>',
+                    'override_handler': '<boolean>'},
             }
         """
         return self._device_commands
@@ -407,12 +405,13 @@ class SimddParser(Parser):
         """Returns a more formatted device prop data structure in a format of dict.
 
         e.g.
-            {'<property-name>': {
-                'DefaultPropValue': '',      # The key was changed from 'default_value'
+            {
+                '<property-name>': {
+                    'DefaultPropValue': '',  # The key was changed from 'default_value'
                                              # so as to have the same data structures
                                              # across all the three parsers.
-                'name': '<property-name>',
-                'type': '<data-type'},
+                    'name': '<property-name>',
+                    'type': '<data-type'},
         }
 
         """
@@ -422,11 +421,13 @@ class SimddParser(Parser):
         """Returns more formatted device override info data structure in dict format.
         
         e.g.
-            {'Sim_<class-name>_Override': {
-                'class_name': '<override-class-name>',
-                'module_directory': '<absolute-path>',
-                'module_name': '<module_name>',
-                'name': 'Sim_<class-name>_Override'
-            }}
+            {
+                'Sim_<class-name>_Override': {
+                    'class_name': '<override-class-name>',
+                    'module_directory': '<absolute-path>',
+                    'module_name': '<module_name>',
+                    'name': 'Sim_<class-name>_Override'
+                }
+            }
         """
         return self._device_override_class
