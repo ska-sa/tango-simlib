@@ -160,7 +160,7 @@ class SimddParser(Parser):
         for element_data in elements:
             for element_info in element_data.values():
                 name = element_info['name']
-                element_params = self._get_reformated_data(element_info, element_type)
+                element_params = self._get_reformatted_data(element_info, element_type)
                 if 'Attributes' in element_type:
                     device_dict[str(name)] = dict(params_template.items() +
                                                   element_params.items())
@@ -168,7 +168,7 @@ class SimddParser(Parser):
                     device_dict[str(name)] = element_params
         return device_dict
 
-    def _get_reformated_data(self, sim_device_element_info, element_type):
+    def _get_reformatted_data(self, sim_device_element_info, element_type):
         """Helper function for flattening the data dicts to be more readable.
 
         Parameters
@@ -267,9 +267,9 @@ class SimddParser(Parser):
         """
         def expand(value):
             """Method to expand values of a value if it is an instance of dict."""
-            # Recursively call get_reformated_data if value is still a dict
+            # Recursively call get_reformatted_data if value is still a dict
             return [(param_name, param_val)
-                    for param_name, param_val in self.get_reformated_data(
+                    for param_name, param_val in self._get_reformatted_data(
                     value, element_type).items()]
 
         formated_info = dict()
