@@ -46,14 +46,14 @@ class SDDParser(Parser):
         self.data_description_file_name = sdd_xml_file
         tree = ET.parse(sdd_xml_file)
         root = tree.getroot()
-        self._device_commands.update(self.extract_command_info(root.find(
+        self._device_commands.update(self._extract_command_info(root.find(
             'CommandList')))
-        self._device_attributes.update(self.extract_monitoring_point_info(
+        self._device_attributes.update(self._extract_monitoring_point_info(
             root.find('MonitoringPointsList')))
 
         self._convert_attribute_info()
 
-    def extract_command_info(self, cmd_info):
+    def _extract_command_info(self, cmd_info):
         """Extracts all the information of the XML element 'CommandList'
 
         Parameters
@@ -153,8 +153,8 @@ class SDDParser(Parser):
         return cmds
 
     def _extract_response_list_info(self, cmd_meta, prop):
-        """Extracts the cmd response info from the command information
-        and adds it to cmd_meta dictionary.
+        """Extracts the cmd response info from the command information and adds it to
+        cmd_meta dictionary.
 
         Parameter
         ---------
@@ -223,7 +223,7 @@ class SDDParser(Parser):
 
         cmd_meta[prop.tag].update(cmd_responses)
 
-    def extract_monitoring_point_info(self, mp_info):
+    def _extract_monitoring_point_info(self, mp_info):
         """Extracts all the information of the XML element 'MonitoringPointsList'
 
         Parameters
@@ -301,8 +301,8 @@ class SDDParser(Parser):
                         dev_mnt_pts_meta[prop.tag] = SDD_TYPES_TO_TANGO_TYPES[prop.text]
                     except KeyError:
                         raise KeyError("The monitoring point '{}''s data type '{}' cannot"
-                                     " be mapped to any TANGO type"
-                                     .format(mnt_pt, prop))
+                                       " be mapped to any TANGO type"
+                                       .format(mnt_pt, prop))
                 else:
                     dev_mnt_pts_meta[prop.tag] = prop.text
 
