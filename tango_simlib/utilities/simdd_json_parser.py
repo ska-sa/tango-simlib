@@ -13,7 +13,7 @@ import pkg_resources
 from PyTango._PyTango import CmdArgType, AttrDataFormat
 from jsonschema import validate
 
-from tango_simlib import helper_module
+from tango_simlib.utilities import helper_module
 from base_parser import Parser
 
 MODULE_LOGGER = logging.getLogger(__name__)

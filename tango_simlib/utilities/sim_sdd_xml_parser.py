@@ -8,7 +8,7 @@ file generated from the DSL.
 """
 import xml.etree.ElementTree as ET
 
-from tango_simlib.base_parser import Parser
+from tango_simlib.utilities.base_parser import Parser
 
 from PyTango import DevDouble, DevLong, DevBoolean, DevString
 

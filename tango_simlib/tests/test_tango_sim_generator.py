@@ -8,10 +8,11 @@ import subprocess
 import pkg_resources
 import devicetest
 
-from tango_simlib.testutils import ClassCleanupUnittestMixin
-from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
+from tango_simlib import tango_sim_generator
 
 from tango_simlib.tests import test_sim_test_interface
+from tango_simlib.utilities import helper_module, sim_xmi_parser
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
