@@ -3,11 +3,11 @@ from PyTango.server import server_run
 from tango_simlib.tango_sim_generator import (configure_device_model, get_tango_device_server)
 
 
-# File generated on Thu Jul 20 09:19:00 2017 by tango-simlib-generator
+# File generated on Thu Mar 01 15:19:00 2018 by tango-simlib-generator
 
 
 def main():
-    sim_data_files = ['/home/kat/svn/tango-simlib/tango_simlib/tests/DishElementMaster.xmi', '/home/kat/svn/tango-simlib/tango_simlib/tests/DishElementMaster_SIMDD.json']
+    sim_data_files = ['/home/kat/svn/tango-simlib/tango_simlib/tests/config_files/DishElementMaster.xmi', '/home/kat/svn/tango-simlib/tango_simlib/tests/config_files/DishElementMaster_SIMDD.json']
     model = configure_device_model(sim_data_files)
     TangoDeviceServers = get_tango_device_server(model, sim_data_files)
     server_run(TangoDeviceServers)
