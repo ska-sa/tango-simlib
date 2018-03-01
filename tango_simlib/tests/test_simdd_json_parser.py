@@ -7,13 +7,15 @@ import pkg_resources
 
 from devicetest import TangoTestContext
 
-from tango_simlib.testutils import cleanup_tempfile
+
 from katcp.testutils import start_thread_with_cleanup
-from tango_simlib import simdd_json_parser, helper_module
-from tango_simlib import sim_xmi_parser, model
-from tango_simlib import tango_sim_generator
+
+from tango_simlib import model, tango_sim_generator
+
 from tango_simlib.examples import override_class
-from tango_simlib.testutils import ClassCleanupUnittestMixin
+from tango_simlib.utilities import simdd_json_parser, helper_module, sim_xmi_parser
+from tango_simlib.utilities.testutils import cleanup_tempfile
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
 
 
 MODULE_LOGGER = logging.getLogger(__name__)

@@ -9,9 +9,9 @@ from functools import partial
 from devicetest import DeviceTestCase
 from mock import Mock
 
-from tango_simlib import model, quantities
-from tango_simlib import tango_sim_generator, helper_module
-from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
+from tango_simlib import model, quantities, tango_sim_generator
+from tango_simlib.utilities import helper_module
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
 
 from PyTango import DevState, AttrDataFormat
 

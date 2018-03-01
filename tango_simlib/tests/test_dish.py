@@ -9,7 +9,7 @@ from mock import Mock, call
 from katcp.testutils import start_thread_with_cleanup
 
 from tango_simlib import tango_sim_generator, model
-from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
 
 from PyTango import DevFailed
 

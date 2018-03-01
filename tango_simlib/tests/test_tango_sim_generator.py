@@ -9,7 +9,6 @@ import pkg_resources
 import devicetest
 
 from tango_simlib import tango_sim_generator
-
 from tango_simlib.tests import test_sim_test_interface
 from tango_simlib.utilities import helper_module, sim_xmi_parser
 from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
@@ -26,7 +25,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         cls.port = helper_module.get_port()
         cls.host = helper_module.get_host_address()
         cls.data_descr_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests', 'Weather.xmi')]
+            'tango_simlib.tests.config_files', 'Weather.xmi')]
         cls.temp_dir = tempfile.mkdtemp()
         cls.sim_device_class = tango_sim_generator.get_device_class(cls.data_descr_file)
         device_name = 'test/nodb/tangodeviceserver'
