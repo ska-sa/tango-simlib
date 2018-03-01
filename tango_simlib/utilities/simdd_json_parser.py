@@ -1,14 +1,10 @@
-###############################################################################
-# SKA South Africa (http://ska.ac.za/)                                        #
-# Author: cam@ska.ac.za                                                       #
-# Copyright @ 2013 SKA SA. All rights reserved.                               #
-#                                                                             #
-# THIS SOFTWARE MAY NOT BE COPIED OR DISTRIBUTED IN ANY FORM WITHOUT THE      #
-# WRITTEN PERMISSION OF SKA SA.                                               #
-###############################################################################
+######################################################################################### 
+# Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
+#                                                                                       #
+# BSD license - see LICENSE.txt for details                                             #
+#########################################################################################
 """This module performs the parsing of the Simulator Description Datafile,
 containing the information needed to instantiate a useful device simulator.
-@author MeerKAT CAM team <cam@ska.ac.za>
 """
 import logging
 import json
