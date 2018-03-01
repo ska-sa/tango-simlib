@@ -41,10 +41,10 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
     def setUpClassWithCleanup(cls):
         cls.data_descr_files = []
         cls.data_descr_files.append(
-            pkg_resources.resource_filename('tango_simlib.tests',
-                                            'DishElementMaster.xmi'))
+            pkg_resources.resource_filename(
+                'tango_simlib.tests.config_files', 'DishElementMaster.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'DishElementMaster_SIMDD.json'))
+            'tango_simlib.tests.config_files', 'DishElementMaster_SIMDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         cls.model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)
@@ -347,10 +347,10 @@ class test_Device(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.data_descr_files = []
         cls.data_descr_files.append(
-            pkg_resources.resource_filename('tango_simlib.tests',
-                                            'DishElementMaster.xmi'))
+            pkg_resources.resource_filename(
+                'tango_simlib.tests.config_files', 'DishElementMaster.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'DishElementMaster_SIMDD.json'))
+            'tango_simlib.tests.config_files', 'DishElementMaster_SIMDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.data_descr_files,
                                                            cls.device_name)
