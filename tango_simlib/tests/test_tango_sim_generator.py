@@ -91,7 +91,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         expected_attributes = []
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
 
-        for attribute_data in self.xmi_parser.device_attributes:
+        for attribute_data in self.xmi_parser._device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
 
         self.assertEqual(set(expected_attributes) - set(not_added_attr_names),
@@ -103,7 +103,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         """Testing whether commands are defined on the device as expected
         """
         actual_device_commands = set(self.sim_device.get_command_list()) - {'Init'}
-        expected_command_list = set(self.xmi_parser.get_reformatted_cmd_metadata().keys())
+        expected_command_list = set(self.xmi_parser.get_device_command_metadata().keys())
         self.assertEquals(actual_device_commands, expected_command_list,
                           "The commands specified in the xmi file are not present in"
                           " the device")

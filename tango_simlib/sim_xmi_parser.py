@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 ###############################################################################
 # SKA South Africa (http://ska.ac.za/)                                        #
 # Author: cam@ska.ac.za                                                       #
@@ -12,10 +11,11 @@ Simlib library generic simulator generator utility to be used to generate an act
 TANGO device that exhibits the behaviour defined in the data description file.
 @author MeerKAT CAM team <cam@ska.ac.za>
 """
-
 import logging
 
 import xml.etree.ElementTree as ET
+
+from base_parser import Parser
 import PyTango
 
 from PyTango import (DevBoolean, DevString, DevEnum, AttrDataFormat,
@@ -81,155 +81,33 @@ POGO_USER_DEFAULT_CMD_PROP_MAP = {
     'argoutType': 'dtype_out',
     'inherited': 'inherited'}
 
-class XmiParser(object):
+class XmiParser(Parser):
+    """Parses the XMI file generated from POGO.
 
+    Attributes
+    ----------
+    data_description_file_name: str
+
+    device_class_name: str
+    """
     def __init__(self):
-        """Parser class handling a simulator description datafile in xmi format.
-
-        Creating an instance of this class requires calling :meth:`parse`
-        afterwards to extract all the provided tango attributes, commands,
-        device property and device override class information from the specified
-        file.  The formated data is a dict structure and can be obtained using
-        :meth:`get_reformatted_device_attr_metadata`,
-        :meth:`get_reformatted_cmd_metadata`,
-        :meth:`get_reformatted_properties_metadata` and
-        :meth:`get_reformatted_override_metadata`
-
-        """
-        self.data_description_file_name = ''
-        self.device_class_name = ''
-        self.device_attributes = []
-        """The Data structure format is a list containing attribute info in a dict
-
-        e.g.
-        [{
-            "attribute": {
-                "displayLevel": "OPERATOR",
-                "maxX": "",
-                "maxY": "",
-                "attType": "Scalar",
-                "polledPeriod": "1000",
-                "dataType": DevDouble,
-                "isDynamic": "true",
-                "rwType": "READ",
-                "allocReadMember": "true",
-                "name": "temperature"
-            },
-            "eventCriteria": {
-                "relChange": "10",
-                "absChange": "0.5",
-                "period": "1000"
-            },
-            "evArchiveCriteria": {
-                "relChange": "10",
-                "absChange": "0.5",
-                "period": "1000"
-            },
-            "properties": {
-                "description": "Current temperature outside near the telescope.",
-                "deltaValue": "",
-                "maxAlarm": "50",
-                "maxValue": "51",
-                "minValue": "-10",
-                "standardUnit": "",
-                "minAlarm": "-9",
-                "maxWarning": "45",
-                "unit": "Degrees Centrigrade",
-                "displayUnit": "",
-                "format": "",
-                "deltaTime": "",
-                "label": "Outside Temperature",
-                "minWarning": "-5"
-           }
-        }]
-
-        """
-        self.device_commands = []
-        """The Data structure format is a list containing command info in a dict
-
-        e.g.
-        [{
-             "name": "On",
-             "arginDescription": "",
-             "arginType": tango._tango.CmdArgType.DevVoid,
-             "argoutDescription": "ok | Device ON",
-             "argoutType": tango._tango.CmdArgType.DevString,
-             "description": "Turn On Device"
-        }]
-
-        """
-        self.device_properties = []
-        """Data structure format is a list containing device property info in a dict
-
-        e.g.
-        [{
-            "deviceProperties": {
-                "type": DevString,
-                "mandatory": "true",
-                "description": "Path to the pogo generate xmi file",
-                "name": "sim_xmi_description_file",
-                "DefaultPropValue": "<any object>"
-            }
-        }]
-
-        """
-        self.class_properties = []
-        """Data structure format is a list containing class property info in a dict
-
-        e.g.
-        [{
-           "classProperties": {
-                "type": DevString,
-                "mandatory": "true",
-                "description": "Path to the pogo generate xmi file",
-                "name": "sim_xmi_description_file",
-                "DefaultPropValue": "<any object>"
-            }
-        }]
-
-        """
-        self.class_description = {}
-        """Data structure format is a dictionary containing the Tango class description
-        information.
-
-        e.g.
-        {
-           "super_classes [{
-               "classname": "",
-               "sourcePath": "an absolute path to the parent xmi file."
-               }],
-        }
-        """
-        # TODO (KM 07-08-2017) Update the above docstring with these items below
-        # once the code in the 'extract_device_class_descr' has been commented out.
-        #   "description": "",
-        #   "title": "",
-        #   "sourcePath": "",
-        #   "language": "",
-        #   "filestogenerate": "",
-        #   "license": "",
-        #   "copyright": "",
-        #   "hasMandatoryProperty": "",
-        #   "hasConcreteProperty": "",
-        #   "hasAbstractCommand": "",
-        #   "hasAbstractAttribute": "",
-        #   "identification": {
-        #       "author": "",
-        #       "contact": "",
-        #       "emailDomain": ""
-        #       }
-
+        super(XmiParser, self).__init__()
+        self._device_attributes = []
+        self._device_commands = []
+        self._device_properties = []
+        self._device_class_properties = []
+        self._class_description = {}
         self._tree = None
 
     def parse(self, sim_xmi_file):
-        """Read simulator description data from xmi file into `self.device_properties`
+        """Read simulator description data from xmi file into `self._device_properties`
 
         Stores all the simulator description data from the xmi tree into
         appropriate attribute, command and device property data structures.
         Loops through the xmi tree class elements and appends description
-        information of dynamic/attributes into `self.device_attributes`,
-        commands into `self.device_commands`, and device_properties into
-        `self.device_properties`.
+        information of dynamic/attributes into `self._device_attributes`,
+        commands into `self._device_commands`, and device_properties into
+        `self._device_properties`.
 
         Parameters
         ----------
@@ -262,19 +140,19 @@ class XmiParser(object):
             elif class_description_data.tag in ['commands']:
                 command_info = (
                     self.extract_command_description_data(class_description_data))
-                self.device_commands.append(command_info)
+                self._device_commands.append(command_info)
             elif class_description_data.tag in ['dynamicAttributes', 'attributes']:
                 attribute_info = self.extract_attributes_description_data(
                     class_description_data)
-                self.device_attributes.append(attribute_info)
+                self._device_attributes.append(attribute_info)
             elif class_description_data.tag in ['deviceProperties']:
                 device_property_info = self.extract_property_description_data(
                     class_description_data, class_description_data.tag)
-                self.device_properties.append(device_property_info)
+                self._device_properties.append(device_property_info)
             elif class_description_data.tag in ['classProperties']:
                 class_property_info = self.extract_property_description_data(
                     class_description_data, class_description_data.tag)
-                self.class_properties.append(class_property_info)
+                self._device_class_properties.append(class_property_info)
 
     def extract_device_class_descr(self, description_data):
         """Extract Tango device class description data from the xmi tree element.
@@ -287,17 +165,17 @@ class XmiParser(object):
             ['inheritances(s)', 'identification'] and
             description_data.attrib contains
             {
-                "description": "",
-                "title": "",
-                "sourcePath": "",
-                "language": "",
-                "filestogenerate": "",
-                "license": "",
-                "copyright": "",
-                "hasMandatoryProperty": "",
-                "hasConcreteProperty": "",
-                "hasAbstractCommand": "",
-                "hasAbstractAttribute" : ""
+                'description': '',
+                'title': '',
+                'sourcePath': '',
+                'language': '',
+                'filestogenerate': '',
+                'license': '',
+                'copyright': '',
+                'hasMandatoryProperty': '',
+                'hasConcreteProperty': '',
+                'hasAbstractCommand': '',
+                'hasAbstractAttribute' : ''
             }
 
         """
@@ -305,20 +183,20 @@ class XmiParser(object):
                                                 # information about the Tango device
                                                 # class, however it is not useful for
                                                 # the current problem.
-        #class_data["identification"] = {}
+        #class_data['identification'] = {}
         #identification = description_data.find('identification')
-        #class_data["identification"]["contact"] = identification.attrib["contact"]
-        #class_data["identification"]["author"] = identification.attrib["author"]
-        #class_data["identification"]["emailDomain"] = (
-        #    identification.attrib["emailDomain"])
-        #    class_data["identification"].append(id.attrib)
+        #class_data['identification']['contact'] = identification.attrib['contact']
+        #class_data['identification']['author'] = identification.attrib['author']
+        #class_data['identification']['emailDomain'] = (
+        #    identification.attrib['emailDomain'])
+        #    class_data['identification'].append(id.attrib)
         class_data = {}
-        class_data["super_classes"] = []
+        class_data['super_classes'] = []
         super_classes = description_data.findall('inheritances')
         for super_class in super_classes:
-            class_data["super_classes"].append(super_class.attrib)
+            class_data['super_classes'].append(super_class.attrib)
 
-        self.class_description.update(class_data)
+        self._class_description.update(class_data)
 
     def extract_command_description_data(self, description_data):
         """Extract command description data from the xmi tree element.
@@ -331,12 +209,12 @@ class XmiParser(object):
             ['argin', 'argout'] and
             description_data.attrib contains
             {
-                "description": "Turn On Device",
-                "displayLevel": "OPERATOR",
-                "isDynamic": "false",
-                "execMethod": "on",
-                "polledPeriod": "0",
-                "name": "On"
+                'description': 'Turn On Device',
+                'displayLevel': 'OPERATOR',
+                'isDynamic': 'false',
+                'execMethod': 'on',
+                'polledPeriod': '0',
+                'name': 'On'
             }
 
         Returns
@@ -369,51 +247,51 @@ class XmiParser(object):
 
             description_data.find('properties').attrib contains
             {
-                "description": "",
-                "deltaValue": "",
-                "maxAlarm": "",
-                "maxValue": "",
-                "minValue": "",
-                "standardUnit": "",
-                "minAlarm": "",
-                "maxWarning": "",
-                "unit": "",
-                "displayUnit": "",
-                "format": "",
-                "deltaTime": "",
-                "label": "",
-                "minWarning": ""
+                'description': '',
+                'deltaValue': '',
+                'maxAlarm': '',
+                'maxValue': '',
+                'minValue': '',
+                'standardUnit': '',
+                'minAlarm': '',
+                'maxWarning': '',
+                'unit': '',
+                'displayUnit': '',
+                'format': '',
+                'deltaTime': '',
+                'label': '',
+                'minWarning': ''
             }
 
             and
 
             description_data.attrib contains
             {
-                "maxX": "",
-                "maxY": "",
-                "attType": "Scalar",
-                "polledPeriod": "0",
-                "displayLevel": "OPERATOR",
-                "isDynamic": "false",
-                "rwType": "WRITE",
-                "allocReadMember": "false",
-                "name": "Constant"
+                'maxX': '',
+                'maxY': '',
+                'attType': 'Scalar',
+                'polledPeriod': '0',
+                'displayLevel': 'OPERATOR',
+                'isDynamic': 'false',
+                'rwType': 'WRITE',
+                'allocReadMember': 'false',
+                'name': 'Constant'
             }
 
 
 
             description_data.find('eventCriteria').attrib contains
             {
-                "relChange": "10",
-                "absChange": "0.5",
-                "period": "1000"
+                'relChange': '10',
+                'absChange': '0.5',
+                'period': '1000'
             }
 
             description_data.find('evArchiveCriteria').attrib contains
             {
-                "relChange": "10",
-                "absChange": "0.5",
-                "period": "1000"
+                'relChange': '10',
+                'absChange': '0.5',
+                'period': '1000'
             }
 
         Returns
@@ -505,7 +383,7 @@ class XmiParser(object):
             default_prop_values = description_data.findall('DefaultPropValue')
             default_values = [prop_value.text for prop_value in default_prop_values]
             property_data[property_group]['DefaultPropValue'] = (
-                default_values if default_values else "")
+                default_values if default_values else '')
         except KeyError:
             MODULE_LOGGER.info("%s has no default value(s) specified", property_group)
         except AttributeError:
@@ -567,17 +445,59 @@ class XmiParser(object):
             else:
                 arg_type = getattr(PyTango, 'Dev' + arg_type)
         except AttributeError:
-            MODULE_LOGGER.debug("PyTango has no attribute 'Dev{}".format(arg_type))
-            raise AttributeError("PyTango has no attribute 'Dev{}.\n Try replacing"
+            MODULE_LOGGER.debug("PyTango has no attribute 'Dev{}'".format(arg_type))
+            raise AttributeError("PyTango has no attribute 'Dev{}'.\n Try replacing"
                                  " '{}' with 'Var{}' in the configuration file"
                                  .format(*(3*(arg_type,))))
 
         return arg_type
 
 
-    def get_reformatted_device_attr_metadata(self):
+    def get_device_attribute_metadata(self):
         """Converts the device_attributes data structure into a dictionary
         to make searching easier.
+
+        e.g.
+            [{
+                'dynamicAttributes': {
+                    'displayLevel': '',
+                    'maxX': <int>,
+                    'maxY': <int>,
+                    'attType': <tango._tango.AttrDataFormat>,
+                    'polledPeriod': '',
+                    'dataType': <tango._tango.CmdArgType>,
+                    'isDynamic': '<boolean>',
+                    'rwType': '',
+                    'allocReadMember': '<boolean>',
+                    'name': '<attribute-name>'
+                },
+                'eventCriteria': {
+                    'relChange': '',
+                    'absChange': '',
+                    'period': ''
+                },
+                'evArchiveCriteria': {
+                    'relChange': '',
+                    'absChange': '',
+                    'period': ''
+                },
+                'properties': {
+                    'description': '',
+                    'deltaValue': '',
+                    'maxAlarm': '',
+                    'maxValue': '',
+                    'minValue': '',
+                    'standardUnit': '',
+                    'minAlarm': '',
+                    'maxWarning': '',
+                    'unit': '',
+                    'displayUnit': '',
+                    'format': '',
+                    'deltaTime': '',
+                    'label': '',
+                    'minWarning': ''
+                }
+            }]
 
         Returns
         -------
@@ -588,39 +508,39 @@ class XmiParser(object):
             of all the attribute's metadata.
 
             e.g.
-            {'input_comms_ok': {
+            {'<attribute-name>': {
                 'abs_change': '',
                 'archive_abs_change': '',
-                'archive_period': '1000',
+                'archive_period': '',
                 'archive_rel_change': '',
-                'data_type': PyTango._PyTango.CmdArgType.DevBoolean,
-                'data_format: PyTango._PyTango.AttrDataFormat.SCALAR,
+                'data_type': <tango._tango.CmdArgType>,
+                'data_format: <tango._tango.AttrDataFormat>,
                 'delta_t': '',
                 'delta_val': '',
-                'description': 'Communications with all weather sensors are nominal.',
+                'description': '',
                 'display_unit': '',
-                'event_period': '1000',
+                'event_period': '',
                 'format': '',
-                'label': 'Input communication OK',
+                'label': '',
                 'max_alarm': '',
                 'max_value': '',
                 'max_warning': '',
                 'min_alarm': '',
                 'min_value': '',
                 'min_warning': '',
-                'name': 'input_comms_ok',
-                'period': '1000',
+                'name': '<attribute-name>',
+                'period': '',
                 'rel_change': '',
                 'standard_unit': '',
                 'unit': '',
-                'writable': 'READ',
+                'writable': '',
                 'enum_labels': []}, # If attribute data type is DevEnum
             }
 
         """
         attributes = {}
 
-        for pogo_attribute_data in self.device_attributes:
+        for pogo_attribute_data in self._device_attributes:
             attribute_meta = {}
             for (prop_group, default_attr_props) in (
                     POGO_USER_DEFAULT_ATTR_PROP_MAP.items()):
@@ -634,25 +554,44 @@ class XmiParser(object):
             attributes[attribute_meta['name']] = attribute_meta
         return attributes
 
-    def get_reformatted_cmd_metadata(self):
-        """Converts the device_commands data structure into a dictionary that
-        makes searching easier.
+    def get_device_command_metadata(self):
+        """Converts the device_commands data structure into a dictionary that makes
+        searching easier.
+
+        e.g.
+            [
+                {
+                    'name': '<command-name>',
+                    'arginDescription': '',
+                    'arginType': <tango._tango.CmdArgType>,
+                    'argoutDescription': '',
+                    'argoutType': <tango._tango.CmdArgType>,
+                    'description': ''
+                }
+            ]
 
         Returns
         -------
         commands : dict
-            A dictionary of all the device commands together with their
-            metadata specified in the POGO generated XMI file. The key
-            represents the name of the command and the value is a dictionary
-            of all the attribute's metadata.
+            A dictionary of all the device commands together with their metadata
+            specified in the POGO generated XMI file. The key represents the name of the 
+            command and the value is a dictionary
+            of all the command's metadata.
 
-            e.g. { 'cmd_name': {cmd_properties}
-
-                 }
-
+            e.g.
+                {
+                    '<command-name>': {
+                        'doc_in': '',
+                        'doc_out': '',
+                        'dtype_in': <tango._tango.CmdArgTypee>,
+                        'dtype_out': <tango._tango.CmdArgType>,
+                        'inherited': '<boolean>',
+                        'name': '<command-name'
+                    }
+                }
         """
         temp_commands = {}
-        for cmd_info in self.device_commands:
+        for cmd_info in self._device_commands:
             temp_commands[cmd_info['name']] = cmd_info
 
         commands = {}
@@ -671,8 +610,35 @@ class XmiParser(object):
             commands[cmd_name] = commands_metadata
         return commands
 
-    def get_reformatted_properties_metadata(self, property_group):
-        """Creates a dictionary of the device properties and their metadata.
+    def get_device_properties_metadata(self, property_group):
+        """Creates a dictionary of the device/class properties and their metadata.
+
+        e.g.
+            [
+                {
+                    'deviceProperties': {
+                        'type': <tango._tango.CmdArgType>,
+                        'mandatory': '<boolean>',
+                        'description': '',
+                        'name': '<property-name>',
+                        'DefaultPropValue': '<any object>'
+                    }
+                }
+            ]
+
+            or
+
+            [
+                {
+                    'classProperties': {
+                        'type': <tango._tango.CmdArgType>,
+                        'mandatory': '<boolean>',
+                        'description': '',
+                        'name': '',
+                        'DefaultPropValue': '<any object>'
+                    }
+                }
+            ]
 
         Parameter
         ---------
@@ -682,24 +648,29 @@ class XmiParser(object):
 
         Returns
         -------
-        device_properties: dict
-            A dictionary of all the device properties together with their
-            metadata specified in the POGO generated XMI file. The keys
-            represent the name of the device property and the value is a
-            dictionary of all the property's metadata.
+        properties: dict
+            A dictionary of all the device/class properties together with their metadata
+            specified in the POGO generated XMI file. The keys represent the name of the
+            device/class property and the value is a dictionary of all the property's
+            metadata.
 
-            e.g. { 'device_property_name' : {device_property_metadata}}
-
-        property_group: str
-            A string representing a group to which the property belongs to, either
-            device properties or class properties.
-
+            e.g.
+                {
+                    '<property-name>' : {
+                        'DefaultPropValue': '<object>',
+                        'description': '',
+                        'inherited': '<boolean>',
+                        'mandatory': '<booolean>',
+                        'name': '<property-name>',
+                        'type': <tango._tango.CmdArgType>
+                    }
+                }
         """
         properties = {}
         if property_group == 'deviceProperties':
-            props = self.device_properties
+            props = self._device_properties
         elif property_group == 'classProperties':
-            props = self.class_properties
+            props = self._device_class_properties
         else:
             raise Exception("Wrong argument provided")
 
@@ -709,13 +680,58 @@ class XmiParser(object):
 
         return properties
 
-    def get_reformatted_override_metadata(self):
+    def get_device_cmd_override_metadata(self):
         # TODO(KM 15-12-2016) The PopulateModelQuantities and PopulateModelActions
         # classes assume that the parsers we have developed have the same interface
         # so this method does nothing but return an empty dictionary. Might provide
         # an implementation when the XMI file has such parameter information (provided
         # in the SIMDD file).
         return {}
+
+    def get_device_class_description_metadata(self):
+        """Returns a dictionary containing the Tango class description information.
+
+        e.g.
+        {
+           'super_classes [{
+               'classname': '',
+               'sourcePath': '<absolute path to the parent xmi file>'
+               }],
+        }
+
+        Returns
+        -------
+        class_description : dict
+
+            e.g.
+                {
+                    'super_classes': [
+                        {
+                            'classname': '<device-class-name>',
+                            'sourcePath': '<absolute path to the parent xmi file>'
+                        }
+                    ]
+                }
+        """
+        # TODO (KM 07-08-2017) Update the above docstring with these items below
+        # once the code in the 'extract_device_class_descr' has been commented out.
+        #   'description': '',
+        #   'title': '',
+        #   'sourcePath': '',
+        #   'language': '',
+        #   'filestogenerate': '',
+        #   'license': '',
+        #   'copyright': '',
+        #   'hasMandatoryProperty': '',
+        #   'hasConcreteProperty': '',
+        #   'hasAbstractCommand': '',
+        #   'hasAbstractAttribute': '',
+        #   'identification': {
+        #       'author': '',
+        #       'contact': '',
+        #       'emailDomain': ''
+        #       }
+        return self._class_description
 
     def get_xmi_tree(self):
         return self._tree

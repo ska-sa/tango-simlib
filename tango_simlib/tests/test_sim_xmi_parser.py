@@ -245,7 +245,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
-        for attribute_data in self.xmi_parser.device_attributes:
+        for attribute_data in self.xmi_parser._device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
         self.assertEqual(set(expected_attributes) - set(not_added_attr_names),
                          attributes - default_attributes,
@@ -254,7 +254,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
 
     def test_attribute_properties(self):
         attribute_list = self.device.get_attribute_list()
-        attribute_data = self.xmi_parser.get_reformatted_device_attr_metadata()
+        attribute_data = self.xmi_parser.get_device_attribute_metadata()
         not_added_attr = self.device.read_attribute('AttributesNotAdded')
         not_added_attr_names = not_added_attr.value
 
@@ -366,13 +366,13 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         """Test tango command list."""
 
         actual_device_commands = set(self.device.get_command_list()) - {'Init'}
-        expected_command_list = set(self.xmi_parser.get_reformatted_cmd_metadata().keys())
+        expected_command_list = set(self.xmi_parser.get_device_command_metadata().keys())
         self.assertEquals(actual_device_commands, expected_command_list,
                           "The commands specified in the xmi file are not present in"
                           " the device")
 
     def test_command_properties(self):
-        command_data = self.xmi_parser.get_reformatted_cmd_metadata()
+        command_data = self.xmi_parser.get_device_command_metadata()
 
         for cmd_name, cmd_metadata in command_data.items():
             cmd_config_info = self.device.get_command_config(cmd_name)
@@ -407,7 +407,7 @@ class test_XmiParser(GenericSetup):
         """Test attribute information parsed matches with the one captured in the
         XMI file.
         """
-        actual_parsed_attrs = self.xmi_parser.get_reformatted_device_attr_metadata()
+        actual_parsed_attrs = self.xmi_parser.get_device_attribute_metadata()
         actual_parsed_attr_list = actual_parsed_attrs.keys()
         self.assertGreater(len(actual_parsed_attr_list), 0,
                            "There is no attribute information parsed")
@@ -442,7 +442,7 @@ class test_XmiParser(GenericSetup):
         with the one captured in the XMI file generated using POGO.
 
         """
-        actual_parsed_cmds = self.xmi_parser.get_reformatted_cmd_metadata()
+        actual_parsed_cmds = self.xmi_parser.get_device_command_metadata()
         expected_cmd_list = ['On', 'Off', 'Add', 'cmd1'] + default_pogo_commands
         actual_parsed_cmd_list = actual_parsed_cmds.keys()
         self.assertGreater(len(actual_parsed_cmd_list), len(default_pogo_commands),
@@ -472,7 +472,7 @@ class test_XmiParser(GenericSetup):
         generating using POGO is parsed correctly with no data loss.
         """
         actual_parsed_dev_properties = (
-                self.xmi_parser.get_reformatted_properties_metadata('deviceProperties'))
+                self.xmi_parser.get_device_properties_metadata('deviceProperties'))
         expected_device_properties_list = ['sim_xmi_description_file']
         actual_parsed_dev_props_list = actual_parsed_dev_properties.keys()
         self.assertEqual(set(expected_device_properties_list),
@@ -529,7 +529,7 @@ class test_PopModelActions(GenericSetup):
         """Test if actions are populated to the model.
         """
         device_name = 'tango/device/instance'
-        cmd_info = self.xmi_parser.get_reformatted_cmd_metadata()
+        cmd_info = self.xmi_parser.get_device_command_metadata()
 
         sim_model = (model.PopulateModelActions(self.xmi_parser, device_name).sim_model)
         self.assertEqual(len(sim_model.sim_quantities), 0,
@@ -585,7 +585,7 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
         """
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
-        for attribute_data in self.xmi_parser.device_attributes:
+        for attribute_data in self.xmi_parser._device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
         self.assertEqual(set(expected_attributes), attributes -
                          helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES,
