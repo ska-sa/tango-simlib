@@ -44,7 +44,7 @@ class SimddParser(Parser):
         self._device_override_class = {}
 
     def parse(self, simdd_json_file):
-        '''Read simulator description data from json file.
+        """Read simulator description data from json file.
 
         Stores all the simulator description data from the json file into appropriate
         attribute, command and device property data structures.
@@ -59,7 +59,7 @@ class SimddParser(Parser):
         - Data structures, are type dict with dictionary elements keyed with element name
         and values must be the corresponding data value.
 
-        '''
+        """
         simdd_schema_file = pkg_resources.resource_filename(
                 'tango_simlib', 'SIMDD.schema')
         with open(simdd_schema_file) as simdd_schema:
