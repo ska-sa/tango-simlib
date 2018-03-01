@@ -210,8 +210,8 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
     @classmethod
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
-        cls.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                        'Weather.xmi')]
+        cls.xmi_file = [pkg_resources.resource_filename(
+            'tango_simlib.tests.config_files', 'Weather.xmi')]
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.xmi_file,
                                                            cls.device_name)
@@ -400,8 +400,8 @@ class GenericSetup(unittest.TestCase):
 
     def setUp(self):
         super(GenericSetup, self).setUp()
-        self.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                         'Weather.xmi')]
+        self.xmi_file = [pkg_resources.resource_filename(
+            'tango_simlib.tests.config_files', 'Weather.xmi')]
         self.xmi_parser = sim_xmi_parser.XmiParser()
         self.xmi_parser.parse(self.xmi_file[0])
 
@@ -561,7 +561,7 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.xmi_file = [pkg_resources.resource_filename(
-                            'tango_simlib.tests', 'devenum_test_case.xmi')]
+            'tango_simlib.tests.config_files', 'devenum_test_case.xmi')]
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.xmi_file,
                                                            cls.device_name)
