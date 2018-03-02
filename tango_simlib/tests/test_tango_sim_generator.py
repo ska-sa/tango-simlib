@@ -6,7 +6,6 @@ import tempfile
 import subprocess
 import pkg_resources
 
-#import devicetest
 import PyTango
 
 from tango_simlib.testutils import ClassCleanupUnittestMixin
@@ -35,8 +34,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         sim_test_device_prop = dict(model_key=device_name)
         dp = PyTango.DeviceProxy('%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
                     cls.host, cls.port))
-        #patcher = devicetest.patch.Patcher()
-       # device_proxy = patcher.ActualDeviceProxy
         tango_sim_generator.generate_device_server(
                 server_name, cls.data_descr_file, cls.temp_dir)
         helper_module.append_device_to_db_file(
