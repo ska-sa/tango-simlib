@@ -3,17 +3,19 @@ import time
 import unittest
 import subprocess
 import pkg_resources
-import devicetest
 
 from functools import partial
-from devicetest import DeviceTestCase
 from mock import Mock
+
+from PyTango import DevState, AttrDataFormat, DeviceProxy
+from tango.test_context import DeviceTestContext
 
 from tango_simlib import model, quantities
 from tango_simlib import tango_sim_generator, helper_module
+from tango_simlib.testutils import cleanup_tempfile
 from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
 
-from PyTango import DevState, AttrDataFormat
+
 
 class FixtureModel(model.Model):
 
@@ -86,7 +88,7 @@ def control_attributes(test_model):
     return control_attributes
 
 
-class test_SimControl(DeviceTestCase):
+class test_SimControl(unittest.TestCase):
     device = None
     properties = dict(model_key='the_test_model')
 
@@ -96,14 +98,24 @@ class test_SimControl(DeviceTestCase):
         # The get_tango_device_server function requires  data file which it uses to
         # extract the device class name. However for this test we don't need  it,
         # hence the use of the dummy sim data file.
+        cls.device_name = 'test/nodb/tangodeviceserver'
         cls.device_klass = tango_sim_generator.get_tango_device_server(
             cls.test_model, ['dummy_sim_data_file.txt'])[-1]
-        cls.device = cls.device_klass
-        super(test_SimControl, cls).setUpClass()
+        cls.tango_context = DeviceTestContext(cls.device_klass,
+                                              device_name=cls.device_name,
+                                              properties=cls.properties)
+        cls.tango_context.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        """Kill the device server."""
+        cls.tango_context.stop()
+
 
     def setUp(self):
         super(test_SimControl, self).setUp()
         self.addCleanup(self.test_model.reset_model)
+        self.device = self.tango_context.device
         self.control_attributes = control_attributes(self.test_model)
         self.attr_name_enum_labels = self.device.attribute_query(
                                           'attribute_name').enum_labels
@@ -264,8 +276,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # devicetest module patches it as a side effect at import time. It does
         # save the original DeviceProxy class in the Patcher singleton, so get it
         # from there
-        patcher = devicetest.patch.Patcher()
-        device_proxy = patcher.ActualDeviceProxy
+        #patcher = devicetest.patch.Patcher()
+        #device_proxy = patcher.ActualDeviceProxy
         tango_sim_generator.generate_device_server(
                 server_name, cls.data_descr_files, cls.temp_dir)
         helper_module.append_device_to_db_file(
@@ -285,10 +297,10 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # Note that tango demands that connection to the server must
         # be delayed by atleast 1000 ms of device server start up.
         time.sleep(1)
-        cls.sim_device = device_proxy(
+        cls.sim_device = DeviceProxy(
                 '%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
                     cls.host, cls.port))
-        cls.sim_control_device = device_proxy(
+        cls.sim_control_device = DeviceProxy(
                 '%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
                     cls.host, cls.port))
 

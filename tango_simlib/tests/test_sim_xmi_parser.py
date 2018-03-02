@@ -1,17 +1,17 @@
 import mock
 import logging
 import unittest
-
 import pkg_resources
 
-from devicetest import TangoTestContext
+import PyTango
+from tango.test_context import DeviceTestContext
+
+from katcp.testutils import start_thread_with_cleanup
 
 from tango_simlib.testutils import cleanup_tempfile
-from katcp.testutils import start_thread_with_cleanup
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 from tango_simlib import model, sim_xmi_parser, tango_sim_generator, helper_module
 
-import PyTango
 
 LOGGER = logging.getLogger(__name__)
 
@@ -214,7 +214,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
                                                            cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
             model, cls.xmi_file)[0]
-        cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
+        cls.tango_context = DeviceTestContext(cls.TangoDeviceServer,
                                              device_name=cls.device_name,
                                              db=cls.tango_db)
         start_thread_with_cleanup(cls, cls.tango_context)
@@ -564,9 +564,9 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
                                                            cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
             model, cls.xmi_file)[0]
-        cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
-                                             device_name=cls.device_name,
-                                             db=cls.tango_db)
+        cls.tango_context = DeviceTestContext(cls.TangoDeviceServer,
+                                              device_name=cls.device_name,
+                                              db=cls.tango_db)
         start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
