@@ -5,12 +5,8 @@
 #########################################################################################
 import weakref
 
-from PyTango import UserDefaultAttrProp
-from PyTango import DevState
-from PyTango import Attr, AttrWriteType
-from PyTango import DevDouble
-from PyTango.server import Device, DeviceMeta
-from PyTango.server import attribute, device_property
+from tango import Attr, AttrWriteType, DevDouble, DevState, UserDefaultAttrProp
+from tango.server import attribute, Device, device_property, DeviceMeta
 
 from tango_simlib import model
 

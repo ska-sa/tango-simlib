@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 
 from tango_simlib.utilities.base_parser import Parser
 
-from PyTango import DevDouble, DevLong, DevBoolean, DevString
+from tango import DevDouble, DevLong, DevBoolean, DevString
 
 SDD_MP_PARAMS_TANGO_MAP = {
     'name': 'name',

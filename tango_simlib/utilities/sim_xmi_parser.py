@@ -11,11 +11,9 @@ import logging
 
 import xml.etree.ElementTree as ET
 
-from base_parser import Parser
-import PyTango
+from tango import AttrDataFormat, CmdArgType, DevBoolean, DevEnum, DevString
 
-from PyTango import (DevBoolean, DevString, DevEnum, AttrDataFormat,
-                     CmdArgType)
+from tango_simlib.utilities.base_parser import Parser
 
 MODULE_LOGGER = logging.getLogger(__name__)
 CONSTANT_DATA_TYPES = frozenset([DevBoolean, DevEnum, DevString])
@@ -410,15 +408,15 @@ class XmiParser(Parser):
         else:
             pogo_type = description_data.find('type').attrib.values()[0]
         # pogo_type has format -> pogoDsl:DoubleType
-        # Pytango type must be of the form DevDouble
+        # tango type must be of the form DevDouble
         arg_type = pogo_type.split(':')[1].replace('Type', '')
         # pogo_type for status turns out to be 'pogoDsl:ConstStringType
         # For now it will be treated as normal DevString type
         if arg_type.find('Const') != -1:
             arg_type = arg_type.replace('Const', '')
         # The out_type of the device State command is
-        # PyTango._PyTango.CmdArgType.DevState instead of the default
-        # PyTango.utils.DevState.
+        # tango._tango.CmdArgType.DevState instead of the default
+        # tango.utils.DevState.
         if arg_type == 'State':
             return CmdArgType.DevState
         try:
@@ -434,17 +432,18 @@ class XmiParser(Parser):
             # TypeArray in xmi file instead.
             if arg_type in ['FloatArray', 'DoubleArray', 'StringArray', 'LongArray',
                             'ULongArray']:
-                arg_type = getattr(PyTango, 'DevVar' + arg_type)
+                arg_type = getattr(CmdArgType, 'DevVar' + arg_type)
             elif arg_type in ['FloatVector', 'DoubleVector', 'StringVector']:
                 arg_type = (
-                    getattr(PyTango, 'DevVar' + arg_type.replace('Vector', 'Array')))
+                    getattr(CmdArgType, 'DevVar' + arg_type.replace('Vector', 'Array')))
             else:
-                arg_type = getattr(PyTango, 'Dev' + arg_type)
+                arg_type = getattr(CmdArgType, 'Dev' + arg_type)
         except AttributeError:
-            MODULE_LOGGER.debug("PyTango has no attribute 'Dev{}'".format(arg_type))
-            raise AttributeError("PyTango has no attribute 'Dev{}'.\n Try replacing"
-                                 " '{}' with 'Var{}' in the configuration file"
-                                 .format(*(3*(arg_type,))))
+            MODULE_LOGGER.debug(
+                "tango.utils.CmdArgType has no attribute 'Dev{}'".format(arg_type))
+            raise AttributeError(
+                "tango.utils.CmdArgType has no attribute 'Dev{}'.\n Try replacing"
+                " '{}' with 'Var{}' in the configuration file".format(*(3*(arg_type,))))
 
         return arg_type
 

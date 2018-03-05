@@ -17,18 +17,18 @@ import time
 
 from functools import partial
 
-from PyTango import Attr, AttrWriteType, UserDefaultAttrProp, AttrQuality, Database
-from PyTango.server import Device, DeviceMeta, command, attribute
-from PyTango import DevState, AttrDataFormat, CmdArgType
+from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType, CmdArgType,
+                   Database, DevState, UserDefaultAttrProp)
+from tango.server import attribute, Device, DeviceMeta, command
 
-from tango_simlib.model import Model
+from tango_simlib.model import (Model, PopulateModelActions, PopulateModelProperties,
+                                PopulateModelQuantities)
+from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
 from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
-from tango_simlib.model import PopulateModelQuantities, PopulateModelActions
-from tango_simlib.model import PopulateModelProperties
-from tango_simlib.utilities import helper_module
+
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -291,7 +291,7 @@ def get_tango_device_server(model, sim_data_files):
                 else:
                     # The return value of rwType is a string and it is required as a
                     # PyTango data type when passed to the Attr function.
-                    # e.g. 'READ' -> PyTango.AttrWriteType.READ
+                    # e.g. 'READ' -> tango._tango.AttrWriteType.READ
                     rw_type = meta_data['writable']
                     rw_type = getattr(AttrWriteType, rw_type)
                     # Add a try/except clause when creating an instance of Attr class
@@ -462,7 +462,7 @@ def generate_device_server(server_name, sim_data_files, directory=''):
 
     """
     lines = ['#!/usr/bin/env python',
-             'from PyTango.server import server_run',
+             'from tango.server import server_run',
              ('from tango_simlib.tango_sim_generator import ('
               'configure_device_model, get_tango_device_server)'),
              '\n\n# File generated on {} by tango-simlib-generator'.format(time.ctime()),

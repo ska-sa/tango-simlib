@@ -2,11 +2,10 @@ import logging
 import unittest
 import pkg_resources
 
-from PyTango import DevDouble
+from tango import DevDouble
 
-from tango_simlib.utilities import sim_sdd_xml_parser
-from tango_simlib.utilities import sim_xmi_parser
 from tango_simlib import model
+from tango_simlib.utilities import sim_sdd_xml_parser, sim_xmi_parser
 
 LOGGER = logging.getLogger(__name__)
 
