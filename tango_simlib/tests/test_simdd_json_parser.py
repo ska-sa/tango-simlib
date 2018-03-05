@@ -1,18 +1,18 @@
 import mock
 import unittest
 import logging
-
-import PyTango
 import pkg_resources
 
-from devicetest import TangoTestContext
+import tango
+from tango.test_context import DeviceTestContext
 
-from tango_simlib.testutils import cleanup_tempfile
 from katcp.testutils import start_thread_with_cleanup
+
 from tango_simlib import simdd_json_parser, helper_module
 from tango_simlib import sim_xmi_parser, model
 from tango_simlib import tango_sim_generator
 from tango_simlib.examples import override_class
+from tango_simlib.testutils import cleanup_tempfile
 from tango_simlib.testutils import ClassCleanupUnittestMixin
 
 
@@ -42,7 +42,7 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
         'archive_period': '1000',
         'archive_rel_change': '10',
         'data_format': 'Scalar',
-        'data_type': PyTango._PyTango.CmdArgType.DevDouble,
+        'data_type': tango._tango.CmdArgType.DevDouble,
         'format': '6.2f',
         'delta_t': '1000',
         'delta_val': '0.5',
@@ -269,9 +269,9 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
                                                            cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
                     model, cls.data_descr_file)[0]
-        cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
-                                             device_name=cls.device_name,
-                                             db=cls.tango_db)
+        cls.tango_context = DeviceTestContext(cls.TangoDeviceServer,
+                                              device_name=cls.device_name,
+                                              db=cls.tango_db)
         start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
@@ -358,7 +358,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.assertEqual(self.device.command_inout(command_name),
                          expected_result)
         self.assertEqual(getattr(self.device.read_attribute('State'), 'value'),
-                         PyTango.DevState.ON)
+                         tango.DevState.ON)
 
     def test_Add_command(self):
         """Testing that the Tango device command can take input of an array type and
@@ -391,7 +391,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.assertEqual(self.device.command_inout(command_name),
                          expected_result)
         self.assertEqual(getattr(self.device.read_attribute('State'), 'value'),
-                         PyTango.DevState.OFF)
+                         tango.DevState.OFF)
 
     def test_set_temperature_command(self):
         """Testing that the SetTemperature command changes the temperature
@@ -435,9 +435,9 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
             cls.data_descr_files, cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
             model, cls.data_descr_files)[0]
-        cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
-                                             device_name=cls.device_name,
-                                             db=cls.tango_db)
+        cls.tango_context = DeviceTestContext(cls.TangoDeviceServer,
+                                              device_name=cls.device_name,
+                                              db=cls.tango_db)
         start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
@@ -596,9 +596,9 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
             cls.data_descr_files, cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
             model, cls.data_descr_files)[0]
-        cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
-                                             device_name=cls.device_name,
-                                             db=cls.tango_db)
+        cls.tango_context = DeviceTestContext(cls.TangoDeviceServer,
+                                              device_name=cls.device_name,
+                                              db=cls.tango_db)
         start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):

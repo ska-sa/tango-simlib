@@ -1,6 +1,5 @@
 import time
 import unittest
-
 import mock
 
 from tango_simlib import quantities

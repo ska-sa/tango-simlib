@@ -13,12 +13,12 @@ containing the information needed to instantiate a useful device simulator.
 import logging
 import json
 import pkg_resources
-
-from PyTango._PyTango import CmdArgType, AttrDataFormat
 from jsonschema import validate
 
+from tango import CmdArgType, AttrDataFormat
+
 from tango_simlib import helper_module
-from base_parser import Parser
+from tango_simlib.base_parser import Parser
 
 MODULE_LOGGER = logging.getLogger(__name__)
 EXPECTED_SIMULATION_PARAMETERS = {
@@ -103,8 +103,8 @@ class SimddParser(Parser):
                         'unit': '',
                         'label': '',
                         'description': '',
-                        'data_type': '<PyTango._PyTango.CmdArgType>',
-                        'data_format': '<PyTango._PyTango.AttrDataFormat>',
+                        'data_type': '<tango._tango.CmdArgType>',
+                        'data_format': '<tango._tango.AttrDataFormat>',
                         'delta_t': '',
                         'delta_val': '',
                         'data_shape': {
@@ -299,11 +299,10 @@ class SimddParser(Parser):
                     property_key = str(item[0])
                     # Since the data type specified in the SIMDD is a string format
                     # e.g. String, it is require in Tango device as a CmdArgType
-                    # i.e. PyTango._PyTango.CmdArgType.DevString
+                    # i.e. tango._tango.CmdArgType.DevString
                     if property_key in ['dtype_in', 'dtype_out']:
-                        # Here we extract the cmdArgType obect since
-                        # for later when creating a Tango command,
-                        # data type is required in this format.
+                        # Here we extract the CmdArgType object since for later when
+                        # creating a Tango command, data type is required in this format.
                         val = getattr(CmdArgType, 'Dev%s' % str(item[1]))
                         formated_info[property_key] = val
                     elif property_key in ['dformat_in', 'dformat_out']:
@@ -321,12 +320,11 @@ class SimddParser(Parser):
                 formated_info['actions'] = actions
             else:
                 # Since the data type specified in the SIMDD is a string format
-                # e.g. Double, it is require in Tango device as a CmdArgType
-                # i.e. PyTango._PyTango.CmdArgType.DevDouble
+                # e.g. Double, it is required in Tango device as a CmdArgType
+                # i.e. tango._tango.CmdArgType.DevDouble
                 if str(param_name) in ['data_type']:
-                    # Here we extract the cmdArgType obect since
-                    # for later when creating a Tango attibute,
-                    # data type is required in this format.
+                    # Here we extract the CmdArgType object since for later when creating
+                    # a Tango attibute, data type is required in this format.
                     val = getattr(CmdArgType, 'Dev%s' % str(param_val))
                 elif str(param_name) in ['DefaultPropValue']:
                     # Default property value can be an string, number and array

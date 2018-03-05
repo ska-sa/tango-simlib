@@ -15,7 +15,7 @@ import importlib
 from functools import partial
 from tango_simlib import quantities
 
-from PyTango import (DevBoolean, DevString, DevEnum,
+from tango import (DevBoolean, DevString, DevEnum,
                      DevDouble, DevFloat, DevLong, DevVoid)
 
 

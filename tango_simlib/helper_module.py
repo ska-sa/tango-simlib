@@ -2,7 +2,7 @@ import os
 import sys
 import socket
 
-from PyTango import Database
+from tango import Database
 
 
 DEFAULT_TANGO_DEVICE_COMMANDS = frozenset(['State', 'Status', 'Init'])
