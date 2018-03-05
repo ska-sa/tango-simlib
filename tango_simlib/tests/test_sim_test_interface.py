@@ -7,14 +7,12 @@ import pkg_resources
 from functools import partial
 from mock import Mock
 
-from PyTango import DevState, AttrDataFormat, DeviceProxy
+from tango import DevState, AttrDataFormat, DeviceProxy
 from tango.test_context import DeviceTestContext
 
-from tango_simlib import model, quantities
-from tango_simlib import tango_sim_generator, helper_module
-from tango_simlib.testutils import cleanup_tempfile
-from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
-
+from tango_simlib import helper_module, model, tango_sim_generator, quantities
+from tango_simlib.testutils import (ClassCleanupUnittestMixin, cleanup_tempdir,
+                                    cleanup_tempfile)
 
 
 class FixtureModel(model.Model):

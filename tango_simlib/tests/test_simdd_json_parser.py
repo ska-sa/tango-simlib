@@ -3,7 +3,7 @@ import unittest
 import logging
 import pkg_resources
 
-import PyTango
+import tango
 from tango.test_context import DeviceTestContext
 
 from katcp.testutils import start_thread_with_cleanup
@@ -42,7 +42,7 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
         'archive_period': '1000',
         'archive_rel_change': '10',
         'data_format': 'Scalar',
-        'data_type': PyTango._PyTango.CmdArgType.DevDouble,
+        'data_type': tango._tango.CmdArgType.DevDouble,
         'format': '6.2f',
         'delta_t': '1000',
         'delta_val': '0.5',
@@ -358,7 +358,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.assertEqual(self.device.command_inout(command_name),
                          expected_result)
         self.assertEqual(getattr(self.device.read_attribute('State'), 'value'),
-                         PyTango.DevState.ON)
+                         tango.DevState.ON)
 
     def test_Add_command(self):
         """Testing that the Tango device command can take input of an array type and
@@ -391,7 +391,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.assertEqual(self.device.command_inout(command_name),
                          expected_result)
         self.assertEqual(getattr(self.device.read_attribute('State'), 'value'),
-                         PyTango.DevState.OFF)
+                         tango.DevState.OFF)
 
     def test_set_temperature_command(self):
         """Testing that the SetTemperature command changes the temperature

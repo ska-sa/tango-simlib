@@ -13,7 +13,7 @@ import sys
 import logging
 import threading
 
-from PyTango.server import server_run
+from tango.server import server_run
 
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 

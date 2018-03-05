@@ -6,10 +6,10 @@ import tempfile
 import subprocess
 import pkg_resources
 
-import PyTango
+import tango
 
-from tango_simlib.testutils import ClassCleanupUnittestMixin
 from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
+from tango_simlib.testutils import ClassCleanupUnittestMixin
 from tango_simlib.tests import test_sim_test_interface
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -32,8 +32,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         server_instance = 'test'
         database_filename = '%s/%s_tango.db' % (cls.temp_dir, server_name)
         sim_test_device_prop = dict(model_key=device_name)
-        dp = PyTango.DeviceProxy('%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
-                    cls.host, cls.port))
         tango_sim_generator.generate_device_server(
                 server_name, cls.data_descr_file, cls.temp_dir)
         helper_module.append_device_to_db_file(
@@ -50,10 +48,10 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # Note that tango demands that connection to the server must
         # be delayed by atleast 1000 ms of device server start up.
         time.sleep(1)
-        cls.sim_device = PyTango.DeviceProxy(
+        cls.sim_device = tango.DeviceProxy(
                 '%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
                     cls.host, cls.port))
-        cls.sim_control_device = PyTango.DeviceProxy(
+        cls.sim_control_device = tango.DeviceProxy(
                 '%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
                     cls.host, cls.port))
         cls.addCleanupClass(cls.sub_proc.kill)

@@ -5,7 +5,7 @@ import mock
 
 from mock import Mock, call
 
-from PyTango import DevFailed
+from tango import DevFailed
 from tango.test_context import DeviceTestContext
 
 from katcp.testutils import start_thread_with_cleanup
