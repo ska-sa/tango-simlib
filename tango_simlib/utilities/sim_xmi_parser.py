@@ -1,15 +1,11 @@
-###############################################################################
-# SKA South Africa (http://ska.ac.za/)                                        #
-# Author: cam@ska.ac.za                                                       #
-# Copyright @ 2013 SKA SA. All rights reserved.                               #
-#                                                                             #
-# THIS SOFTWARE MAY NOT BE COPIED OR DISTRIBUTED IN ANY FORM WITHOUT THE      #
-# WRITTEN PERMISSION OF SKA SA.                                               #
-###############################################################################
+######################################################################################### 
+# Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
+#                                                                                       #
+# BSD license - see LICENSE.txt for details                                             #
+#########################################################################################
 """
 Simlib library generic simulator generator utility to be used to generate an actual
 TANGO device that exhibits the behaviour defined in the data description file.
-@author MeerKAT CAM team <cam@ska.ac.za>
 """
 import logging
 
@@ -17,7 +13,7 @@ import xml.etree.ElementTree as ET
 
 from tango import AttrDataFormat, CmdArgType, DevBoolean, DevEnum, DevString
 
-from tango_simlib.base_parser import Parser
+from tango_simlib.utilities.base_parser import Parser
 
 MODULE_LOGGER = logging.getLogger(__name__)
 CONSTANT_DATA_TYPES = frozenset([DevBoolean, DevEnum, DevString])

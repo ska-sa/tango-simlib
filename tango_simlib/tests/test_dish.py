@@ -11,7 +11,7 @@ from tango.test_context import DeviceTestContext
 from katcp.testutils import start_thread_with_cleanup
 
 from tango_simlib import tango_sim_generator, model
-from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
 
 
 DISH_ELEMENT_MASTER_COMMAND_LIST = frozenset([
@@ -42,10 +42,10 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
     def setUpClassWithCleanup(cls):
         cls.data_descr_files = []
         cls.data_descr_files.append(
-            pkg_resources.resource_filename('tango_simlib.tests',
-                                            'DishElementMaster.xmi'))
+            pkg_resources.resource_filename(
+                'tango_simlib.tests.config_files', 'DishElementMaster.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'DishElementMaster_SIMDD.json'))
+            'tango_simlib.tests.config_files', 'DishElementMaster_SIMDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         cls.model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)
@@ -348,10 +348,10 @@ class test_Device(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.data_descr_files = []
         cls.data_descr_files.append(
-            pkg_resources.resource_filename('tango_simlib.tests',
-                                            'DishElementMaster.xmi'))
+            pkg_resources.resource_filename(
+                'tango_simlib.tests.config_files', 'DishElementMaster.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'DishElementMaster_SIMDD.json'))
+            'tango_simlib.tests.config_files', 'DishElementMaster_SIMDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.data_descr_files,
                                                            cls.device_name)

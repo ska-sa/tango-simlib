@@ -1,14 +1,10 @@
-###############################################################################
-# SKA South Africa (http://ska.ac.za/)                                        #
-# Author: cam@ska.ac.za                                                       #
-# Copyright @ 2013 SKA SA. All rights reserved.                               #
-#                                                                             #
-# THIS SOFTWARE MAY NOT BE COPIED OR DISTRIBUTED IN ANY FORM WITHOUT THE      #
-# WRITTEN PERMISSION OF SKA SA.                                               #
-###############################################################################
+######################################################################################### 
+# Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
+#                                                                                       #
+# BSD license - see LICENSE.txt for details                                             #
+#########################################################################################
 """This module performs the parsing of the Simulator Description Datafile,
 containing the information needed to instantiate a useful device simulator.
-@author MeerKAT CAM team <cam@ska.ac.za>
 """
 import logging
 import json
@@ -16,9 +12,9 @@ import pkg_resources
 from jsonschema import validate
 
 from tango import CmdArgType, AttrDataFormat
+from tango_simlib.utilities import helper_module
+from tango_simlib.utilities.base_parser import Parser
 
-from tango_simlib import helper_module
-from tango_simlib.base_parser import Parser
 
 MODULE_LOGGER = logging.getLogger(__name__)
 EXPECTED_SIMULATION_PARAMETERS = {
@@ -61,7 +57,7 @@ class SimddParser(Parser):
 
         """
         simdd_schema_file = pkg_resources.resource_filename(
-                'tango_simlib', 'SIMDD.schema')
+                'tango_simlib.utilities', 'SIMDD.schema')
         with open(simdd_schema_file) as simdd_schema:
             schema_data = json.load(simdd_schema)
         self.data_description_file_name = simdd_json_file

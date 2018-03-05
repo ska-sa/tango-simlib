@@ -8,12 +8,10 @@ from tango.test_context import DeviceTestContext
 
 from katcp.testutils import start_thread_with_cleanup
 
-from tango_simlib import simdd_json_parser, helper_module
-from tango_simlib import sim_xmi_parser, model
-from tango_simlib import tango_sim_generator
+from tango_simlib import model, tango_sim_generator
 from tango_simlib.examples import override_class
-from tango_simlib.testutils import cleanup_tempfile
-from tango_simlib.testutils import ClassCleanupUnittestMixin
+from tango_simlib.utilities import simdd_json_parser, helper_module, sim_xmi_parser
+from tango_simlib.utilities.testutils import cleanup_tempfile, ClassCleanupUnittestMixin
 
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -81,7 +79,7 @@ class GenericSetup(unittest.TestCase):
     def setUp(self):
         super(GenericSetup, self).setUp()
         self.simdd_json_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests', 'Weather_SIMDD.json')]
+            'tango_simlib.tests.config_files', 'Weather_SIMDD.json')]
         self.simdd_parser = simdd_json_parser.SimddParser()
         self.simdd_parser.parse(self.simdd_json_file[0])
 
@@ -262,8 +260,8 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
     @classmethod
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
-        cls.data_descr_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                               'Weather_SIMDD.json')]
+        cls.data_descr_file = [pkg_resources.resource_filename(
+            'tango_simlib.tests.config_files', 'Weather_SIMDD.json')]
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.data_descr_file,
                                                            cls.device_name)
@@ -426,10 +424,11 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.data_descr_files = []
-        cls.data_descr_files.append(pkg_resources.resource_filename('tango_simlib.tests',
-                                                                    'MkatVds.xmi'))
+        cls.data_descr_files.append(
+            pkg_resources.resource_filename(
+                'tango_simlib.tests.config_files', 'MkatVds.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'MkatVds_SIMDD.json'))
+            'tango_simlib.tests.config_files', 'MkatVds_SIMDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)
@@ -483,9 +482,9 @@ class test_SourceSimulatorInfo(unittest.TestCase):
     def setUp(self):
         super(test_SourceSimulatorInfo, self).setUp()
         self.sim_xmi_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests', 'MkatVds.xmi')]
+            'tango_simlib.tests.config_files', 'MkatVds.xmi')]
         self.simdd_json_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests', 'MkatVds_SIMDD.json')]
+            'tango_simlib.tests.config_files', 'MkatVds_SIMDD.json')]
         self.simdd_parser = simdd_json_parser.SimddParser()
         self.xmi_parser = sim_xmi_parser.XmiParser()
         self.xmi_parser.parse(self.sim_xmi_file[0])
@@ -588,9 +587,9 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.data_descr_files = []
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'Weather.xmi'))
+            'tango_simlib.tests.config_files', 'Weather.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'Weather_SIMDD_2.json'))
+            'tango_simlib.tests.config_files', 'Weather_SIMDD_2.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)

@@ -1,16 +1,12 @@
 #!/usr/bin/env python
-###############################################################################
-# SKA South Africa (http://ska.ac.za/)                                        #
-# Author: cam@ska.ac.za                                                       #
-# Copyright @ 2013 SKA SA. All rights reserved.                               #
-#                                                                             #
-# THIS SOFTWARE MAY NOT BE COPIED OR DISTRIBUTED IN ANY FORM WITHOUT THE      #
-# WRITTEN PERMISSION OF SKA SA.                                               #
-###############################################################################
+######################################################################################### 
+# Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
+#                                                                                       #
+# BSD license - see LICENSE.txt for details                                             #
+#########################################################################################
 """
 Simlib library generic simulator generator utility to be used to generate an actual
 TANGO device that exhibits the behaviour defined in the data description file.
-@author MeerKAT CAM team <cam@ska.ac.za>
 """
 
 import os
@@ -22,15 +18,15 @@ import time
 from functools import partial
 
 from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType, CmdArgType,
-                     Database, DevState, UserDefaultAttrProp)
+                   Database, DevState, UserDefaultAttrProp)
 from tango.server import attribute, Device, DeviceMeta, command
 
-from tango_simlib import helper_module
 from tango_simlib.model import (Model, PopulateModelActions, PopulateModelProperties,
                                 PopulateModelQuantities)
-from tango_simlib.sim_xmi_parser import XmiParser
-from tango_simlib.simdd_json_parser import SimddParser
-from tango_simlib.sim_sdd_xml_parser import SDDParser
+from tango_simlib.utilities import helper_module
+from tango_simlib.utilities.sim_xmi_parser import XmiParser
+from tango_simlib.utilities.simdd_json_parser import SimddParser
+from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 
 
