@@ -3,15 +3,16 @@ import unittest
 import pkg_resources
 import mock
 
-from devicetest import TangoTestContext
 from mock import Mock, call
+
+from tango import DevFailed
+from tango.test_context import DeviceTestContext
 
 from katcp.testutils import start_thread_with_cleanup
 
 from tango_simlib import tango_sim_generator, model
-from tango_simlib.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
 
-from PyTango import DevFailed
 
 DISH_ELEMENT_MASTER_COMMAND_LIST = frozenset([
     'Capture', 'ConfigureAttenuation', 'ConfigureBand1', 'ConfigureBand2',
@@ -41,10 +42,10 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
     def setUpClassWithCleanup(cls):
         cls.data_descr_files = []
         cls.data_descr_files.append(
-            pkg_resources.resource_filename('tango_simlib.tests',
-                                            'DishElementMaster.xmi'))
+            pkg_resources.resource_filename(
+                'tango_simlib.tests.config_files', 'DishElementMaster.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'DishElementMaster_SIMDD.json'))
+            'tango_simlib.tests.config_files', 'DishElementMaster_SIMDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         cls.model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)
@@ -347,18 +348,18 @@ class test_Device(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.data_descr_files = []
         cls.data_descr_files.append(
-            pkg_resources.resource_filename('tango_simlib.tests',
-                                            'DishElementMaster.xmi'))
+            pkg_resources.resource_filename(
+                'tango_simlib.tests.config_files', 'DishElementMaster.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests', 'DishElementMaster_SIMDD.json'))
+            'tango_simlib.tests.config_files', 'DishElementMaster_SIMDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.data_descr_files,
                                                            cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
                 model, cls.data_descr_files)[0]
-        cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
-                                             device_name=cls.device_name,
-                                             db=cls.tango_db)
+        cls.tango_context = DeviceTestContext(cls.TangoDeviceServer,
+                                              device_name=cls.device_name,
+                                              db=cls.tango_db)
         start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):

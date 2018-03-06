@@ -3,11 +3,11 @@ from PyTango.server import server_run
 from tango_simlib.tango_sim_generator import (configure_device_model, get_tango_device_server)
 
 
-# File generated on Thu Jul 20 10:00:29 2017 by tango-simlib-tango-simulator-generator
+# File generated on Thu Mar 01 15:00:29 2018 by tango-simlib-tango-simulator-generator
 
 
 def main():
-    sim_data_files = ['/home/kat/svn/tango-simlib/tango_simlib/tests/Weather.xmi', '/home/kat/svn/tango-simlib/tango_simlib/tests/Weather_SIMDD.json']
+    sim_data_files = ['/home/kat/svn/tango-simlib/tango_simlib/tests/config_files/Weather.xmi', '/home/kat/svn/tango-simlib/tango_simlib/tests/config_files/Weather_SIMDD.json']
     model = configure_device_model(sim_data_files)
     TangoDeviceServers = get_tango_device_server(model, sim_data_files)
     server_run(TangoDeviceServers)

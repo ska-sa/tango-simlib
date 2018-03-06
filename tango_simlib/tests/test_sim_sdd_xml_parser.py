@@ -2,11 +2,10 @@ import logging
 import unittest
 import pkg_resources
 
-from PyTango import DevDouble
+from tango import DevDouble
 
-from tango_simlib import sim_sdd_xml_parser
-from tango_simlib import sim_xmi_parser
 from tango_simlib import model
+from tango_simlib.utilities import sim_sdd_xml_parser, sim_xmi_parser
 
 LOGGER = logging.getLogger(__name__)
 
@@ -68,8 +67,8 @@ class GenericSetup(unittest.TestCase):
 
     def setUp(self):
         super(GenericSetup, self).setUp()
-        self.xml_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                         'WeatherSimulator_CN.xml')]
+        self.xml_file = [pkg_resources.resource_filename(
+            'tango_simlib.tests.config_files', 'WeatherSimulator_CN.xml')]
         self.xml_parser = sim_sdd_xml_parser.SDDParser()
         self.xml_parser.parse(self.xml_file[0])
 
@@ -79,7 +78,7 @@ class test_Sdd_Xml_Parser(GenericSetup):
         """Testing that the monitoring points' information parsed matches with the one
         captured in the XML file.
         """
-        actual_parsed_mnt_pts = self.xml_parser.get_reformatted_device_attr_metadata()
+        actual_parsed_mnt_pts = self.xml_parser.get_device_attribute_metadata()
         expected_monitoring_points_list = ['Insolation', 'Temperature', 'Pressure',
                                            'Rainfall', 'Relative_Humidity',
                                            'Wind_Direction', 'Wind_Speed']
@@ -140,7 +139,7 @@ class test_PopModelQuantities(GenericSetup):
         pmq = model.PopulateModelQuantities(self.xml_parser, device_name)
         self.assertEqual(device_name, pmq.sim_model.name,
                          "The device name and the model name do not match.")
-        mnt_pt_metadata = self.xml_parser.get_reformatted_device_attr_metadata()
+        mnt_pt_metadata = self.xml_parser.get_device_attribute_metadata()
         for sim_quantity_name, sim_quantity in (
                 pmq.sim_model.sim_quantities.items()):
             sim_quantity_metadata = getattr(sim_quantity, 'meta')

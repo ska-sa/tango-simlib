@@ -28,8 +28,7 @@ setup(name="tango_simlib",
       tests_require=[
           'enum',
           'numpy',
-          'nose_xunitmp',
-          'python-devicetest'],
+          'nose_xunitmp'],
       extras_require={
           'docs': ["sphinx-pypi-upload",
                    "numpydoc",
@@ -37,9 +36,9 @@ setup(name="tango_simlib",
           },
       zip_safe=False,
       include_package_data=True,
-      package_data={'tango_simlib': ['SIMDD.schema', 'tests/*.xmi', 'tests/*.json']},
-      dependency_links=[
-          'git+https://github.com/vxgmichel/pytango-devicetest.git#egg=python_devicetest'],
+      package_data={'tango_simlib': ['utilities/SIMDD.schema',
+                                     'tests/config_files/*.xmi',
+                                     'tests/config_files/*.json']},
       scripts=['scripts/DishElementMaster-DS',
                'scripts/Weather-DS'],
       entry_points={
