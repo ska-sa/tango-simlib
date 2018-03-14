@@ -27,6 +27,7 @@ setup(name="tango_simlib",
           "enum"],
       tests_require=[
           'enum',
+          'katcp',
           'numpy',
           'nose_xunitmp'],
       extras_require={
