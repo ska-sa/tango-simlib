@@ -22,8 +22,10 @@ node('docker') {
         timestamps {
             timeout(time: 30, unit: 'MINUTES') {
                 try {
+                    sh 'sudo service tango-db restart'
                     sh 'sudo pip install . -U'
-                    sh 'python setup.py test'
+                    sh 'sudo pip install nose_xunitmp'
+                    sh 'python setup.py test --with-xunitmp --xunitmp-file nosetests.xml'
                 } finally {
                     step([$class: 'JUnitResultArchiver', testResults: 'nosetests.xml'])
                 }
