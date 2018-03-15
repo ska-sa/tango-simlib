@@ -22,11 +22,6 @@ node('docker') {
         timestamps {
             timeout(time: 30, unit: 'MINUTES') {
                 try {
-                    
-                    sh 'echo "******************"'
-                    sh 'sudo nohup service mysql start'
-                    sh 'service mysql start'
-                    sh 'service mysql status'
                     sh 'sudo nohup service tango-db start'
                     sh 'service tango-db status'
                     sh 'sudo pip install . -U'
