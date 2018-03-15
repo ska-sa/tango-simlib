@@ -24,7 +24,7 @@ node('docker') {
                 try {
                     
                     sh 'echo "******************"'
-                    sh 'service mysql status'
+                    sh 'sudo nohup service mysql start'
                     sh 'service mysql start'
                     sh 'service mysql status'
                     sh 'sudo pip install . -U'
