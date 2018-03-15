@@ -22,10 +22,11 @@ node('docker') {
         timestamps {
             timeout(time: 30, unit: 'MINUTES') {
                 try {
+                    
                     sh 'echo "******************"'
-                    sh 'sudo service mysql status'
-                    sh 'sudo service mysql start'
-                    sh 'sudo service mysql status'
+                    sh 'service mysql status'
+                    sh 'service mysql start'
+                    sh 'service mysql status'
                     sh 'sudo pip install . -U'
                     sh 'sudo pip install nose_xunitmp'
                     sh 'python setup.py test --with-xunitmp --xunitmp-file nosetests.xml'
