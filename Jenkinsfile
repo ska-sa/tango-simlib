@@ -23,6 +23,8 @@ node('docker') {
             timeout(time: 30, unit: 'MINUTES') {
                 try {
                     sh 'sudo service tango-db status'
+                    sh 'sudo service tango-db start'
+                    sh 'sudo service tango-db status'
                     sh 'sudo pip install . -U'
                     sh 'sudo pip install nose_xunitmp'
                     sh 'python setup.py test --with-xunitmp --xunitmp-file nosetests.xml'
