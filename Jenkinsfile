@@ -27,6 +27,8 @@ node('docker') {
                     sh 'sudo nohup service mysql start'
                     sh 'service mysql start'
                     sh 'service mysql status'
+                    sh 'sudo nohup service tango-db start'
+                    sh 'service tango-db status'
                     sh 'sudo pip install . -U'
                     sh 'sudo pip install nose_xunitmp'
                     sh 'python setup.py test --with-xunitmp --xunitmp-file nosetests.xml'
