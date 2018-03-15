@@ -24,6 +24,8 @@ node('docker') {
                 try {
                     sh 'echo "******************"'
                     sh 'sudo service mysql status'
+                    sh 'sudo service mysql start'
+                    sh 'sudo service mysql status'
                     sh 'sudo pip install . -U'
                     sh 'sudo pip install nose_xunitmp'
                     sh 'python setup.py test --with-xunitmp --xunitmp-file nosetests.xml'
