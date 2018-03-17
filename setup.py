@@ -23,10 +23,9 @@ setup(name="tango_simlib",
       install_requires=[
           "PyTango>=9.2.0",
           "numpy",
-          "jsonschema",
-          "enum"],
+          "jsonschema"],
       tests_require=[
-          'enum',
+          'katcp',
           'numpy',
           'nose_xunitmp'],
       extras_require={

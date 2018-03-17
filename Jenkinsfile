@@ -1,9 +1,10 @@
-node('Slave433') {
+node('docker') {
 
-    stage 'Cleanup workspace'
-    sh 'chmod 777 -R .'
-    sh 'rm -rf *'
-
+    withDockerContainer(
+        image: 'camtango_db:latest',
+        args: '-u root'
+    ) {
+        
     stage 'Checkout SCM'
         checkout([
             $class: 'GitSCM',
@@ -18,13 +19,15 @@ node('Slave433') {
         timestamps {
             timeout(time: 30, unit: 'MINUTES') {
                 try {
-                    sh 'sudo service tango-db restart'
-                    sh 'sudo pip install --egg git+https://github.com/tango-cs/PyTango.git@develop'
-                    sh 'sudo pip install . -U'
-                    sh 'python setup.py nosetests'
+                    sh 'nohup service mysql start'
+                    sh 'nohup service tango-db start'
+                    sh 'pip install . -U'
+                    sh 'pip install nose_xunitmp'
+                    sh 'python setup.py test --with-xunitmp --xunitmp-file nosetests.xml'
                 } finally {
                     step([$class: 'JUnitResultArchiver', testResults: 'nosetests.xml'])
                 }
             }
         }
+    }
 }
