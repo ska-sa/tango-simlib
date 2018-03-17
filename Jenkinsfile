@@ -4,19 +4,16 @@ node('docker') {
         image: 'camtango_db:latest',
         args: '-u root'
     ) {
-        stage 'Cleanup workspace'
-        sh 'chmod 777 -R .'
-        sh 'rm -rf *'
-
-        stage 'Checkout SCM'
-            checkout([
-                $class: 'GitSCM',
-                branches: [[name: "refs/heads/${env.BRANCH_NAME}"]],
-                extensions: [[$class: 'LocalBranch']],
-                userRemoteConfigs: scm.userRemoteConfigs,
-                doGenerateSubmoduleConfigurations: false,
-                submoduleCfg: []
-            ])
+        
+    stage 'Checkout SCM'
+        checkout([
+            $class: 'GitSCM',
+            branches: [[name: "refs/heads/${env.BRANCH_NAME}"]],
+            extensions: [[$class: 'LocalBranch']],
+            userRemoteConfigs: scm.userRemoteConfigs,
+            doGenerateSubmoduleConfigurations: false,
+            submoduleCfg: []
+        ])
 
     stage 'Install & Unit Tests'
         timestamps {
