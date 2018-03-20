@@ -1,26 +1,21 @@
 #!/usr/bin/env python
-###############################################################################
-# SKA South Africa (http://ska.ac.za/)                                        #
-# Author: cam@ska.ac.za                                                       #
-# Copyright @ 2013 SKA SA. All rights reserved.                               #
-#                                                                             #
-# THIS SOFTWARE MAY NOT BE COPIED OR DISTRIBUTED IN ANY FORM WITHOUT THE      #
-# WRITTEN PERMISSION OF SKA SA.                                               #
-###############################################################################
+######################################################################################### 
+# Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
+#                                                                                       #
+# BSD license - see LICENSE.txt for details                                             #
+#########################################################################################
+"""Utility to help launch a TANGO device in a KATCP eco-system.
 
-
-"""Utility to help launch a TANGO device in a KATCP eco-system
-
-Helps by auto-registering a TANGO device if needed
+Helps by auto-registering a TANGO device if needed.
 
 """
 import os
 import sys
 import argparse
-
-import PyTango
-
 from functools import partial
+
+import tango
+
 
 parser = argparse.ArgumentParser(
     description="Launch a TANGO device, handling registration as needed. "
@@ -44,18 +39,18 @@ parser.add_argument('--put-device-property', action='append', help=
                     dest='device_properties', default=[])
 
 def register_device(name, device_class, server_name, instance):
-    dev_info = PyTango.DbDevInfo()
+    dev_info = tango.DbDevInfo()
     dev_info.name = name
     dev_info._class = device_class
     dev_info.server = "{}/{}".format(server_name.split('.')[0], instance)
     print """Attempting to register TANGO device {!r}
     class: {!r}  server: {!r}.""".format(
             dev_info.name, dev_info._class, dev_info.server)
-    db = PyTango.Database()
+    db = tango.Database()
     db.add_device(dev_info)
 
 def put_device_property(dev_name, property_name, property_value):
-    db = PyTango.Database()
+    db = tango.Database()
     print "Setting device {!r} property {!r}: {!r}".format(
         dev_name, property_name, property_value)
     db.put_device_property(dev_name, {property_name:[property_value]})

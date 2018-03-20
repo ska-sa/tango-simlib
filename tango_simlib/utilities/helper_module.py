@@ -1,10 +1,16 @@
+######################################################################################### 
+# Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
+#                                                                                       #
+# BSD license - see LICENSE.txt for details                                             #
+#########################################################################################
 import os
 import sys
 import socket
 import logging
+import json
 
-from PyTango import Database
-from PyTango.server import command
+from tango import Database
+from tango.server import command
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -130,3 +136,38 @@ def generate_cmd_handler(model, action_name, action_handler):
         """
         return command(f=cmd_handler, **cmd_info_copy)
 
+# JSON `load` and `loads` equivalents, that force all strings to be returned
+# as byte strings, rather than unicode.  This is critical for fields that will
+# be used by TANGO, as it breaks with unicode strings.
+# Solution from:  https://stackoverflow.com/a/33571117
+
+def json_load_byteified(file_handle):
+    """Similar to json.load(), but forces str instead of unicode strings."""
+    return _byteify(
+        json.load(file_handle, object_hook=_byteify),
+        ignore_dicts=True
+    )
+
+def json_loads_byteified(json_text):
+    """Similar to json.loads(), but forces str instead of unicode strings."""
+    return _byteify(
+        json.loads(json_text, object_hook=_byteify),
+        ignore_dicts=True
+    )
+
+def _byteify(data, ignore_dicts=False):
+    """If this is a unicode string, return its string representation."""
+    if isinstance(data, unicode):
+        return data.encode('utf-8')
+    # if this is a list of values, return list of byteified values
+    if isinstance(data, list):
+        return [_byteify(item, ignore_dicts=True) for item in data]
+    # if this is a dictionary, return dictionary of byteified keys and values
+    # but only if we haven't already byteified it
+    if isinstance(data, dict) and not ignore_dicts:
+        return {
+            _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
+            for key, value in data.iteritems()
+        }
+    # if it's anything else, return it in its original form
+    return data

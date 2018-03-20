@@ -4,14 +4,14 @@ import unittest
 import shutil
 import tempfile
 import subprocess
-
 import pkg_resources
-import devicetest
 
-from tango_simlib.testutils import ClassCleanupUnittestMixin
-from tango_simlib import tango_sim_generator, sim_xmi_parser, helper_module
+import tango
 
+from tango_simlib import tango_sim_generator
 from tango_simlib.tests import test_sim_test_interface
+from tango_simlib.utilities import helper_module, sim_xmi_parser
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         cls.port = helper_module.get_port()
         cls.host = helper_module.get_host_address()
         cls.data_descr_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests', 'Weather.xmi')]
+            'tango_simlib.tests.config_files', 'Weather.xmi')]
         cls.temp_dir = tempfile.mkdtemp()
         cls.sim_device_class = tango_sim_generator.get_device_class(cls.data_descr_file)
         device_name = 'test/nodb/tangodeviceserver'
@@ -33,8 +33,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         server_instance = 'test'
         database_filename = '%s/%s_tango.db' % (cls.temp_dir, server_name)
         sim_test_device_prop = dict(model_key=device_name)
-        patcher = devicetest.patch.Patcher()
-        device_proxy = patcher.ActualDeviceProxy
         tango_sim_generator.generate_device_server(
                 server_name, cls.data_descr_file, cls.temp_dir)
         helper_module.append_device_to_db_file(
@@ -44,19 +42,17 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
                             server_name, server_instance, '%scontrol' % device_name,
                             database_filename, '%sSimControl' % cls.sim_device_class,
                             sim_test_device_prop)
-        cls.sub_proc = subprocess.Popen(["python", "{}/{}".format(
-                                            cls.temp_dir, server_name),
-                                        server_instance, "-file={}".format(
-                                            database_filename),
-                                        "-ORBendPoint", "giop:tcp::{}".format(
-                                            cls.port)])
+        cls.sub_proc = subprocess.Popen(
+            ["python", "{}/{}".format(cls.temp_dir, server_name),
+             server_instance, "-file={}".format(database_filename),
+             "-ORBendPoint", "giop:tcp::{}".format( cls.port)])
         # Note that tango demands that connection to the server must
         # be delayed by atleast 1000 ms of device server start up.
         time.sleep(1)
-        cls.sim_device = device_proxy(
+        cls.sim_device = tango.DeviceProxy(
                 '%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
                     cls.host, cls.port))
-        cls.sim_control_device = device_proxy(
+        cls.sim_control_device = tango.DeviceProxy(
                 '%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' % (
                     cls.host, cls.port))
         cls.addCleanupClass(cls.sub_proc.kill)
@@ -91,7 +87,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         expected_attributes = []
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
 
-        for attribute_data in self.xmi_parser.device_attributes:
+        for attribute_data in self.xmi_parser._device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
 
         self.assertEqual(set(expected_attributes) - set(not_added_attr_names),
@@ -103,7 +99,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         """Testing whether commands are defined on the device as expected
         """
         actual_device_commands = set(self.sim_device.get_command_list()) - {'Init'}
-        expected_command_list = set(self.xmi_parser.get_reformatted_cmd_metadata().keys())
+        expected_command_list = set(self.xmi_parser.get_device_command_metadata().keys())
         self.assertEquals(actual_device_commands, expected_command_list,
                           "The commands specified in the xmi file are not present in"
                           " the device")

@@ -4,7 +4,7 @@ from tango_simlib.tango_sim_generator import (configure_device_model, get_tango_
 
 
 def main():
-    sim_data_files = ['../tests/Weather.xmi', '../tests/Weather_SIMDD_3.json']
+    sim_data_files = ['../tests/config_files/Weather.xmi', '../tests/config_files/Weather_SIMDD_3.json']
     model = configure_device_model(sim_data_files)
     TangoDeviceServers = get_tango_device_server(model, sim_data_files)
     server_run(TangoDeviceServers)

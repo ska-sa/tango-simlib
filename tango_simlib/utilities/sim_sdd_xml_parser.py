@@ -1,20 +1,16 @@
-#!/usr/bin/env python
-###############################################################################
-# SKA South Africa (http://ska.ac.za/)                                        #
-# Author: cam@ska.ac.za                                                       #
-# Copyright @ 2013 SKA SA. All rights reserved.                               #
-#                                                                             #
-# THIS SOFTWARE MAY NOT BE COPIED OR DISTRIBUTED IN ANY FORM WITHOUT THE      #
-# WRITTEN PERMISSION OF SKA SA.                                               #
-###############################################################################
+######################################################################################### 
+# Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
+#                                                                                       #
+# BSD license - see LICENSE.txt for details                                             #
+#########################################################################################
 """This module performs the parsing of the SKA Self-Description Data XML schema
 file generated from the DSL.
-
 """
-
 import xml.etree.ElementTree as ET
 
-from PyTango import DevDouble, DevLong, DevBoolean, DevString
+from tango_simlib.utilities.base_parser import Parser
+
+from tango import DevDouble, DevLong, DevBoolean, DevString
 
 SDD_MP_PARAMS_TANGO_MAP = {
     'name': 'name',
@@ -30,37 +26,30 @@ SDD_TYPES_TO_TANGO_TYPES = {
     'boolean': DevBoolean,
     'string': DevString}
 
-class SDDParser(object):
+class SDDParser(Parser):
     """Parses the SDD XML file generated from DSL.
 
     Attributes
     ----------
-    monitoring_points: dict
+    data_description_file_name: str
 
-    commands: dict
+    device_class_name: str
 
     """
-    def __init__(self):
-        self.data_description_file_name = ''
-        self.monitoring_points = {}
-        self.commands = {}
-        self._formatted_mnt_pts_info = {}
-        self._formatted_cmds_info = {}
-
     def parse(self, sdd_xml_file):
         # TODO (KM 18-11-2016) Might make use of the libraries mentioned to parse XML
         # files in this URL http://docs.python-guide.org/en/latest/scenarios/xml/
         self.data_description_file_name = sdd_xml_file
         tree = ET.parse(sdd_xml_file)
         root = tree.getroot()
-        self.commands.update(self.extract_command_info(root.find(
+        self._device_commands.update(self._extract_command_info(root.find(
             'CommandList')))
-        self.monitoring_points.update(self.extract_monitoring_point_info(
+        self._device_attributes.update(self._extract_monitoring_point_info(
             root.find('MonitoringPointsList')))
 
-        self._convert_mnt_pt_info()
+        self._convert_attribute_info()
 
-    def extract_command_info(self, cmd_info):
+    def _extract_command_info(self, cmd_info):
         """Extracts all the information of the XML element 'CommandList'
 
         Parameters
@@ -160,8 +149,8 @@ class SDDParser(object):
         return cmds
 
     def _extract_response_list_info(self, cmd_meta, prop):
-        """Extracts the cmd response info from the command information
-        and adds it to cmd_meta dictionary.
+        """Extracts the cmd response info from the command information and adds it to
+        cmd_meta dictionary.
 
         Parameter
         ---------
@@ -230,7 +219,7 @@ class SDDParser(object):
 
         cmd_meta[prop.tag].update(cmd_responses)
 
-    def extract_monitoring_point_info(self, mp_info):
+    def _extract_monitoring_point_info(self, mp_info):
         """Extracts all the information of the XML element 'MonitoringPointsList'
 
         Parameters
@@ -308,27 +297,27 @@ class SDDParser(object):
                         dev_mnt_pts_meta[prop.tag] = SDD_TYPES_TO_TANGO_TYPES[prop.text]
                     except KeyError:
                         raise KeyError("The monitoring point '{}''s data type '{}' cannot"
-                                     " be mapped to any TANGO type"
-                                     .format(mnt_pt, prop))
+                                       " be mapped to any TANGO type"
+                                       .format(mnt_pt, prop))
                 else:
                     dev_mnt_pts_meta[prop.tag] = prop.text
 
             dev_mnt_pts[mnt_pt.attrib['name']] = dev_mnt_pts_meta
         return dev_mnt_pts
 
-    def get_reformatted_device_attr_metadata(self):
-        return self._formatted_mnt_pts_info
+    def get_device_attribute_metadata(self):
+        return self._device_attributes
 
     # TODO(KM 15-12-2016) Will need to implement a method that unpacks the commands
     # dictionary to be 'un-nested' for easier lookups, which this method is going to
     # return.
-    def get_reformatted_cmd_metadata(self):
-        return self._formatted_cmds_info
+    def get_device_command_metadata(self):
+        return self._device_commands
 
-    def get_reformatted_override_metadata(self):
+    def get_device_cmd_override_metadata(self):
         return {}
 
-    def _convert_mnt_pt_info(self):
+    def _convert_attribute_info(self):
         """Converts the monitoring points data structure into a dictionary
         to make searching easier.
 
@@ -359,7 +348,7 @@ class SDDParser(object):
 
         """
         monitoring_pts = {}
-        for mpt_name, mpt_metadata in self.monitoring_points.items():
+        for mpt_name, mpt_metadata in self._device_attributes.items():
             monitoring_pts[mpt_name] = {}
             for metadata_prop_name, metadata_prop_val in mpt_metadata.items():
                 # Unpack the min and max values from the ValueRange dictionary
@@ -377,4 +366,7 @@ class SDDParser(object):
                     except KeyError:
                         monitoring_pts[mpt_name][metadata_prop_name.lower()] = (
                             metadata_prop_val)
-        self._formatted_mnt_pts_info = monitoring_pts
+        self._device_attributes = monitoring_pts
+
+    def get_device_properties_metadata(self, property_group):
+        return {}

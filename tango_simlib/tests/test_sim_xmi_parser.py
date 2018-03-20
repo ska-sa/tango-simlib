@@ -1,17 +1,19 @@
 import mock
 import logging
 import unittest
-
 import pkg_resources
 
-from devicetest import TangoTestContext
+import tango
+from tango.test_context import DeviceTestContext
 
-from tango_simlib.testutils import cleanup_tempfile
 from katcp.testutils import start_thread_with_cleanup
-from tango_simlib.testutils import ClassCleanupUnittestMixin
-from tango_simlib import model, sim_xmi_parser, tango_sim_generator, helper_module
 
-import PyTango
+from tango_simlib import model, tango_sim_generator
+
+from tango_simlib.utilities.testutils import cleanup_tempfile
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
+from tango_simlib.utilities import sim_xmi_parser, helper_module
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -49,9 +51,9 @@ expected_mandatory_default_cmds_info = [
     {
         "name": 'State',
         "arginDescription": 'none',
-        "arginType": PyTango._PyTango.CmdArgType.DevVoid,
+        "arginType": tango._tango.CmdArgType.DevVoid,
         "argoutDescription": 'Device state',
-        "argoutType": PyTango.utils.DevState,
+        "argoutType": tango.utils.DevState,
         "description": 'This command gets the device state (stored in its '
             'device_state data member) and returns it to the caller.',
         "displayLevel": 'OPERATOR',
@@ -61,9 +63,9 @@ expected_mandatory_default_cmds_info = [
     },
     {
         "arginDescription": 'none',
-        "arginType": PyTango._PyTango.CmdArgType.DevVoid,
+        "arginType": tango._tango.CmdArgType.DevVoid,
         "argoutDescription": 'Device status',
-        "argoutType": PyTango._PyTango.CmdArgType.DevString,
+        "argoutType": tango._tango.CmdArgType.DevString,
         "description": 'This command gets the device status'
             '(stored in its device_status data member) and returns it to the caller.',
         "displayLevel": 'OPERATOR',
@@ -78,7 +80,7 @@ expected_mandatory_default_cmds_info = [
 # parsed by the XmiParser.
 expected_pressure_attr_info = {
     'name': 'pressure',
-    'data_type': PyTango.CmdArgType.DevDouble,
+    'data_type': tango.CmdArgType.DevDouble,
     'period': '1000',
     'writable': 'READ',
     # The description in the XMI file has unicode quote characters around the word
@@ -97,7 +99,7 @@ expected_pressure_attr_info = {
     'min_warning': '',
     'delta_t': '',
     'delta_val': '',
-    'data_format': PyTango.AttrDataFormat.SCALAR,
+    'data_format': tango.AttrDataFormat.SCALAR,
     'max_dim_y': 0,
     'max_dim_x': 1,
     'abs_change': '0.5',
@@ -116,12 +118,12 @@ expected_admin_mode_devenum_attr_info = {
     'archive_abs_change': '1',
     'archive_period': '',
     'archive_rel_change': '',
-    'data_type': PyTango.CmdArgType.DevEnum,
+    'data_type': tango.CmdArgType.DevEnum,
     'delta_t': '',
     'delta_val': '',
     'description': ('Report the current admin mode of the DSH Element. '
                     'Factory defaut is MAINTENANCE.'),
-    'data_format': PyTango.AttrDataFormat.SCALAR,
+    'data_format': tango.AttrDataFormat.SCALAR,
     'display_unit': '',
     'enum_labels': [
         'ONLINE',
@@ -145,14 +147,14 @@ expected_admin_mode_devenum_attr_info = {
     'rel_change': '',
     'standard_unit': '',
     'unit': '',
-    'writable': PyTango.AttrWriteType.READ_WRITE,
+    'writable': tango.AttrWriteType.READ_WRITE,
     'inherited': 'false'}
 
 
 expected_achieved_pointing_spectrum_attr_info = {
     'abs_change': '',
-    'data_format': PyTango._PyTango.AttrDataFormat.SPECTRUM,
-    'data_type': PyTango._PyTango.CmdArgType.DevFloat,
+    'data_format': tango._tango.AttrDataFormat.SPECTRUM,
+    'data_type': tango._tango.CmdArgType.DevFloat,
     'delta_t': '',
     'delta_val': '',
     'description': ('The achieved pointing of the DSH Element. '
@@ -175,16 +177,16 @@ expected_achieved_pointing_spectrum_attr_info = {
     'rel_change': '',
     'standard_unit': '',
     'unit': '[ms, degree, degree]',
-    'writable': PyTango.AttrWriteType.READ_WRITE,
+    'writable': tango.AttrWriteType.READ_WRITE,
     'inherited': 'false'}
 
 # The desired information for the 'On' command when the Weather.xmi file is parsed
 expected_on_cmd_info = {
     'name': 'On',
     'doc_in': 'No input parameter',
-    'dtype_in': PyTango.CmdArgType.DevVoid,
+    'dtype_in': tango.CmdArgType.DevVoid,
     'doc_out': 'Command responds',
-    'dtype_out': PyTango.CmdArgType.DevVoid,
+    'dtype_out': tango.CmdArgType.DevVoid,
     'inherited': 'false'}
 
 # The expected information that would be obtained for the device property when the
@@ -193,7 +195,7 @@ expected_sim_xmi_file_device_property_info = {
     'name': 'sim_xmi_description_file',
     'mandatory': 'true',
     'description': 'Path to the pogo generated xmi file',
-    'type': PyTango.CmdArgType.DevString,
+    'type': tango.CmdArgType.DevString,
     'inherited': 'false'}
 
 EXPECTED_QUANTITIES_LIST = frozenset([
@@ -207,14 +209,14 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
     @classmethod
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
-        cls.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                        'Weather.xmi')]
+        cls.xmi_file = [pkg_resources.resource_filename(
+            'tango_simlib.tests.config_files', 'Weather.xmi')]
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.xmi_file,
                                                            cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
             model, cls.xmi_file)[0]
-        cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
+        cls.tango_context = DeviceTestContext(cls.TangoDeviceServer,
                                              device_name=cls.device_name,
                                              db=cls.tango_db)
         start_thread_with_cleanup(cls, cls.tango_context)
@@ -245,7 +247,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
-        for attribute_data in self.xmi_parser.device_attributes:
+        for attribute_data in self.xmi_parser._device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
         self.assertEqual(set(expected_attributes) - set(not_added_attr_names),
                          attributes - default_attributes,
@@ -254,7 +256,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
 
     def test_attribute_properties(self):
         attribute_list = self.device.get_attribute_list()
-        attribute_data = self.xmi_parser.get_reformatted_device_attr_metadata()
+        attribute_data = self.xmi_parser.get_device_attribute_metadata()
         not_added_attr = self.device.read_attribute('AttributesNotAdded')
         not_added_attr_names = not_added_attr.value
 
@@ -274,7 +276,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
                 attr_prop_value = getattr(attr_query_data, attr_parameter, None)
                 # Here the writable property is checked for, since Pogo
                 # expresses in as a string (e.g. 'READ') where tango device return a
-                # Pytango object `PyTango.AttrWriteType.READ` and taking
+                # tango object `tango._tango.AttrWriteType.READ` and taking
                 # its string returns 'READ' which corresponds to the Pogo one.
                 if attr_parameter in ['writable']:
                     attr_prop_value = str(attr_prop_value)
@@ -366,13 +368,13 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         """Test tango command list."""
 
         actual_device_commands = set(self.device.get_command_list()) - {'Init'}
-        expected_command_list = set(self.xmi_parser.get_reformatted_cmd_metadata().keys())
+        expected_command_list = set(self.xmi_parser.get_device_command_metadata().keys())
         self.assertEquals(actual_device_commands, expected_command_list,
                           "The commands specified in the xmi file are not present in"
                           " the device")
 
     def test_command_properties(self):
-        command_data = self.xmi_parser.get_reformatted_cmd_metadata()
+        command_data = self.xmi_parser.get_device_command_metadata()
 
         for cmd_name, cmd_metadata in command_data.items():
             cmd_config_info = self.device.get_command_config(cmd_name)
@@ -397,8 +399,8 @@ class GenericSetup(unittest.TestCase):
 
     def setUp(self):
         super(GenericSetup, self).setUp()
-        self.xmi_file = [pkg_resources.resource_filename('tango_simlib.tests',
-                                                         'Weather.xmi')]
+        self.xmi_file = [pkg_resources.resource_filename(
+            'tango_simlib.tests.config_files', 'Weather.xmi')]
         self.xmi_parser = sim_xmi_parser.XmiParser()
         self.xmi_parser.parse(self.xmi_file[0])
 
@@ -407,7 +409,7 @@ class test_XmiParser(GenericSetup):
         """Test attribute information parsed matches with the one captured in the
         XMI file.
         """
-        actual_parsed_attrs = self.xmi_parser.get_reformatted_device_attr_metadata()
+        actual_parsed_attrs = self.xmi_parser.get_device_attribute_metadata()
         actual_parsed_attr_list = actual_parsed_attrs.keys()
         self.assertGreater(len(actual_parsed_attr_list), 0,
                            "There is no attribute information parsed")
@@ -442,7 +444,7 @@ class test_XmiParser(GenericSetup):
         with the one captured in the XMI file generated using POGO.
 
         """
-        actual_parsed_cmds = self.xmi_parser.get_reformatted_cmd_metadata()
+        actual_parsed_cmds = self.xmi_parser.get_device_command_metadata()
         expected_cmd_list = ['On', 'Off', 'Add', 'cmd1'] + default_pogo_commands
         actual_parsed_cmd_list = actual_parsed_cmds.keys()
         self.assertGreater(len(actual_parsed_cmd_list), len(default_pogo_commands),
@@ -472,7 +474,7 @@ class test_XmiParser(GenericSetup):
         generating using POGO is parsed correctly with no data loss.
         """
         actual_parsed_dev_properties = (
-                self.xmi_parser.get_reformatted_properties_metadata('deviceProperties'))
+                self.xmi_parser.get_device_properties_metadata('deviceProperties'))
         expected_device_properties_list = ['sim_xmi_description_file']
         actual_parsed_dev_props_list = actual_parsed_dev_properties.keys()
         self.assertEqual(set(expected_device_properties_list),
@@ -529,7 +531,7 @@ class test_PopModelActions(GenericSetup):
         """Test if actions are populated to the model.
         """
         device_name = 'tango/device/instance'
-        cmd_info = self.xmi_parser.get_reformatted_cmd_metadata()
+        cmd_info = self.xmi_parser.get_device_command_metadata()
 
         sim_model = (model.PopulateModelActions(self.xmi_parser, device_name).sim_model)
         self.assertEqual(len(sim_model.sim_quantities), 0,
@@ -558,15 +560,15 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.xmi_file = [pkg_resources.resource_filename(
-                            'tango_simlib.tests', 'devenum_test_case.xmi')]
+            'tango_simlib.tests.config_files', 'devenum_test_case.xmi')]
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.xmi_file,
                                                            cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
             model, cls.xmi_file)[0]
-        cls.tango_context = TangoTestContext(cls.TangoDeviceServer,
-                                             device_name=cls.device_name,
-                                             db=cls.tango_db)
+        cls.tango_context = DeviceTestContext(cls.TangoDeviceServer,
+                                              device_name=cls.device_name,
+                                              db=cls.tango_db)
         start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
@@ -585,7 +587,7 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
         """
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
-        for attribute_data in self.xmi_parser.device_attributes:
+        for attribute_data in self.xmi_parser._device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
         self.assertEqual(set(expected_attributes), attributes -
                          helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES,
