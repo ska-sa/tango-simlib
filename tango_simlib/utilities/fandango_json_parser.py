@@ -14,9 +14,10 @@ https://github.com/tango-controls/fandango/blob/master/doc/recipes/ExportDeviceD
 import logging
 import json
 
-from helper_module import json_load_byteified
+from tango import CmdArgType, AttrDataFormat
 
-from PyTango._PyTango import CmdArgType, AttrDataFormat
+from tango_simlib.utilities.base_parser import Parser
+from tango_simlib.utilities.helper_module import json_load_byteified
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -28,27 +29,11 @@ CMD_PROP_MAP = {
     'out_type_desc': 'doc_out'
 }
 
-class FandangoExportDeviceParser(object):
+class FandangoExportDeviceParser(Parser):
 
     def __init__(self):
-        """Parser class handling a TANGO device data file in json format.
+	super(FandangoExportDeviceParser, self).__init__() 
 
-        Creating an instance of this class requires calling :meth:`parse` method
-        afterwards to extract all the provided TANGO attributes, commands,
-        device property and device override class information from the specified
-        file. The formatted data is a dict structure and can be obtained using
-        :meth:`get_reformatted_device_attr_metadata`,
-        :meth:`get_reformatted_cmd_metadata`,
-        :meth:`get_reformatted_properties_metadata` and
-        :meth:`get_reformatted_override_metadata`.
-        """
-
-        # Simulator decription datafile in json format
-        self.data_description_file_name = ''
-        self.device_class_name = ''
-        self._device_attributes = {}
-        self._device_commands = {}
-        self._device_properties = {}
         self._device_class_properties = {}
 
     def parse(self, json_file):
@@ -102,7 +87,7 @@ class FandangoExportDeviceParser(object):
 
         self._device_attributes.update(attribute_data)           
 
-    def get_reformatted_device_attr_metadata(self):
+    def get_device_attribute_metadata(self):
         """Returns the device's attributes' configuration.
 
         Returns
@@ -163,7 +148,7 @@ class FandangoExportDeviceParser(object):
         """
         return self._device_attributes
 
-    def get_reformatted_cmd_metadata(self):"
+    def get_device_command_metadata(self):"
         """Returns the device's commands' configuration.
         
         Returns
@@ -183,7 +168,7 @@ class FandangoExportDeviceParser(object):
         """
         return self._device_commands
 
-    def get_reformatted_properties_metadata(self, property_group):
+    def get_device_properties_metadata(self, property_group):
         """Returns the device's class or device property configuration.
         
         Returns
@@ -198,5 +183,5 @@ class FandangoExportDeviceParser(object):
         """
         return self._device_properties
 
-    def get_reformatted_override_metadata(self):
+    def get_device_cmd_override_metadata(self):
         return {}
