@@ -14,11 +14,11 @@ https://github.com/tango-controls/fandango/blob/master/doc/recipes/ExportDeviceD
 import logging
 import json
 
-from helper_module import json_load_byteified
-
-from PyTango._PyTango import CmdArgType, AttrDataFormat
+from tango import CmdArgType, AttrDataFormat
 
 from tango_simlib.utilities.base_parser import Parser
+from tango_simlib.utilities.helper_module import json_load_byteified
+
 MODULE_LOGGER = logging.getLogger(__name__)
 
 CMD_PROP_MAP = {
@@ -34,12 +34,6 @@ class FandangoExportDeviceParser(Parser):
     def __init__(self):
 	super(FandangoExportDeviceParser, self).__init__() 
 
-        # Simulator decription datafile in json format
-        self.data_description_file_name = ''
-        self.device_class_name = ''
-        self._device_attributes = {}
-        self._device_commands = {}
-        self._device_properties = {}
         self._device_class_properties = {}
 
     def parse(self, json_file):
