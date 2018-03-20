@@ -18,6 +18,7 @@ from helper_module import json_load_byteified
 
 from PyTango._PyTango import CmdArgType, AttrDataFormat
 
+from tango_simlib.utilities.base_parser import Parser
 MODULE_LOGGER = logging.getLogger(__name__)
 
 CMD_PROP_MAP = {
