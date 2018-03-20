@@ -28,20 +28,10 @@ CMD_PROP_MAP = {
     'out_type_desc': 'doc_out'
 }
 
-class FandangoExportDeviceParser(object):
+class FandangoExportDeviceParser(Parser):
 
     def __init__(self):
-        """Parser class handling a TANGO device data file in json format.
-
-        Creating an instance of this class requires calling :meth:`parse` method
-        afterwards to extract all the provided TANGO attributes, commands,
-        device property and device override class information from the specified
-        file. The formatted data is a dict structure and can be obtained using
-        :meth:`get_reformatted_device_attr_metadata`,
-        :meth:`get_reformatted_cmd_metadata`,
-        :meth:`get_reformatted_properties_metadata` and
-        :meth:`get_reformatted_override_metadata`.
-        """
+	super(FandangoExportDeviceParser, self).__init__() 
 
         # Simulator decription datafile in json format
         self.data_description_file_name = ''
