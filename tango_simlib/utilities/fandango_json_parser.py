@@ -87,7 +87,7 @@ class FandangoExportDeviceParser(Parser):
 
         self._device_attributes.update(attribute_data)           
 
-    def get_reformatted_device_attr_metadata(self):
+    def get_device_attribute_metadata(self):
         """Returns the device's attributes' configuration.
 
         Returns
@@ -148,7 +148,7 @@ class FandangoExportDeviceParser(Parser):
         """
         return self._device_attributes
 
-    def get_reformatted_cmd_metadata(self):"
+    def get_device_command_metadata(self):"
         """Returns the device's commands' configuration.
         
         Returns
@@ -168,7 +168,7 @@ class FandangoExportDeviceParser(Parser):
         """
         return self._device_commands
 
-    def get_reformatted_properties_metadata(self, property_group):
+    def get_device_properties_metadata(self, property_group):
         """Returns the device's class or device property configuration.
         
         Returns
@@ -183,5 +183,5 @@ class FandangoExportDeviceParser(Parser):
         """
         return self._device_properties
 
-    def get_reformatted_override_metadata(self):
+    def get_device_cmd_override_metadata(self):
         return {}
