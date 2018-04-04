@@ -1,4 +1,4 @@
-"""This module tests the fandang_json_parser script.
+"""This module tests the fandango_json_parser script.
 """
 import unittest
 import logging
