@@ -17,7 +17,8 @@ import json
 from tango import CmdArgType, AttrDataFormat
 
 from tango_simlib.utilities.base_parser import Parser
-from tango_simlib.utilities.helper_module import json_load_byteified
+#from tango_simlib.utilities.helper_module import json_load_byteified
+from helper_module import json_load_byteified
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -148,7 +149,7 @@ class FandangoExportDeviceParser(Parser):
         """
         return self._device_attributes
 
-    def get_device_command_metadata(self):"
+    def get_device_command_metadata(self):
         """Returns the device's commands' configuration.
         
         Returns
