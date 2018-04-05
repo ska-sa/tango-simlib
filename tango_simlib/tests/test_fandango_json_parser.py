@@ -23,15 +23,6 @@ EXPECTED_CMD_PROPERTY_PARAMETERS = [
     'doc_out'
     ]
 
-INTERESTED_CMD_PROP = [
-    EXPECTED_CMD_PROPERTY_PARAMETERS[1],
-    EXPECTED_CMD_PROPERTY_PARAMETERS[3]
-    ]
-
-INTERESTED_ATTR_PROP = ['data_type', 'data_format']
-
-EXPECTED_TANGO_TYPES = [tango._tango.CmdArgType, tango._tango.AttrDataFormat]
-
 # The desired information for the attribute 'Status' when the database2
 # json file is parsed by the FandangoExportDeviceParser.
 EXPECTED_STATUS_ATTR_INFO = {
@@ -108,31 +99,27 @@ class TestFandangoJsonParser(GenericSetup):
 
         # testing that the command properties have been renamed to
         # match values in command signature
-        for cmd_name in self.fandango_parser.get_device_command_metadata():
+
+        for cmd_name, cmd_metadata in self.fandango_parser.get_device_command_metadata().items():
             self.assertEquals(
-                EXPECTED_CMD_PROPERTY_PARAMETERS.sort(),
-                self.fandango_parser.get_device_command_metadata()
-                [cmd_name].keys().sort(),
+                sorted(EXPECTED_CMD_PROPERTY_PARAMETERS),
+                sorted(cmd_metadata.keys()),
                 "The mapping of the command properties to the command"
                 "signature wasn't successful for '%s' command" % (cmd_name)
                 )
             # testing that data type of cmd property values is a tango type and
             # there is no occurence of 'Const' in the value of the cmd property
-            for cmd_prop_value in [
-                    self.fandango_parser.get_device_command_metadata()
-                    [cmd_name][INTERESTED_CMD_PROP[0]],
-                    self.fandango_parser.get_device_command_metadata()
-                    [cmd_name][INTERESTED_CMD_PROP[1]]]:
+            for cmd_prop in ['dtype_in', 'dtype_out']:
+                cmd_prop_value = cmd_metadata[cmd_prop]
                 self.assertEquals(
                     str(cmd_prop_value).find('Const'), -1,
-                    "The value (%s) of the cmd property, '%s', for the command, '%s',"
-                    "has 'Const'" % (cmd_prop_value, INTERESTED_CMD_PROP[0], cmd_name)
+                    "The value '%s' of the cmd property, '%s', for the command, '%s',"
+                    "has 'Const'" % (cmd_prop_value, cmd_prop, cmd_name)
                     )
                 self.assertEquals(
-                    EXPECTED_TANGO_TYPES[0], type(cmd_prop_value),
-                    "The data type (%s) of the cmd property, '%s', of the command, '%s',"
-                    "is not a tango type" % (cmd_prop_value, INTERESTED_CMD_PROP[0],
-                                             cmd_name)
+                    tango._tango.CmdArgType, type(cmd_prop_value),
+                    "The data type '%s' of the cmd property, '%s', of the command, '%s',"
+                    "is not a tango type" % (cmd_prop_value, cmd_prop, cmd_name)
                     )
 
     def test_preprocess_attribute_types(self):
@@ -141,24 +128,19 @@ class TestFandangoJsonParser(GenericSetup):
         """
 
         # testing that data type of specified attr property values is a tango type
-        for attr_name in self.fandango_parser.get_device_attribute_metadata():
+        dev_attr = self.fandango_parser.get_device_attribute_metadata().items()
+        for attr_name, attr_metadata in dev_attr:
             self.assertEquals(
-                EXPECTED_TANGO_TYPES[0],
-                type(
-                    self.fandango_parser.get_device_attribute_metadata()[attr_name]
-                    [INTERESTED_ATTR_PROP[0]]
-                    ),
-                "The value of attr prop, '%s', of attr name, '%s', is not a tango type."
-                % (INTERESTED_ATTR_PROP[0], attr_name)
+                tango._tango.CmdArgType,
+                type(attr_metadata['data_type']),
+                "The value of attr prop 'data_type' of attr name, '%s', is not a tango type."
+                % (attr_name)
                 )
             self.assertEquals(
-                EXPECTED_TANGO_TYPES[1],
-                type(
-                    self.fandango_parser.get_device_attribute_metadata()
-                    [attr_name][INTERESTED_ATTR_PROP[1]]
-                    ),
-                "The value of attr prop, '%s', of attr name, '%s', is not a tango type."
-                % (INTERESTED_ATTR_PROP[1], attr_name)
+                tango._tango.AttrDataFormat,
+                type(attr_metadata['data_format']),
+                "The value of attr prop, 'data_format', of attr name, '%s', is not a tango type."
+                % (attr_name)
                 )
 
     def test_parsed_attributes(self):
@@ -184,11 +166,16 @@ class TestFandangoJsonParser(GenericSetup):
         # Using the 'Status' attribute expected results
         self.assertIn(
             'Status', actual_parsed_attrs.keys(),
-            "The attribute temperature is not in the parsed attribute list"
+            "The attribute Status is not in the parsed attribute list"
             )
         actual_parsed_status_attr_info = actual_parsed_attrs['Status']
-        # Compare the values of the attribute properties captured in the Jive
+        self.assertEquals(
+            len(actual_parsed_status_attr_info.keys()), len(EXPECTED_STATUS_ATTR_INFO.keys()),
+            "There are extra/missing properties in the parsed 'Status' attribute"
+            )
+        # Compare the values of the attribute properties captured in the fandango
         # generated json file and the ones in the parsed attribute data structure.
+
         for prop in EXPECTED_STATUS_ATTR_INFO:
             self.assertEquals(
                 actual_parsed_status_attr_info[prop], EXPECTED_STATUS_ATTR_INFO[prop],
