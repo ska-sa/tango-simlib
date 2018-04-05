@@ -1,3 +1,8 @@
+#########################################################################################
+# Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
+#                                                                                       #
+# BSD license - see LICENSE.txt for details                                             #
+#########################################################################################
 """This module tests the fandango_json_parser script.
 """
 import unittest
@@ -112,11 +117,6 @@ class TestFandangoJsonParser(GenericSetup):
             for cmd_prop in ['dtype_in', 'dtype_out']:
                 cmd_prop_value = cmd_metadata[cmd_prop]
                 self.assertEquals(
-                    str(cmd_prop_value).find('Const'), -1,
-                    "The value '%s' of the cmd property, '%s', for the command, '%s',"
-                    "has 'Const'" % (cmd_prop_value, cmd_prop, cmd_name)
-                    )
-                self.assertEquals(
                     tango._tango.CmdArgType, type(cmd_prop_value),
                     "The data type '%s' of the cmd property, '%s', of the command, '%s',"
                     "is not a tango type" % (cmd_prop_value, cmd_prop, cmd_name)
@@ -170,7 +170,7 @@ class TestFandangoJsonParser(GenericSetup):
             )
         actual_parsed_status_attr_info = actual_parsed_attrs['Status']
         self.assertEquals(
-            len(actual_parsed_status_attr_info.keys()), len(EXPECTED_STATUS_ATTR_INFO.keys()),
+            sorted(actual_parsed_status_attr_info.keys()), sorted(EXPECTED_STATUS_ATTR_INFO.keys()),
             "There are extra/missing properties in the parsed 'Status' attribute"
             )
         # Compare the values of the attribute properties captured in the fandango
