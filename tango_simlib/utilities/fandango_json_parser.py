@@ -148,7 +148,7 @@ class FandangoExportDeviceParser(Parser):
         """
         return self._device_attributes
 
-    def get_device_command_metadata(self):"
+    def get_device_command_metadata(self):
         """Returns the device's commands' configuration.
         
         Returns
