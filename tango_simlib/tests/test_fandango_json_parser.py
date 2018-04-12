@@ -74,7 +74,7 @@ EXPECTED_STATUS_ATTR_INFO = {
     'quality': 'ATTR_VALID',
     'standard_unit': 'No standard unit',
     'string': 'Device is OK',
-    'time': 1521724934.799581,
+    'time': 1523521664.582936,
     'unit': '',
     'value': 'Device is OK',
     'writable': 'READ'
@@ -89,7 +89,7 @@ class GenericSetup(unittest.TestCase):
     def setUp(self):
         super(GenericSetup, self).setUp()
         self.fandango_json_file = pkg_resources.resource_filename(
-            'tango_simlib.tests.config_files', 'database2.json')
+            'tango_simlib.tests.config_files', 'database2.fgo')
         self.fandango_parser = fandango_json_parser.FandangoExportDeviceParser()
         self.fandango_parser.parse(self.fandango_json_file)
 
