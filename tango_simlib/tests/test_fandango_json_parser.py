@@ -94,7 +94,7 @@ class GenericSetup(unittest.TestCase):
         self.fandango_parser.parse(self.fandango_json_file)
 
 
-class TestFandangoJsonParser(GenericSetup):
+class test_FandangoJsonParser(GenericSetup):
     """A test class that tests that the fandango json parser works correctly.
     """
     def test_preprocess_command_types(self):
