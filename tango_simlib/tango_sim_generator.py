@@ -27,6 +27,7 @@ from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
 from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
+from tango_simlib.utilities.fandango_json_parser import FandangoExportDeviceParser
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 
 
@@ -371,12 +372,12 @@ def get_parser_instance(sim_datafile):
     Parameters
     ----------
     sim_datafile : str
-        A direct path to the xmi/xml/json file.
+        A direct path to the xmi/xml/json/fgo file.
 
     Returns
     ------
     parser_instance: Parser instance
-        The Parser object which reads an xmi/xml/json file and parses it into device
+        The Parser object which reads an xmi/xml/json/fgo file and parses it into device
         attributes, commands, and properties.
 
     """
@@ -392,6 +393,9 @@ def get_parser_instance(sim_datafile):
     elif extension in [".xml"]:
         parser_instance = SDDParser()
         parser_instance.parse(sim_datafile)
+    elif extension in [".fgo"]:
+        parser_instance = FandangoExportDeviceParser()
+        parser_instance.parse(sim_datafile)
     return parser_instance
 
 def configure_device_model(sim_data_file=None, test_device_name=None):
@@ -402,7 +406,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
     Parameters
     ----------
     sim_datafile : list
-        A list of direct paths to either xmi/xml/json files.
+        A list of direct paths to either xmi/xml/json/fgo files.
     test_device_name : str
         A TANGO device name. This is used for running tests as we want the model
         instance and the device name to have the same name.
@@ -484,7 +488,7 @@ def get_device_class(sim_data_files):
     Parameters
     ----------
     sim_data_files: list
-        A list of direct paths to either xmi/xml/json data files.
+        A list of direct paths to either xmi/xml/json/fgo data files.
 
     Returns
     -------
@@ -503,6 +507,8 @@ def get_device_class(sim_data_files):
         if extension in [".xmi"]:
             parser_instance = get_parser_instance(data_file)
         elif extension in [".json"] and len(sim_data_files) < 2:
+            parser_instance = get_parser_instance(data_file)
+        elif extension in [".fgo"] and len(sim_data_files) <2:
             parser_instance = get_parser_instance(data_file)
 
     # Since at the current moment the class name of the tango simulator to be
