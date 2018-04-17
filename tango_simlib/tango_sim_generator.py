@@ -506,9 +506,7 @@ def get_device_class(sim_data_files):
         extension = extension.lower()
         if extension in [".xmi"]:
             parser_instance = get_parser_instance(data_file)
-        elif extension in [".json"] and len(sim_data_files) < 2:
-            parser_instance = get_parser_instance(data_file)
-        elif extension in [".fgo"] and len(sim_data_files) <2:
+        elif extension in [".fgo", ".json"] and len(sim_data_files) < 2:
             parser_instance = get_parser_instance(data_file)
 
     # Since at the current moment the class name of the tango simulator to be
