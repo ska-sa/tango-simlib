@@ -89,12 +89,12 @@ class GenericSetup(unittest.TestCase):
     def setUp(self):
         super(GenericSetup, self).setUp()
         self.fandango_json_file = pkg_resources.resource_filename(
-            'tango_simlib.tests.config_files', 'database2.json')
+            'tango_simlib.tests.config_files', 'database2.fgo')
         self.fandango_parser = fandango_json_parser.FandangoExportDeviceParser()
         self.fandango_parser.parse(self.fandango_json_file)
 
 
-class TestFandangoJsonParser(GenericSetup):
+class test_FandangoJsonParser(GenericSetup):
     """A test class that tests that the fandango json parser works correctly.
     """
     def test_preprocess_command_types(self):

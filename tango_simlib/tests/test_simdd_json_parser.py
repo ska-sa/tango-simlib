@@ -1,3 +1,9 @@
+######################################################################################### 
+# Author: cam@ska.ac.za                                                                 #
+# Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
+#                                                                                       #
+# BSD license - see LICENSE.txt for details                                             #
+#########################################################################################
 import mock
 import unittest
 import logging
@@ -112,7 +118,7 @@ class test_SimddJsonParser(GenericSetup):
         # Using the made up temperature attribute expected results as we
         # haven't generated the full test data for the other attributes.
         self.assertIn('temperature', actual_parsed_attrs.keys(),
-                      "The attribute pressure is not in the parsed attribute list")
+                      "The attribute temperature is not in the parsed attribute list")
         actual_parsed_temperature_attr_info = actual_parsed_attrs['temperature']
 
         # Compare the values of the attribute properties captured in the POGO
