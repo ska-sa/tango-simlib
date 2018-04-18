@@ -399,7 +399,7 @@ def get_parser_instance(sim_datafile):
     return parser_instance
 
 def configure_device_model(sim_data_file=None, test_device_name=None):
-    """In essence this function should get the xmi file, parse it,
+    """In essence this function should get the data descriptor file, parse it,
     take the attribute and command information, populate the model quantities and
     actions to be simulated and return that model.
 

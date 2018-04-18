@@ -68,8 +68,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
 
     def setUp(self):
         super(test_TangoSimGenDeviceIntegration, self).setUp()
-        self.xmi_parser = sim_xmi_parser.XmiParser()
-        self.xmi_parser.parse(self.data_descr_file[0])
+        self.file_parser = sim_xmi_parser.XmiParser()
+        self.file_parser.parse(self.data_descr_file[0])
         self.expected_model = tango_sim_generator.configure_device_model(
                 self.data_descr_file, self.sim_device.name())
         self.attr_name_enum_labels = sorted(
@@ -95,7 +95,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         expected_attributes = []
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
 
-        for attribute_data in self.xmi_parser._device_attributes:
+        for attribute_data in self.file_parser._device_attributes:
             expected_attributes.append(attribute_data['dynamicAttributes']['name'])
 
         self.assertEqual(set(expected_attributes) - set(not_added_attr_names),
@@ -107,10 +107,9 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         """Testing whether commands are defined on the device as expected
         """
         actual_device_commands = set(self.sim_device.get_command_list()) - {'Init'}
-        expected_command_list = set(self.xmi_parser.get_device_command_metadata().keys())
+        expected_command_list = set(self.file_parser.get_device_command_metadata().keys())
         self.assertEquals(actual_device_commands, expected_command_list,
-                          "The commands specified in the xmi file are not present in"
-                          " the device")
+                          "The commands specified are not present in the device")
 
     def _count_device_properties(self):
         """Count device properties in tango database"""
@@ -163,8 +162,9 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         setattr(self.sim_control_device, 'last_val', input_value)
         self.assertEqual(self.sim_device.temperature, input_value)
 
-class test_TangoSimGenDeviceIntegrationForFandangoFile(ClassCleanupUnittestMixin,
-    unittest.TestCase):
+
+class test_TangoSimGenDeviceIntegrationForFandangoFile(
+    ClassCleanupUnittestMixin, unittest.TestCase):
 
     longMessage = True
 
@@ -255,7 +255,7 @@ class test_TangoSimGenDeviceIntegrationForFandangoFile(ClassCleanupUnittestMixin
 
     def test_initial_device_properties(self):
         """Test initial device properties added to the tangoDB"""
-        expected_count = 1
+        expected_count = 1 # model_key property already present in db
         self.assertEquals(expected_count, self._count_device_properties())        
 
     def test_write_device_properties_to_db(self):
