@@ -71,7 +71,7 @@ class TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         cls.addCleanupClass(shutil.rmtree, cls.temp_dir)
 
     def setUp(self):
-        super(test_TangoSimGenDeviceIntegration, self).setUp()
+        super(TangoSimGenDeviceIntegration, self).setUp()
         self.sim_file_parser.parse(self.data_descr_file[0])
         self.expected_model = tango_sim_generator.configure_device_model(
             self.data_descr_file, self.sim_device.name())
