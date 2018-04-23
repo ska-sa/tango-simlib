@@ -195,7 +195,7 @@ class test_TangoSimGenDeviceIntegrationFGO(test_TangoSimGenDeviceIntegrationXMI)
         not_added_attr_names = not_added_attr.value
 
         expected_attributes = []
-        for attr, attr_prop in self.sim_file_parser._device_attributes.items():
+        for attr_prop in self.sim_file_parser._device_attributes.values():
             expected_attributes.append(attr_prop['name'])
         expected_attributes = set(expected_attributes)
         # checking to see if there were any attributes not added
@@ -237,7 +237,7 @@ class test_TangoSimGenDeviceIntegrationSIMDD(test_TangoSimGenDeviceIntegrationXM
         are added to the TANGO device.
         """
         # test that the attributes from the running simulated device match the attributes
-        # from in the fandango generated file
+        # from in the simdd json file
         device_attributes = set(self.sim_device.get_attribute_list())
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
         remaining_device_attrs = device_attributes - default_attributes
@@ -245,7 +245,10 @@ class test_TangoSimGenDeviceIntegrationSIMDD(test_TangoSimGenDeviceIntegrationXM
         not_added_attr_names = not_added_attr.value
 
         expected_attributes = []
-        for attr, attr_prop in self.sim_file_parser._device_attributes.items():
+        """for attr_prop in self.sim_file_parser._device_attributes.values():
+            expected_attributes.append(attr_prop['name'])
+        """
+        for attr_prop in self.sim_file_parser._device_attributes.values():
             expected_attributes.append(attr_prop['name'])
         expected_attributes = set(expected_attributes)
         # checking to see if there were any attributes not added
