@@ -25,7 +25,7 @@ from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
 MODULE_LOGGER = logging.getLogger(__name__)
 
 
-class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
+class TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
     longMessage = True
     server_name = None
@@ -119,7 +119,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
             set(control_attributes))
 
 
-class test_XmiFile(test_TangoSimGenDeviceIntegration):
+class test_XmiFile(TangoSimGenDeviceIntegration):
 
     @classmethod
     def setUpClassWithCleanup(cls):
@@ -181,7 +181,7 @@ class test_XmiFile(test_TangoSimGenDeviceIntegration):
         self.assertEqual(self.sim_device.temperature, input_value)
 
 
-class test_FandangoFile(test_TangoSimGenDeviceIntegration):
+class test_FandangoFile(TangoSimGenDeviceIntegration):
 
     @classmethod
     def setUpClassWithCleanup(cls):
@@ -227,7 +227,7 @@ class test_FandangoFile(test_TangoSimGenDeviceIntegration):
                           " the device")
 
 
-class test_JsonFile(test_TangoSimGenDeviceIntegration):
+class test_JsonFile(TangoSimGenDeviceIntegration):
 
     @classmethod
     def setUpClassWithCleanup(cls):
