@@ -82,6 +82,12 @@ class FandangoExportDeviceParser(Parser):
                 if attr_prop == 'data_type':
                     attr_config[attr_prop] = getattr(CmdArgType, attr_prop_value)
                 elif attr_prop == 'data_format':
+                    # checking if SPECTRUM attr has max_dim_x key not registered
+                    if (attr_config[attr_prop] == 'SPECTRUM' and 
+                        'max_dim_x' not in attr_config.keys()):
+                        # include dim keys if condition is met
+                        attr_config.update(
+                            {'max_dim_x':len(attr_config['value']), 'max_dim_y': 0})
                     attr_config[attr_prop] = (
                         getattr(AttrDataFormat, attr_prop_value))
 
