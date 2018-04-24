@@ -60,7 +60,7 @@ class BaseTest(object):
                  server_instance, "-file={}".format(database_filename),
                  "-ORBendPoint", "giop:tcp::{}".format(cls.port)])
             # Note that tango demands that connection to the server must
-            # be delayed by atleast 1000 ms of device server start up.
+            # be delayed by at least 1000 ms of device server start up.
             time.sleep(1)
             cls.sim_device = tango.DeviceProxy(
                 '%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
