@@ -25,7 +25,14 @@ from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
 MODULE_LOGGER = logging.getLogger(__name__)
 
 class BaseTest(object):
-
+    """The class below (in this case, TangoSimGenDeviceIntegration) contains functions
+    that are named with test prefixing the function names. Due to this, Nosetest first 
+    calls this class which has none type class variables and thus, makes the tests 
+    fail. From the suggestion in this link from stackoverflow,
+    https://stackoverflow.com/questions/1323455/python-unit-test-with-base-and-sub-class
+    wrapping a class around the base class  would make Nosetest begin execution from the 
+    derived classes where the test should be done instead of the base class.
+    """
     class TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
         longMessage = True
