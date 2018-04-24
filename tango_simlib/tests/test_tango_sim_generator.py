@@ -57,8 +57,8 @@ class BaseTest:
                 sim_test_device_prop)
             cls.sub_proc = subprocess.Popen(
                 ["python", "{}/{}".format(cls.temp_dir, cls.server_name),
-                server_instance, "-file={}".format(database_filename),
-                "-ORBendPoint", "giop:tcp::{}".format(cls.port)])
+                 server_instance, "-file={}".format(database_filename),
+                 "-ORBendPoint", "giop:tcp::{}".format(cls.port)])
             # Note that tango demands that connection to the server must
             # be delayed by atleast 1000 ms of device server start up.
             time.sleep(1)
@@ -118,7 +118,7 @@ class BaseTest:
             self.assertEqual(
                 attributes - implemented_attr,
                 set(control_attributes))
-        
+                
         def test_sim_control_device_attribute_change(self):
             """Setting the desired attribute value for the device's attribute from
             the simulator controller device
@@ -265,7 +265,7 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         self.assertEqual(set(expected_attributes), remaining_device_attrs,
                          "Actual tango device attribute list differs from expected "
                          "list!")
-        
+    
     def test_device_command_list(self):
         """Testing whether commands from running simulated device match commands from
         simmdd json file
