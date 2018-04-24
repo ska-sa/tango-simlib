@@ -24,102 +24,115 @@ from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
+class BaseTest:
 
-class TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
+    class TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
-    longMessage = True
-    server_name = None
-    data_descr_file = None
-    sim_file_parser = None
+        longMessage = True
+        server_name = None
+        data_descr_file = None
+        sim_file_parser = None
 
-    @classmethod
-    def setUpClassWithCleanup(cls):
-        cls.port = helper_module.get_port()
-        cls.host = helper_module.get_host_address()
-        cls.data_descr_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests.config_files', cls.data_descr_file)]
-        cls.temp_dir = tempfile.mkdtemp()
-        cls.sim_device_class = tango_sim_generator.get_device_class(cls.data_descr_file)
-        device_name = 'test/nodb/tangodeviceserver'
-        server_instance = 'test'
-        database_filename = '%s/%s_tango.db' % (cls.temp_dir, cls.server_name)
-        sim_test_device_prop = dict(model_key=device_name)
-        tango_sim_generator.generate_device_server(
-            cls.server_name, cls.data_descr_file, cls.temp_dir)
-        helper_module.append_device_to_db_file(
-            cls.server_name, server_instance, device_name,
-            database_filename, cls.sim_device_class)
-        cls.db_instance = helper_module.append_device_to_db_file(
-            cls.server_name, server_instance,
-            '%scontrol' % device_name, database_filename,
-            '%sSimControl' % cls.sim_device_class,
-            sim_test_device_prop)
-        cls.sub_proc = subprocess.Popen(
-            ["python", "{}/{}".format(cls.temp_dir, cls.server_name),
-             server_instance, "-file={}".format(database_filename),
-             "-ORBendPoint", "giop:tcp::{}".format(cls.port)])
-        # Note that tango demands that connection to the server must
-        # be delayed by atleast 1000 ms of device server start up.
-        time.sleep(1)
-        cls.sim_device = tango.DeviceProxy(
-            '%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
-                cls.host, cls.port))
-        cls.sim_control_device = tango.DeviceProxy(
-            '%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' %
-            (cls.host, cls.port))
-        cls.addCleanupClass(cls.sub_proc.kill)
-        cls.addCleanupClass(shutil.rmtree, cls.temp_dir)
+        @classmethod
+        def setUpClassWithCleanup(cls):
+            cls.port = helper_module.get_port()
+            cls.host = helper_module.get_host_address()
+            cls.data_descr_file = [pkg_resources.resource_filename(
+                'tango_simlib.tests.config_files', cls.data_descr_file)]
+            cls.temp_dir = tempfile.mkdtemp()
+            cls.sim_device_class = tango_sim_generator.get_device_class(cls.data_descr_file)
+            device_name = 'test/nodb/tangodeviceserver'
+            server_instance = 'test'
+            database_filename = '%s/%s_tango.db' % (cls.temp_dir, cls.server_name)
+            sim_test_device_prop = dict(model_key=device_name)
+            tango_sim_generator.generate_device_server(
+                cls.server_name, cls.data_descr_file, cls.temp_dir)
+            helper_module.append_device_to_db_file(
+                cls.server_name, server_instance, device_name,
+                database_filename, cls.sim_device_class)
+            cls.db_instance = helper_module.append_device_to_db_file(
+                cls.server_name, server_instance,
+                '%scontrol' % device_name, database_filename,
+                '%sSimControl' % cls.sim_device_class,
+                sim_test_device_prop)
+            cls.sub_proc = subprocess.Popen(
+                ["python", "{}/{}".format(cls.temp_dir, cls.server_name),
+                server_instance, "-file={}".format(database_filename),
+                "-ORBendPoint", "giop:tcp::{}".format(cls.port)])
+            # Note that tango demands that connection to the server must
+            # be delayed by atleast 1000 ms of device server start up.
+            time.sleep(1)
+            cls.sim_device = tango.DeviceProxy(
+                '%s:%s/test/nodb/tangodeviceserver#dbase=no' % (
+                    cls.host, cls.port))
+            cls.sim_control_device = tango.DeviceProxy(
+                '%s:%s/test/nodb/tangodeviceservercontrol#dbase=no' %
+                (cls.host, cls.port))
+            cls.addCleanupClass(cls.sub_proc.kill)
+            cls.addCleanupClass(shutil.rmtree, cls.temp_dir)
 
-    def setUp(self):
-        super(TangoSimGenDeviceIntegration, self).setUp()
-        self.sim_file_parser.parse(self.data_descr_file[0])
-        self.expected_model = tango_sim_generator.configure_device_model(
-            self.data_descr_file, self.sim_device.name())
-        self.attr_name_enum_labels = sorted(
-            self.sim_control_device.attribute_query(
-                'attribute_name').enum_labels)
-    
-    def _count_device_properties(self):
-        """Count device properties in tango database"""
-        db_info = self.db_instance.get_info()
-        db_info_list = db_info.split('\n')
-        num_properties = 0
-        for line in db_info_list:
-            if 'Device properties defined' in line:
-                num_properties = line.split('=')[-1]
-        return int(num_properties)
+        def setUp(self):
+            super(BaseTest.TangoSimGenDeviceIntegration, self).setUp()
+            self.sim_file_parser.parse(self.data_descr_file[0])
+            self.expected_model = tango_sim_generator.configure_device_model(
+                self.data_descr_file, self.sim_device.name())
+            self.attr_name_enum_labels = sorted(
+                self.sim_control_device.attribute_query(
+                    'attribute_name').enum_labels)
 
-    def test_initial_device_properties(self):
-        """Test initial device properties added to the tangoDB"""
-        expected_count = 1  # model_key property already present in db
-        self.assertEquals(expected_count, self._count_device_properties())
+        def _count_device_properties(self):
+            """Count device properties in tango database"""
+            db_info = self.db_instance.get_info()
+            db_info_list = db_info.split('\n')
+            num_properties = 0
+            for line in db_info_list:
+                if 'Device properties defined' in line:
+                    num_properties = line.split('=')[-1]
+            return int(num_properties)
 
-    def test_write_device_properties_to_db(self):
-        """Testing whether the device properties in the model are added to
-        the tangoDB
-        """
-        initial_count = self._count_device_properties()
-        tango_sim_generator.write_device_properties_to_db(
-            self.sim_device.name(), self.expected_model, self.db_instance)
-        num_expected_properties = len(self.expected_model.sim_properties.keys())
-        final_count = self._count_device_properties()
-        num_added_properties = final_count - initial_count
-        self.assertEquals(num_expected_properties, num_added_properties)
+        def test_initial_device_properties(self):
+            """Test initial device properties added to the tangoDB"""
+            expected_count = 1  # model_key property already present in db
+            self.assertEquals(expected_count, self._count_device_properties())
 
-    def test_sim_control_attribute_list(self):
-        """Testing whether the attributes quantities in the model are added to
-        the TANGO sim device controller
-        """
-        implemented_attr = helper_module.SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR
-        control_attributes = test_sim_test_interface.control_attributes(
-            self.expected_model)
-        attributes = set(self.sim_control_device.get_attribute_list())
-        self.assertEqual(
-            attributes - implemented_attr,
-            set(control_attributes))
+        def test_write_device_properties_to_db(self):
+            """Testing whether the device properties in the model are added to
+            the tangoDB
+            """
+            initial_count = self._count_device_properties()
+            tango_sim_generator.write_device_properties_to_db(
+                self.sim_device.name(), self.expected_model, self.db_instance)
+            num_expected_properties = len(self.expected_model.sim_properties.keys())
+            final_count = self._count_device_properties()
+            num_added_properties = final_count - initial_count
+            self.assertEquals(num_expected_properties, num_added_properties)
+
+        def test_sim_control_attribute_list(self):
+            """Testing whether the attributes quantities in the model are added to
+            the TANGO sim device controller
+            """
+            implemented_attr = helper_module.SIM_CONTROL_ADDITIONAL_IMPLEMENTED_ATTR
+            control_attributes = test_sim_test_interface.control_attributes(
+                self.expected_model)
+            attributes = set(self.sim_control_device.get_attribute_list())
+            self.assertEqual(
+                attributes - implemented_attr,
+                set(control_attributes))
+        
+        def test_sim_control_device_attribute_change(self):
+            """Setting the desired attribute value for the device's attribute from
+            the simulator controller device
+            """
+            desired_attribute_name = 'temperature'
+            input_value = 100.0
+            self.sim_control_device.attribute_name = self.attr_name_enum_labels.index(
+                desired_attribute_name)
+            self.sim_control_device.pause_active = True
+            setattr(self.sim_control_device, 'last_val', input_value)
+            self.assertEqual(self.sim_device.temperature, input_value)
 
 
-class test_XmiFile(TangoSimGenDeviceIntegration):
+class test_XmiFile(BaseTest.TangoSimGenDeviceIntegration):
 
     @classmethod
     def setUpClassWithCleanup(cls):
@@ -168,20 +181,8 @@ class test_XmiFile(TangoSimGenDeviceIntegration):
         self.assertEquals(actual_device_commands, expected_command_list,
                           "The commands specified are not present in the device")
 
-    def test_sim_control_device_attribute_change(self):
-        """Setting the desired attribute value for the device's attribute from
-        the simulator controller device
-        """
-        desired_attribute_name = 'temperature'
-        input_value = 100.0
-        self.sim_control_device.attribute_name = self.attr_name_enum_labels.index(
-            desired_attribute_name)
-        self.sim_control_device.pause_active = True
-        setattr(self.sim_control_device, 'last_val', input_value)
-        self.assertEqual(self.sim_device.temperature, input_value)
 
-
-class test_FandangoFile(TangoSimGenDeviceIntegration):
+class test_FandangoFile(BaseTest.TangoSimGenDeviceIntegration):
 
     @classmethod
     def setUpClassWithCleanup(cls):
@@ -226,8 +227,11 @@ class test_FandangoFile(TangoSimGenDeviceIntegration):
                           "The commands specified in the fgo file are not present in"
                           " the device")
 
+    def test_sim_control_device_attribute_change(self):
+        pass
 
-class test_JsonFile(TangoSimGenDeviceIntegration):
+
+class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
 
     @classmethod
     def setUpClassWithCleanup(cls):
