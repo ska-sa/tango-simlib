@@ -24,7 +24,7 @@ from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
-class BaseTest:
+class BaseTest(object):
 
     class TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
