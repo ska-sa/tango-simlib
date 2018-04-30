@@ -67,6 +67,8 @@ EXPECTED_STATUS_ATTR_INFO = {
     'format': '%s',
     'label': 'Status',
     'max_alarm': 'Not specified',
+    'max_dim_x': 1,
+    'max_dim_y': 0,
     'min_alarm': 'Not specified',
     'model': 'monctl:10000/sys/database/2/Status',
     'name': 'Status',
