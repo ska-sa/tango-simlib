@@ -9,7 +9,7 @@ from tango import Attr, AttrWriteType, DevDouble, DevState, UserDefaultAttrProp
 from tango.server import attribute, Device, device_property, DeviceMeta
 
 from tango_simlib import model
-from tango_simlib.helper_module import generate_cmd_handler
+from tango_simlib.utilities.helper_module import generate_cmd_handler
 
 class TangoTestDeviceServerBase(Device):
     __metaclass__ = DeviceMeta
