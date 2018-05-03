@@ -235,7 +235,7 @@ def get_tango_device_server(model, sim_data_files):
             for action_name, action_handler in self.model.sim_actions.items():
                 cmd_handler = helper_module.generate_cmd_handler(
                     self.model, action_name, action_handler)
-                setattr(TangoDeviceServer, action_name, action_handler)
+                setattr(TangoDeviceServer, action_name, cmd_handler)
                 self.add_command(cmd_handler, device_level=True)
 
         def initialize_dynamic_attributes(self):

@@ -49,8 +49,9 @@ class TangoTestDeviceServerBase(Device):
     def initialize_dynamic_commands(self):
         for action_name, action_handler in self.model.test_sim_actions.items():
             cmd_handler = generate_cmd_handler(self.model, action_name, action_handler)
-            #You might need to turn cmd_handler into an unbound method before you add
-            #it to the class
+            # You might need to turn cmd_handler into an unbound method before you add
+            # it to the class
+            setattr(TangoTestDeviceServerBase, action_name, cmd_handler)
             self.add_command(cmd_handler, device_level=True)
 
     def initialize_dynamic_attributes(self):
