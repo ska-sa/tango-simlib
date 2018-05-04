@@ -49,7 +49,7 @@ class FandangoExportDeviceParser(Parser):
             elif data_component == 'class_properties':
                 self._device_class_properties.update(elements)
             elif data_component == 'properties':
-                self._device_properties.update(elements)
+                self.update_property_data(elements)
             elif data_component == 'dev_class':
                 self.device_class_name = elements     
 
@@ -82,22 +82,50 @@ class FandangoExportDeviceParser(Parser):
             for attr_prop, attr_prop_value in attr_config.items():
                 if attr_prop == 'data_type':
                     attr_config[attr_prop] = getattr(CmdArgType, attr_prop_value)
+                    # ensuring READ_WRITE is assigned to 'writable' key for all DevEnum
+                    if attr_prop_value == "DevEnum":
+                        attr_config['writable'] = 'READ_WRITE'
                 elif attr_prop == 'data_format':
                     # checking if SPECTRUM format attr has max_dim_x key not registered
                     if (attr_prop_value == 'SPECTRUM' and 
                         'max_dim_x' not in attr_config.keys()):
-                        max_dim[attr]= {'max_dim_x': len(attr_config['value']), 'max_dim_y': 0}
+                        max_dim[attr] = {'max_dim_x': len(attr_config['value']), 'max_dim_y': 0}
                     # checking if SCALAR format attr has max_dim_x key not registered
                     elif (attr_prop_value == 'SCALAR' and
                         'max_dim_x' not in attr_config.keys()):
-                        max_dim[attr]= {'max_dim_x': 1, 'max_dim_y': 0}
+                        max_dim[attr] = {'max_dim_x': 1, 'max_dim_y': 0}
                     attr_config[attr_prop] = (
                         getattr(AttrDataFormat, attr_prop_value))
 
         for attr, max_config in max_dim.items():
             attribute_data[attr].update(max_config)
 
-        self._device_attributes.update(attribute_data)           
+        self._device_attributes.update(attribute_data)
+
+    def update_property_data(self, property_data):
+        """Update key values to a dict with keys 'DefaultPropValue','name' and 'type'
+
+        e.g.
+            {
+                '<property-name>': {
+                    'DefaultPropValue': '<list-of-strings>',
+                    'name': '<property-name>',
+                    'type': '<data-type>'},
+            }
+
+        """
+        prop_data = {}
+        for prop, prop_val in property_data.items():
+            prop_data[prop] = {
+                'DefaultPropValue': prop_val,
+                'name': prop,
+                'type': 'VarStringArray'
+                }
+
+        for prop, config in prop_data.items():
+            property_data[prop] = config
+
+        self._device_properties.update(property_data)           
 
     def get_device_attribute_metadata(self):
         """Returns the device's attributes' configuration.
