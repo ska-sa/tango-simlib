@@ -1,4 +1,4 @@
-######################################################################################### 
+#########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
@@ -32,7 +32,7 @@ CMD_PROP_MAP = {
 class FandangoExportDeviceParser(Parser):
 
     def __init__(self):
-	super(FandangoExportDeviceParser, self).__init__() 
+        super(FandangoExportDeviceParser, self).__init__()
 
         self._device_class_properties = {}
 
@@ -49,10 +49,10 @@ class FandangoExportDeviceParser(Parser):
             elif data_component == 'class_properties':
                 self._device_class_properties.update(elements)
             elif data_component == 'properties':
-                self._device_properties.update(elements)
+                self.update_property_data(elements)
             elif data_component == 'dev_class':
-                self.device_class_name = elements     
-
+                self.device_class_name = elements
+    
     def preprocess_command_types(self, command_data):
         """Convert the command input and output data types from strings to the TANGO
         types and rename the command properties to match with the keyword arguments of
@@ -82,23 +82,68 @@ class FandangoExportDeviceParser(Parser):
             for attr_prop, attr_prop_value in attr_config.items():
                 if attr_prop == 'data_type':
                     attr_config[attr_prop] = getattr(CmdArgType, attr_prop_value)
+                    # ensuring READ_WRITE is assigned to 'writable' key for all DevEnum
+                    if attr_prop_value == "DevEnum":
+                        attr_config['writable'] = 'READ_WRITE'
                 elif attr_prop == 'data_format':
                     # checking if SPECTRUM format attr has max_dim_x key not registered
-                    if (attr_prop_value == 'SPECTRUM' and 
+                    if (attr_prop_value == 'SPECTRUM' and
                         'max_dim_x' not in attr_config.keys()):
-                        max_dim[attr]= {'max_dim_x': len(attr_config['value']), 'max_dim_y': 0}
+                        max_dim[attr] = {
+                            'max_dim_x': len(attr_config['value']),'max_dim_y': 0
+                            }
                     # checking if SCALAR format attr has max_dim_x key not registered
                     elif (attr_prop_value == 'SCALAR' and
                         'max_dim_x' not in attr_config.keys()):
-                        max_dim[attr]= {'max_dim_x': 1, 'max_dim_y': 0}
+                        max_dim[attr] = {'max_dim_x': 1, 'max_dim_y': 0}
                     attr_config[attr_prop] = (
                         getattr(AttrDataFormat, attr_prop_value))
 
         for attr, max_config in max_dim.items():
             attribute_data[attr].update(max_config)
 
-        self._device_attributes.update(attribute_data)           
+        self._device_attributes.update(attribute_data)
 
+    def update_property_data(self, property_data):
+        """Update key values to a dict with keys 'DefaultPropValue','name' and 'type'
+
+        Parameters
+        ----------
+        property_data: dict
+        e.g.
+            {
+                '<property-name>': '<list-of-strings>',
+                '<property-name>': '<list-of-strings>'
+            }
+
+        property_data is reformatted to the format below
+            {
+                '<property-name>': {
+                    'DefaultPropValue': '<list-of-strings>',
+                    'name': '<property-name>',
+                    'type': '<data-type>'},
+                '<property-name>': {
+                    'DefaultPropValue': '<list-of-strings>',
+                    'name': '<property-name>',
+                    'type': '<data-type>'}
+            }
+
+        """
+        prop_data = [
+            (
+                prop,
+                dict([
+                        ('DefaultPropValue', prop_val),
+                        ('name', prop),
+                        ('type', 'VarStringArray')
+                        ])
+                ) for prop, prop_val in property_data.items()
+            ]
+
+        property_data = dict(prop_data)
+
+        self._device_properties.update(property_data)
+        
     def get_device_attribute_metadata(self):
         """Returns the device's attributes' configuration.
 
@@ -190,7 +235,10 @@ class FandangoExportDeviceParser(Parser):
             info in a dict.
             e.g.
             {
-                '<property_name>': <property_value>,
+                '<property-name>': {
+                    'DefaultPropValue': '<list-of-strings>',
+                    'name': '<property-name>',
+                    'type': '<data-type>'}
             }
         """
         return self._device_properties
