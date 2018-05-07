@@ -125,7 +125,7 @@ class FandangoExportDeviceParser(Parser):
                 '<property-name>': {
                     'DefaultPropValue': '<list-of-strings>',
                     'name': '<property-name>',
-                    'type': '<data-type>'},
+                    'type': '<data-type>'}
             }
 
         """
@@ -238,11 +238,7 @@ class FandangoExportDeviceParser(Parser):
                 '<property-name>': {
                     'DefaultPropValue': '<list-of-strings>',
                     'name': '<property-name>',
-                    'type': '<data-type>'},
-                '<property-name>': {
-                    'DefaultPropValue': '<list-of-strings>',
-                    'name': '<property-name>',
-                    'type': '<data-type>'},
+                    'type': '<data-type>'}
             }
         """
         return self._device_properties
