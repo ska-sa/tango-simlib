@@ -235,7 +235,14 @@ class FandangoExportDeviceParser(Parser):
             info in a dict.
             e.g.
             {
-                '<property_name>': <property_value>,
+                '<property-name>': {
+                    'DefaultPropValue': '<list-of-strings>',
+                    'name': '<property-name>',
+                    'type': '<data-type>'},
+                '<property-name>': {
+                    'DefaultPropValue': '<list-of-strings>',
+                    'name': '<property-name>',
+                    'type': '<data-type>'},
             }
         """
         return self._device_properties
