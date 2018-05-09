@@ -497,7 +497,7 @@ class OverrideDish(object):
     ELEV_DRIVE_MAX_RATE = 1.0
 
     def _configureband(self, model, timestamp, band_number):
-        _allowed_modes = ('STANDBY-FP', 'OPERATE')
+        _allowed_modes = ('STANDBY-FP', 'OPERATE', 'STOW')
         dish_mode_quant = model.sim_quantities['dishMode']
         current_mode_enum_val = dish_mode_quant.last_val
         current_mode_str_val = (
@@ -573,6 +573,28 @@ class OverrideDish(object):
             timestamp
         """
         self._configureband(model, data_input, 5)
+
+    def action_configureband5a(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 5a. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        self._configureband(model, data_input, 5a)
+
+    def action_configureband5b(self, model, tango_dev=None, data_input=None):
+        """This command triggers the Dish to transition to the CONFIGURE Dish Element
+        Mode, and returns to the caller. To configure the Dish to operate in frequency
+        band 5b. On completion of the band configuration, Dish will automatically
+        revert to the previous Dish mode (OPERATE or STANDBY-FP).
+
+        data_input: str
+            timestamp
+        """
+        self._configureband(model, data_input, 5b)
 
     def action_lowpower(self, model, tango_dev=None, data_input=None):
         """This command triggers the Dish to transition to the LOW power
@@ -746,7 +768,7 @@ class OverrideDish(object):
         model.sim_quantities['dishMode'].set_val(set_mode, model_time)
         MODULE_LOGGER.info("Dish transition to the STOW Dish Element Mode.")
 
-    def action_slew(self, model, tango_dev=None, data_input=None):
+    def action_track(self, model, tango_dev=None, data_input=None):
         """The Dish is tracking the commanded pointing positions within the
         specified TRACK pointing accuracy.
 
@@ -763,7 +785,7 @@ class OverrideDish(object):
         if current_mode_str_val not in _allowed_modes:
             Except.throw_exception("DISH Command Failed",
                                    "DISH is not in {} mode.".format(_allowed_modes),
-                                   "Slew()",
+                                   "Track()",
                                    ErrSeverity.WARN)
 
         try:
@@ -772,20 +794,20 @@ class OverrideDish(object):
             Except.throw_exception(
                 "DISH Command Failed",
                 "The quantity 'pointingState' is not in the Dish model.",
-                "Slew()", ErrSeverity.WARN)
+                "Track()", ErrSeverity.WARN)
 
         model_time = model.time_func()
         pointing_state_enum_val = pointing_state_quant.last_val
         pointing_state_str_val = (
             pointing_state_quant.meta['enum_labels'][int(pointing_state_enum_val)])
-        if pointing_state_str_val != 'SLEW':
-            set_mode = pointing_state_quant.meta['enum_labels'].index('SLEW')
+        if pointing_state_str_val != 'TRACK':
+            set_mode = pointing_state_quant.meta['enum_labels'].index('TRACK')
             pointing_state_quant.set_val(set_mode, model_time)
         else:
             Except.throw_exception(
                 "DISH Command Failed",
-                "Dish pointing state already in SLEW mode.",
-                "Slew()", ErrSeverity.WARN)
+                "Dish pointing state already in TRACK mode.",
+                "Track()", ErrSeverity.WARN)
 
         model.sim_quantities['desiredAzimuth'].set_val(data_input[1], model_time)
         model.sim_quantities['desiredElevation'].set_val(data_input[2], model_time)
