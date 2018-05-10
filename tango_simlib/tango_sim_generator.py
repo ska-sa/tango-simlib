@@ -33,14 +33,6 @@ from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
-POGO_USER_DEFAULT_CMD_PROP_MAP = {
-        'name': 'name',
-        'arginDescription': 'doc_in',
-        'arginType': 'dtype_in',
-        'argoutDescription': 'doc_out',
-        'argoutType': 'dtype_out'}
-
-
 class TangoDeviceServerBase(Device):
     instances = weakref.WeakValueDictionary()
 
@@ -73,7 +65,7 @@ class TangoDeviceServerBase(Device):
 
 def get_tango_device_server(model, sim_data_files):
     """Declares a tango device class that inherits the Device class and then
-    adds tango commands.
+    adds tango attributes (DevEnum and Spectrum type).
 
     Parameters
     ----------
@@ -85,17 +77,9 @@ def get_tango_device_server(model, sim_data_files):
     Returns
     -------
     TangoDeviceServer : PyTango.Device
-        Tango device that has the results of the translated KATCP server
+        Tango device that has the commands dictionary populated.
 
     """
-    # Declare a Tango Device class for specifically adding commands prior
-    # running the device server
-    class TangoDeviceServerCommands(object):
-        pass
-
-    class TangoTestDeviceServerCommands(object):
-        pass
-
     # Declare a Tango Device class for specifically adding static
     # attributes prior running the device server and controller
     class TangoDeviceServerStaticAttrs(object):
@@ -111,28 +95,7 @@ def get_tango_device_server(model, sim_data_files):
         tango_device_instance._attribute_name_index = val
         tango_device_instance.model_quantity = tango_device_instance.model.sim_quantities[
             sorted(tango_device_instance.model.sim_quantities.keys())[val]]
-
-    def generate_cmd_handler(action_name, action_handler):
-        def cmd_handler(tango_device, input_parameters=None):
-            return action_handler(tango_dev=tango_device, data_input=input_parameters)
-
-        cmd_handler.__name__ = action_name
-        cmd_info_copy = model.sim_actions_meta[action_name].copy()
-        # Delete all the keys that are not part of the Tango command parameters.
-        cmd_info_copy.pop('name')
-        tango_cmd_prop = POGO_USER_DEFAULT_CMD_PROP_MAP.values()
-        for prop_key in model.sim_actions_meta[action_name]:
-            if prop_key not in tango_cmd_prop:
-                MODULE_LOGGER.info(
-                    "Warning! Property %s is not a tango command prop", prop_key)
-                cmd_info_copy.pop(prop_key)
-        """
-        The command method signature:
-        command(f=None, dtype_in=None, dformat_in=None, doc_in="",
-                dtype_out=None, dformat_out=None, doc_out="", green_mode=None)
-        """
-        return command(f=cmd_handler, **cmd_info_copy)
-
+    
     def add_static_attribute(tango_device_class, attr_name, attr_meta):
         """Add any TANGO attribute of to the device server before start-up.
 
@@ -232,20 +195,8 @@ def get_tango_device_server(model, sim_data_files):
             add_static_attribute(TangoDeviceServerStaticAttrs, quantity_name,
                                  quantity.meta)
 
-    for action_name, action_handler in model.sim_actions.items():
-        cmd_handler = generate_cmd_handler(action_name, action_handler)
-        # You might need to turn cmd_handler into an unbound method before you add
-        # it to the class
-        setattr(TangoDeviceServerCommands, action_name, cmd_handler)
 
-    for action_name, action_handler in model.test_sim_actions.items():
-        cmd_handler = generate_cmd_handler(action_name, action_handler)
-        # You might need to turn cmd_handler into an unbound method before you add
-        # it to the class
-        setattr(TangoTestDeviceServerCommands, action_name, cmd_handler)
-
-    class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerCommands,
-                            TangoDeviceServerStaticAttrs):
+    class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
 
         def init_device(self):
@@ -254,6 +205,7 @@ def get_tango_device_server(model, sim_data_files):
             self._not_added_attributes = []
             write_device_properties_to_db(self.get_name(), self.model)
             self._reset_to_default_state()
+            self.initialize_dynamic_commands()
 
         def _reset_to_default_state(self):
             """Reset the model's quantities' adjustable attributes to their default
@@ -270,6 +222,13 @@ def get_tango_device_server(model, sim_data_files):
                     except KeyError:
                         adjustable_val = 0.0
                     setattr(simulated_quantity, attr, adjustable_val)
+
+        def initialize_dynamic_commands(self):
+            for action_name, action_handler in self.model.sim_actions.items():
+                cmd_handler = helper_module.generate_cmd_handler(
+                    self.model, action_name, action_handler)
+                setattr(TangoDeviceServer, action_name, cmd_handler)
+                self.add_command(cmd_handler, device_level=True)
 
         def initialize_dynamic_attributes(self):
             model_sim_quants = self.model.sim_quantities
@@ -329,8 +288,7 @@ def get_tango_device_server(model, sim_data_files):
         def NumAttributesNotAdded(self):
             return len(self._not_added_attributes)
 
-    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerCommands,
-                     TangoTestDeviceServerStaticAttrs):
+    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
 
         instances = weakref.WeakValueDictionary()
@@ -340,6 +298,7 @@ def get_tango_device_server(model, sim_data_files):
 
             name = self.get_name()
             self.instances[name] = self
+
 
     klass_name = get_device_class(sim_data_files)
     TangoDeviceServer.TangoClassName = klass_name

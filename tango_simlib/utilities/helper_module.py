@@ -6,10 +6,13 @@
 import os
 import sys
 import socket
+import logging
 import json
 
 from tango import Database
+from tango.server import command
 
+MODULE_LOGGER = logging.getLogger(__name__)
 
 DEFAULT_TANGO_DEVICE_COMMANDS = frozenset(['State', 'Status', 'Init'])
 DEFAULT_TANGO_DEVICE_ATTRIBUTES = frozenset(['State', 'Status', 'AttributesNotAdded',
@@ -54,6 +57,8 @@ DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE = {
 }
 
 TANGO_NOT_SPECIFIED_PROPS = ['Not specified', 'No display unit', 'No standard unit']
+
+DEFAULT_CMD_PROPS = ('name', 'doc_in', 'dtype_in', 'doc_out', 'dtype_out')
 
 def get_server_name():
     """Gets the TANGO server name from the command line arguments
@@ -104,6 +109,26 @@ def get_port():
 def get_host_address():
     host_name = socket.gethostname()
     return host_name
+
+def generate_cmd_handler(model, action_name, action_handler):
+        def cmd_handler(tango_device, input_parameters=None):
+            return action_handler(tango_dev=tango_device, data_input=input_parameters)
+
+        cmd_handler.__name__ = action_name
+        cmd_info_copy = model.sim_actions_meta[action_name].copy()
+        # Delete all the keys that are not part of the Tango command parameters.
+        cmd_info_copy.pop('name')
+        for prop_key in model.sim_actions_meta[action_name]:
+            if prop_key not in DEFAULT_CMD_PROPS:
+                MODULE_LOGGER.warning(
+                    "Warning! Property %s is not a tango command prop", prop_key)
+                cmd_info_copy.pop(prop_key)
+        """
+        The command method signature:
+        command(f=None, dtype_in=None, dformat_in=None, doc_in="",
+                dtype_out=None, dformat_out=None, doc_out="", green_mode=None)
+        """
+        return command(f=cmd_handler, **cmd_info_copy)
 
 # JSON `load` and `loads` equivalents, that force all strings to be returned
 # as byte strings, rather than unicode.  This is critical for fields that will
