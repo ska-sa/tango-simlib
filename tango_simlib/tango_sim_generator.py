@@ -32,14 +32,6 @@ from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
-POGO_USER_DEFAULT_CMD_PROP_MAP = {
-        'name': 'name',
-        'arginDescription': 'doc_in',
-        'arginType': 'dtype_in',
-        'argoutDescription': 'doc_out',
-        'argoutType': 'dtype_out'}
-
-
 class TangoDeviceServerBase(Device):
     instances = weakref.WeakValueDictionary()
 

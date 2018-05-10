@@ -58,12 +58,7 @@ DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE = {
 
 TANGO_NOT_SPECIFIED_PROPS = ['Not specified', 'No display unit', 'No standard unit']
 
-POGO_USER_DEFAULT_CMD_PROP_MAP = {
-        'name': 'name',
-        'arginDescription': 'doc_in',
-        'arginType': 'dtype_in',
-        'argoutDescription': 'doc_out',
-        'argoutType': 'dtype_out'}
+DEFAULT_CMD_PROPS = ('name', 'doc_in', 'dtype_in', 'doc_out', 'dtype_out')
 
 def get_server_name():
     """Gets the TANGO server name from the command line arguments
@@ -123,10 +118,10 @@ def generate_cmd_handler(model, action_name, action_handler):
         cmd_info_copy = model.sim_actions_meta[action_name].copy()
         # Delete all the keys that are not part of the Tango command parameters.
         cmd_info_copy.pop('name')
-        tango_cmd_prop = POGO_USER_DEFAULT_CMD_PROP_MAP.values()
+        tango_cmd_props = DEFAULT_CMD_PROPS
         for prop_key in model.sim_actions_meta[action_name]:
-            if prop_key not in tango_cmd_prop:
-                MODULE_LOGGER.warn(
+            if prop_key not in tango_cmd_props:
+                MODULE_LOGGER.warning(
                     "Warning! Property %s is not a tango command prop", prop_key)
                 cmd_info_copy.pop(prop_key)
         """
