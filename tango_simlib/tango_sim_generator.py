@@ -64,7 +64,7 @@ class TangoDeviceServerBase(Device):
 
 def get_tango_device_server(model, sim_data_files):
     """Declares a tango device class that inherits the Device class and then
-    adds tango attributes (DevEnum and Specrum type).
+    adds tango attributes (DevEnum and Spectrum type).
 
     Parameters
     ----------
