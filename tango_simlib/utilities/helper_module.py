@@ -126,7 +126,7 @@ def generate_cmd_handler(model, action_name, action_handler):
         tango_cmd_prop = POGO_USER_DEFAULT_CMD_PROP_MAP.values()
         for prop_key in model.sim_actions_meta[action_name]:
             if prop_key not in tango_cmd_prop:
-                MODULE_LOGGER.info(
+                MODULE_LOGGER.warn(
                     "Warning! Property %s is not a tango command prop", prop_key)
                 cmd_info_copy.pop(prop_key)
         """
