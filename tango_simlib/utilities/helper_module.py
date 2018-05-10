@@ -118,9 +118,8 @@ def generate_cmd_handler(model, action_name, action_handler):
         cmd_info_copy = model.sim_actions_meta[action_name].copy()
         # Delete all the keys that are not part of the Tango command parameters.
         cmd_info_copy.pop('name')
-        tango_cmd_props = DEFAULT_CMD_PROPS
         for prop_key in model.sim_actions_meta[action_name]:
-            if prop_key not in tango_cmd_props:
+            if prop_key not in DEFAULT_CMD_PROPS:
                 MODULE_LOGGER.warning(
                     "Warning! Property %s is not a tango command prop", prop_key)
                 cmd_info_copy.pop(prop_key)
