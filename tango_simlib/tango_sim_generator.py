@@ -213,7 +213,6 @@ def get_tango_device_server(model, sim_data_files):
             write_device_properties_to_db(self.get_name(), self.model)
             self._reset_to_default_state()
             self.initialize_dynamic_commands()
-            
 
         def _reset_to_default_state(self):
             """Reset the model's quantities' adjustable attributes to their default

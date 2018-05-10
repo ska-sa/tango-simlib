@@ -44,7 +44,6 @@ class TangoTestDeviceServerBase(Device):
         self.sim_device_attributes = self.model.sim_quantities.keys()
         self.set_state(DevState.ON)
         self.initialize_dynamic_commands()
-        
 
     def initialize_dynamic_commands(self):
         for action_name, action_handler in self.model.test_sim_actions.items():
