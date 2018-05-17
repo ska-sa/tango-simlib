@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-######################################################################################### 
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
@@ -463,9 +461,9 @@ def get_device_class(sim_data_files):
     for data_file in sim_data_files:
         extension = os.path.splitext(data_file)[-1]
         extension = extension.lower()
-        if extension in [".xmi"]:
+        if extension in [".xmi", ".fgo"]:
             parser_instance = get_parser_instance(data_file)
-        elif extension in [".fgo", ".json"] and len(sim_data_files) < 2:
+        elif extension in [".json"] and len(sim_data_files) < 2:
             parser_instance = get_parser_instance(data_file)
 
     # Since at the current moment the class name of the tango simulator to be
