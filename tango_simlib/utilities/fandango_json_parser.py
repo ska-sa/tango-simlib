@@ -79,12 +79,12 @@ class FandangoExportDeviceParser(Parser):
         """
         max_dim = {}
         for attr, attr_config in attribute_data.items():
+            # assign 'READ_WRITE' to all attributes with 'WT_UNKNOWN'
+            if attr_config['writable'] not in ['READ', 'WRITE', 'READ_WRITE']:
+                attr_config['writable'] = 'READ_WRITE'
             for attr_prop, attr_prop_value in attr_config.items():
                 if attr_prop == 'data_type':
                     attr_config[attr_prop] = getattr(CmdArgType, attr_prop_value)
-                    # ensuring READ_WRITE is assigned to 'writable' key for all DevEnum
-                    if attr_prop_value == "DevEnum":
-                        attr_config['writable'] = 'READ_WRITE'
                 elif attr_prop == 'data_format':
                     # checking if SPECTRUM format attr has max_dim_x key not registered
                     if (attr_prop_value == 'SPECTRUM' and
