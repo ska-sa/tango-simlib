@@ -77,8 +77,8 @@ class FandangoExportDeviceParser(Parser):
     def preprocess_attribute_types(self, attribute_data):
         """Convert the attribute data types from strings to the TANGO types.
         """
-        max_dim = {}
         for attr, attr_config in attribute_data.items():
+            
             # assign 'READ_WRITE' to all attributes with 'WT_UNKNOWN'
             if attr_config['writable'] not in ['READ', 'WRITE', 'READ_WRITE']:
                 attr_config['writable'] = 'READ_WRITE'
@@ -86,21 +86,8 @@ class FandangoExportDeviceParser(Parser):
                 if attr_prop == 'data_type':
                     attr_config[attr_prop] = getattr(CmdArgType, attr_prop_value)
                 elif attr_prop == 'data_format':
-                    # checking if SPECTRUM format attr has max_dim_x key not registered
-                    if (attr_prop_value == 'SPECTRUM' and
-                        'max_dim_x' not in attr_config.keys()):
-                        max_dim[attr] = {
-                            'max_dim_x': len(attr_config['value']),'max_dim_y': 0
-                            }
-                    # checking if SCALAR format attr has max_dim_x key not registered
-                    elif (attr_prop_value == 'SCALAR' and
-                        'max_dim_x' not in attr_config.keys()):
-                        max_dim[attr] = {'max_dim_x': 1, 'max_dim_y': 0}
                     attr_config[attr_prop] = (
                         getattr(AttrDataFormat, attr_prop_value))
-
-        for attr, max_config in max_dim.items():
-            attribute_data[attr].update(max_config)
 
         self._device_attributes.update(attribute_data)
 
