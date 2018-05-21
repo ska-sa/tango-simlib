@@ -460,15 +460,13 @@ def get_device_class(sim_data_files):
 
     parser_instance = None
     klass_name = ''
-    precedence_map = {'.xmi': 1, '.fgo': 2, '.json': 3}
-
-    def get_precedence(file_name):
-        extension = os.path.splitext(file_name)[-1]
+    for data_file in sim_data_files:
+        extension = os.path.splitext(data_file)[-1]
         extension = extension.lower()
-        return precedence_map.get(extension, 100)
-
-    sorted_files = sorted(sim_data_files, key=get_precedence)
-    parser_instance = get_parser_instance(sorted_files[0])
+        if extension in [".xmi"]:
+            parser_instance = get_parser_instance(data_file)
+        elif extension in [".fgo", ".json"] and len(sim_data_files) < 2:
+            parser_instance = get_parser_instance(data_file)
 
     # Since at the current moment the class name of the tango simulator to be
     # generated must be specified in the xmi data file, if no xmi if provided
