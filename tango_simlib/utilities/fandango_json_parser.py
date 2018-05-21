@@ -78,7 +78,6 @@ class FandangoExportDeviceParser(Parser):
         """Convert the attribute data types from strings to the TANGO types.
         """
         for attr, attr_config in attribute_data.items():
-            
             # assign 'READ_WRITE' to all attributes with 'WT_UNKNOWN'
             if attr_config['writable'] not in ['READ', 'WRITE', 'READ_WRITE']:
                 attr_config['writable'] = 'READ_WRITE'
