@@ -76,7 +76,7 @@ EXPECTED_STATUS_ATTR_INFO = {
     'quality': 'ATTR_VALID',
     'standard_unit': 'No standard unit',
     'string': 'Device is OK',
-    'time': 1521724934.799581,
+    'time': 1526890796.668117,
     'unit': '',
     'value': 'Device is OK',
     'writable': 'READ'
