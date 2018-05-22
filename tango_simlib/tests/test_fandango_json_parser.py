@@ -47,6 +47,7 @@ EXPECTED_STATUS_ATTR_INFO = {
     'description': '',
     'device': 'sys/database/2',
     'display_unit': 'No display unit',
+    'enum_labels': [],
     'events': {
         'arch_event': {
             'archive_abs_change': 'Not specified',
@@ -69,14 +70,16 @@ EXPECTED_STATUS_ATTR_INFO = {
     'max_alarm': 'Not specified',
     'max_dim_x': 1,
     'max_dim_y': 0,
+    'max_value': 'Not specified',
     'min_alarm': 'Not specified',
+    'min_value': 'Not specified',
     'model': 'monctl:10000/sys/database/2/Status',
     'name': 'Status',
     'polling': 0,
     'quality': 'ATTR_VALID',
     'standard_unit': 'No standard unit',
     'string': 'Device is OK',
-    'time': 1521724934.799581,
+    'time': 1526890796.668117,
     'unit': '',
     'value': 'Device is OK',
     'writable': 'READ'

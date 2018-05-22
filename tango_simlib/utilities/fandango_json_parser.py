@@ -78,9 +78,9 @@ class FandangoExportDeviceParser(Parser):
         """Convert the attribute data types from strings to the TANGO types.
         """
         for attr, attr_config in attribute_data.items():
-            
             # assign 'READ_WRITE' to all attributes with 'WT_UNKNOWN'
-            if attr_config['writable'] not in ['READ', 'WRITE', 'READ_WRITE']:
+            attr_access = ['READ', 'WRITE', 'READ_WRITE', 'READ_WITH_WRITE']
+            if attr_config['writable'] not in attr_access:
                 attr_config['writable'] = 'READ_WRITE'
             for attr_prop, attr_prop_value in attr_config.items():
                 if attr_prop == 'data_type':
@@ -157,6 +157,7 @@ class FandangoExportDeviceParser(Parser):
                     'description': '',
                     'device': 'tango/admin/monctl',
                     'display_unit': 'No display unit',
+                    'enum_labels': [],
                     'events': {
                         'arch_event': {
                             'archive_abs_change': 'Not specified',
@@ -177,7 +178,11 @@ class FandangoExportDeviceParser(Parser):
                     'format': 'Not specified',
                     'label': 'State',
                     'max_alarm': 'Not specified',
+                    'max_dim_x': 1,
+                    'max_dim_y': 0,
+                    'max_value': 'Not specified',
                     'min_alarm': 'Not specified',
+                    'min_value': 'Not specified',
                     'model': 'monctl:10000/tango/admin/monctl/State',
                     'name': 'State',
                     'polling': 1000,
