@@ -157,6 +157,7 @@ class FandangoExportDeviceParser(Parser):
                     'description': '',
                     'device': 'tango/admin/monctl',
                     'display_unit': 'No display unit',
+                    'enum_labels': [],
                     'events': {
                         'arch_event': {
                             'archive_abs_change': 'Not specified',
@@ -177,7 +178,11 @@ class FandangoExportDeviceParser(Parser):
                     'format': 'Not specified',
                     'label': 'State',
                     'max_alarm': 'Not specified',
+                    'max_dim_x': 1,
+                    'max_dim_y': 0,
+                    'max_value': 'Not specified',
                     'min_alarm': 'Not specified',
+                    'min_value': 'Not specified',
                     'model': 'monctl:10000/tango/admin/monctl/State',
                     'name': 'State',
                     'polling': 1000,
