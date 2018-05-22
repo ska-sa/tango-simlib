@@ -79,7 +79,8 @@ class FandangoExportDeviceParser(Parser):
         """
         for attr, attr_config in attribute_data.items():
             # assign 'READ_WRITE' to all attributes with 'WT_UNKNOWN'
-            if attr_config['writable'] not in ['READ', 'WRITE', 'READ_WRITE']:
+            attr_access = ['READ', 'WRITE', 'READ_WRITE', 'READ_WITH_WRITE']
+            if attr_config['writable'] not in attr_access:
                 attr_config['writable'] = 'READ_WRITE'
             for attr_prop, attr_prop_value in attr_config.items():
                 if attr_prop == 'data_type':
