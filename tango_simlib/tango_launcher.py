@@ -30,6 +30,8 @@ required_argument('--class', dest='device_class', action='append',
                   "same number of times and the names and classes are matched in order")
 required_argument('--server-command', help="TANGO server executable command")
 required_argument('--server-instance', help="TANGO server instance name")
+required_argument('--file', help="ASCII file containing device configuration parameters" +
+                  "and device network access parameter")
 required_argument('--port', help="TCP port where TANGO server should listen")
 parser.add_argument('--put-device-property', action='append', help=
                     "Put a device property into the TANGO DB, format is: "
@@ -58,7 +60,7 @@ def put_device_property(dev_name, property_name, property_value):
 def start_device(opts):
     server_name = os.path.basename(opts.server_command)
     number_of_devices = len(opts.name)
-    #Register tango devices
+    # Register tango devices
     for i in range(number_of_devices):
         register_device(
             opts.name[i], opts.device_class[i], server_name, opts.server_instance)
@@ -83,6 +85,7 @@ def start_device(opts):
     else:
         args = [opts.server_command,
                 opts.server_instance,
+                opts.file,
                '-ORBendPoint', 'giop:tcp::{}'.format(opts.port)]
         print "Starting TANGO device server:\n{}".format(
               " ".join(["{!r}".format(arg) for arg in args]))
