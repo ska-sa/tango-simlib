@@ -76,7 +76,7 @@ def start_device(opts):
         put_device_property(dev_name, dev_property_name, dev_property_val)
 
     if '.py' in opts.server_command:
-        args = ['python %s' % opts.server_command, opts.server_instance]
+        args = ['python %s' % opts.server_command, opts.server_instance, opts.file]
         print "Starting TANGO device server:\n{}".format(
               " ".join(["{!r}".format(arg) for arg in args]))
         sys.stdout.flush()
