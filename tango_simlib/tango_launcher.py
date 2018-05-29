@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-######################################################################################### 
+#########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
@@ -30,9 +30,9 @@ required_argument('--class', dest='device_class', action='append',
                   "same number of times and the names and classes are matched in order")
 required_argument('--server-command', help="TANGO server executable command")
 required_argument('--server-instance', help="TANGO server instance name")
-required_argument('--file', help="ASCII file containing device configuration parameters" +
-                  "and device network access parameter")
 required_argument('--port', help="TCP port where TANGO server should listen")
+parser.add_argument('--file', help="ASCII file containing device configuration parameters" +
+                    "and device network access parameter")
 parser.add_argument('--put-device-property', action='append', help=
                     "Put a device property into the TANGO DB, format is: "
                     "'device/name/X:property_name:property_value'. Only allows "
@@ -40,19 +40,22 @@ parser.add_argument('--put-device-property', action='append', help=
                     "Can be specified multiple times.",
                     dest='device_properties', default=[])
 
-def register_device(name, device_class, server_name, instance):
-    dev_info = tango.DbDevInfo()
-    dev_info.name = name
-    dev_info._class = device_class
-    dev_info.server = "{}/{}".format(server_name.split('.')[0], instance)
-    print """Attempting to register TANGO device {!r}
-    class: {!r}  server: {!r}.""".format(
+def register_device(name, device_class, server_name, instance, file=None):
+    if file:
+        db = tango.Database(file)
+    else:
+        dev_info = tango.DbDevInfo()
+        dev_info.name = name
+        dev_info._class = device_class
+        dev_info.server = "{}/{}".format(server_name, instance)
+        print """Attempting to register TANGO device {!r}
+        class: {!r}  server: {!r}.""".format(
             dev_info.name, dev_info._class, dev_info.server)
-    db = tango.Database()
-    db.add_device(dev_info)
+        db = tango.Database()
+        db.add_device(dev_info)
 
-def put_device_property(dev_name, property_name, property_value):
-    db = tango.Database()
+def put_device_property(dev_name, property_name, property_value, file):
+    db = tango.Database(file)
     print "Setting device {!r} property {!r}: {!r}".format(
         dev_name, property_name, property_value)
     db.put_device_property(dev_name, {property_name:[property_value]})
@@ -63,7 +66,7 @@ def start_device(opts):
     # Register tango devices
     for i in range(number_of_devices):
         register_device(
-            opts.name[i], opts.device_class[i], server_name, opts.server_instance)
+            opts.name[i], opts.device_class[i], server_name, opts.server_instance, opts.file)
     for dev_property in opts.device_properties:
         try:
             dev_name, dev_property_name, dev_property_val = dev_property.split(
@@ -73,10 +76,12 @@ def start_device(opts):
                              'see help for --put-device-property')
         assert dev_name in opts.name, (
             "Device {!r} not launched by this command".format(dev_name))
-        put_device_property(dev_name, dev_property_name, dev_property_val)
+        put_device_property(dev_name, dev_property_name, dev_property_val, opts.file)
 
     if '.py' in opts.server_command:
-        args = ['python %s' % opts.server_command, opts.server_instance, opts.file]
+        args = ['python %s' % opts.server_command, opts.server_instance]
+        if opts.file:
+            args.append('-file={}'.format(opts.file))
         print "Starting TANGO device server:\n{}".format(
               " ".join(["{!r}".format(arg) for arg in args]))
         sys.stdout.flush()
@@ -85,8 +90,9 @@ def start_device(opts):
     else:
         args = [opts.server_command,
                 opts.server_instance,
-                opts.file,
                '-ORBendPoint', 'giop:tcp::{}'.format(opts.port)]
+        if opts.file:
+            args.append('-file={}'.format(opts.file))
         print "Starting TANGO device server:\n{}".format(
               " ".join(["{!r}".format(arg) for arg in args]))
         sys.stdout.flush()
