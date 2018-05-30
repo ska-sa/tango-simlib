@@ -40,17 +40,16 @@ parser.add_argument('--put-device-property', action='append', help=
                     "Can be specified multiple times.",
                     dest='device_properties', default=[])
 
-def register_device(name, device_class, server_name, instance, file_name=None):
-    if not file_name:
-        dev_info = tango.DbDevInfo()
-        dev_info.name = name
-        dev_info._class = device_class
-        dev_info.server = "{}/{}".format(server_name, instance)
-        print """Attempting to register TANGO device {!r}
-        class: {!r}  server: {!r}.""".format(
-            dev_info.name, dev_info._class, dev_info.server)
-        db = tango.Database()
-        db.add_device(dev_info)
+def register_device(name, device_class, server_name, instance):
+    dev_info = tango.DbDevInfo()
+    dev_info.name = name
+    dev_info._class = device_class
+    dev_info.server = "{}/{}".format(server_name, instance)
+    print """Attempting to register TANGO device {!r}
+    class: {!r}  server: {!r}.""".format(
+        dev_info.name, dev_info._class, dev_info.server)
+    db = tango.Database()
+    db.add_device(dev_info)
 
 def put_device_property(dev_name, property_name, property_value, file_name):
     if file_name:
@@ -65,9 +64,10 @@ def start_device(opts):
     server_name = os.path.basename(opts.server_command)
     number_of_devices = len(opts.name)
     # Register tango devices
-    for i in range(number_of_devices):
-        register_device(
-            opts.name[i], opts.device_class[i], server_name, opts.server_instance, opts.file_name)
+    if not opts.file_name:
+        for i in range(number_of_devices):
+            register_device(
+                opts.name[i], opts.device_class[i], server_name, opts.server_instance)
     for dev_property in opts.device_properties:
         try:
             dev_name, dev_property_name, dev_property_val = dev_property.split(
