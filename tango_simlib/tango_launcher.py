@@ -63,7 +63,7 @@ def put_device_property(dev_name, property_name, property_value, file_name):
 def start_device(opts):
     server_name = os.path.basename(opts.server_command)
     number_of_devices = len(opts.name)
-    # Register tango devices
+    # Register tango devices if TANGO DB is being used
     if not opts.file_name:
         for i in range(number_of_devices):
             register_device(
