@@ -31,7 +31,7 @@ required_argument('--class', dest='device_class', action='append',
 required_argument('--server-command', help="TANGO server executable command")
 required_argument('--server-instance', help="TANGO server instance name")
 required_argument('--port', help="TCP port where TANGO server should listen")
-parser.add_argument('--file', help="ASCII file containing device configuration parameters" +
+parser.add_argument('--file-name', help="ASCII file containing device configuration parameters" +
                     "and device network access parameter")
 parser.add_argument('--put-device-property', action='append', help=
                     "Put a device property into the TANGO DB, format is: "
@@ -40,10 +40,8 @@ parser.add_argument('--put-device-property', action='append', help=
                     "Can be specified multiple times.",
                     dest='device_properties', default=[])
 
-def register_device(name, device_class, server_name, instance, file=None):
-    if file:
-        db = tango.Database(file)
-    else:
+def register_device(name, device_class, server_name, instance, file_name=None):
+    if not file_name:
         dev_info = tango.DbDevInfo()
         dev_info.name = name
         dev_info._class = device_class
@@ -54,8 +52,8 @@ def register_device(name, device_class, server_name, instance, file=None):
         db = tango.Database()
         db.add_device(dev_info)
 
-def put_device_property(dev_name, property_name, property_value, file):
-    db = tango.Database(file)
+def put_device_property(dev_name, property_name, property_value, file_name):
+    db = tango.Database(file_name)
     print "Setting device {!r} property {!r}: {!r}".format(
         dev_name, property_name, property_value)
     db.put_device_property(dev_name, {property_name:[property_value]})
@@ -66,7 +64,7 @@ def start_device(opts):
     # Register tango devices
     for i in range(number_of_devices):
         register_device(
-            opts.name[i], opts.device_class[i], server_name, opts.server_instance, opts.file)
+            opts.name[i], opts.device_class[i], server_name, opts.server_instance, opts.file_name)
     for dev_property in opts.device_properties:
         try:
             dev_name, dev_property_name, dev_property_val = dev_property.split(
@@ -76,12 +74,12 @@ def start_device(opts):
                              'see help for --put-device-property')
         assert dev_name in opts.name, (
             "Device {!r} not launched by this command".format(dev_name))
-        put_device_property(dev_name, dev_property_name, dev_property_val, opts.file)
+        put_device_property(dev_name, dev_property_name, dev_property_val, opts.file_name)
 
     if '.py' in opts.server_command:
         args = ['python %s' % opts.server_command, opts.server_instance]
-        if opts.file:
-            args.append('-file={}'.format(opts.file))
+        if opts.file_name:
+            args.append('-file={}'.format(opts.file_name))
         print "Starting TANGO device server:\n{}".format(
               " ".join(["{!r}".format(arg) for arg in args]))
         sys.stdout.flush()
@@ -91,8 +89,8 @@ def start_device(opts):
         args = [opts.server_command,
                 opts.server_instance,
                '-ORBendPoint', 'giop:tcp::{}'.format(opts.port)]
-        if opts.file:
-            args.append('-file={}'.format(opts.file))
+        if opts.file_name:
+            args.append('-file={}'.format(opts.file_name))
         print "Starting TANGO device server:\n{}".format(
               " ".join(["{!r}".format(arg) for arg in args]))
         sys.stdout.flush()
