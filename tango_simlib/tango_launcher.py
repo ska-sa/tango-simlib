@@ -53,7 +53,10 @@ def register_device(name, device_class, server_name, instance, file_name=None):
         db.add_device(dev_info)
 
 def put_device_property(dev_name, property_name, property_value, file_name):
-    db = tango.Database(file_name)
+    if file_name:
+        db = tango.Database(file_name)
+    else:
+        db = tango.Database()
     print "Setting device {!r} property {!r}: {!r}".format(
         dev_name, property_name, property_value)
     db.put_device_property(dev_name, {property_name:[property_value]})
