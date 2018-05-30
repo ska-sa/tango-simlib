@@ -32,7 +32,7 @@ required_argument('--server-command', help="TANGO server executable command")
 required_argument('--server-instance', help="TANGO server instance name")
 required_argument('--port', help="TCP port where TANGO server should listen")
 parser.add_argument('--file-name', help="ASCII file containing device configuration parameters" +
-                    "and device network access parameter")
+                    "and device network access parameter if TANGO DB server is not used")
 parser.add_argument('--put-device-property', action='append', help=
                     "Put a device property into the TANGO DB, format is: "
                     "'device/name/X:property_name:property_value'. Only allows "
