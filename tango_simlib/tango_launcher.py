@@ -44,7 +44,7 @@ def register_device(name, device_class, server_name, instance):
     dev_info = tango.DbDevInfo()
     dev_info.name = name
     dev_info._class = device_class
-    dev_info.server = "{}/{}".format(server_name, instance)
+    dev_info.server = "{}/{}".format(server_name.split('.')[0], instance)
     print """Attempting to register TANGO device {!r}
     class: {!r}  server: {!r}.""".format(
         dev_info.name, dev_info._class, dev_info.server)
