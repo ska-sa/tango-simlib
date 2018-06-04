@@ -160,7 +160,7 @@ class PopulateModelQuantities(object):
     """Used to populate/update model quantities
 
     Populates the model quantities using the data from the TANGO device information
-    captured in the POGO generated xmi file.
+    captured in the POGO generated xmi or FANDANGO generated fgo file.
 
     Attributes
     ----------
@@ -171,8 +171,8 @@ class PopulateModelQuantities(object):
         An instance of the Model class which is used for simulation of simple attributes.
 
     """
-    def __init__(self, parser_instance, tango_device_name, sim_model=None):
-        self.parser_instance = parser_instance
+    def __init__(self, attribute_info, tango_device_name, sim_model=None):
+        self.attribute_info = attribute_info
         if sim_model:
             if isinstance(sim_model, Model):
                 self.sim_model = sim_model
@@ -198,9 +198,8 @@ class PopulateModelQuantities(object):
 
         """
         start_time = self.sim_model.start_time
-        attributes = self.parser_instance.get_device_attribute_metadata()
 
-        for attr_name, attr_props in attributes.items():
+        for attr_name, attr_props in self.attribute_info.items():
             # When using more than one config file, the attribute meta data can be
             # overwritten, so we need to update it instead of reassigning a different
             # object.
@@ -210,7 +209,8 @@ class PopulateModelQuantities(object):
                 MODULE_LOGGER.info(
                     "Initializing '{}' quantity meta information using config file:"
                     " '{}'.".format(attr_name,
-                                    self.parser_instance.data_description_file_name))
+                                    'self.parser_instance.data_description_file_name'))
+                # TODO (Sam 01.06.2018) Find a way to add the file where the error occurred
                 model_attr_props = attr_props
             else:
                 # Before the model attribute props dict is updated, the
@@ -257,8 +257,9 @@ class PopulateModelQuantities(object):
                         raise ValueError(
                             "Attribute with name '{}' specified in the configuration"
                             " file [{}] has no mininum or maximum values set".format(
-                                attr_name,
-                                self.parser_instance.data_description_file_name))
+                                attr_name, 
+                                'self.parser_instance.data_description_file_name'))
+                # TODO (Sam 01.06.2018) Find a way to add the file where the error occurred
                     quantity_factory = (
                             quantities.registry[attr_props['quantity_simulation_type']])
                     self.sim_model.sim_quantities[attr_name] = quantity_factory(
@@ -307,23 +308,27 @@ class PopulateModelActions(object):
     """Used to populate/update model actions
 
     Populates the model actions using the data from the TANGO device information
-    captured in the POGO generated xmi file.
+    captured in the POGO generated xmi or FANDANGO generated fgo file.
 
     Attributes
     ----------
     command_info : dict
         A dictionary of all the device commands together with their
-        metadata specified in the POGO generated XMI file. The key
+        metadata specified in the xmi, json or fgo file. The key
         represents the name of the command and the value is a dictionary
-        of all the attribute's metadata.
+        of all the command's metadata.
+    
+    override_info : dict
+        A dictionary of device override info.
 
     sim_model :  Model instance
         An instance of the Model class which is used for simulation of simple attributes
         and/or commands.
 
     """
-    def __init__(self, parser_instance, tango_device_name, model_instance=None):
-        self.parser_instance = parser_instance
+    def __init__(self, command_info, override_info, tango_device_name, model_instance=None):
+        self.command_info = command_info
+        self.override_info = override_info
         if model_instance is None:
             self.sim_model = Model(tango_device_name)
         else:
@@ -331,11 +336,9 @@ class PopulateModelActions(object):
         self.add_actions()
 
     def add_actions(self):
-        command_info = self.parser_instance.get_device_command_metadata()
-        override_info = self.parser_instance.get_device_cmd_override_metadata()
         instances = {}
-        if override_info != {}:
-            instances = self._get_class_instances(override_info)
+        if self.override_info != {}:
+            instances = self._get_class_instances(self.override_info)
 
         # Need to override the model's update method if the override class provides one.
         instance = []
@@ -351,16 +354,15 @@ class PopulateModelActions(object):
                                    " override class.".format(type(inst).__name__))
             else:
                 self.sim_model.override_pre_updates.append(pre_update_overwrite)
-
             try:
                 post_update_overwrite = getattr(inst, 'post_update')
             except AttributeError:
-                MODULE_LOGGER.info("No pre-update method defined in the '{}'"
+                MODULE_LOGGER.info("No post-update method defined in the '{}'"
                                    " override class.".format(type(inst).__name__))
             else:
                 self.sim_model.override_post_updates.append(post_update_overwrite)
 
-        for cmd_name, cmd_meta in command_info.items():
+        for cmd_name, cmd_meta in self.command_info.items():
             # Exclude the TANGO default commands as they have their own built in handlers
             # provided.
             if cmd_name in DEFAULT_TANGO_COMMANDS:
@@ -523,7 +525,6 @@ class PopulateModelActions(object):
                     # Return a default value if output_return is not specified.
                     return_value = ARBITRARY_DATA_TYPE_RETURN_VALUES[action_output_type]
             return return_value
-
         action_handler.__name__ = action_name
         return action_handler
 
@@ -532,7 +533,7 @@ class PopulateModelProperties(object):
     """Used to populate/update model properties
 
     Populates the model properties using the data from the TANGO device information
-    captured in the POGO generated xmi file.
+    captured in the POGO generated xmi or FANDANGO generated fgo file.
 
     Attributes
     ----------
@@ -543,8 +544,9 @@ class PopulateModelProperties(object):
         An instance of the Model class which is used for simulation of simple attributes.
 
     """
-    def __init__(self, parser_instance, tango_device_name, sim_model=None):
-        self.parser_instance = parser_instance
+    def __init__(self, properties_info, tango_device_name, sim_model=None):
+        self.properties_info = properties_info
+        # self.parser_instance = parser_instance
         if sim_model:
             if isinstance(sim_model, Model):
                 self.sim_model = sim_model
@@ -562,9 +564,9 @@ class PopulateModelProperties(object):
         property, value must be a string, number or array and it is optional.
 
         """
-        device_props = self.parser_instance.get_device_properties_metadata(
-                            'deviceProperties')
-        self.sim_model.set_sim_property(device_props)
+        # device_props = self.parser_instance.get_device_properties_metadata(
+        #                     'deviceProperties')
+        self.sim_model.set_sim_property(self.properties_info)
 
 
 class SimModelException(Exception):

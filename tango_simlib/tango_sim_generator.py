@@ -401,16 +401,23 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
     # In case there are more than one data description files to be used to configure the
     # device.
     parsers = []
-    for file_descriptor in data_file:
-        parsers.append(get_parser_instance(file_descriptor))
+    for file_name in data_file:
+        parsers.append(get_parser_instance(file_name))
 
     # In case there is more than one parser instance for each file
     model = Model(dev_name)
+    attribute_info = {}
+    command_info = {}
+    properties_info = {}
+    override_info = {}
     for parser in parsers:
-        model_quantity_populator = PopulateModelQuantities(parser, dev_name, model)
-        sim_model = model_quantity_populator.sim_model
-        PopulateModelActions(parser, dev_name, sim_model)
-        PopulateModelProperties(parser, dev_name, sim_model)
+        attribute_info.update(parser.get_device_attribute_metadata())
+        command_info.update(parser.get_device_command_metadata())
+        properties_info.update(parser.get_device_properties_metadata('deviceProperties'))
+        override_info.update(parser.get_device_cmd_override_metadata())
+    PopulateModelQuantities(attribute_info, dev_name, model)
+    PopulateModelActions(command_info, override_info, dev_name, model)
+    PopulateModelProperties(properties_info, dev_name, model)
     return model
 
 def generate_device_server(server_name, sim_data_files, directory=''):
