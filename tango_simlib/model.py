@@ -218,8 +218,8 @@ class PopulateModelQuantities(object):
                 # props template are removed.
                 # i.e. All optional parameters not provided in the SIMDD
                 attr_props = dict((param_key, param_val)
-                                for param_key, param_val in attr_props.iteritems()
-                                if param_val)
+                                  for param_key, param_val in attr_props.iteritems()
+                                  if param_val)
                 model_attr_props = dict(model_attr_props.items() + attr_props.items())
 
             if model_attr_props.has_key('quantity_simulation_type'):
@@ -351,14 +351,14 @@ class PopulateModelActions(object):
                 pre_update_overwrite = getattr(inst, 'pre_update')
             except AttributeError:
                 MODULE_LOGGER.info("No pre-update method defined in the '{}'"
-                                " override class.".format(type(inst).__name__))
+                                   " override class.".format(type(inst).__name__))
             else:
                 self.sim_model.override_pre_updates.append(pre_update_overwrite)
             try:
                 post_update_overwrite = getattr(inst, 'post_update')
             except AttributeError:
                 MODULE_LOGGER.info("No post-update method defined in the '{}'"
-                                " override class.".format(type(inst).__name__))
+                                   " override class.".format(type(inst).__name__))
             else:
                 self.sim_model.override_post_updates.append(post_update_overwrite)
 
@@ -384,11 +384,11 @@ class PopulateModelActions(object):
                     if instance_.startswith('SimControl'):
                         instance = instances[instance_]
                 self._check_override_action_presence(cmd_name, instance,
-                                                    'test_action_{}')
+                                                     'test_action_{}')
                 handler = getattr(
                     instance, 'test_action_{}'.format(cmd_name.lower()),
                     self.generate_action_handler(cmd_name, cmd_meta['dtype_out'],
-                                                actions))
+                                                 actions))
                 self.sim_model.set_test_sim_action(cmd_name, handler)
             else:
                 for instance_ in instances:
@@ -396,8 +396,8 @@ class PopulateModelActions(object):
                         instance = instances[instance_]
                 self._check_override_action_presence(cmd_name, instance, 'action_{}')
                 handler = getattr(instance, 'action_{}'.format(cmd_name.lower()),
-                                self.generate_action_handler(
-                                    cmd_name, cmd_meta['dtype_out'], actions))
+                                  self.generate_action_handler(
+                                       cmd_name, cmd_meta['dtype_out'], actions))
 
                 self.sim_model.set_sim_action(cmd_name, handler)
             # Might store the action's metadata in the sim_actions dictionary
