@@ -257,7 +257,7 @@ class PopulateModelQuantities(object):
                         raise ValueError(
                             "Attribute with name '{}' specified in the configuration"
                             " file [{}] has no mininum or maximum values set".format(
-                                attr_name, 
+                                attr_name,
                                 self.parser_instance.data_description_file_name))
                     quantity_factory = (
                             quantities.registry[attr_props['quantity_simulation_type']])
