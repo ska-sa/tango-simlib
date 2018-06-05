@@ -407,10 +407,6 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
     # In case there is more than one parser instance for each file
     model = Model(dev_name)
     for parser in parsers:
-        # model_quantity_populator = PopulateModelQuantities(parser, dev_name, model)
-        # sim_model = model_quantity_populator.sim_model
-        # PopulateModelActions(parser, dev_name, sim_model)
-        # PopulateModelProperties(parser, dev_name, sim_model)
         PopulateModelQuantities(parser, dev_name, model)
         PopulateModelProperties(parser, dev_name, model)
     PopulateModelActions(parsers, dev_name, model)
