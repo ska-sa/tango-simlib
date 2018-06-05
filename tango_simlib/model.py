@@ -200,76 +200,75 @@ class PopulateModelQuantities(object):
         start_time = self.sim_model.start_time
         attributes = self.parser_instance.get_device_attribute_metadata()
 
-        if attributes != {}:
-            for attr_name, attr_props in attributes.items():
-                # When using more than one config file, the attribute meta data can be
-                # overwritten, so we need to update it instead of reassigning a different
-                # object.
-                try:
-                    model_attr_props = self.sim_model.sim_quantities[attr_name].meta
-                except KeyError:
-                    MODULE_LOGGER.info(
-                        "Initializing '{}' quantity meta information using config file:"
-                        " '{}'.".format(attr_name,
-                                        self.parser_instance.data_description_file_name))
-                    model_attr_props = attr_props
-                else:
-                    # Before the model attribute props dict is updated, the
-                    # parameter keys with no values specified from the attribute
-                    # props template are removed.
-                    # i.e. All optional parameters not provided in the SIMDD
-                    attr_props = dict((param_key, param_val)
-                                    for param_key, param_val in attr_props.iteritems()
-                                    if param_val)
-                    model_attr_props = dict(model_attr_props.items() + attr_props.items())
-
-                if model_attr_props.has_key('quantity_simulation_type'):
-                    if model_attr_props['quantity_simulation_type'] == 'ConstantQuantity':
-                        try:
-                            initial_value = model_attr_props['initial_value']
-                        except KeyError:
-                            # `initial_value` is an optional parameter, thus if not
-                            # specified in the SIMDD datafile, an initial value of
-                            # default value of is assigned to the attribute
-                            # quantity initial value
-                            initial_value = None
-                            MODULE_LOGGER.info(
-                                "Parameter `initial_value` does not exist for"
-                                "attribute {}. Default will be used".format(
-                                    model_attr_props['name']))
-                        attr_data_type = model_attr_props['data_type']
-                        init_val = (initial_value if initial_value not in [None, ""]
-                                    else INITIAL_CONSTANT_VALUE_TYPES[attr_data_type][-1])
-                        start_val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type][0](init_val)
-                        quantity_factory = (
-                                quantities.registry[attr_props['quantity_simulation_type']])
-                        self.sim_model.sim_quantities[attr_name] = quantity_factory(
-                                start_time=start_time, meta=model_attr_props,
-                                start_value=start_val)
-                    else:
-                        try:
-                            sim_attr_quantities = self.sim_attribute_quantities(
-                                float(model_attr_props['min_bound']),
-                                float(model_attr_props['max_bound']),
-                                float(model_attr_props['max_slew_rate']),
-                                float(model_attr_props['mean']),
-                                float(model_attr_props['std_dev']))
-                        except KeyError:
-                            raise ValueError(
-                                "Attribute with name '{}' specified in the configuration"
-                                " file [{}] has no mininum or maximum values set".format(
-                                    attr_name, 
+        for attr_name, attr_props in attributes.items():
+            # When using more than one config file, the attribute meta data can be
+            # overwritten, so we need to update it instead of reassigning a different
+            # object.
+            try:
+                model_attr_props = self.sim_model.sim_quantities[attr_name].meta
+            except KeyError:
+                MODULE_LOGGER.info(
+                    "Initializing '{}' quantity meta information using config file:"
+                    " '{}'.".format(attr_name,
                                     self.parser_instance.data_description_file_name))
-                        quantity_factory = (
-                                quantities.registry[attr_props['quantity_simulation_type']])
-                        self.sim_model.sim_quantities[attr_name] = quantity_factory(
-                                start_time=start_time, meta=model_attr_props,
-                                **sim_attr_quantities)
-                else:
-                    self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
-                            start_time=start_time, meta=model_attr_props, start_value=True)
+                model_attr_props = attr_props
+            else:
+                # Before the model attribute props dict is updated, the
+                # parameter keys with no values specified from the attribute
+                # props template are removed.
+                # i.e. All optional parameters not provided in the SIMDD
+                attr_props = dict((param_key, param_val)
+                                for param_key, param_val in attr_props.iteritems()
+                                if param_val)
+                model_attr_props = dict(model_attr_props.items() + attr_props.items())
 
-            self.sim_model.setup_sim_quantities()
+            if model_attr_props.has_key('quantity_simulation_type'):
+                if model_attr_props['quantity_simulation_type'] == 'ConstantQuantity':
+                    try:
+                        initial_value = model_attr_props['initial_value']
+                    except KeyError:
+                        # `initial_value` is an optional parameter, thus if not
+                        # specified in the SIMDD datafile, an initial value of
+                        # default value of is assigned to the attribute
+                        # quantity initial value
+                        initial_value = None
+                        MODULE_LOGGER.info(
+                            "Parameter `initial_value` does not exist for"
+                            "attribute {}. Default will be used".format(
+                                model_attr_props['name']))
+                    attr_data_type = model_attr_props['data_type']
+                    init_val = (initial_value if initial_value not in [None, ""]
+                                else INITIAL_CONSTANT_VALUE_TYPES[attr_data_type][-1])
+                    start_val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type][0](init_val)
+                    quantity_factory = (
+                            quantities.registry[attr_props['quantity_simulation_type']])
+                    self.sim_model.sim_quantities[attr_name] = quantity_factory(
+                            start_time=start_time, meta=model_attr_props,
+                            start_value=start_val)
+                else:
+                    try:
+                        sim_attr_quantities = self.sim_attribute_quantities(
+                            float(model_attr_props['min_bound']),
+                            float(model_attr_props['max_bound']),
+                            float(model_attr_props['max_slew_rate']),
+                            float(model_attr_props['mean']),
+                            float(model_attr_props['std_dev']))
+                    except KeyError:
+                        raise ValueError(
+                            "Attribute with name '{}' specified in the configuration"
+                            " file [{}] has no mininum or maximum values set".format(
+                                attr_name, 
+                                self.parser_instance.data_description_file_name))
+                    quantity_factory = (
+                            quantities.registry[attr_props['quantity_simulation_type']])
+                    self.sim_model.sim_quantities[attr_name] = quantity_factory(
+                            start_time=start_time, meta=model_attr_props,
+                            **sim_attr_quantities)
+            else:
+                self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
+                        start_time=start_time, meta=model_attr_props, start_value=True)
+
+        self.sim_model.setup_sim_quantities()
 
     def sim_attribute_quantities(self, min_bound, max_bound, max_slew_rate,
                                  mean, std_dev):
@@ -566,8 +565,7 @@ class PopulateModelProperties(object):
         """
         device_props = self.parser_instance.get_device_properties_metadata(
                             'deviceProperties')
-        if device_props!= {}:
-            self.sim_model.set_sim_property(device_props)
+        self.sim_model.set_sim_property(device_props)
 
 class SimModelException(Exception):
     def __init__(self, message):
