@@ -211,7 +211,7 @@ class test_PopulateModelActions(GenericSetup):
         device_name = 'tango/device/instance'
         pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
         sim_model = pmq.sim_model
-        model.PopulateModelActions(self.simdd_parser, device_name, sim_model)
+        model.PopulateModelActions([self.simdd_parser], device_name, sim_model)
 
         actual_actions_list = sim_model.sim_actions.keys()
         expected_actions_list = ['On', 'Off', 'StopRainfall', 'SetTemperature', 'Add',
@@ -226,7 +226,7 @@ class test_PopulateModelActions(GenericSetup):
         pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
         sim_model = pmq.sim_model
         cmd_info = self.simdd_parser.get_device_command_metadata()
-        model.PopulateModelActions(self.simdd_parser, device_name, sim_model)
+        model.PopulateModelActions([self.simdd_parser], device_name, sim_model)
         sim_model_actions_meta = sim_model.sim_actions_meta
 
         for cmd_name, cmd_metadata in cmd_info.items():
@@ -245,7 +245,7 @@ class test_PopulateModelActions(GenericSetup):
         device_name = 'tango/device/instance'
         pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
         sim_model = pmq.sim_model
-        model.PopulateModelActions(self.simdd_parser, device_name, sim_model)
+        model.PopulateModelActions([self.simdd_parser], device_name, sim_model)
         action_on = sim_model.sim_actions['On']
         self.assertEqual(action_on.func.im_class, override_class.OverrideWeather)
 
@@ -253,7 +253,7 @@ class test_PopulateModelActions(GenericSetup):
         device_name = 'tango/device/instance'
         pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
         sim_model = pmq.sim_model
-        model.PopulateModelActions(self.simdd_parser, device_name, sim_model)
+        model.PopulateModelActions([self.simdd_parser], device_name, sim_model)
         action_set_temperature = sim_model.sim_actions['SetTemperature']
         data_in = 25.00
         self.assertEqual(action_set_temperature(data_in), data_in)
