@@ -539,7 +539,7 @@ class test_PopModelActions(GenericSetup):
         device_name = 'tango/device/instance'
         cmd_info = self.xmi_parser.get_device_command_metadata()
 
-        sim_model = (model.PopulateModelActions(self.xmi_parser, device_name).sim_model)
+        sim_model = (model.PopulateModelActions([self.xmi_parser], device_name).sim_model)
         self.assertEqual(len(sim_model.sim_quantities), 0,
                          "The model has some unexpected quantities")
 
