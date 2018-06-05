@@ -406,18 +406,14 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
 
     # In case there is more than one parser instance for each file
     model = Model(dev_name)
-    attribute_info = {}
-    command_info = {}
-    properties_info = {}
-    override_info = {}
     for parser in parsers:
-        attribute_info.update(parser.get_device_attribute_metadata())
-        command_info.update(parser.get_device_command_metadata())
-        properties_info.update(parser.get_device_properties_metadata('deviceProperties'))
-        override_info.update(parser.get_device_cmd_override_metadata())
-    PopulateModelQuantities(attribute_info, dev_name, model)
-    PopulateModelActions(command_info, override_info, dev_name, model)
-    PopulateModelProperties(properties_info, dev_name, model)
+        # model_quantity_populator = PopulateModelQuantities(parser, dev_name, model)
+        # sim_model = model_quantity_populator.sim_model
+        # PopulateModelActions(parser, dev_name, sim_model)
+        # PopulateModelProperties(parser, dev_name, sim_model)
+        PopulateModelQuantities(parser, dev_name, model)
+        PopulateModelProperties(parser, dev_name, model)
+    PopulateModelActions(parsers, dev_name, model)
     return model
 
 def generate_device_server(server_name, sim_data_files, directory=''):
@@ -506,3 +502,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
