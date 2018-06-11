@@ -160,7 +160,7 @@ class PopulateModelQuantities(object):
     """Used to populate/update model quantities
 
     Populates the model quantities using the data from the TANGO device information
-    captured in the POGO generated xmi file.
+    captured in the json file / POGO generated xmi / FANDANGO generated fgo file.
 
     Attributes
     ----------
@@ -307,23 +307,25 @@ class PopulateModelActions(object):
     """Used to populate/update model actions
 
     Populates the model actions using the data from the TANGO device information
-    captured in the POGO generated xmi file.
+    captured in the json file / POGO generated xmi / FANDANGO generated fgo file.
 
     Attributes
     ----------
-    command_info : dict
+    cmd_info : dict
         A dictionary of all the device commands together with their
-        metadata specified in the POGO generated XMI file. The key
-        represents the name of the command and the value is a dictionary
-        of all the attribute's metadata.
+        metadata specified in the xmi, json or fgo file(s).
+    
+    override_info : dict
+        A dictionary of device override info in specified the xmi, json or fgo file(s).
 
     sim_model :  Model instance
         An instance of the Model class which is used for simulation of simple attributes
         and/or commands.
 
     """
-    def __init__(self, parser_instance, tango_device_name, model_instance=None):
-        self.parser_instance = parser_instance
+    def __init__(self, cmd_info, override_info, tango_device_name, model_instance=None):
+        self.cmd_info = cmd_info
+        self.override_info = override_info
         if model_instance is None:
             self.sim_model = Model(tango_device_name)
         else:
@@ -331,11 +333,9 @@ class PopulateModelActions(object):
         self.add_actions()
 
     def add_actions(self):
-        command_info = self.parser_instance.get_device_command_metadata()
-        override_info = self.parser_instance.get_device_cmd_override_metadata()
         instances = {}
-        if override_info != {}:
-            instances = self._get_class_instances(override_info)
+        if self.override_info != {}:
+            instances = self._get_class_instances(self.override_info)
 
         # Need to override the model's update method if the override class provides one.
         instance = []
@@ -351,16 +351,15 @@ class PopulateModelActions(object):
                                    " override class.".format(type(inst).__name__))
             else:
                 self.sim_model.override_pre_updates.append(pre_update_overwrite)
-
             try:
                 post_update_overwrite = getattr(inst, 'post_update')
             except AttributeError:
-                MODULE_LOGGER.info("No pre-update method defined in the '{}'"
+                MODULE_LOGGER.info("No post-update method defined in the '{}'"
                                    " override class.".format(type(inst).__name__))
             else:
                 self.sim_model.override_post_updates.append(post_update_overwrite)
 
-        for cmd_name, cmd_meta in command_info.items():
+        for cmd_name, cmd_meta in self.cmd_info.items():
             # Exclude the TANGO default commands as they have their own built in handlers
             # provided.
             if cmd_name in DEFAULT_TANGO_COMMANDS:
@@ -395,7 +394,7 @@ class PopulateModelActions(object):
                 self._check_override_action_presence(cmd_name, instance, 'action_{}')
                 handler = getattr(instance, 'action_{}'.format(cmd_name.lower()),
                                   self.generate_action_handler(
-                                      cmd_name, cmd_meta['dtype_out'], actions))
+                                       cmd_name, cmd_meta['dtype_out'], actions))
 
                 self.sim_model.set_sim_action(cmd_name, handler)
             # Might store the action's metadata in the sim_actions dictionary
@@ -532,19 +531,19 @@ class PopulateModelProperties(object):
     """Used to populate/update model properties
 
     Populates the model properties using the data from the TANGO device information
-    captured in the POGO generated xmi file.
+    captured in the json file / POGO generated xmi / FANDANGO generated fgo file.
 
     Attributes
     ----------
-    parser_instance : Parser instance
-        The Parser object which reads an xmi/xml/json file and parses it into device
-        attributes, commands, and properties.
+    properties_info : dict
+        A dictionary of device property configuration specified in the xmi, json 
+        or fgo file(s).
     sim_model :  Model instance
         An instance of the Model class which is used for simulation of simple attributes.
 
     """
-    def __init__(self, parser_instance, tango_device_name, sim_model=None):
-        self.parser_instance = parser_instance
+    def __init__(self, properties_info, tango_device_name, sim_model=None):
+        self.properties_info = properties_info
         if sim_model:
             if isinstance(sim_model, Model):
                 self.sim_model = sim_model
@@ -562,10 +561,7 @@ class PopulateModelProperties(object):
         property, value must be a string, number or array and it is optional.
 
         """
-        device_props = self.parser_instance.get_device_properties_metadata(
-                            'deviceProperties')
-        self.sim_model.set_sim_property(device_props)
-
+        self.sim_model.set_sim_property(self.properties_info)
 
 class SimModelException(Exception):
     def __init__(self, message):
