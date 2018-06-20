@@ -211,17 +211,33 @@ def get_tango_device_server(model, sim_data_files):
             """Reset the model's quantities' adjustable attributes to their default
             values.
             """
+            type_map = {
+                'DevString': "",
+                'DevFloat': 0.0,
+                'DevDouble': 0.0,
+                'DevBoolean': False,
+                'DevEnum': 0,
+                'DevLong': 0,
+                'DevULong': 0,
+                'DevVoid': None}
             simulated_quantities = self.model.sim_quantities.values()
             for simulated_quantity in simulated_quantities:
                 sim_quantity_meta_info = simulated_quantity.meta
-                adjustable_attrs = simulated_quantity.adjustable_attributes
-
-                for attr in adjustable_attrs:
+                if 'initial_value' in sim_quantity_meta_info.keys():
+                    pass
+                else:
                     try:
-                        adjustable_val = float(sim_quantity_meta_info[attr])
+                        adjustable_val = sim_quantity_meta_info['value']
                     except KeyError:
-                        adjustable_val = 0.0
-                    setattr(simulated_quantity, attr, adjustable_val)
+                        meta_type = str(sim_quantity_meta_info['data_type'])
+                        meta_format = str(sim_quantity_meta_info['data_format'])
+                        if meta_format == 'SCALAR':
+                            adjustable_val = type_map[meta_type]
+                        elif meta_format == 'SPECTRUM':
+                            adjustable_val = [type_map[meta_type]]
+                        else:
+                            adjustable_val = [[type_map[meta_type]]] * 2
+                    setattr(simulated_quantity, 'last_val', adjustable_val)
 
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():
