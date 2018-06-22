@@ -22,7 +22,7 @@ from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType, CmdArgType,
 from tango.server import attribute, Device, DeviceMeta, command
 
 from tango_simlib.model import (Model, PopulateModelActions, PopulateModelProperties,
-                                PopulateModelQuantities)
+                                PopulateModelQuantities, INITIAL_CONSTANT_VALUE_TYPES)
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
@@ -211,33 +211,64 @@ def get_tango_device_server(model, sim_data_files):
             """Reset the model's quantities' adjustable attributes to their default
             values.
             """
-            type_map = {
-                'DevString': "",
-                'DevFloat': 0.0,
-                'DevDouble': 0.0,
-                'DevBoolean': False,
-                'DevEnum': 0,
-                'DevLong': 0,
-                'DevULong': 0,
-                'DevVoid': None}
             simulated_quantities = self.model.sim_quantities.values()
             for simulated_quantity in simulated_quantities:
                 sim_quantity_meta_info = simulated_quantity.meta
-                if 'initial_value' in sim_quantity_meta_info.keys():
-                    pass
-                else:
+                attr_data_type = sim_quantity_meta_info['data_type']
+                attr_data_format = str(sim_quantity_meta_info['data_format'])
+                try:
+                    max_dim_x = sim_quantity_meta_info['max_dim_x']
+                    max_dim_y = sim_quantity_meta_info['max_dim_y']
+                except KeyError:
+                    max_dim_x = sim_quantity_meta_info['maxX']
+                    max_dim_y = sim_quantity_meta_info['maxY']
+                if not max_dim_x:
+                    max_dim_x = 1
+                if not max_dim_y:
+                    max_dim_y = 2
+                val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
+                try:
+                    sim_quantity_meta_info['quantity_simulation_type']
+                except KeyError:
                     try:
                         adjustable_val = sim_quantity_meta_info['value']
                     except KeyError:
-                        meta_type = str(sim_quantity_meta_info['data_type'])
-                        meta_format = str(sim_quantity_meta_info['data_format'])
-                        if meta_format == 'SCALAR':
-                            adjustable_val = type_map[meta_type]
-                        elif meta_format == 'SPECTRUM':
-                            adjustable_val = [type_map[meta_type]]
+                        if attr_data_format == 'SCALAR':
+                            adjustable_val = val
+                        elif attr_data_format == 'SPECTRUM':
+                            adjustable_val = [val] * max_dim_x
                         else:
-                            adjustable_val = [[type_map[meta_type]]] * 2
-                    setattr(simulated_quantity, 'last_val', adjustable_val)
+                            adjustable_val = [[val] * max_dim_x for i in range(max_dim_y)]
+                    else:
+                        if attr_data_format == 'SCALAR':
+                            adjustable_val = val_type(adjustable_val)
+                        elif attr_data_format == 'SPECTRUM':
+                            adjustable_val = map(val_type, adjustable_val)
+                        else:
+                            adjustable_val = [[val_type(curr_val) for curr_val in sublist]
+                                for sublist in adjustable_val]
+                    simulated_quantity.last_val = adjustable_val
+                else:
+                    if sim_quantity_meta_info['quantity_simulation_type'] == 'ConstantQuantity':
+                        try:
+                            initial_value = sim_quantity_meta_info['initial_value']
+                        except KeyError:
+                            initial_value = None
+                        adjustable_val = (initial_value if initial_value not in [None, ""]
+                                else val)
+                        if val_type is None:
+                            adjustable_val = None
+                        else:
+                            adjustable_val = val_type(adjustable_val)
+                        simulated_quantity.last_val = adjustable_val
+                    else:
+                        sim_attribute_quantities = {
+                            'max_slew_rate': float(sim_quantity_meta_info['min_bound']),
+                            'min_bound': float(sim_quantity_meta_info['max_bound']),
+                            'max_bound': float(sim_quantity_meta_info['max_slew_rate']),
+                            'mean': float(sim_quantity_meta_info['mean']),
+                            'std_dev': float(sim_quantity_meta_info['std_dev'])}
+                        simulated_quantity.last_val = sim_attribute_quantities
 
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():

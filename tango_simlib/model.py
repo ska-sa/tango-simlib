@@ -12,9 +12,10 @@ import importlib
 from functools import partial
 from tango_simlib import quantities
 
-from tango import (DevBoolean, DevString, DevEnum,
-                     DevDouble, DevFloat, DevLong, DevVoid)
+# from tango import (DevBoolean, DevString, DevEnum, DevState,
+#                    DevDouble, DevFloat, DevLong, DevVoid, DevULong)
 
+from tango import CmdArgType
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -23,22 +24,26 @@ model_registry = weakref.WeakValueDictionary()
 DEFAULT_TANGO_COMMANDS = frozenset(['State', 'Status', 'Init'])
 MAX_NUM_OF_CLASS_ATTR_OCCURENCE = 1
 ARBITRARY_DATA_TYPE_RETURN_VALUES = {
-    DevString: 'Ok!',
-    DevBoolean: True,
-    DevDouble: 4.05,
-    DevFloat: 8.1,
-    DevLong: 3,
-    DevVoid: None}
+    CmdArgType.DevString: 'Ok!',
+    CmdArgType.DevBoolean: True,
+    CmdArgType.DevDouble: 4.05,
+    CmdArgType.DevFloat: 8.1,
+    CmdArgType.DevLong: 3,
+    CmdArgType.DevVoid: None}
 
 # In the case where an attribute with contant quantity simulation type is
 # specified, this dict is used to convert the initial value if specified to
 # the data-type corresponding to the attribute data-type.
 INITIAL_CONSTANT_VALUE_TYPES = {
-    DevString: (str, ""),
-    DevFloat: (float, 0.0),
-    DevDouble: (float, 0.0),
-    DevBoolean: (bool, False),
-    DevEnum: (int, 0)}
+    CmdArgType.DevString: (str, ""),
+    CmdArgType.DevFloat: (float, 0.0),
+    CmdArgType.DevDouble: (float, 0.0),
+    CmdArgType.DevBoolean: (bool, False),
+    CmdArgType.DevEnum: (int, 0),
+    CmdArgType.DevLong: (int, 0),
+    CmdArgType.DevULong: (int, 0),
+    CmdArgType.DevVoid: (None, None),
+    CmdArgType.DevState: (int, 0)}
 
 
 class Model(object):
@@ -237,9 +242,13 @@ class PopulateModelQuantities(object):
                             "attribute {}. Default will be used".format(
                                 model_attr_props['name']))
                     attr_data_type = model_attr_props['data_type']
+                    val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
                     init_val = (initial_value if initial_value not in [None, ""]
-                                else INITIAL_CONSTANT_VALUE_TYPES[attr_data_type][-1])
-                    start_val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type][0](init_val)
+                                else val)
+                    if val_type is None:
+                        start_val = None
+                    else:
+                        start_val = val_type(init_val)
                     quantity_factory = (
                             quantities.registry[attr_props['quantity_simulation_type']])
                     self.sim_model.sim_quantities[attr_name] = quantity_factory(
@@ -265,8 +274,39 @@ class PopulateModelQuantities(object):
                             start_time=start_time, meta=model_attr_props,
                             **sim_attr_quantities)
             else:
+                attr_data_type = model_attr_props['data_type']
+                attr_data_format = str(model_attr_props['data_format'])
+                try:
+                    max_dim_x = model_attr_props['max_dim_x']
+                    max_dim_y = model_attr_props['max_dim_y']
+                except KeyError:
+                    max_dim_x = model_attr_props['maxX']
+                    max_dim_y = model_attr_props['maxY']
+                if not max_dim_x:
+                    max_dim_x = 1
+                if not max_dim_y:
+                    max_dim_y = 2
+                val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
+                try:
+                    default_val = model_attr_props['value']
+                except KeyError:
+                    if attr_data_format == 'SCALAR':
+                        default_val = val
+                    elif attr_data_format == 'SPECTRUM':
+                        default_val = [val] * max_dim_x
+                    else:
+                        default_val = [[val] * max_dim_x for i in range(max_dim_y)]
+                else:
+                    if attr_data_format == 'SCALAR':
+                        default_val = val_type(default_val)
+                    elif attr_data_format == 'SPECTRUM':
+                        default_val = map(val_type, default_val)
+                    else:
+                        default_val = [[val_type(curr_val) for curr_val in sublist]
+                            for sublist in default_val]
                 self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
-                        start_time=start_time, meta=model_attr_props, start_value=True)
+                        start_time=start_time, meta=model_attr_props,
+                        start_value=default_val)
 
         self.sim_model.setup_sim_quantities()
 
