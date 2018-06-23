@@ -214,32 +214,39 @@ def get_tango_device_server(model, sim_data_files):
             simulated_quantities = self.model.sim_quantities.values()
             for simulated_quantity in simulated_quantities:
                 sim_quantity_meta_info = simulated_quantity.meta
+                key_vals = sim_quantity_meta_info.keys()
                 attr_data_type = sim_quantity_meta_info['data_type']
-                attr_data_format = str(sim_quantity_meta_info['data_format'])
                 try:
-                    max_dim_x = sim_quantity_meta_info['max_dim_x']
-                    max_dim_y = sim_quantity_meta_info['max_dim_y']
+                    attr_data_format = str(sim_quantity_meta_info['data_format'])
                 except KeyError:
-                    max_dim_x = sim_quantity_meta_info['maxX']
-                    max_dim_y = sim_quantity_meta_info['maxY']
-                if not max_dim_x:
+                    attr_data_format = 'SPECTRUM'
+                # attr_data_format = str(sim_quantity_meta_info['data_format'])
+                expected_key_vals = ['max_dim_x', 'max_dim_y']
+                if any(key_val in expected_key_vals for key_val in key_vals):
+                    try:
+                        max_dim_x = sim_quantity_meta_info['max_dim_x']
+                        max_dim_y = sim_quantity_meta_info['max_dim_y']
+                    except KeyError:
+                        max_dim_x = sim_quantity_meta_info['maxX']
+                        max_dim_y = sim_quantity_meta_info['maxY']
+                    if not max_dim_x:
+                        max_dim_x = 1
+                    if not max_dim_y:
+                        max_dim_y = 2
+                else:
                     max_dim_x = 1
-                if not max_dim_y:
                     max_dim_y = 2
+
                 val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
+                expected_key_vals = ['value', 'possiblevalues']
                 try:
                     sim_quantity_meta_info['quantity_simulation_type']
                 except KeyError:
-                    try:
-                        adjustable_val = sim_quantity_meta_info['value']
-                    except KeyError:
-                        if attr_data_format == 'SCALAR':
-                            adjustable_val = val
-                        elif attr_data_format == 'SPECTRUM':
-                            adjustable_val = [val] * max_dim_x
-                        else:
-                            adjustable_val = [[val] * max_dim_x for i in range(max_dim_y)]
-                    else:
+                    if any(key_val in expected_key_vals for key_val in key_vals):
+                        try:
+                            adjustable_val = sim_quantity_meta_info['value']
+                        except KeyError:
+                            adjustable_val = sim_quantity_meta_info['possiblevalues']
                         if attr_data_format == 'SCALAR':
                             adjustable_val = val_type(adjustable_val)
                         elif attr_data_format == 'SPECTRUM':
@@ -247,6 +254,14 @@ def get_tango_device_server(model, sim_data_files):
                         else:
                             adjustable_val = [[val_type(curr_val) for curr_val in sublist]
                                 for sublist in adjustable_val]
+                    else:
+                        if attr_data_format == 'SCALAR':
+                            adjustable_val = val
+                        elif attr_data_format == 'SPECTRUM':
+                            adjustable_val = [val] * max_dim_x
+                        else:
+                            adjustable_val = [[val] * max_dim_x for i in range(max_dim_y)]
+                    
                     simulated_quantity.last_val = adjustable_val
                 else:
                     if sim_quantity_meta_info['quantity_simulation_type'] == 'ConstantQuantity':

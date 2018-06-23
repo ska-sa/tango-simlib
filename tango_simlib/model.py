@@ -274,36 +274,49 @@ class PopulateModelQuantities(object):
                             start_time=start_time, meta=model_attr_props,
                             **sim_attr_quantities)
             else:
+                key_vals = model_attr_props.keys()
                 attr_data_type = model_attr_props['data_type']
-                attr_data_format = str(model_attr_props['data_format'])
                 try:
-                    max_dim_x = model_attr_props['max_dim_x']
-                    max_dim_y = model_attr_props['max_dim_y']
+                    attr_data_format = str(model_attr_props['data_format'])
                 except KeyError:
-                    max_dim_x = model_attr_props['maxX']
-                    max_dim_y = model_attr_props['maxY']
-                if not max_dim_x:
+                    attr_data_format = 'SPECTRUM'
+                expected_key_vals = ['max_dim_x', 'max_dim_y']
+                if any(key_val in expected_key_vals for key_val in key_vals):
+                    try:
+                        max_dim_x = model_attr_props['max_dim_x']
+                        max_dim_y = model_attr_props['max_dim_y']
+                    except KeyError:
+                        max_dim_x = model_attr_props['maxX']
+                        max_dim_y = model_attr_props['maxY']
+                    if not max_dim_x:
+                        max_dim_x = 1
+                    if not max_dim_y:
+                        max_dim_y = 2
+                else:
                     max_dim_x = 1
-                if not max_dim_y:
                     max_dim_y = 2
+                
                 val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
-                try:
-                    default_val = model_attr_props['value']
-                except KeyError:
+                expected_key_vals = ['value', 'possiblevalues']
+                if any(key_val in expected_key_vals for key_val in key_vals):
+                    try:
+                        default_val = model_attr_props['value']
+                    except KeyError:
+                        default_val = model_attr_props['possiblevalues']
+                    if attr_data_format == 'SCALAR':
+                            default_val = val_type(default_val)
+                    elif attr_data_format == 'SPECTRUM':
+                        default_val = map(val_type, default_val)
+                    else:
+                        default_val = [[val_type(curr_val) for curr_val in sublist]
+                            for sublist in default_val]
+                else:
                     if attr_data_format == 'SCALAR':
                         default_val = val
                     elif attr_data_format == 'SPECTRUM':
                         default_val = [val] * max_dim_x
                     else:
                         default_val = [[val] * max_dim_x for i in range(max_dim_y)]
-                else:
-                    if attr_data_format == 'SCALAR':
-                        default_val = val_type(default_val)
-                    elif attr_data_format == 'SPECTRUM':
-                        default_val = map(val_type, default_val)
-                    else:
-                        default_val = [[val_type(curr_val) for curr_val in sublist]
-                            for sublist in default_val]
                 self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
                         start_time=start_time, meta=model_attr_props,
                         start_value=default_val)
