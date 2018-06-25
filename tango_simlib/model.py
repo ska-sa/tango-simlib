@@ -11,10 +11,6 @@ import importlib
 
 from functools import partial
 from tango_simlib import quantities
-
-# from tango import (DevBoolean, DevString, DevEnum, DevState,
-#                    DevDouble, DevFloat, DevLong, DevVoid, DevULong)
-
 from tango import CmdArgType
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -104,7 +100,6 @@ class Model(object):
     def update(self):
         sim_time = self.time_func()
         dt = sim_time - self.last_update_time
-
         if dt < self.min_update_period or self.paused:
             # Updating the sim_state in case the test interface or external command
             # updated the quantities.
@@ -114,10 +109,10 @@ class Model(object):
                 "Sim {} skipping update at {}, dt {} < {} and pause {}"
                 .format(self.name, sim_time, dt, self.min_update_period, self.paused))
             return
-
+        
         for override_update in self.override_pre_updates:
             override_update(self, sim_time, dt)
-
+            
         MODULE_LOGGER.info("Stepping at {}, dt: {}".format(sim_time, dt))
         self.last_update_time = sim_time
         try:
@@ -304,12 +299,12 @@ class PopulateModelQuantities(object):
                     except KeyError:
                         default_val = model_attr_props['possiblevalues']
                     if attr_data_format == 'SCALAR':
-                            default_val = val_type(default_val)
+                        default_val = val_type(default_val)
                     elif attr_data_format == 'SPECTRUM':
                         default_val = map(val_type, default_val)
                     else:
                         default_val = [[val_type(curr_val) for curr_val in sublist]
-                            for sublist in default_val]
+                                       for sublist in default_val]
                 else:
                     if attr_data_format == 'SCALAR':
                         default_val = val
