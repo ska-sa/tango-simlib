@@ -251,29 +251,33 @@ def get_tango_device_server(model, sim_data_files):
                                 try:
                                     adjustable_val = sim_quantity_meta_info['value']
                                 except KeyError:
-                                    adjustable_val = sim_quantity_meta_info['possiblevalues']
+                                    adjustable_val = sim_quantity_meta_info[
+                                                        'possiblevalues']
                                 if attr_data_format == 'SCALAR':
                                     adjustable_val = val_type(adjustable_val)
                                 elif attr_data_format == 'SPECTRUM':
                                     adjustable_val = map(val_type, adjustable_val)
                                 else:
-                                    adjustable_val = [[val_type(curr_val) for curr_val in sublist]
-                                                    for sublist in adjustable_val]
+                                    adjustable_val = [[val_type(curr_val) for curr_val in
+                                                      sublist] for sublist in 
+                                                      adjustable_val]
                             else:
                                 if attr_data_format == 'SCALAR':
                                     adjustable_val = val
                                 elif attr_data_format == 'SPECTRUM':
                                     adjustable_val = [val] * max_dim_x
                                 else:
-                                    adjustable_val = [[val] * max_dim_x for i in range(max_dim_y)]
+                                    adjustable_val = [[val] * max_dim_x 
+                                                      for i in range(max_dim_y)]
                         else:
-                            if sim_quantity_meta_info['quantity_simulation_type'] == 'ConstantQuantity':
+                            if (sim_quantity_meta_info['quantity_simulation_type'] ==
+                                'ConstantQuantity'):
                                 try:
                                     initial_value = sim_quantity_meta_info['initial_value']
                                 except KeyError:
                                     initial_value = None
-                                adjustable_val = (initial_value if initial_value not in [None, ""]
-                                                  else val)
+                                adjustable_val = (initial_value if initial_value not in
+                                                  [None, ""] else val)
                                 if val_type is None:
                                     adjustable_val = None
                                 else:
