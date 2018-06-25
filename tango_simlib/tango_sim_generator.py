@@ -217,11 +217,19 @@ def get_tango_device_server(model, sim_data_files):
                 sim_quantity_meta_info = simulated_quantity.meta
                 key_vals = sim_quantity_meta_info.keys()
                 attr_data_type = sim_quantity_meta_info['data_type']
+                # the xmi, json and fgo files have data_format attributes indicating
+                # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
+                # key in its attribute list. It has a key labelled possiblevalues which
+                # is a list. Hence, SPECTRUM is no data_format is found.
                 try:
                     attr_data_format = str(sim_quantity_meta_info['data_format'])
                 except KeyError:
                     attr_data_format = 'SPECTRUM'
                 expected_key_vals = ['max_dim_x', 'max_dim_y']
+                # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
+                # (maxX, maxY) keys. If none of these keys are found in them or in the
+                # xml file, we use default values of 1 for x and 2 for y - same applies
+                # for files where the keys have empty values.
                 if any(key_val in expected_key_vals for key_val in key_vals):
                     try:
                         max_dim_x = sim_quantity_meta_info['max_dim_x']
