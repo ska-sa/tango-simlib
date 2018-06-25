@@ -375,7 +375,6 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # reading the attribute value. So instead we use the sleep method to allow for
         # 'dt' to be large enough.
         time.sleep(1)
-        print self.sim_device.read_attribute('rainfall').value
         self.assertGreater(getattr(self.sim_device.read_attribute('rainfall'), 'value'),
                            max_rainfall_value,
                            "Rain levels not above the expected value for a rainstorm")
