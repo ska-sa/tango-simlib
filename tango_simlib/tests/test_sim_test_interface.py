@@ -317,7 +317,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
 
     def test_StopRainfall_command(self):
         command_name = 'StopRainfall'
-        expected_rainfall_value = 1.5
+        expected_rainfall_value = 0.0
         self.sim_control_device.command_inout(command_name)
         # TODO (KM 17-02-2018) Follow up on this issue:
         # https://skaafrica.atlassian.net/browse/LMC-64 for testing two dependent TANGO
@@ -337,8 +337,8 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         """Testing that the Tango device weather simulation of quantities can be halted.
         """
         command_name = 'StopQuantitySimulation'
-        expected_result = {'temperature': 25.0,
-                           'insolation': 500.0}
+        expected_result = {'temperature': 0.0,
+                           'insolation': 0.0}
         device_attributes = self.sim_device.get_attribute_list()
         for quantity_name in expected_result.keys():
             self.assertIn(quantity_name, device_attributes)
@@ -375,6 +375,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # reading the attribute value. So instead we use the sleep method to allow for
         # 'dt' to be large enough.
         time.sleep(1)
+        print self.sim_device.read_attribute('rainfall').value
         self.assertGreater(getattr(self.sim_device.read_attribute('rainfall'), 'value'),
                            max_rainfall_value,
                            "Rain levels not above the expected value for a rainstorm")
