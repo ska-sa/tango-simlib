@@ -22,7 +22,7 @@ from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType, CmdArgType,
 from tango.server import attribute, Device, DeviceMeta, command
 
 from tango_simlib.model import (Model, PopulateModelActions, PopulateModelProperties,
-                                PopulateModelQuantities)
+                                PopulateModelQuantities, INITIAL_CONSTANT_VALUE_TYPES)
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
@@ -212,16 +212,93 @@ def get_tango_device_server(model, sim_data_files):
             values.
             """
             simulated_quantities = self.model.sim_quantities.values()
+            model_time = self.model.start_time
             for simulated_quantity in simulated_quantities:
                 sim_quantity_meta_info = simulated_quantity.meta
-                adjustable_attrs = simulated_quantity.adjustable_attributes
-
-                for attr in adjustable_attrs:
+                key_vals = sim_quantity_meta_info.keys()
+                attr_data_type = sim_quantity_meta_info['data_type']
+                # the xmi, json and fgo files have data_format attributes indicating
+                # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
+                # key in its attribute list. It has a key labelled possiblevalues which
+                # is a list. Hence, SPECTRUM is no data_format is found.
+                try:
+                    attr_data_format = str(sim_quantity_meta_info['data_format'])
+                except KeyError:
+                    attr_data_format = 'SPECTRUM'
+                expected_key_vals = ['max_dim_x', 'max_dim_y', 'maxX', 'maxY']
+                # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
+                # (maxX, maxY) keys. If none of these keys are found in them or in the
+                # xml file, we use default values of 1 for x and 2 for y - same applies
+                # for files where the keys have empty values.
+                if any(key_val in expected_key_vals for key_val in key_vals):
                     try:
-                        adjustable_val = float(sim_quantity_meta_info[attr])
+                        max_dim_x = sim_quantity_meta_info['max_dim_x']
+                        max_dim_y = sim_quantity_meta_info['max_dim_y']
                     except KeyError:
-                        adjustable_val = 0.0
-                    setattr(simulated_quantity, attr, adjustable_val)
+                        max_dim_x = sim_quantity_meta_info.get('maxX', 1)
+                        max_dim_y = sim_quantity_meta_info.get('maxY', 2)
+                    # just in case the keys exist but have no values
+                    if not max_dim_x:
+                        max_dim_x = 1
+                    if not max_dim_y:
+                        max_dim_y = 2
+
+                val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
+                expected_key_vals = ['value', 'possiblevalues']
+                adjustable_attrs = simulated_quantity.adjustable_attributes
+                for attr in adjustable_attrs:
+                    if attr == 'last_update_time':
+                        simulated_quantity.attr = model_time
+                        continue
+                    else:
+                        try:
+                            sim_quantity_meta_info['quantity_simulation_type']
+                        except KeyError:
+                            if any(key_val in expected_key_vals for key_val in key_vals):
+                                try:
+                                    adjustable_val = sim_quantity_meta_info['value']
+                                except KeyError:
+                                    adjustable_val = sim_quantity_meta_info[
+                                                        'possiblevalues']
+                                if attr_data_format == 'SCALAR':
+                                    adjustable_val = val_type(adjustable_val)
+                                elif attr_data_format == 'SPECTRUM':
+                                    adjustable_val = map(val_type, adjustable_val)
+                                else:
+                                    adjustable_val = [[val_type(curr_val) for curr_val in
+                                                      sublist] for sublist in 
+                                                      adjustable_val]
+                            else:
+                                if attr_data_format == 'SCALAR':
+                                    adjustable_val = val
+                                elif attr_data_format == 'SPECTRUM':
+                                    adjustable_val = [val] * max_dim_x
+                                else:
+                                    adjustable_val = [[val] * max_dim_x 
+                                                      for i in range(max_dim_y)]
+                        else:
+                            if (sim_quantity_meta_info['quantity_simulation_type'] ==
+                                'ConstantQuantity'):
+                                try:
+                                    initial_value = sim_quantity_meta_info[
+                                                        'initial_value']
+                                except KeyError:
+                                    initial_value = None
+                                adjustable_val = (initial_value if initial_value not in
+                                                  [None, ""] else val)
+                                if val_type is None:
+                                    adjustable_val = None
+                                else:
+                                    adjustable_val = val_type(adjustable_val)
+                            else:
+                                if attr == 'last_val':
+                                    simulated_quantity.attr = float(sim_quantity_meta_info['mean'])
+                                    continue
+                                else:
+                                    adjustable_val = float(sim_quantity_meta_info[attr])
+
+                        simulated_quantity.attr = adjustable_val
+                
 
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():
