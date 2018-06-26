@@ -279,7 +279,7 @@ class PopulateModelQuantities(object):
                     attr_data_format = str(model_attr_props['data_format'])
                 except KeyError:
                     attr_data_format = 'SPECTRUM'
-                expected_key_vals = ['max_dim_x', 'max_dim_y']
+                expected_key_vals = ['max_dim_x', 'max_dim_y', 'maxX', 'maxY']
                 # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
                 # (maxX, maxY) keys. If none of these keys are found in them or in the
                 # xml file, we use default values of 1 for x and 2 for y - same applies
@@ -289,15 +289,13 @@ class PopulateModelQuantities(object):
                         max_dim_x = model_attr_props['max_dim_x']
                         max_dim_y = model_attr_props['max_dim_y']
                     except KeyError:
-                        max_dim_x = model_attr_props['maxX']
-                        max_dim_y = model_attr_props['maxY']
+                        max_dim_x = model_attr_props.get('maxX', 1)
+                        max_dim_y = model_attr_props.get('maxY', 2)
+                    # just in case the keys exist but have no values
                     if not max_dim_x:
                         max_dim_x = 1
                     if not max_dim_y:
                         max_dim_y = 2
-                else:
-                    max_dim_x = 1
-                    max_dim_y = 2
                 
                 val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
                 expected_key_vals = ['value', 'possiblevalues']

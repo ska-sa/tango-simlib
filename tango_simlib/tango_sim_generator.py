@@ -225,7 +225,7 @@ def get_tango_device_server(model, sim_data_files):
                     attr_data_format = str(sim_quantity_meta_info['data_format'])
                 except KeyError:
                     attr_data_format = 'SPECTRUM'
-                expected_key_vals = ['max_dim_x', 'max_dim_y']
+                expected_key_vals = ['max_dim_x', 'max_dim_y', 'maxX', 'maxY']
                 # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
                 # (maxX, maxY) keys. If none of these keys are found in them or in the
                 # xml file, we use default values of 1 for x and 2 for y - same applies
@@ -235,15 +235,13 @@ def get_tango_device_server(model, sim_data_files):
                         max_dim_x = sim_quantity_meta_info['max_dim_x']
                         max_dim_y = sim_quantity_meta_info['max_dim_y']
                     except KeyError:
-                        max_dim_x = sim_quantity_meta_info['maxX']
-                        max_dim_y = sim_quantity_meta_info['maxY']
+                        max_dim_x = sim_quantity_meta_info.get('maxX', 1)
+                        max_dim_y = sim_quantity_meta_info.get('maxY', 2)
+                    # just in case the keys exist but have no values
                     if not max_dim_x:
                         max_dim_x = 1
                     if not max_dim_y:
                         max_dim_y = 2
-                else:
-                    max_dim_x = 1
-                    max_dim_y = 2
 
                 val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
                 expected_key_vals = ['value', 'possiblevalues']
