@@ -64,7 +64,7 @@ def start_device(opts):
     server_name = os.path.basename(opts.server_command)
     number_of_devices = len(opts.name)
     # Register tango devices if TANGO DB is being used
-    if not opts.file_name:
+    if opts.file_name:
         for i in range(number_of_devices):
             register_device(
                 opts.name[i], opts.device_class[i], server_name, opts.server_instance)
