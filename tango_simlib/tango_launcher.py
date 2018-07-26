@@ -63,11 +63,10 @@ def put_device_property(dev_name, property_name, property_value, file_name):
 def start_device(opts):
     server_name = os.path.basename(opts.server_command)
     number_of_devices = len(opts.name)
-    # Register tango devices if TANGO DB is being used
-    if opts.file_name:
-        for i in range(number_of_devices):
-            register_device(
-                opts.name[i], opts.device_class[i], server_name, opts.server_instance)
+    # Register tango devices
+    for i in range(number_of_devices):
+        register_device(
+            opts.name[i], opts.device_class[i], server_name, opts.server_instance)
     for dev_property in opts.device_properties:
         try:
             dev_name, dev_property_name, dev_property_val = dev_property.split(
