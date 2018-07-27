@@ -89,8 +89,12 @@ def get_file_name():
     file_name : str
         file used as tango database
     """
-    file_name = sys.argv[4].split('=')[1]
-    return file_name
+    args = sys.argv
+    for index, val in enumerate(args):
+        if 'file' in val:
+            return args[index].split('=')[1]
+        else:
+            return None
 
 def append_device_to_db_file(server, instance, device, db_file_name,
                              tangoclass=None, properties={}):
