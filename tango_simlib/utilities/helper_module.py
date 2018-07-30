@@ -91,7 +91,7 @@ def get_file_name():
     """
     args = sys.argv
     for index, val in enumerate(args):
-        if 'file' in val:
+        if val.startswith('-file='):
             return args[index].split('=')[1]
         else:
             return None
