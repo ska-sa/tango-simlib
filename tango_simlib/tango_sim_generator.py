@@ -457,7 +457,11 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
 
     if test_device_name is None:
         server_name = helper_module.get_server_name()
-        db_instance = Database()
+        file_name = helper_module.get_file_name()
+        if file_name:
+            db_instance = Database(file_name)
+        else:
+            db_instance = Database()
         # db_datum is a PyTango.DbDatum structure with attribute name and value_string.
         # The name attribute represents the name of the device server and the
         # value_string attribute is a list of all the registered device instances in
