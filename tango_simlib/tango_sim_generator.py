@@ -397,7 +397,8 @@ def write_device_properties_to_db(device_name, model, db_instance=None):
         Tango database instance
     """
     if not db_instance:
-        db_instance = Database()
+        db_instance = helper_module.get_database()
+
     for prop_name, prop_meta in model.sim_properties.items():
         db_instance.put_device_property(
             device_name, {prop_name: prop_meta['DefaultPropValue']})
@@ -457,11 +458,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
 
     if test_device_name is None:
         server_name = helper_module.get_server_name()
-        file_name = helper_module.get_file_name()
-        if file_name:
-            db_instance = Database(file_name)
-        else:
-            db_instance = Database()
+        db_instance = helper_module.get_database()
         # db_datum is a PyTango.DbDatum structure with attribute name and value_string.
         # The name attribute represents the name of the device server and the
         # value_string attribute is a list of all the registered device instances in
