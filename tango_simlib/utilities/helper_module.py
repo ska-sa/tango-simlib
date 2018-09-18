@@ -81,18 +81,19 @@ def get_server_name():
     server_name = executable_name + '/' + sys.argv[1]
     return server_name
 
-def get_file_name():
-    """Gets the db file name from the command line arguments
+def get_database():
+    """Gets the tango db.
 
     Returns
     -------
-    file_name : str
-        file used as tango database
+    db : tango.Database
+        A tango database instance
     """
     for val in sys.argv:
         if val.startswith('-file='):
-            return val.split('=')[1]
-    return None
+            file_name = val.split('=')[1]
+            return Database(file_name)
+    return Database()
 
 def append_device_to_db_file(server, instance, device, db_file_name,
                              tangoclass=None, properties={}):
