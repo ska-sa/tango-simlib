@@ -1,6 +1,6 @@
 .. _fandango: https://github.com/tango-controls/fandango
 
-0.1.7
+0.2.0
 -----
 - Adding support to register and run a TANGO device using a file as a database.
 - Initialising the model quantity values with the default values specified in the simulator data description files.
