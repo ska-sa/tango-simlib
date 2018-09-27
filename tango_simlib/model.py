@@ -44,7 +44,9 @@ INITIAL_CONSTANT_VALUE_TYPES = {
     CmdArgType.DevLong64: (int, 0),
     CmdArgType.DevULong64: (int, 0),
     CmdArgType.DevVoid: (None, None),
-    CmdArgType.DevState: (int, 0)}
+    CmdArgType.DevState: (int, 0),
+    CmdArgType.DevEncoded: (bytearray, 0)
+}
 
 
 class Model(object):
