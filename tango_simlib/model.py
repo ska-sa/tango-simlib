@@ -1,4 +1,4 @@
-######################################################################################### 
+#########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
@@ -36,10 +36,17 @@ INITIAL_CONSTANT_VALUE_TYPES = {
     CmdArgType.DevDouble: (float, 0.0),
     CmdArgType.DevBoolean: (bool, False),
     CmdArgType.DevEnum: (int, 0),
+    CmdArgType.DevUChar: (int, 0),
+    CmdArgType.DevShort: (int, 0),
+    CmdArgType.DevUShort: (int, 0),
     CmdArgType.DevLong: (int, 0),
     CmdArgType.DevULong: (int, 0),
+    CmdArgType.DevLong64: (int, 0),
+    CmdArgType.DevULong64: (int, 0),
     CmdArgType.DevVoid: (None, None),
-    CmdArgType.DevState: (int, 0)}
+    CmdArgType.DevState: (int, 0),
+    CmdArgType.DevEncoded: (bytearray, 0)
+}
 
 
 class Model(object):
@@ -109,10 +116,10 @@ class Model(object):
                 "Sim {} skipping update at {}, dt {} < {} and pause {}"
                 .format(self.name, sim_time, dt, self.min_update_period, self.paused))
             return
-        
+
         for override_update in self.override_pre_updates:
             override_update(self, sim_time, dt)
-            
+
         MODULE_LOGGER.info("Stepping at {}, dt: {}".format(sim_time, dt))
         self.last_update_time = sim_time
         try:
@@ -296,7 +303,7 @@ class PopulateModelQuantities(object):
                         max_dim_x = 1
                     if not max_dim_y:
                         max_dim_y = 2
-                
+
                 val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
                 expected_key_vals = ['value', 'possiblevalues']
                 if any(key_val in expected_key_vals for key_val in key_vals):
@@ -368,7 +375,7 @@ class PopulateModelActions(object):
     cmd_info : dict
         A dictionary of all the device commands together with their
         metadata specified in the xmi, json or fgo file(s).
-    
+
     override_info : dict
         A dictionary of device override info in specified the xmi, json or fgo file(s).
 
@@ -590,7 +597,7 @@ class PopulateModelProperties(object):
     Attributes
     ----------
     properties_info : dict
-        A dictionary of device property configuration specified in the xmi, json 
+        A dictionary of device property configuration specified in the xmi, json
         or fgo file(s).
     sim_model :  Model instance
         An instance of the Model class which is used for simulation of simple attributes.
