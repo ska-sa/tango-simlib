@@ -23,13 +23,13 @@ Using only the basic *TANGO* interface description captured via a POGO_ generate
 XMI file, a basic simulator with randomly varying attributes and no-op command
 handlers can be generated with no further coding. Attribute simulation
 parameters and simple command behaviour can be specified using a *Simulator
-Description Datafile* (SIMDD_). The format of this file is currently a working
+Description Datafile* (SimDD_). The format of this file is currently a working
 proposal and subject to change. A more formal format specification is being
 worked on.
 
 Note that ``tango-simlib`` does not generate simulator code. Rather, the
 simulator's behaviour is driven by the description data at run-time using *Python*'s
-dynamic programming features. If the description files (XMI or SIMDD) are
+dynamic programming features. If the description files (XMI or SimDD) are
 modified, the simulator device server only needs to be restarted for the changes
 to take effect.
 
@@ -47,7 +47,7 @@ to take effect.
 
 .. _TANGO: http://www.tango-controls.org/
 .. _POGO: http://www.esrf.eu/computing/cs/tango/tango_doc/tools_doc/pogo_doc/
-.. _SIMDD: https://docs.google.com/document/d/1tkRGnKu5g8AHxVjK7UkEiukvqtqgZDzptphVCHemcIs/edit?usp=sharing
+.. _SimDD: https://docs.google.com/document/d/1tkRGnKu5g8AHxVjK7UkEiukvqtqgZDzptphVCHemcIs/edit?usp=sharing
 .. _CAM_Style_guide: https://docs.google.com/document/d/1aZoIyR9tz5rCWr2qJKuMTmKp2IzHlFjrCFrpDDHFypM/edit?usp=sharing
 .. _PyTango: https://pypi.python.org/pypi/PyTango
 .. _source: https://github.com/ska-sa/tango-simlib

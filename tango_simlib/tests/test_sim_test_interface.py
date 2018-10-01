@@ -267,7 +267,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         cls.data_descr_files.append(pkg_resources.resource_filename(
             'tango_simlib.tests.config_files', 'Weather.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests.config_files', 'Weather_SIMDD_3.json'))
+            'tango_simlib.tests.config_files', 'Weather_SimDD_3.json'))
         cls.temp_dir = cleanup_tempdir(cls)
         cls.sim_device_class = tango_sim_generator.get_device_class(cls.data_descr_files)
         device_name = 'test/nodb/tangodeviceserver'

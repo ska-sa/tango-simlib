@@ -243,7 +243,7 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
     @classmethod
     def setUpClassWithCleanup(cls):
         cls.server_name = 'weather_ds'
-        cls.data_descr_file = 'Weather_SIMDD.json'
+        cls.data_descr_file = 'Weather_SimDD.json'
         super(test_JsonFile, cls).setUpClassWithCleanup()
 
     def setUp(self):

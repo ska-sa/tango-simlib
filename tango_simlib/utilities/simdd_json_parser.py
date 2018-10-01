@@ -57,7 +57,7 @@ class SimddParser(Parser):
 
         """
         simdd_schema_file = pkg_resources.resource_filename(
-                'tango_simlib.utilities', 'SIMDD.schema')
+                'tango_simlib.utilities', 'SimDD.schema')
         with open(simdd_schema_file) as simdd_schema:
             schema_data = json.load(simdd_schema)
         self.data_description_file_name = simdd_json_file
@@ -293,7 +293,7 @@ class SimddParser(Parser):
 
                 for item in expand(param_val):
                     property_key = str(item[0])
-                    # Since the data type specified in the SIMDD is a string format
+                    # Since the data type specified in the SimDD is a string format
                     # e.g. String, it is require in Tango device as a CmdArgType
                     # i.e. tango._tango.CmdArgType.DevString
                     if property_key in ['dtype_in', 'dtype_out']:
@@ -315,7 +315,7 @@ class SimddParser(Parser):
                     actions.append(string_items)
                 formated_info['actions'] = actions
             else:
-                # Since the data type specified in the SIMDD is a string format
+                # Since the data type specified in the SimDD is a string format
                 # e.g. Double, it is required in Tango device as a CmdArgType
                 # i.e. tango._tango.CmdArgType.DevDouble
                 if str(param_name) in ['data_type']:

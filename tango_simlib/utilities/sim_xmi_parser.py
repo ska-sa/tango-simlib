@@ -680,7 +680,7 @@ class XmiParser(Parser):
         # classes assume that the parsers we have developed have the same interface
         # so this method does nothing but return an empty dictionary. Might provide
         # an implementation when the XMI file has such parameter information (provided
-        # in the SIMDD file).
+        # in the SimDD file).
         return {}
 
     def get_device_class_description_metadata(self):

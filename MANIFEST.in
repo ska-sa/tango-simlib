@@ -1,11 +1,11 @@
-include tango_simlib/utilities/SIMDD.schema
-include tango_simlib/tests/config_files/MkatVds_SIMDD.json
+include tango_simlib/utilities/SimDD.schema
+include tango_simlib/tests/config_files/MkatVds_SimDD.json
 include tango_simlib/tests/config_files/MkatVds.xmi
-include tango_simlib/tests/config_files/weather_SIMDD.json
-include tango_simlib/tests/config_files/weather_SIMDD_3.json
+include tango_simlib/tests/config_files/weather_SimDD.json
+include tango_simlib/tests/config_files/weather_SimDD_3.json
 include tango_simlib/tests/config_files/WeatherSimulator_CN.xml
 include tango_simlib/tests/config_files/weather_sim.xmi
-include tango_simlib/tests/config_files/weather_supplementary_SIMDD.json
 include tango_simlib/tests/config_files/devenum_test_case.xmi
 include tango_simlib/tests/config_files/DishElementMaster.xmi
-include tango_simlib/tests/config_files/DishElementMaster_SIMDD.json
+include tango_simlib/tests/config_files/DishElementMaster_SimDD.json
+include tango_simlib/tests/config_files/database2.fgo
