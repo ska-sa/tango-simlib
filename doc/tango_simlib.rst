@@ -29,34 +29,10 @@ tango\_simlib\.quantities module
     :undoc-members:
     :show-inheritance:
 
-tango\_simlib\.sim\_sdd\_xml\_parser module
--------------------------------------------
-
-.. automodule:: tango_simlib.sim_sdd_xml_parser
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 tango\_simlib\.sim\_test\_interface module
 ------------------------------------------
 
 .. automodule:: tango_simlib.sim_test_interface
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-tango\_simlib\.sim\_xmi\_parser module
---------------------------------------
-
-.. automodule:: tango_simlib.sim_xmi_parser
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-tango\_simlib\.simdd\_json\_parser module
------------------------------------------
-
-.. automodule:: tango_simlib.simdd_json_parser
     :members:
     :undoc-members:
     :show-inheritance:
@@ -76,20 +52,3 @@ tango\_simlib\.tango\_sim\_generator module
     :members:
     :undoc-members:
     :show-inheritance:
-
-tango\_simlib\.testutils module
--------------------------------
-
-.. automodule:: tango_simlib.testutils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-tango\_simlib\.helper\_module module
-------------------------------------
-
-.. automodule:: tango_simlib.helper_module
-    :members:
-    :undoc-members:
-    :show-inheritance:
-

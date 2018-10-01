@@ -17,13 +17,13 @@ Using only the basic *TANGO* interface description captured via a POGO_ generate
 XMI file, a basic simulator with randomly varying attributes and no-op command
 handlers can be generated with no further coding. Attribute simulation
 parameters and simple command behaviour can be specified using a *Simulator
-Description Datafile* (SIMDD_). The format of this file is currently a working
+Description Datafile* (SimDD_). The format of this file is currently a working
 proposal and subject to change. A more formal format specification is being
 worked on.
 
 Note that ``tango-simlib`` does not generate simulator code. Rather, the
 simulator's behaviour is driven by the description data at run-time using *Python*'s
-dynamic programming features. If the description files (XMI or SIMDD) are
+dynamic programming features. If the description files (XMI or SimDD) are
 modified, the simulator device server only needs to be restarted for the changes
 to take effect.
 
@@ -67,7 +67,7 @@ telescope to the *TANGO* world.
 
 .. _TANGO: http://www.tango-controls.org/
 .. _POGO: http://www.esrf.eu/computing/cs/tango/tango_doc/tools_doc/pogo_doc/
-.. _SIMDD: https://docs.google.com/document/d/1tkRGnKu5g8AHxVjK7UkEiukvqtqgZDzptphVCHemcIs/edit?usp=sharing
+.. _SimDD: https://docs.google.com/document/d/1tkRGnKu5g8AHxVjK7UkEiukvqtqgZDzptphVCHemcIs/edit?usp=sharing
 .. _KAT-7: https://www.ska.ac.za/science-engineering/kat-7/
 .. _KAT-7-wiki: https://en.wikipedia.org/wiki/KAT-7
 .. _MeerKAT: https://www.ska.ac.za/science-engineering/meerkat/
@@ -111,7 +111,7 @@ Generating Simulators
 ---------------------
 
 The basic way of generating a *TANGO* device simulator using this library is to make use of the *TANGO* simulator generator module.
-Give it a path to the description files (XMI or SIMDD or both).
+Give it a path to the description files (XMI or SimDD or both).
 
 .. code-block:: bash
 
@@ -152,7 +152,7 @@ Change directory to tango_simlib/examples/
                             --server-instance tango-launched\
                             --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
 
-An example of starting the ``Weather`` simulator generated from the ``Weather_SIMDD.json``
+An example of starting the ``Weather`` simulator generated from the ``Weather_SimDD.json``
 file with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 
 .. code-block:: bash
@@ -168,7 +168,7 @@ file with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 ****************************************
 
 An example of starting the *VDS* simulator generated from both the ``MkatVds.xmi`` and
-the ``MkatVds_SIMDD.json`` files with a ``SimControl`` instance using the ``tango_launcher.py`` script.
+the ``MkatVds_SimDD.json`` files with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 
 .. code-block:: bash
 

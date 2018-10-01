@@ -18,6 +18,7 @@ What is tango-simlib?
 
    intro
    tango_simlib
+   tango_simlib.utilities
    tango_simlib.examples
    footer
 
