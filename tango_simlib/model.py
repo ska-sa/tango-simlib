@@ -223,7 +223,7 @@ class PopulateModelQuantities(object):
                 # Before the model attribute props dict is updated, the
                 # parameter keys with no values specified from the attribute
                 # props template are removed.
-                # i.e. All optional parameters not provided in the SIMDD
+                # i.e. All optional parameters not provided in the SimDD
                 attr_props = dict((param_key, param_val)
                                   for param_key, param_val in attr_props.iteritems()
                                   if param_val)
@@ -235,7 +235,7 @@ class PopulateModelQuantities(object):
                         initial_value = model_attr_props['initial_value']
                     except KeyError:
                         # `initial_value` is an optional parameter, thus if not
-                        # specified in the SIMDD datafile, an initial value of
+                        # specified in the SimDD datafile, an initial value of
                         # default value of is assigned to the attribute
                         # quantity initial value
                         initial_value = None

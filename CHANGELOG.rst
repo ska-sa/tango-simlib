@@ -1,4 +1,17 @@
 .. _fandango: https://github.com/tango-controls/fandango
+.. _79: https://github.com/ska-sa/tango-simlib/issues/79
+
+0.2.1
+-----
+- Supporting more tango data types.
+    - DevUChar
+    - DevShort
+    - DevUShort
+    - DevLong64
+    - DevULong64
+    - DevState
+    - DevEncoded
+- Updating documentation. Addresses issue #79_.
 
 0.2.0
 -----

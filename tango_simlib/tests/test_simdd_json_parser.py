@@ -38,7 +38,7 @@ EXPECTED_MANDATORY_CMD_PARAMETERS = frozenset([
 EXPECTED_MANDATORY_OVERRIDE_CLASS_PARAMETERS = frozenset([
     'class_name', 'module_directory', 'module_name', 'name'])
 
-# The desired information for the attribute temperature when the Weather_SIMDD
+# The desired information for the attribute temperature when the Weather_SimDD
 # json file is parsed by the SimddParser.
 EXPECTED_TEMPERATURE_ATTR_INFO = {
         'abs_change': '0.5',
@@ -85,7 +85,7 @@ class GenericSetup(unittest.TestCase):
     def setUp(self):
         super(GenericSetup, self).setUp()
         self.simdd_json_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests.config_files', 'Weather_SIMDD.json')]
+            'tango_simlib.tests.config_files', 'Weather_SimDD.json')]
         self.simdd_parser = simdd_json_parser.SimddParser()
         self.simdd_parser.parse(self.simdd_json_file[0])
 
@@ -95,7 +95,7 @@ class test_SimddJsonParser(GenericSetup):
 
     def test_parsed_attributes(self):
         """Testing that the attribute information parsed matches with the one captured
-        in the SIMDD json file.
+        in the SimDD json file.
         """
         actual_parsed_attrs = self.simdd_parser.get_device_attribute_metadata()
         expected_attr_list = ['input-comms-ok', 'insolation', 'pressure', 'rainfall',
@@ -131,7 +131,7 @@ class test_SimddJsonParser(GenericSetup):
 
     def test_parsed_override_info(self):
         """Testing that the class override information parsed matches with the one
-        captured in the SIMDD json file.
+        captured in the SimDD json file.
         """
         actual_override_info = self.simdd_parser.get_device_cmd_override_metadata()
         for klass_info in actual_override_info.values():
@@ -242,7 +242,7 @@ class test_PopulateModelActions(GenericSetup):
                              cmd_name)
 
     def test_model_actions_overrides(self):
-        """Testing that the On command defined in the SIMDD file is mapped to the
+        """Testing that the On command defined in the SimDD file is mapped to the
         correct user-defined action handler provided in the override class.
         """
         device_name = 'tango/device/instance'
@@ -274,7 +274,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
     def setUpClassWithCleanup(cls):
         cls.tango_db = cleanup_tempfile(cls, prefix='tango', suffix='.db')
         cls.data_descr_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests.config_files', 'Weather_SIMDD.json')]
+            'tango_simlib.tests.config_files', 'Weather_SimDD.json')]
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.data_descr_file,
                                                            cls.device_name)
@@ -324,19 +324,19 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
     def test_command_list(self):
         """Testing that the command list in the Tango device matches with the one
-        specified in the SIMDD data description file.
+        specified in the SimDD data description file.
         """
         actual_device_commands = set(self.device.get_command_list())
         expected_command_list = (
             self.simdd_json_parser.get_device_command_metadata().keys())
         expected_command_list.extend(helper_module.DEFAULT_TANGO_DEVICE_COMMANDS)
         self.assertEquals(actual_device_commands, set(expected_command_list),
-                          "The commands specified in the SIMDD file are not present in"
+                          "The commands specified in the SimDD file are not present in"
                           " the device")
 
     def test_command_properties(self):
         """Testing that the command parameter information matches with the information
-        captured in the SIMDD data description file.
+        captured in the SimDD data description file.
         """
         command_data = self.simdd_json_parser.get_device_command_metadata()
         extra_command_parameters = ['dformat_in', 'dformat_out', 'description',
@@ -441,7 +441,7 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
             pkg_resources.resource_filename(
                 'tango_simlib.tests.config_files', 'MkatVds.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests.config_files', 'MkatVds_SIMDD.json'))
+            'tango_simlib.tests.config_files', 'MkatVds_SimDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)
@@ -475,19 +475,19 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
         """Testing device command list.
 
         Check that the command list in the Tango device matches with the one
-        specified in the SIMDD data description file.
+        specified in the SimDD data description file.
 
         """
         actual_device_commands = set(self.device.get_command_list())
         self.assertEquals(actual_device_commands -
                           helper_module.DEFAULT_TANGO_DEVICE_COMMANDS,
                           MKAT_VDS_COMMAND_LIST,
-                          "The commands specified in the SIMDD file are not present in"
+                          "The commands specified in the SimDD file are not present in"
                           " the device")
 
 
 class test_SourceSimulatorInfo(unittest.TestCase):
-    """This class is not testing the code, but only testing that the test XMI and SIMDD
+    """This class is not testing the code, but only testing that the test XMI and SimDD
     files are consistant with each other.
     """
     longMessage = True
@@ -497,7 +497,7 @@ class test_SourceSimulatorInfo(unittest.TestCase):
         self.sim_xmi_file = [pkg_resources.resource_filename(
             'tango_simlib.tests.config_files', 'MkatVds.xmi')]
         self.simdd_json_file = [pkg_resources.resource_filename(
-            'tango_simlib.tests.config_files', 'MkatVds_SIMDD.json')]
+            'tango_simlib.tests.config_files', 'MkatVds_SimDD.json')]
         self.simdd_parser = simdd_json_parser.SimddParser()
         self.xmi_parser = sim_xmi_parser.XmiParser()
         self.xmi_parser.parse(self.sim_xmi_file[0])
@@ -506,7 +506,7 @@ class test_SourceSimulatorInfo(unittest.TestCase):
     def test_source_data_attributes(self):
         """Testing attribute information from data files.
 
-        Check if the attribute information in the SIMDD is consistant with the"
+        Check if the attribute information in the SimDD is consistant with the"
         information captured in the XMI file generated using POGO.
 
         """
@@ -530,7 +530,7 @@ class test_SourceSimulatorInfo(unittest.TestCase):
     def test_source_data_commands(self):
         """Testing command information from data files.
 
-        Check if the commands information in the SIMDD is consistant with the"
+        Check if the commands information in the SimDD is consistant with the"
         information captured in the XMI file generated using POGO.
 
         """
@@ -554,7 +554,7 @@ class test_SourceSimulatorInfo(unittest.TestCase):
     def test_source_data_device_properties(self):
         """Testing device properties information from data files.
 
-        Check if the device properties information in the SIMDD is consistant with the
+        Check if the device properties information in the SimDD is consistant with the
         information captured in the XMI file generated using POGO.
 
         """
@@ -570,7 +570,7 @@ class test_SourceSimulatorInfo(unittest.TestCase):
                          property_name, self.simdd_json_file[0], self.sim_xmi_file[0]))
 
     def test_source_data_class_properties(self):
-        """Testing if the class properties information in the SIMDD is consistant with the"
+        """Testing if the class properties information in the SimDD is consistant with the"
         information captured in the XMI file generated using POGO.
         """
         xmi_parser_properties = (
@@ -602,7 +602,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
         cls.data_descr_files.append(pkg_resources.resource_filename(
             'tango_simlib.tests.config_files', 'Weather.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests.config_files', 'Weather_SIMDD_2.json'))
+            'tango_simlib.tests.config_files', 'Weather_SimDD_2.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)

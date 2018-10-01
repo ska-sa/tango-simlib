@@ -51,7 +51,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             pkg_resources.resource_filename(
                 'tango_simlib.tests.config_files', 'DishElementMaster.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests.config_files', 'DishElementMaster_SIMDD.json'))
+            'tango_simlib.tests.config_files', 'DishElementMaster_SimDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         cls.model = tango_sim_generator.configure_device_model(
             cls.data_descr_files, cls.device_name)
@@ -80,7 +80,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         """Testing device command list.
 
         Check that the command list in the model matches with the one specified in the
-        XMI/SIMDD data description file.
+        XMI/SimDD data description file.
         """
         actual_device_commands = set(self.model.sim_actions.keys())
         self.assertEquals(actual_device_commands,
@@ -357,7 +357,7 @@ class test_Device(ClassCleanupUnittestMixin, unittest.TestCase):
             pkg_resources.resource_filename(
                 'tango_simlib.tests.config_files', 'DishElementMaster.xmi'))
         cls.data_descr_files.append(pkg_resources.resource_filename(
-            'tango_simlib.tests.config_files', 'DishElementMaster_SIMDD.json'))
+            'tango_simlib.tests.config_files', 'DishElementMaster_SimDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
         model = tango_sim_generator.configure_device_model(cls.data_descr_files,
                                                            cls.device_name)
