@@ -670,9 +670,9 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
         el_speed = 0.0
         az_accl = 0.0
         el_accl = 0.0
-        self.assertListEqual(self.device.desiredPointing,
-                             np.asarray([_timestamp, az, el, az_speed,
-                                         el_speed, az_accl, el_accl], dtype=np.float32))
+        self.assertListEqual(self.device.desiredPointing.tolist(),
+                             [_timestamp, az, el, az_speed,
+                              el_speed, az_accl, el_accl])
 
         # Change the values of the timestamp,  az and el
         _timestamp = time.time()
@@ -683,6 +683,6 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
             _timestamp, az, el, az_speed, el_speed, az_accl, el_accl
         ]
 
-        self.assertListEqual(self.device.desiredPointing,
-                             np.asarray([_timestamp, az, el, az_speed,
-                                         el_speed, az_accl, el_accl], dtype=np.float32))
+        self.assertListEqual(self.device.desiredPointing.tolist(),
+                             [_timestamp, az, el, az_speed,
+                              el_speed, az_accl, el_accl])
