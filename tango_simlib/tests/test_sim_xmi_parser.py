@@ -6,6 +6,7 @@
 #########################################################################################
 import mock
 import logging
+import time
 import unittest
 import pkg_resources
 
@@ -661,12 +662,24 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
 
     def test_writable_spectrum_attribute(self):
         """Test that the Spectrum writable attribute can be set correctly."""
-        timestamp = 0.0
+        _timestamp = 0.0
         az = 0.0
         el = 0.0
         az_speed = 0.0
         el_speed = 0.0
         az_accl = 0.0
         el_accl = 0.0
-        self.assertEqual(self.device.desiredPosition, [timestamp, az, el, az_speed,
+        self.assertEqual(self.device.desiredPointing, [_timestamp, az, el, az_speed,
+                                                       el_speed, az_accl, el_accl])
+
+        # Change the values of az and el
+        _timestamp = time.time()
+        az = 45.0
+        el = 104.0
+        # Write to the attribute desiredPointing
+        self.device.desiredPointing = [
+            _timestamp, az, el, az_speed, el_speed, az_accl, el_accl
+        ]
+
+        self.assertEqual(self.device.desiredPointing, [_timestamp, az, el, az_speed,
                                                        el_speed, az_accl, el_accl])
