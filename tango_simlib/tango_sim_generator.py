@@ -249,7 +249,7 @@ def get_tango_device_server(model, sim_data_files):
                 adjustable_attrs = simulated_quantity.adjustable_attributes
                 for attr in adjustable_attrs:
                     if attr == 'last_update_time':
-                        simulated_quantity.attr = model_time
+                        setattr(simulated_quantity, attr, model_time)
                         continue
                     else:
                         try:
@@ -293,23 +293,13 @@ def get_tango_device_server(model, sim_data_files):
                                     adjustable_val = val_type(adjustable_val)
                             else:
                                 if attr == 'last_val':
-                                    simulated_quantity.attr = float(sim_quantity_meta_info['mean'])
+                                    setattr(simulated_quantity, attr,
+                                            float(sim_quantity_meta_info['mean']))
                                     continue
                                 else:
                                     adjustable_val = float(sim_quantity_meta_info[attr])
 
-                        if attr == 'last_val':
-                            simulated_quantity.last_val = adjustable_val
-                        elif attr == 'mean':
-                            simulated_quantity.mean = adjustable_val
-                        elif attr == 'std_dev':
-                            simulated_quantity.std_dev = adjustable_val
-                        elif attr == 'max_slew_rate':
-                            simulated_quantity.max_slew_rate = adjustable_val
-                        elif attr == 'min_bound':
-                            simulated_quantity.min_bound = adjustable_val
-                        elif attr == 'max_bound':
-                            simulated_quantity.max_bound = adjustable_val
+                        setattr(simulated_quantity, attr, adjustable_val)
 
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():
