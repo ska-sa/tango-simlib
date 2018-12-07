@@ -289,8 +289,8 @@ class test_TangoSimGenerator(BaseTest.TangoSimGenDeviceIntegration):
 
     @classmethod
     def setUpClassWithCleanup(cls):
-        cls.server_name = 'DishElementMaster_ds'
-        cls.data_descr_file = 'devenum_test_case.xmi'
+        cls.server_name = 'weather_ds'
+        cls.data_descr_file = 'Weather.xmi'
         super(test_TangoSimGenerator, cls).setUpClassWithCleanup()
 
     def setUp(self):
@@ -299,36 +299,12 @@ class test_TangoSimGenerator(BaseTest.TangoSimGenDeviceIntegration):
 
     def test_device_init_command(self):
         """Test that the TANGO device Init command works correctly."""
-        _timestamp = 0.0
-        az = 0.0
-        el = 0.0
-        az_speed = 0.0
-        el_speed = 0.0
-        az_accl = 0.0
-        el_accl = 0.0
-        self.assertListEqual(self.sim_device.desiredPointing.tolist(),
-                             [_timestamp, az, el, az_speed,
-                              el_speed, az_accl, el_accl])
-
-        # Change the values of the timestamp, az and el
-        _timestamp = 124324
-        az = 45.0
-        el = 104.0
+        default_val = 0
+        self.assertEqual(self.sim_device.integer1, default_val)
         # Write to the attribute desiredPointing
-        self.sim_device.desiredPointing = [
-            _timestamp, az, el, az_speed, el_speed, az_accl, el_accl
-        ]
-
-        self.assertListEqual(self.sim_device.desiredPointing.tolist(),
-                             [_timestamp, az, el, az_speed,
-                              el_speed, az_accl, el_accl])
-
+        self.sim_device.integer1 = 45
+        self.assertEqual(self.sim_device.integer1, 45)
         # Reset the values of the device attributes to default.
         self.sim_device.Init()
-        _timestamp = 0.0
-        az = 0.0
-        el = 0.0
         # Check that the desiredPointing attribute is reset.
-        self.assertListEqual(self.sim_device.desiredPointing.tolist(),
-                             [_timestamp, az, el, az_speed,
-                              el_speed, az_accl, el_accl])
+        self.assertEqual(self.sim_device.integer1, default_val)
