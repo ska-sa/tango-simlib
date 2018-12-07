@@ -298,8 +298,18 @@ def get_tango_device_server(model, sim_data_files):
                                 else:
                                     adjustable_val = float(sim_quantity_meta_info[attr])
 
-                        simulated_quantity.attr = adjustable_val
-                
+                        if attr == 'last_val':
+                            simulated_quantity.last_val = adjustable_val
+                        elif attr == 'mean':
+                            simulated_quantity.mean = adjustable_val
+                        elif attr == 'std_dev':
+                            simulated_quantity.std_dev = adjustable_val
+                        elif attr == 'max_slew_rate':
+                            simulated_quantity.max_slew_rate = adjustable_val
+                        elif attr == 'min_bound':
+                            simulated_quantity.min_bound = adjustable_val
+                        elif attr == 'max_bound':
+                            simulated_quantity.max_bound = adjustable_val
 
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():
