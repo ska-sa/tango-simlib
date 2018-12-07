@@ -675,7 +675,7 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
                               el_speed, az_accl, el_accl])
 
         # Change the values of the timestamp,  az and el
-        _timestamp = time.time()
+        _timestamp = 124324
         az = 45.0
         el = 104.0
         # Write to the attribute desiredPointing
