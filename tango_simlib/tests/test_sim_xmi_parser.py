@@ -669,7 +669,7 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
         el_speed = 0.0
         az_accl = 0.0
         el_accl = 0.0
-        self.assertEqual(self.device.desiredPointing, [_timestamp, az, el, az_speed,
+        self.assertListEqual(self.device.desiredPointing, [_timestamp, az, el, az_speed,
                                                        el_speed, az_accl, el_accl])
 
         # Change the values of az and el
@@ -681,5 +681,5 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
             _timestamp, az, el, az_speed, el_speed, az_accl, el_accl
         ]
 
-        self.assertEqual(self.device.desiredPointing, [_timestamp, az, el, az_speed,
+        self.assertListEqual(self.device.desiredPointing, [_timestamp, az, el, az_speed,
                                                        el_speed, az_accl, el_accl])
