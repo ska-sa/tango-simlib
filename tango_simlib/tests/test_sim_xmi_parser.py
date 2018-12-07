@@ -658,3 +658,15 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
                                  "The expected value for the device property "
                                  "parameter '%s' does not match with the "
                                  "actual value" % (attr_prop))
+
+    def test_writable_spectrum_attribute(self):
+        """Test that the Spectrum writable attribute can be set correctly."""
+        timestamp = 0.0
+        az = 0.0
+        el = 0.0
+        az_speed = 0.0
+        el_speed = 0.0
+        az_accl = 0.0
+        el_accl = 0.0
+        self.assertEqual(self.device.desiredPosition, [timestamp, az, el, az_speed,
+                                                       el_speed, az_accl, el_accl])
