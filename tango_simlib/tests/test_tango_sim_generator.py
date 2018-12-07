@@ -283,3 +283,52 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         self.assertEquals(actual_device_cmds, set(expected_cmd_list),
                           "The commands specified in the json file are not present in"
                           " the device")
+
+
+class test_TangoSimGenerator(BaseTest.TangoSimGenDeviceIntegration):
+
+    @classmethod
+    def setUpClassWithCleanup(cls):
+        cls.server_name = 'DishElementMaster_ds'
+        cls.data_descr_file = 'devenum_test_case.xmi'
+        super(test_TangoSimGenerator, cls).setUpClassWithCleanup()
+
+    def setUp(self):
+        self.sim_file_parser = sim_xmi_parser.XmiParser()
+        super(test_TangoSimGenerator, self).setUp()
+
+    def test_device_init_command(self):
+        """Test that the TANGO device Init command works correctly."""
+        _timestamp = 0.0
+        az = 0.0
+        el = 0.0
+        az_speed = 0.0
+        el_speed = 0.0
+        az_accl = 0.0
+        el_accl = 0.0
+        self.assertListEqual(self.sim_device.desiredPointing.tolist(),
+                             [_timestamp, az, el, az_speed,
+                              el_speed, az_accl, el_accl])
+
+        # Change the values of the timestamp, az and el
+        _timestamp = 124324
+        az = 45.0
+        el = 104.0
+        # Write to the attribute desiredPointing
+        self.sim_device.desiredPointing = [
+            _timestamp, az, el, az_speed, el_speed, az_accl, el_accl
+        ]
+
+        self.assertListEqual(self.sim_device.desiredPointing.tolist(),
+                             [_timestamp, az, el, az_speed,
+                              el_speed, az_accl, el_accl])
+
+        # Reset the values of the device attributes to default.
+        self.sim_device.Init()
+        _timestamp = 0.0
+        az = 0.0
+        el = 0.0
+        # Check that the desiredPointing attribute is reset.
+        self.assertListEqual(self.sim_device.desiredPointing.tolist(),
+                             [_timestamp, az, el, az_speed,
+                              el_speed, az_accl, el_accl])
