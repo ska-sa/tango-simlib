@@ -133,7 +133,7 @@ def get_tango_device_server(model, sim_data_files):
             # For attributes that have a SPECTRUM data format, there is no need to
             # type cast them to an integer data type. we need assign the list of values
             # to the attribute value parameter.
-            if type(value) == list or isinstance(value, np.ndarray):
+            if type(value) in (list, np.ndarray):
                 attr.set_value_date_quality(value, update_time, quality)
             else:
                 attr.set_value_date_quality(int(value), update_time, quality)
