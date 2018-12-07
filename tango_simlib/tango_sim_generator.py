@@ -63,6 +63,20 @@ class TangoDeviceServerBase(Device):
             self.info_stream("Reading attribute %s", name)
             attr.set_value_date_quality(value, update_time, quality)
 
+    def write_attributes(self, attr):
+        """Method writing an attribute value
+
+        Parameters
+        ----------
+        attr : PyTango.DevAttr
+            The attribute to write to.
+
+        """
+        name = attr.get_name()
+        data = attr.get_write_value()
+        self.info_stream("Writing attribute {} with value: {}".format(name, data))
+        self.model.sim_quantity[name].set_val(data, self.model.time_func())
+
 
 def get_tango_device_server(model, sim_data_files):
     """Declares a tango device class that inherits the Device class and then
@@ -351,7 +365,11 @@ def get_tango_device_server(model, sim_data_files):
                             MODULE_LOGGER.info(
                                 "No setter function for " + prop + " property")
                     attr.set_default_properties(attr_props)
-                    self.add_attribute(attr, self.read_attributes)
+                    if rw_type == tango._tango.AttrWriteType.READ:
+                        self.add_attribute(attr, self.read_attributes)
+                    else:
+                        self.add_attribute(
+                            attr, self.read_attributes, self.write_attributes)
                     MODULE_LOGGER.info("Added dynamic {} attribute"
                                        .format(attribute_name))
 
