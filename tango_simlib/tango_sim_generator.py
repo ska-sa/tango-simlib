@@ -153,7 +153,7 @@ def get_tango_device_server(model, sim_data_files):
             else:
                 attr.set_value_date_quality(int(value), update_time, quality)
         # Attribute write method for writable attributes
-        if str(attr_meta['writable']) == 'READ_WRITE':
+        if str(attr_meta['writable']) in ('READ_WRITE', 'WRITE'):
             @attr.write
             def attr(tango_device_instance, new_val):
                 # When selecting a model quantity we use the enum labels list indexing
@@ -369,8 +369,8 @@ def get_tango_device_server(model, sim_data_files):
 
                     if rw_type in (AttrWriteType.READ, AttrWriteType.READ_WITH_WRITE):
                         self.add_attribute(attr, self.read_attributes)
-                    if rw_type == AttrWriteType.WRITE:
-                        self.add_attribute(attr, self.write_attributes)
+                    elif rw_type == AttrWriteType.WRITE:
+                        self.add_attribute(attr, w_meth=self.write_attributes)
                     elif rw_type == AttrWriteType.READ_WRITE:
                         self.add_attribute(
                             attr, self.read_attributes, self.write_attributes)
