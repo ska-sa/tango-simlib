@@ -288,6 +288,13 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
                 # its string returns 'READ' which corresponds to the Pogo one.
                 if attr_parameter in ['writable']:
                     attr_prop_value = str(attr_prop_value)
+                    if attr_prop_value == 'WT_UNKNOWN':  # Attributes with a 'READ_WRITE'
+                                                         # writable type are always set
+                                                         # to 'WT_UNKOWN', but the
+                                                         # `writable_attr_name` property
+                                                         # is set to the name of the
+                                                         # attribute.
+                        attr_prop_value = 'READ_WRITE'
 
                 if attr_prop_value is None:
                     # In the case where no attr_query data is not found it is
