@@ -365,7 +365,7 @@ def get_tango_device_server(model, sim_data_files):
                             MODULE_LOGGER.info(
                                 "No setter function for " + prop + " property")
                     attr.set_default_properties(attr_props)
-                    if rw_type == tango._tango.AttrWriteType.READ:
+                    if rw_type == AttrWriteType.READ:
                         self.add_attribute(attr, self.read_attributes)
                     else:
                         self.add_attribute(
