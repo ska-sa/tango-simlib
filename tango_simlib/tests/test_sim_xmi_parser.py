@@ -6,6 +6,8 @@
 #########################################################################################
 import mock
 import logging
+import numpy as np
+import time
 import unittest
 import pkg_resources
 
@@ -286,6 +288,13 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
                 # its string returns 'READ' which corresponds to the Pogo one.
                 if attr_parameter in ['writable']:
                     attr_prop_value = str(attr_prop_value)
+                    if attr_prop_value == 'WT_UNKNOWN':  # Attributes with a 'READ_WRITE'
+                                                         # writable type are always set
+                                                         # to 'WT_UNKOWN', but the
+                                                         # `writable_attr_name` property
+                                                         # is set to the name of the
+                                                         # attribute.
+                        attr_prop_value = 'READ_WRITE'
 
                 if attr_prop_value is None:
                     # In the case where no attr_query data is not found it is
@@ -658,3 +667,29 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
                                  "The expected value for the device property "
                                  "parameter '%s' does not match with the "
                                  "actual value" % (attr_prop))
+
+    def test_writable_spectrum_attribute(self):
+        """Test that the Spectrum writable attribute can be set correctly."""
+        _timestamp = 0.0
+        az = 0.0
+        el = 0.0
+        az_speed = 0.0
+        el_speed = 0.0
+        az_accl = 0.0
+        el_accl = 0.0
+        self.assertListEqual(self.device.desiredPointing.tolist(),
+                             [_timestamp, az, el, az_speed,
+                              el_speed, az_accl, el_accl])
+
+        # Change the values of the timestamp,  az and el
+        _timestamp = 124324
+        az = 45.0
+        el = 104.0
+        # Write to the attribute desiredPointing
+        self.device.desiredPointing = [
+            _timestamp, az, el, az_speed, el_speed, az_accl, el_accl
+        ]
+
+        self.assertListEqual(self.device.desiredPointing.tolist(),
+                             [_timestamp, az, el, az_speed,
+                              el_speed, az_accl, el_accl])

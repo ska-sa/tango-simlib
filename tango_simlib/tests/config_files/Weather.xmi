@@ -159,7 +159,7 @@
       <eventCriteria relChange="10" absChange="0.5" period="1000"/>
       <evArchiveCriteria relChange="10" absChange="0.5" period="1000"/>
     </dynamicAttributes>
-    <dynamicAttributes name="integer1" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
+    <dynamicAttributes name="integer1" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="1000" maxX="" maxY="" allocReadMember="true" isDynamic="true">
       <dataType xsi:type="pogoDsl:IntType"/>
       <changeEvent fire="false" libCheckCriteria="false"/>
       <archiveEvent fire="false" libCheckCriteria="false"/>

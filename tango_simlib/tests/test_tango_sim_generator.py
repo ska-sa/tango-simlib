@@ -283,3 +283,28 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         self.assertEquals(actual_device_cmds, set(expected_cmd_list),
                           "The commands specified in the json file are not present in"
                           " the device")
+
+
+class test_TangoSimGenerator(BaseTest.TangoSimGenDeviceIntegration):
+
+    @classmethod
+    def setUpClassWithCleanup(cls):
+        cls.server_name = 'weather_ds'
+        cls.data_descr_file = 'Weather.xmi'
+        super(test_TangoSimGenerator, cls).setUpClassWithCleanup()
+
+    def setUp(self):
+        self.sim_file_parser = sim_xmi_parser.XmiParser()
+        super(test_TangoSimGenerator, self).setUp()
+
+    def test_device_init_command(self):
+        """Test that the TANGO device Init command works correctly."""
+        default_val = 0
+        self.assertEqual(self.sim_device.integer1, default_val)
+        # Write to the attribute desiredPointing
+        self.sim_device.integer1 = 45
+        self.assertEqual(self.sim_device.integer1, 45)
+        # Reset the values of the device attributes to default.
+        self.sim_device.Init()
+        # Check that the desiredPointing attribute is reset.
+        self.assertEqual(self.sim_device.integer1, default_val)

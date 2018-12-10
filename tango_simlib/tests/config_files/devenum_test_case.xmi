@@ -29,6 +29,15 @@
       <properties description="The achieved pointing of the DSH Element. [timestamp] Milliseconds since UNIX epoch, UTC ms [Azimuth] degree [Elevation] degree" label="Achieved pointing" unit="[ms, degree, degree]" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <eventCriteria relChange="" absChange="" period="1000"/>
     </attributes>
+    <attributes name="desiredPointing" attType="Spectrum" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="7" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:FloatType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="The desired pointing of the DSH Element. [timestamp] Milliseconds since UNIX epoch, UTC ms [Azimuth] degree [Elevation] degree [Azimuth speed] degrees/s [Elevation speed] degrees/s [Azimuth acceleration] degrees/s^-2 [Elevation acceleration] degrees/s^-2" label="Desired pointing" unit="[ms, degree, degree]" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <eventCriteria relChange="" absChange="" period="1000"/>
+    </attributes>
     <preferences docHome="./doc_html" makefileHome="/usr/share/pogo/preferences"/>
   </classes>
 </pogoDsl:PogoSystem>

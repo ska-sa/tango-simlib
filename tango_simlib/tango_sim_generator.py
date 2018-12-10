@@ -16,6 +16,7 @@ import argparse
 import time
 
 from functools import partial
+import numpy as np
 
 from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType, CmdArgType,
                    Database, DevState, UserDefaultAttrProp)
@@ -59,8 +60,23 @@ class TangoDeviceServerBase(Device):
             name = attr.get_name()
             value, update_time = self.model.quantity_state[name]
             quality = AttrQuality.ATTR_VALID
-            self.info_stream("Reading attribute %s", name)
+            self.debug_stream("Reading attribute %s", name)
             attr.set_value_date_quality(value, update_time, quality)
+
+    def write_attributes(self, attr):
+        """Method writing an attribute value
+
+        Parameters
+        ----------
+        attr : PyTango.DevAttr
+            The attribute to write to.
+
+        """
+        if self.get_state() != DevState.OFF:
+            name = attr.get_name()
+            data = attr.get_write_value()
+            self.debug_stream("Writing attribute {} with value: {}".format(name, data))
+            self.model.sim_quantities[name].set_val(data, self.model.time_func())
 
 
 def get_tango_device_server(model, sim_data_files):
@@ -132,12 +148,12 @@ def get_tango_device_server(model, sim_data_files):
             # For attributes that have a SPECTRUM data format, there is no need to
             # type cast them to an integer data type. we need assign the list of values
             # to the attribute value parameter.
-            if type(value) == list:
+            if type(value) in (list, np.ndarray):
                 attr.set_value_date_quality(value, update_time, quality)
             else:
                 attr.set_value_date_quality(int(value), update_time, quality)
         # Attribute write method for writable attributes
-        if str(attr_meta['writable']) == 'READ_WRITE':
+        if str(attr_meta['writable']) in ('READ_WRITE', 'WRITE'):
             @attr.write
             def attr(tango_device_instance, new_val):
                 # When selecting a model quantity we use the enum labels list indexing
@@ -248,7 +264,7 @@ def get_tango_device_server(model, sim_data_files):
                 adjustable_attrs = simulated_quantity.adjustable_attributes
                 for attr in adjustable_attrs:
                     if attr == 'last_update_time':
-                        simulated_quantity.attr = model_time
+                        simulated_quantity.last_update_time = model_time
                         continue
                     else:
                         try:
@@ -292,13 +308,13 @@ def get_tango_device_server(model, sim_data_files):
                                     adjustable_val = val_type(adjustable_val)
                             else:
                                 if attr == 'last_val':
-                                    simulated_quantity.attr = float(sim_quantity_meta_info['mean'])
+                                    simulated_quantity.last_val = (
+                                        float(sim_quantity_meta_info['mean']))
                                     continue
                                 else:
                                     adjustable_val = float(sim_quantity_meta_info[attr])
 
-                        simulated_quantity.attr = adjustable_val
-                
+                        setattr(simulated_quantity, attr, adjustable_val)
 
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():
@@ -350,7 +366,15 @@ def get_tango_device_server(model, sim_data_files):
                             MODULE_LOGGER.info(
                                 "No setter function for " + prop + " property")
                     attr.set_default_properties(attr_props)
-                    self.add_attribute(attr, self.read_attributes)
+
+                    if rw_type in (AttrWriteType.READ, AttrWriteType.READ_WITH_WRITE):
+                        self.add_attribute(attr, self.read_attributes)
+                    elif rw_type == AttrWriteType.WRITE:
+                        self.add_attribute(attr, w_meth=self.write_attributes)
+                    elif rw_type == AttrWriteType.READ_WRITE:
+                        self.add_attribute(
+                            attr, self.read_attributes, self.write_attributes)
+
                     MODULE_LOGGER.info("Added dynamic {} attribute"
                                        .format(attribute_name))
 
