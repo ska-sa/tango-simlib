@@ -75,7 +75,7 @@ class TangoDeviceServerBase(Device):
         name = attr.get_name()
         data = attr.get_write_value()
         self.info_stream("Writing attribute {} with value: {}".format(name, data))
-        self.model.sim_quantity[name].set_val(data, self.model.time_func())
+        self.model.sim_quantities[name].set_val(data, self.model.time_func())
 
 
 def get_tango_device_server(model, sim_data_files):
