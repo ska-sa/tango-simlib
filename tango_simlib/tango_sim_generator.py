@@ -264,7 +264,7 @@ def get_tango_device_server(model, sim_data_files):
                 adjustable_attrs = simulated_quantity.adjustable_attributes
                 for attr in adjustable_attrs:
                     if attr == 'last_update_time':
-                        setattr(simulated_quantity, attr, model_time)
+                        simulated_quantity.last_update_time = model_time
                         continue
                     else:
                         try:
@@ -308,8 +308,8 @@ def get_tango_device_server(model, sim_data_files):
                                     adjustable_val = val_type(adjustable_val)
                             else:
                                 if attr == 'last_val':
-                                    setattr(simulated_quantity, attr,
-                                            float(sim_quantity_meta_info['mean']))
+                                    simulated_quantity.last_val = (
+                                        float(sim_quantity_meta_info['mean']))
                                     continue
                                 else:
                                     adjustable_val = float(sim_quantity_meta_info[attr])
