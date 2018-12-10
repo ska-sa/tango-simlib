@@ -365,11 +365,14 @@ def get_tango_device_server(model, sim_data_files):
                             MODULE_LOGGER.info(
                                 "No setter function for " + prop + " property")
                     attr.set_default_properties(attr_props)
+
                     if rw_type == AttrWriteType.READ:
                         self.add_attribute(attr, self.read_attributes)
-                    else:
+                    elif rw_type in (AttrWriteType.READ_WRITE,
+                                     AttrWriteType.READ_WITH_WRITE, AttrWriteType.WRITE):
                         self.add_attribute(
                             attr, self.read_attributes, self.write_attributes)
+
                     MODULE_LOGGER.info("Added dynamic {} attribute"
                                        .format(attribute_name))
 
