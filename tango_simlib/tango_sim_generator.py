@@ -60,7 +60,6 @@ class TangoDeviceServerBase(Device):
             name = attr.get_name()
             value, update_time = self.model.quantity_state[name]
             quality = AttrQuality.ATTR_VALID
-            self.debug_stream("Reading attribute %s", name)
             attr.set_value_date_quality(value, update_time, quality)
 
     def write_attributes(self, attr):
@@ -75,7 +74,6 @@ class TangoDeviceServerBase(Device):
         if self.get_state() != DevState.OFF:
             name = attr.get_name()
             data = attr.get_write_value()
-            self.debug_stream("Writing attribute {} with value: {}".format(name, data))
             self.model.sim_quantities[name].set_val(data, self.model.time_func())
 
 
@@ -144,7 +142,6 @@ def get_tango_device_server(model, sim_data_files):
             name = attr.get_name()
             value, update_time = tango_device_instance.model.quantity_state[name]
             quality = AttrQuality.ATTR_VALID
-            tango_device_instance.info_stream("Reading attribute %s", name)
             # For attributes that have a SPECTRUM data format, there is no need to
             # type cast them to an integer data type. we need assign the list of values
             # to the attribute value parameter.
