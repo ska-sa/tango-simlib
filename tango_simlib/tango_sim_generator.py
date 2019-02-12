@@ -533,7 +533,7 @@ def generate_device_server(server_name, sim_data_files, directory=''):
     """Create a tango device server python file
 
     Parameters
-    ---------
+    ----------
     server_name: str
         Tango device server name
     sim_data_files: list

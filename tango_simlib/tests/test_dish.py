@@ -53,7 +53,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.data_descr_files.append(pkg_resources.resource_filename(
             'tango_simlib.tests.config_files', 'DishElementMaster_SimDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
-        cls.model = tango_sim_generator.configure_device_model(
+        cls.model = tango_sim_generator.configure_device_models(
             cls.data_descr_files, cls.device_name)
 
     def setUp(self):
@@ -359,7 +359,7 @@ class test_Device(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.data_descr_files.append(pkg_resources.resource_filename(
             'tango_simlib.tests.config_files', 'DishElementMaster_SimDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
-        model = tango_sim_generator.configure_device_model(cls.data_descr_files,
+        model = tango_sim_generator.configure_device_models(cls.data_descr_files,
                                                            cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
                 model, cls.data_descr_files)[0]

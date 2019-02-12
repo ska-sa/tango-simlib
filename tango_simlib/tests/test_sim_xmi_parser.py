@@ -220,7 +220,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         cls.xmi_file = [pkg_resources.resource_filename(
             'tango_simlib.tests.config_files', 'Weather.xmi')]
         cls.device_name = 'test/nodb/tangodeviceserver'
-        model = tango_sim_generator.configure_device_model(cls.xmi_file,
+        model = tango_sim_generator.configure_device_models(cls.xmi_file,
                                                            cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
             model, cls.xmi_file)[0]
@@ -578,7 +578,7 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.xmi_file = [pkg_resources.resource_filename(
             'tango_simlib.tests.config_files', 'devenum_test_case.xmi')]
         cls.device_name = 'test/nodb/tangodeviceserver'
-        model = tango_sim_generator.configure_device_model(cls.xmi_file,
+        model = tango_sim_generator.configure_device_models(cls.xmi_file,
                                                            cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
             model, cls.xmi_file)[0]
