@@ -81,7 +81,7 @@ class BaseTest(object):
         def setUp(self):
             super(BaseTest.TangoSimGenDeviceIntegration, self).setUp()
             self.sim_file_parser.parse(self.data_descr_file[0])
-            self.expected_model = tango_sim_generator.configure_device_models(
+            self.expected_models = tango_sim_generator.configure_device_models(
                 self.data_descr_file, self.sim_device.name())
             self.attr_name_enum_labels = sorted(
                 self.sim_control_device.attribute_query(

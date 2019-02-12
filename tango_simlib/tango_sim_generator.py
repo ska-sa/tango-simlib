@@ -222,7 +222,7 @@ def get_tango_device_server(models, sim_data_files):
 
         def init_device(self):
             super(TangoDeviceServer, self).init_device()
-            self.model = models[self.get_name()]
+            self.model = self.models[self.get_name()]
             self._not_added_attributes = []
             write_device_properties_to_db(self.get_name(), self.model)
             self._reset_to_default_state()
