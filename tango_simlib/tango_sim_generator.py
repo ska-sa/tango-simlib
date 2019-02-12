@@ -484,7 +484,7 @@ def configure_device_models(sim_data_file=None, test_device_name=None):
     """
     data_file = sim_data_file
     klass_name = get_device_class(data_file)
-
+    dev_names = None
     if test_device_name is None:
         server_name = helper_module.get_server_name()
         db_instance = helper_module.get_database()
