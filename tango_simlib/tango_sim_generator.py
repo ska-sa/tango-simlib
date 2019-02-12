@@ -170,7 +170,8 @@ def get_tango_device_server(models, sim_data_files):
         MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
 
     # Sim test interface static attribute `attribute_name` info
-    controllable_attribute_names = model.sim_quantities.keys()
+    # Pick the first model instance in the dict.
+    controllable_attribute_names = models.values()[0].sim_quantities.keys()
     attr_control_meta = dict()
     attr_control_meta['enum_labels'] = sorted(controllable_attribute_names)
     attr_control_meta['data_format'] = AttrDataFormat.SCALAR
@@ -202,7 +203,7 @@ def get_tango_device_server(models, sim_data_files):
     # TODO(AR 02-03-2017): Ask the tango community on the upcoming Stack
     # Exchange community (AskTango) and also make follow ups on the next tango
     # releases.
-    for quantity_name, quantity in model.sim_quantities.items():
+    for quantity_name, quantity in models.values()[0].sim_quantities.items():
         d_type = quantity.meta['data_type']
         d_type = str(quantity.meta['data_type'])
         d_format = str(quantity.meta['data_format'])
