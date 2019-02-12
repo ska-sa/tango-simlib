@@ -214,10 +214,10 @@ def get_tango_device_server(models, sim_data_files):
 
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
+        models = models
 
         def __init__(self, dev_class, name):
             super(TangoDeviceServer, self).__init__(dev_class, name)
-            self.models = models
             self.init_device()
 
         def init_device(self):
