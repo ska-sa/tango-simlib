@@ -518,12 +518,12 @@ def configure_device_models(sim_data_file=None, test_device_name=None):
         properties_info = {}
         override_info = {}
         for parser in parsers:
-            PopulateModelQuantities(parser, dev_name, model)
+            PopulateModelQuantities(parser, model.name, model)
             command_info.update(parser.get_device_command_metadata())
             properties_info.update(parser.get_device_properties_metadata('deviceProperties'))
             override_info.update(parser.get_device_cmd_override_metadata())
-        PopulateModelActions(command_info, override_info, dev_name, model)
-        PopulateModelProperties(properties_info, dev_name, model)
+        PopulateModelActions(command_info, override_info, model.name, model)
+        PopulateModelProperties(properties_info, model.name, model)
     return models
 
 def generate_device_server(server_name, sim_data_files, directory=''):
