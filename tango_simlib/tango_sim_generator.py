@@ -214,15 +214,11 @@ def get_tango_device_server(models, sim_data_files):
 
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
-        models = models
-
-        def __init__(self, dev_class, name):
-            super(TangoDeviceServer, self).__init__(dev_class, name)
-            self.init_device()
+        _models = models
 
         def init_device(self):
             super(TangoDeviceServer, self).init_device()
-            self.model = self.models[self.get_name()]
+            self.model = self._models[self.get_name()]
             self._not_added_attributes = []
             write_device_properties_to_db(self.get_name(), self.model)
             self._reset_to_default_state()
