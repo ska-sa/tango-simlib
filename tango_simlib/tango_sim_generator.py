@@ -463,10 +463,12 @@ def get_parser_instance(sim_datafile):
 def configure_device_model(sim_data_file=None, test_device_name=None):
     models = configure_device_models(sim_data_file, test_device_name)
     if len(models) == 1:
-        return models.values()[0]
+        return models
     else:
-        raise RuntimeError('Single model expected, but found {} models in {}'
-                           .format(len(models), sim_data_file))
+        raise RuntimeError('Single model expected, but found {} devices {}'
+                           ' registered under device server class {}. Rather use '
+                           ' `configure_device_models`.'
+                           .format(len(models), get_device_class(sim_data_file)))
 
 def configure_device_models(sim_data_file=None, test_device_name=None):
     """In essence this function should get the data descriptor file, parse it,
