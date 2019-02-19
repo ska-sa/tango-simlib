@@ -84,8 +84,9 @@ def get_tango_device_server(models, sim_data_files):
 
     Parameters
     ----------
-    model: model.Model instance dict
-        Device model instance
+    models: dict
+        A dictionary of model.Model instances.
+        e.g. {'model-name': model.Model}
     sim_data_files: list
         A list of direct paths to either xmi/xml/json data files.
 
@@ -472,7 +473,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
 
 def configure_device_models(sim_data_file=None, test_device_name=None):
     """In essence this function should get the data descriptor file, parse it,
-    take the attribute and command information, populate the model quantities and
+    take the attribute and command information, populate the model(s) quantities and
     actions to be simulated and return that model.
 
     Parameters
