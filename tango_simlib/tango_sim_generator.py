@@ -216,10 +216,12 @@ def get_tango_device_server(models, sim_data_files):
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
         _models = models
+        print _models
 
         def init_device(self):
             super(TangoDeviceServer, self).init_device()
             self.model = self._models[self.get_name()]
+            print self.model
             self._not_added_attributes = []
             write_device_properties_to_db(self.get_name(), self.model)
             self._reset_to_default_state()
@@ -466,7 +468,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
     if len(models) == 1:
         return models
     else:
-        raise RuntimeError('Single model expected, but found {} devices {}'
+        raise RuntimeError('Single model expected, but found {} devices'
                            ' registered under device server class {}. Rather use '
                            ' `configure_device_models`.'
                            .format(len(models), get_device_class(sim_data_file)))
