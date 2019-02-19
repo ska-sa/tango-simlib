@@ -13,8 +13,10 @@ import shutil
 import tempfile
 import subprocess
 import pkg_resources
+from mock import Mock
 
 import tango
+from tango import Database
 
 from tango_simlib import tango_sim_generator
 from tango_simlib.tests import test_sim_test_interface
@@ -309,3 +311,44 @@ class test_TangoSimGenerator(BaseTest.TangoSimGenDeviceIntegration):
         self.sim_device.Init()
         # Check that the desiredPointing attribute is reset.
         self.assertEqual(self.sim_device.integer1, default_val)
+
+
+class test_TangoSimGenerator2(ClassCleanupUnittestMixin, unittest.TestCase):
+    """Test the multi-model generation functionality."""
+
+    longMessage = True
+    server_name = 'MultiDeviceModel/test'
+
+    @classmethod
+    def setUpClass(cls):
+        cls.data_descr_files = []
+        cls.data_descr_files.append(
+            pkg_resources.resource_filename(
+                'tango_simlib.tests.config_files', 'multidevice.xmi'))
+        db_file_name = pkg_resources.resource_filename(
+            'tango_simlib.tests.config_files', 'multidevice_tango.db')
+        cls.db_instance = Database(db_file_name)
+        mock_get_server_name = Mock(return_value=cls.server_name)
+        helper_module.get_server_name = mock_get_server_name
+        mock_get_database = Mock(return_value=cls.db_instance)
+        helper_module.get_database = mock_get_database
+
+
+class test_MultiModel(test_TangoSimGenerator2):
+    def test_configure_models(self):
+        models = tango_sim_generator.configure_device_models(
+            self.data_descr_files)
+        self.assertGreater(len(models.keys()), 1)
+
+    def test_configure_model(self):
+        with self.assertRaises(RuntimeError) as cm:
+            model = tango_sim_generator.configure_device_model(
+                self.data_descr_files)
+        err = cm.exception
+        num_devices = len(self.db_instance.get_device_name(
+            self.server_name, 'MultiDeviceModel').value_string)
+        self.assertEqual(str(err),
+                         'Single model expected, but found {} devices'
+                         ' registered under device server class MultiDeviceModel.'
+                         ' Rather use `configure_device_models`.'
+                         .format(num_devices))
