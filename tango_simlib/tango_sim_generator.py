@@ -467,7 +467,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         return models
     else:
         raise RuntimeError('Single model expected, but found {} devices'
-                           ' registered under device server class {}. Rather use '
+                           ' registered under device server class {}. Rather use'
                            ' `configure_device_models`.'
                            .format(len(models), get_device_class(sim_data_file)))
 
