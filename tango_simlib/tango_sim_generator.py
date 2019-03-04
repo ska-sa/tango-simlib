@@ -78,14 +78,15 @@ class TangoDeviceServerBase(Device):
             self.model.sim_quantities[name].set_val(data, self.model.time_func())
 
 
-def get_tango_device_server(model, sim_data_files):
+def get_tango_device_server(models, sim_data_files):
     """Declares a tango device class that inherits the Device class and then
     adds tango attributes (DevEnum and Spectrum type).
 
     Parameters
     ----------
-    model: model.Model instance
-        Device model instance
+    models: dict
+        A dictionary of model.Model instances.
+        e.g. {'model-name': model.Model}
     sim_data_files: list
         A list of direct paths to either xmi/xml/json data files.
 
@@ -170,7 +171,8 @@ def get_tango_device_server(model, sim_data_files):
         MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
 
     # Sim test interface static attribute `attribute_name` info
-    controllable_attribute_names = model.sim_quantities.keys()
+    # Pick the first model instance in the dict.
+    controllable_attribute_names = models.values()[0].sim_quantities.keys()
     attr_control_meta = dict()
     attr_control_meta['enum_labels'] = sorted(controllable_attribute_names)
     attr_control_meta['data_format'] = AttrDataFormat.SCALAR
@@ -202,7 +204,7 @@ def get_tango_device_server(model, sim_data_files):
     # TODO(AR 02-03-2017): Ask the tango community on the upcoming Stack
     # Exchange community (AskTango) and also make follow ups on the next tango
     # releases.
-    for quantity_name, quantity in model.sim_quantities.items():
+    for quantity_name, quantity in models.values()[0].sim_quantities.items():
         d_type = quantity.meta['data_type']
         d_type = str(quantity.meta['data_type'])
         d_format = str(quantity.meta['data_format'])
@@ -213,10 +215,11 @@ def get_tango_device_server(model, sim_data_files):
 
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
         __metaclass__ = DeviceMeta
+        _models = models
 
         def init_device(self):
             super(TangoDeviceServer, self).init_device()
-            self.model = model
+            self.model = self._models[self.get_name()]
             self._not_added_attributes = []
             write_device_properties_to_db(self.get_name(), self.model)
             self._reset_to_default_state()
@@ -459,8 +462,18 @@ def get_parser_instance(sim_datafile):
     return parser_instance
 
 def configure_device_model(sim_data_file=None, test_device_name=None):
+    models = configure_device_models(sim_data_file, test_device_name)
+    if len(models) == 1:
+        return models
+    else:
+        raise RuntimeError('Single model expected, but found {} devices'
+                           ' registered under device server class {}. Rather use'
+                           ' `configure_device_models`.'
+                           .format(len(models), get_device_class(sim_data_file)))
+
+def configure_device_models(sim_data_file=None, test_device_name=None):
     """In essence this function should get the data descriptor file, parse it,
-    take the attribute and command information, populate the model quantities and
+    take the attribute and command information, populate the model(s) quantities and
     actions to be simulated and return that model.
 
     Parameters
@@ -473,12 +486,13 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
 
     Returns
     -------
-    model : model.Model instance
+    models : dict
+        A dictionary of model.Model instances
 
     """
     data_file = sim_data_file
     klass_name = get_device_class(data_file)
-
+    dev_names = None
     if test_device_name is None:
         server_name = helper_module.get_server_name()
         db_instance = helper_module.get_database()
@@ -490,11 +504,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         # We assume that at least one device instance has been
         # registered for that class and device server.
         dev_names = getattr(db_datum, 'value_string')
-        if dev_names:
-            dev_name = dev_names[0]
-        else:
-            # In case a device name is not provided during testing a
-            # default name is assigned since it cannot be found in database.
+        if not dev_names:
             dev_name = 'test/nodb/tangodeviceserver'
     else:
         dev_name = test_device_name
@@ -505,26 +515,33 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
     for file_name in data_file:
         parsers.append(get_parser_instance(file_name))
 
+    # In case there is more than one device instance per class.
+    models = {}
+    if dev_names:
+        for dev_name in dev_names:
+            models[dev_name] = Model(dev_name)
+    else:
+        models[dev_name] = Model(dev_name)
+
     # In case there is more than one parser instance for each file
-    model = Model(dev_name)
-    command_info = {}
-    properties_info = {}
-    override_info = {}
-    for parser in parsers:
-        PopulateModelQuantities(parser, dev_name, model)
-        command_info.update(parser.get_device_command_metadata())
-        properties_info.update(parser.get_device_properties_metadata('deviceProperties'))
-        override_info.update(parser.get_device_cmd_override_metadata())
-    PopulateModelActions(command_info, override_info, dev_name, model)
-    PopulateModelProperties(properties_info, dev_name, model)
-    
-    return model
+    for model in models.values():
+        command_info = {}
+        properties_info = {}
+        override_info = {}
+        for parser in parsers:
+            PopulateModelQuantities(parser, model.name, model)
+            command_info.update(parser.get_device_command_metadata())
+            properties_info.update(parser.get_device_properties_metadata('deviceProperties'))
+            override_info.update(parser.get_device_cmd_override_metadata())
+        PopulateModelActions(command_info, override_info, model.name, model)
+        PopulateModelProperties(properties_info, model.name, model)
+    return models
 
 def generate_device_server(server_name, sim_data_files, directory=''):
     """Create a tango device server python file
 
     Parameters
-    ---------
+    ----------
     server_name: str
         Tango device server name
     sim_data_files: list
@@ -534,12 +551,12 @@ def generate_device_server(server_name, sim_data_files, directory=''):
     lines = ['#!/usr/bin/env python',
              'from tango.server import server_run',
              ('from tango_simlib.tango_sim_generator import ('
-              'configure_device_model, get_tango_device_server)'),
+              'configure_device_models, get_tango_device_server)'),
              '\n\n# File generated on {} by tango-simlib-generator'.format(time.ctime()),
              '\n\ndef main():',
              '    sim_data_files = %s' % sim_data_files,
-             '    model = configure_device_model(sim_data_files)',
-             '    TangoDeviceServers = get_tango_device_server(model, sim_data_files)',
+             '    models = configure_device_models(sim_data_files)',
+             '    TangoDeviceServers = get_tango_device_server(models, sim_data_files)',
              '    server_run(TangoDeviceServers)',
              '\nif __name__ == "__main__":',
              '    main()\n']
@@ -589,8 +606,8 @@ def get_device_class(sim_data_files):
 
 def get_argparser():
     parser = argparse.ArgumentParser(
-            description="Generate a tango data driven simulator, handling"
-            "registration as needed. Supports multiple device per process.")
+        description="Generate a tango data driven simulator, handling"
+        " registration as needed. Supports multiple device per process.")
     required_argument = partial(parser.add_argument, required=True)
     required_argument('--sim-data-file', action='append',
                       help='Simulator description data files(s) '

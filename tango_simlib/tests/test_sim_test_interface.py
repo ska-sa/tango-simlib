@@ -100,12 +100,13 @@ class test_SimControl(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.test_model = FixtureModel('the_test_model')
+        cls.models = {'the_test_model': cls.test_model}
         # The get_tango_device_server function requires  data file which it uses to
         # extract the device class name. However for this test we don't need  it,
         # hence the use of the dummy sim data file.
         cls.device_name = 'test/nodb/tangodeviceserver'
         cls.device_klass = tango_sim_generator.get_tango_device_server(
-            cls.test_model, ['dummy_sim_data_file.txt'])[-1]
+            cls.models, ['dummy_sim_data_file.txt'])[-1]
         cls.tango_context = DeviceTestContext(cls.device_klass,
                                               device_name=cls.device_name,
                                               properties=cls.properties)

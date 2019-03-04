@@ -276,7 +276,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.data_descr_file = [pkg_resources.resource_filename(
             'tango_simlib.tests.config_files', 'Weather_SimDD.json')]
         cls.device_name = 'test/nodb/tangodeviceserver'
-        model = tango_sim_generator.configure_device_model(cls.data_descr_file,
+        model = tango_sim_generator.configure_device_models(cls.data_descr_file,
                                                            cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
                     model, cls.data_descr_file)[0]
@@ -443,7 +443,7 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
         cls.data_descr_files.append(pkg_resources.resource_filename(
             'tango_simlib.tests.config_files', 'MkatVds_SimDD.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
-        model = tango_sim_generator.configure_device_model(
+        model = tango_sim_generator.configure_device_models(
             cls.data_descr_files, cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
             model, cls.data_descr_files)[0]
@@ -604,7 +604,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(ClassCleanupUnittestMixin,
         cls.data_descr_files.append(pkg_resources.resource_filename(
             'tango_simlib.tests.config_files', 'Weather_SimDD_2.json'))
         cls.device_name = 'test/nodb/tangodeviceserver'
-        model = tango_sim_generator.configure_device_model(
+        model = tango_sim_generator.configure_device_models(
             cls.data_descr_files, cls.device_name)
         cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
             model, cls.data_descr_files)[0]
