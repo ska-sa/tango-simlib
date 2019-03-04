@@ -318,6 +318,7 @@ class test_TangoSimGenerator2(ClassCleanupUnittestMixin, unittest.TestCase):
 
     longMessage = True
     server_name = 'MultiDeviceModel/test'
+    num_of_registered_devices = 3
 
     @classmethod
     def setUpClass(cls):
@@ -338,7 +339,7 @@ class test_MultiModel(test_TangoSimGenerator2):
     def test_configure_models(self):
         models = tango_sim_generator.configure_device_models(
             self.data_descr_files)
-        self.assertGreater(len(models.keys()), 1)
+        self.assertEqual(len(models.keys()), self.num_of_registered_devices)
 
     def test_configure_model(self):
         with self.assertRaises(RuntimeError) as cm:
