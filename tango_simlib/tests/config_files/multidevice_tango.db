@@ -1,42 +1,55 @@
-#
-# Resource backup , created Tue Feb 19 12:07:13 GMT 2019
-#
-
-#---------------------------------------------------------
-# SERVER MultiDeviceModel/test, MultiDeviceModel device declaration
-#---------------------------------------------------------
-
-MultiDeviceModel/test/DEVICE/MultiDeviceModel: "test/nodb/tangodeviceserver1",\ 
-                                               "test/nodb/tangodeviceserver2",\ 
+MultiDeviceModel/test/DEVICE/MultiDeviceModel: "test/nodb/tangodeviceserver1",\
+                                               "test/nodb/tangodeviceserver2",\
                                                "test/nodb/tangodeviceserver3"
-
-
-#---------------------------------------------------------
-# CLASS MultiDeviceModel properties
-#---------------------------------------------------------
-
-
-#---------------------------------------------------------
-# SERVER MultiDeviceModel/test, MultiDeviceModelSimControl device declaration
-#---------------------------------------------------------
-
-MultiDeviceModel/test/DEVICE/MultiDeviceModelSimControl: "test/nodb/tangodeviceserversimcontrol1",\ 
-                                                         "test/nodb/tangodeviceserversimcontrol2",\ 
+MultiDeviceModel/test/DEVICE/MultiDeviceModelSimControl: "test/nodb/tangodeviceserversimcontrol1",\
+                                                         "test/nodb/tangodeviceserversimcontrol2",\
                                                          "test/nodb/tangodeviceserversimcontrol3"
 
+#############################################
+# CLASS MultiDeviceModel
 
-# --- test/nodb/tangodeviceserversimcontrol1 properties
 
-test/nodb/tangodeviceserversimcontrol1->model_key: "test/nodb/tangodeviceserver1"
+# CLASS MultiDeviceModel attribute properties
 
-# --- test/nodb/tangodeviceserversimcontrol2 properties
 
-test/nodb/tangodeviceserversimcontrol2->model_key: "test/nodb/tangodeviceserver2"
+#############################################
+# CLASS MultiDeviceModelSimControl
 
-# --- test/nodb/tangodeviceserversimcontrol3 properties
 
-test/nodb/tangodeviceserversimcontrol3->model_key: "test/nodb/tangodeviceserver3"
+# CLASS MultiDeviceModelSimControl attribute properties
 
-#---------------------------------------------------------
-# CLASS MultiDeviceModelSimControl properties
-#---------------------------------------------------------
+
+
+# DEVICE test/nodb/tangodeviceserver1 properties 
+
+
+# DEVICE test/nodb/tangodeviceserver1 attribute properties
+
+# DEVICE test/nodb/tangodeviceserver2 properties 
+
+
+# DEVICE test/nodb/tangodeviceserver2 attribute properties
+
+# DEVICE test/nodb/tangodeviceserver3 properties 
+
+
+# DEVICE test/nodb/tangodeviceserver3 attribute properties
+
+# DEVICE test/nodb/tangodeviceserversimcontrol1 properties 
+
+test/nodb/tangodeviceserversimcontrol1->model_key: test/nodb/tangodeviceserver1
+
+# DEVICE test/nodb/tangodeviceserversimcontrol1 attribute properties
+
+# DEVICE test/nodb/tangodeviceserversimcontrol2 properties 
+
+test/nodb/tangodeviceserversimcontrol2->model_key: test/nodb/tangodeviceserver2
+
+# DEVICE test/nodb/tangodeviceserversimcontrol2 attribute properties
+
+# DEVICE test/nodb/tangodeviceserversimcontrol3 properties 
+
+test/nodb/tangodeviceserversimcontrol3->model_key: test/nodb/tangodeviceserver3
+
+# DEVICE test/nodb/tangodeviceserversimcontrol3 attribute properties
+

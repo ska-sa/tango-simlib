@@ -18,6 +18,8 @@ from mock import Mock
 import tango
 from tango import Database
 
+from katcp.testutils import start_thread_with_cleanup
+
 from tango_simlib import tango_sim_generator
 from tango_simlib.tests import test_sim_test_interface
 from tango_simlib.utilities import (helper_module, sim_xmi_parser,
@@ -317,19 +319,20 @@ class test_TangoSimGenerator2(ClassCleanupUnittestMixin, unittest.TestCase):
     """Test the multi-model generation functionality."""
 
     longMessage = True
-    server_name = 'MultiDeviceModel/test'
+    server_instance = 'MultiDeviceModel/test'
     num_of_registered_devices = 3
+    server_name = 'MultiDeviceModel'
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClassWithCleanup(cls):
         cls.data_descr_files = []
         cls.data_descr_files.append(
             pkg_resources.resource_filename(
                 'tango_simlib.tests.config_files', 'multidevice.xmi'))
-        db_file_name = pkg_resources.resource_filename(
+        cls.db_file_name = pkg_resources.resource_filename(
             'tango_simlib.tests.config_files', 'multidevice_tango.db')
-        cls.db_instance = Database(db_file_name)
-        mock_get_server_name = Mock(return_value=cls.server_name)
+        cls.db_instance = Database(cls.db_file_name)
+        mock_get_server_name = Mock(return_value=cls.server_instance)
         helper_module.get_server_name = mock_get_server_name
         mock_get_database = Mock(return_value=cls.db_instance)
         helper_module.get_database = mock_get_database
@@ -347,9 +350,45 @@ class test_MultiModel(test_TangoSimGenerator2):
                 self.data_descr_files)
         err = cm.exception
         num_devices = len(self.db_instance.get_device_name(
-            self.server_name, 'MultiDeviceModel').value_string)
+            self.server_instance, 'MultiDeviceModel').value_string)
         self.assertEqual(str(err),
                          'Single model expected, but found {} devices'
                          ' registered under device server class MultiDeviceModel.'
                          ' Rather use `configure_device_models`.'
                          .format(num_devices))
+
+
+class test_MultiModelServer(test_TangoSimGenerator2):
+    @classmethod
+    def setUpClassWithCleanup(cls):
+        super(test_MultiModelServer, cls).setUpClassWithCleanup()
+        cls.port = helper_module.get_port()
+        cls.host = helper_module.get_host_address()
+        cls.temp_dir = tempfile.mkdtemp()
+        server_instance = 'test'
+        tango_sim_generator.generate_device_server(
+            cls.server_name, cls.data_descr_files, cls.temp_dir)
+        cls.sub_proc = subprocess.Popen(
+            ["python", "{}/{}".format(cls.temp_dir, cls.server_name),
+             server_instance, "-file={}".format(cls.db_file_name),
+             "-ORBendPoint", "giop:tcp::{}".format(cls.port)])
+        # Note that tango demands that connection to the server must
+        # be delayed by at least 1000 ms of device server start up.
+        time.sleep(1)
+        cls.sim_control_device1 = tango.DeviceProxy(
+            '%s:%s/test/nodb/tangodeviceserversimcontrol1#dbase=no' %
+            (cls.host, cls.port))
+        cls.sim_control_device2 = tango.DeviceProxy(
+            '%s:%s/test/nodb/tangodeviceserversimcontrol2#dbase=no' %
+            (cls.host, cls.port))
+        cls.sim_control_device3 = tango.DeviceProxy(
+            '%s:%s/test/nodb/tangodeviceserversimcontrol3#dbase=no' %
+            (cls.host, cls.port))
+        cls.addCleanupClass(cls.sub_proc.kill)
+        cls.addCleanupClass(shutil.rmtree, cls.temp_dir)
+
+    def test_multiple_sim_control_devices(self):
+        """Test that you can have multiple sim control devices running."""
+        self.assertGreater(self.sim_control_device1.ping(), 0)
+        self.assertGreater(self.sim_control_device2.ping(), 0)
+        self.assertGreater(self.sim_control_device3.ping(), 0)
