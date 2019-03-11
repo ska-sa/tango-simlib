@@ -3,8 +3,14 @@
 
 0.3.0
 -----
-### Added
-    - 
+- Support multiple device and control interfaces per server process (Enhancement)
+    - Addressing issue raised in #56
+- Adding a log when writing to the attributes
+- Reduced the unnecessary logging of the TANGO device
+- Handle non scalar value
+    - Addresses the  issue of not correctly reseting simulated quantity values to default
+    - When writing to a SPECTRUM type attribute, the data structure passed on to the write method is converted into an numpy          ndarray which was not handled. This was causing an error when it was trying to type cast an numpy.ndarray into an int.
+
 
 0.2.1
 -----
