@@ -6,11 +6,11 @@
 0.3.0
 -----
 - Support multiple device and control interfaces per server process (Enhancement)
-    - Addressing issue raised in #56_
+    - Addressing issue raised in 56_
 - Adding a log when writing to the attributes
 - Reduced the unnecessary logging of the TANGO device
 - Handle non scalar value
-    - Linked to the Pull Request #91_
+    - Linked to the Pull Request 91_
 
 0.2.1
 -----
@@ -22,7 +22,7 @@
     - DevULong64
     - DevState
     - DevEncoded
-- Updating documentation. Addresses issue #79_.
+- Updating documentation. Addresses issue 79_.
 
 0.2.0
 -----
