@@ -1,6 +1,11 @@
 .. _fandango: https://github.com/tango-controls/fandango
 .. _79: https://github.com/ska-sa/tango-simlib/issues/79
 
+0.3.0
+-----
+### Added
+    - 
+
 0.2.1
 -----
 - Supporting more tango data types.
