@@ -1,16 +1,16 @@
 .. _fandango: https://github.com/tango-controls/fandango
 .. _79: https://github.com/ska-sa/tango-simlib/issues/79
+.. _56: https://github.com/ska-sa/tango-simlib/issues/56
+.. _91: https://github.com/ska-sa/tango-simlib/pull/91
 
 0.3.0
 -----
 - Support multiple device and control interfaces per server process (Enhancement)
-    - Addressing issue raised in #56
+    - Addressing issue raised in #56_
 - Adding a log when writing to the attributes
 - Reduced the unnecessary logging of the TANGO device
 - Handle non scalar value
-    - Addresses the  issue of not correctly reseting simulated quantity values to default
-    - When writing to a SPECTRUM type attribute, the data structure passed on to the write method is converted into an numpy          ndarray which was not handled. This was causing an error when it was trying to type cast an numpy.ndarray into an int.
-
+    - Linked to the Pull Request #91_
 
 0.2.1
 -----
