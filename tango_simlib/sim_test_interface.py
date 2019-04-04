@@ -93,7 +93,6 @@ class TangoTestDeviceServerBase(Device):
 
         """
         name = attr.get_name()
-        self.info_stream("Reading attribute %s", name)
         attr.set_value(getattr(self.model_quantity, name))
 
     def write_attributes(self, attr):
