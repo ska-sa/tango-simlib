@@ -1,7 +1,7 @@
 pipeline {
 
     agent {
-        label 'camtango_nodb'
+        label 'camtango_db'
     }
 
     stages {
