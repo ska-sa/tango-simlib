@@ -1,5 +1,16 @@
 .. _fandango: https://github.com/tango-controls/fandango
 .. _79: https://github.com/ska-sa/tango-simlib/issues/79
+.. _56: https://github.com/ska-sa/tango-simlib/issues/56
+.. _91: https://github.com/ska-sa/tango-simlib/pull/91
+
+0.3.0
+-----
+- Support multiple device and control interfaces per server process (Enhancement)
+    - Addressing issue raised in 56_
+- Adding a log when writing to the attributes
+- Reduced the unnecessary logging of the TANGO device
+- Handle non scalar value
+    - Linked to the Pull Request 91_
 
 0.2.1
 -----
@@ -11,7 +22,7 @@
     - DevULong64
     - DevState
     - DevEncoded
-- Updating documentation. Addresses issue #79_.
+- Updating documentation. Addresses issue 79_.
 
 0.2.0
 -----
