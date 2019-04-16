@@ -44,7 +44,7 @@ pipeline {
                 sh 'nohup service tango-db start'
                 sh 'pip install . -U --user'
                 sh 'pip install nose_xunitmp --user'
-                sh 'python setup.py test --with-xunitmp --xunitmp-file nosetests.xml'
+                sh "python setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE}"
             }
             post {
                 always {
