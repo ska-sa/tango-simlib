@@ -3,6 +3,10 @@ pipeline {
     agent {
         label 'camtango_db'
     } 
+
+    environment {
+        KATPACKAGE = "${(env.JOB_NAME - env.JOB_BASE_NAME) - '-multibranch/'}"
+    }
     
     stages {
         
@@ -16,6 +20,17 @@ pipeline {
                     doGenerateSubmoduleConfigurations: false,
                     submoduleCfg: []
                 ])
+            }
+        }
+
+        stage ('Static analysis') {
+            steps {
+                sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
+            }
+            post {
+                always {
+                    recordIssues(tool: pyLint(pattern: 'pylint.out'))
+                }
             }
         }
 
@@ -34,30 +49,27 @@ pipeline {
             post {
                 always {
                     junit 'nosetests.xml'
-                    archiveArtifacts 'nosetests.xml'
+                    cobertura coberturaReportFile: 'coverage.xml'
+                    archiveArtifacts '*.xml'
                 }
             }
         }
 
-        stage ('Build .whl & .deb') {
+        stage('Build & publish packages') {
+            when {
+                branch 'master'
+            }
+
             steps {
                 sh 'fpm -s python -t deb .'
                 sh 'python setup.py bdist_wheel'
                 sh 'mv *.deb dist/'
-            }
-        }
-
-        stage ('Archive build artifact: .whl & .deb') {
-            steps {
                 archiveArtifacts 'dist/*'
-            }
-        }
 
-        stage ('Trigger downstream publish') {
-            steps {
-                build job: 'publish-local', parameters: [
-                    string(name: 'artifact_source', value: "${currentBuild.absoluteUrl}/artifact/dist/*zip*/dist.zip"),
-                    string(name: 'source_branch', value: "${env.BRANCH_NAME}")]
+                // Trigger downstream publish job
+                build job: 'ci.publish-artifacts', parameters: [
+                        string(name: 'job_name', value: "${env.JOB_NAME}"),
+                        string(name: 'build_number', value: "${env.BUILD_NUMBER}")]
             }
         }
     }
