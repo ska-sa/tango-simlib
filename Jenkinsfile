@@ -1,46 +1,77 @@
-node('docker') {
+pipeline {
 
-    withDockerContainer(
-        image: 'camtango_db:latest',
-        args: '-u root'
-    ) {
+    agent {
+        label 'camtango_db'
+    } 
+
+    environment {
+        KATPACKAGE = "${(env.JOB_NAME - env.JOB_BASE_NAME) - '-multibranch/'}"
+    }
+    
+    stages {
         
-    stage 'Checkout SCM'
-        checkout([
-            $class: 'GitSCM',
-            branches: [[name: "refs/heads/${env.BRANCH_NAME}"]],
-            extensions: [[$class: 'LocalBranch']],
-            userRemoteConfigs: scm.userRemoteConfigs,
-            doGenerateSubmoduleConfigurations: false,
-            submoduleCfg: []
-        ])
+        stage ('Checkout SCM') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "refs/heads/${env.BRANCH_NAME}"]],
+                    extensions: [[$class: 'LocalBranch']],
+                    userRemoteConfigs: scm.userRemoteConfigs,
+                    doGenerateSubmoduleConfigurations: false,
+                    submoduleCfg: []
+                ])
+            }
+        }
 
-    stage 'Install & Unit Tests'
-        timestamps {
-            timeout(time: 30, unit: 'MINUTES') {
-                try {
-                    sh 'nohup service mysql start'
-                    sh 'nohup service tango-db start'
-                    sh 'pip install . -U'
-                    sh 'pip install nose_xunitmp'
-                    sh 'python setup.py test --with-xunitmp --xunitmp-file nosetests.xml'
-                } finally {
-                    step([$class: 'JUnitResultArchiver', testResults: 'nosetests.xml'])
+        stage ('Static analysis') {
+            steps {
+                sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
+            }
+            post {
+                always {
+                    recordIssues(tool: pyLint(pattern: 'pylint.out'))
                 }
             }
         }
-    stage 'Build .whl & .deb'
-        sh 'fpm -s python -t deb .'
-        sh 'python setup.py bdist_wheel'
-        sh 'mv *.deb dist/'
 
-    stage 'Archive build artifact: .whl & .deb'
-        archive 'dist/*'
+        stage ('Install & Unit Tests') {
+            options {
+                timestamps()
+                timeout(time: 30, unit: 'MINUTES')
+            }
+            steps {
+                sh 'nohup service mysql start'
+                sh 'nohup service tango-db start'
+                sh 'pip install . -U --user'
+                sh 'pip install nose_xunitmp --user'
+                sh "python setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE}"
+            }
+            post {
+                always {
+                    junit 'nosetests.xml'
+                    cobertura coberturaReportFile: 'coverage.xml'
+                    archiveArtifacts '*.xml'
+                }
+            }
+        }
 
-    stage 'Trigger downstream publish'
-        build job: 'publish-local', parameters: [
-            string(name: 'artifact_source', value: "${currentBuild.absoluteUrl}/artifact/dist/*zip*/dist.zip"),
-            string(name: 'source_branch', value: "${env.BRANCH_NAME}")]
+        stage('Build & publish packages') {
+            when {
+                branch 'master'
+            }
+
+            steps {
+                sh 'fpm -s python -t deb .'
+                sh 'python setup.py bdist_wheel'
+                sh 'mv *.deb dist/'
+                archiveArtifacts 'dist/*'
+
+                // Trigger downstream publish job
+                build job: 'ci.publish-artifacts', parameters: [
+                        string(name: 'job_name', value: "${env.JOB_NAME}"),
+                        string(name: 'build_number', value: "${env.BUILD_NUMBER}")]
+            }
+        }
     }
-
 }
+
