@@ -22,11 +22,11 @@ setup(name="tango_simlib",
       use_katversion=True,
       install_requires=[
           "PyTango>=9.2.2",
-          "numpy",
+          "numpy<1.17",
           "jsonschema"],
       tests_require=[
           'katcp',
-          'numpy',
+          'numpy<1.17',
           'nose_xunitmp'],
       extras_require={
           'docs': ["sphinx-pypi-upload",
