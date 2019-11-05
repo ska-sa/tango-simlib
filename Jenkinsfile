@@ -2,14 +2,14 @@ pipeline {
 
     agent {
         label 'camtango_db'
-    } 
+    }
 
     environment {
         KATPACKAGE = "${(env.JOB_NAME - env.JOB_BASE_NAME) - '-multibranch/'}"
     }
-    
+
     stages {
-        
+
         stage ('Checkout SCM') {
             steps {
                 checkout([
@@ -26,7 +26,9 @@ pipeline {
         stage ('Static analysis') {
             steps {
                 sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
+                sh "lint_diff.sh -r ${KATPACKAGE}"
             }
+
             post {
                 always {
                     recordIssues(tool: pyLint(pattern: 'pylint.out'))
@@ -55,7 +57,7 @@ pipeline {
             }
         }
 
-        stage('Build & publish packages') {
+        stage ('Build & publish packages') {
             when {
                 branch 'master'
             }
