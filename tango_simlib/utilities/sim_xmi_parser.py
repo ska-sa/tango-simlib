@@ -1,4 +1,4 @@
-######################################################################################### 
+#########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
@@ -430,10 +430,15 @@ class XmiParser(Parser):
 
             # The DevVarTypeArray data type specified in pogo writes
             # TypeArray in xmi file instead.
-            if arg_type in ['FloatArray', 'DoubleArray', 'StringArray', 'LongArray',
-                            'ULongArray']:
+            if arg_type in ['FloatArray', 'DoubleArray',
+                            'StringArray', 'CharArray',
+                            'LongArray', 'ULongArray',
+                            'ShortArray', 'UShortArray',
+                            'IntArray', 'UIntArray',
+                            'LongStringArray', 'DoubleStringArray']:
                 arg_type = getattr(CmdArgType, 'DevVar' + arg_type)
-            elif arg_type in ['FloatVector', 'DoubleVector', 'StringVector']:
+            elif arg_type in ['FloatVector', 'DoubleVector', 'StringVector',
+                              'ShortVector', 'IntVector', 'LongVector', 'ULongVector']:
                 arg_type = (
                     getattr(CmdArgType, 'DevVar' + arg_type.replace('Vector', 'Array')))
             else:
@@ -446,7 +451,6 @@ class XmiParser(Parser):
                 " '{}' with 'Var{}' in the configuration file".format(*(3*(arg_type,))))
 
         return arg_type
-
 
     def get_device_attribute_metadata(self):
         """Converts the device_attributes data structure into a dictionary
@@ -569,7 +573,7 @@ class XmiParser(Parser):
         -------
         commands : dict
             A dictionary of all the device commands together with their metadata
-            specified in the POGO generated XMI file. The key represents the name of the 
+            specified in the POGO generated XMI file. The key represents the name of the
             command and the value is a dictionary
             of all the command's metadata.
 
