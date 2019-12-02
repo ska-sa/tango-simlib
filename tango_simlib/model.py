@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
@@ -229,7 +232,7 @@ class PopulateModelQuantities(object):
                                   if param_val)
                 model_attr_props = dict(model_attr_props.items() + attr_props.items())
 
-            if model_attr_props.has_key('quantity_simulation_type'):
+            if 'quantity_simulation_type' in model_attr_props:
                 if model_attr_props['quantity_simulation_type'] == 'ConstantQuantity':
                     try:
                         initial_value = model_attr_props['initial_value']
