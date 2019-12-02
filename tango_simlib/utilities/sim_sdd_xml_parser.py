@@ -6,6 +6,9 @@
 """This module performs the parsing of the SKA Self-Description Data XML schema
 file generated from the DSL.
 """
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 import xml.etree.ElementTree as ET
 
 from tango_simlib.utilities.base_parser import Parser
