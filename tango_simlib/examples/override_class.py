@@ -6,6 +6,9 @@
 """
 An example of the user-defined override class.
 """
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 
 import logging
 
