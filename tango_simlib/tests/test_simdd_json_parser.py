@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 ######################################################################################### 
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
@@ -171,7 +174,7 @@ class test_PopulateModelQuantities(GenericSetup):
             sim_quantity_metadata = getattr(sim_quantity, 'meta')
             attr_meta = attribute_metadata[sim_quantity_name]
             for attr_param_name, attr_param_val in attr_meta.items():
-                self.assertTrue(sim_quantity_metadata.has_key(attr_param_name),
+                self.assertTrue(attr_param_name in sim_quantity_metadata,
                                 "The param '%s' was not added to the model quantity"
                                 " '%s'" % (attr_param_name, sim_quantity_name))
                 self.assertEqual(
@@ -252,7 +255,7 @@ class test_PopulateModelActions(GenericSetup):
         override_info = self.simdd_parser.get_device_cmd_override_metadata()
         model.PopulateModelActions(cmd_info, override_info, device_name, sim_model)
         action_on = sim_model.sim_actions['On']
-        self.assertEqual(action_on.func.im_class, override_class.OverrideWeather)
+        self.assertEqual(action_on.func.__self__.__class__, override_class.OverrideWeather)
 
     def test_model_action_behaviour(self):
         device_name = 'tango/device/instance'
