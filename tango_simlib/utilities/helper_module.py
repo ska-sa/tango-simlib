@@ -1,4 +1,4 @@
-######################################################################################### 
+#########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
@@ -61,7 +61,7 @@ TANGO_NOT_SPECIFIED_PROPS = ['Not specified', 'No display unit', 'No standard un
 DEFAULT_CMD_PROPS = ('name', 'doc_in', 'dtype_in', 'doc_out', 'dtype_out')
 
 def get_server_name():
-    """Gets the TANGO server name from the command line arguments
+    """Gets the TANGO server name from the command line arguments.
 
     Returns
     -------

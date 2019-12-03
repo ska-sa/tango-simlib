@@ -1,4 +1,4 @@
-######################################################################################### 
+#########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
@@ -8,9 +8,8 @@ file generated from the DSL.
 """
 import xml.etree.ElementTree as ET
 
+from tango import DevBoolean, DevDouble, DevLong, DevString
 from tango_simlib.utilities.base_parser import Parser
-
-from tango import DevDouble, DevLong, DevBoolean, DevString
 
 SDD_MP_PARAMS_TANGO_MAP = {
     'name': 'name',
@@ -50,7 +49,7 @@ class SDDParser(Parser):
         self._convert_attribute_info()
 
     def _extract_command_info(self, cmd_info):
-        """Extracts all the information of the XML element 'CommandList'
+        """Extracts all the information of the XML element 'CommandList'.
 
         Parameters
         ----------
@@ -195,12 +194,12 @@ class SDDParser(Parser):
             }
 
         """
-        cmd_responses = {}      # To store a list of the cmd_responses
+        cmd_responses = {}  # To store a list of the cmd_responses
         for response in prop:
-            cmd_response_meta = {}      # Stores the response properties
+            cmd_response_meta = {}  # Stores the response properties
             for resp_prop in response:
                 if resp_prop.tag in ['ResponseParameters']:
-                    response_params = {}   # Stores the response paramaters
+                    response_params = {}  # Stores the response paramaters
                     cmd_response_meta[resp_prop.tag] = {}
                     for parameter in resp_prop:
                         # Stores the properties of the parameter
@@ -220,7 +219,7 @@ class SDDParser(Parser):
         cmd_meta[prop.tag].update(cmd_responses)
 
     def _extract_monitoring_point_info(self, mp_info):
-        """Extracts all the information of the XML element 'MonitoringPointsList'
+        """Extracts all the information of the XML element 'MonitoringPointsList'.
 
         Parameters
         ----------
@@ -318,7 +317,8 @@ class SDDParser(Parser):
         return {}
 
     def _convert_attribute_info(self):
-        """Converts the monitoring points data structure into a dictionary
+        """
+        Converts the monitoring points data structure into a dictionary
         to make searching easier.
 
         A dictionary of all the element's monitoring points together with their

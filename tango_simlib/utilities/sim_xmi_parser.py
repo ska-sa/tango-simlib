@@ -94,7 +94,8 @@ class XmiParser(Parser):
         self._tree = None
 
     def parse(self, sim_xmi_file):
-        """Read simulator description data from xmi file into `self._device_properties`
+        """
+        Read simulator description data from xmi file into `self._device_properties`.
 
         Stores all the simulator description data from the xmi tree into
         appropriate attribute, command and device property data structures.
@@ -262,8 +263,6 @@ class XmiParser(Parser):
                 'name': 'Constant'
             }
 
-
-
             description_data.find('eventCriteria').attrib contains
             {
                 'relChange': '10',
@@ -284,7 +283,7 @@ class XmiParser(Parser):
             Dictionary of all attribute data required to create a tango attribute
 
         """
-        attribute_data = dict()
+        attribute_data = {}
         attribute_data['dynamicAttributes'] = description_data.attrib.copy()
 
         attType = attribute_data['dynamicAttributes']['attType']
@@ -357,7 +356,7 @@ class XmiParser(Parser):
             to create a tango device property
 
         """
-        property_data = dict()
+        property_data = {}
         property_data[property_group] = description_data.attrib.copy()
         property_data[property_group]['type'] = (
             self._get_arg_type(description_data))
@@ -405,8 +404,7 @@ class XmiParser(Parser):
         if arg_type.find('Const') != -1:
             arg_type = arg_type.replace('Const', '')
         # The out_type of the device State command is
-        # tango._tango.CmdArgType.DevState instead of the default
-        # tango.utils.DevState.
+        # tango._tango.CmdArgType.DevState instead of the default tango.utils.DevState.
         if arg_type == 'State':
             return CmdArgType.DevState
         try:
@@ -415,8 +413,7 @@ class XmiParser(Parser):
             try:
                 arg_type = INT_TYPE_MAP[arg_type]
             except KeyError:
-                MODULE_LOGGER.info("arg_type {} is not an integer type.".
-                                   format(arg_type))
+                MODULE_LOGGER.info("arg_type {} is not an integer type.".format(arg_type))
 
             # The DevVarTypeArray data type specified in pogo writes
             # TypeArray in xmi file instead.

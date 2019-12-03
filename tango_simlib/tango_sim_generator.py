@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-######################################################################################### 
+#########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
@@ -9,28 +9,27 @@ Simlib library generic simulator generator utility to be used to generate an act
 TANGO device that exhibits the behaviour defined in the data description file.
 """
 
-import os
-import weakref
-import logging
 import argparse
+import logging
+import os
 import time
-
+import weakref
 from functools import partial
+
 import numpy as np
-
-from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType, CmdArgType,
-                   Database, DevState, UserDefaultAttrProp)
-from tango.server import attribute, Device, DeviceMeta, command
-
-from tango_simlib.model import (Model, PopulateModelActions, PopulateModelProperties,
-                                PopulateModelQuantities, INITIAL_CONSTANT_VALUE_TYPES)
+from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType,
+                   CmdArgType, Database, DevState, UserDefaultAttrProp)
+from tango.server import Device, DeviceMeta, attribute, command
+from tango_simlib.model import (INITIAL_CONSTANT_VALUE_TYPES, Model,
+                                PopulateModelActions, PopulateModelProperties,
+                                PopulateModelQuantities)
+from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.utilities import helper_module
+from tango_simlib.utilities.fandango_json_parser import \
+    FandangoExportDeviceParser
+from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
-from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
-from tango_simlib.utilities.fandango_json_parser import FandangoExportDeviceParser
-from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
-
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -48,7 +47,7 @@ class TangoDeviceServerBase(Device):
         self.model.update()
 
     def read_attributes(self, attr):
-        """Method reading an attribute value
+        """Method reading an attribute value.
 
         Parameters
         ----------
@@ -63,7 +62,7 @@ class TangoDeviceServerBase(Device):
             attr.set_value_date_quality(value, update_time, quality)
 
     def write_attributes(self, attr):
-        """Method writing an attribute value
+        """Method writing an attribute value.
 
         Parameters
         ----------
@@ -111,7 +110,7 @@ def get_tango_device_server(models, sim_data_files):
         tango_device_instance._attribute_name_index = val
         tango_device_instance.model_quantity = tango_device_instance.model.sim_quantities[
             sorted(tango_device_instance.model.sim_quantities.keys())[val]]
-    
+
     def add_static_attribute(tango_device_class, attr_name, attr_meta):
         """Add any TANGO attribute of to the device server before start-up.
 
@@ -284,7 +283,7 @@ def get_tango_device_server(models, sim_data_files):
                                     adjustable_val = map(val_type, adjustable_val)
                                 else:
                                     adjustable_val = [[val_type(curr_val) for curr_val in
-                                                      sublist] for sublist in 
+                                                      sublist] for sublist in
                                                       adjustable_val]
                             else:
                                 if attr_data_format == 'SCALAR':
@@ -292,7 +291,7 @@ def get_tango_device_server(models, sim_data_files):
                                 elif attr_data_format == 'SPECTRUM':
                                     adjustable_val = [val] * max_dim_x
                                 else:
-                                    adjustable_val = [[val] * max_dim_x 
+                                    adjustable_val = [[val] * max_dim_x
                                                       for i in range(max_dim_y)]
                         else:
                             if (sim_quantity_meta_info['quantity_simulation_type'] ==
@@ -411,7 +410,7 @@ def get_tango_device_server(models, sim_data_files):
     return [TangoDeviceServer, SimControl]
 
 def write_device_properties_to_db(device_name, model, db_instance=None):
-    """Writes device properties, including optional default value, to tango DB
+    """Writes device properties, including optional default value, to tango DB.
 
     Parameters
     ----------
@@ -430,7 +429,7 @@ def write_device_properties_to_db(device_name, model, db_instance=None):
             device_name, {prop_name: prop_meta['DefaultPropValue']})
 
 def get_parser_instance(sim_datafile):
-    """This method returns an appropriate parser instance to generate a Tango device
+    """This method returns an appropriate parser instance to generate a Tango device.
 
     Parameters
     ----------
@@ -472,7 +471,8 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
                            .format(len(models), get_device_class(sim_data_file)))
 
 def configure_device_models(sim_data_file=None, test_device_name=None):
-    """In essence this function should get the data descriptor file, parse it,
+    """
+    In essence this function should get the data descriptor file, parse it,
     take the attribute and command information, populate the model(s) quantities and
     actions to be simulated and return that model.
 
@@ -538,7 +538,7 @@ def configure_device_models(sim_data_file=None, test_device_name=None):
     return models
 
 def generate_device_server(server_name, sim_data_files, directory=''):
-    """Create a tango device server python file
+    """Create a tango device server python file.
 
     Parameters
     ----------
@@ -566,7 +566,7 @@ def generate_device_server(server_name, sim_data_files, directory=''):
     os.chmod(os.path.join(directory, "%s" % server_name), 477)
 
 def get_device_class(sim_data_files):
-    """Get device class name from specified xmi/simdd description file
+    """Get device class name from specified xmi/simdd description file.
 
     Parameters
     ----------

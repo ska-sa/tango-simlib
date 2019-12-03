@@ -2,9 +2,7 @@
 from PyTango.server import server_run
 from tango_simlib.tango_sim_generator import (configure_device_models, get_tango_device_server)
 
-
 # File generated on Tue Feb 12 15:21:00 2019 by tango-simlib-tango-simulator-generator
-
 
 def main():
     sim_data_files = ['/home/kat/svn/tango-simlib/tango_simlib/tests/config_files/Weather.xmi', '/home/kat/svn/tango-simlib/tango_simlib/tests/config_files/Weather_SimDD.json']

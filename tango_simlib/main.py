@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-######################################################################################### 
+#########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
@@ -14,10 +14,9 @@ from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 
 
 def simulator_main(sim_class, sim_control_class=TangoTestDeviceServerBase):
-    """Main function for a simulator with class sim_class
+    """Main function for a simulator with class sim_class.
 
-    sim_class is a tango.server.Device subclass
-
+    sim_class is a tango.server.Device subclass.
     """
     run_ipython = '--ipython' in sys.argv
     if run_ipython:
