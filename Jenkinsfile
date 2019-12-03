@@ -57,7 +57,7 @@ pipeline {
                 stage ('py27') {
                     steps {
                         echo "Running nosetests on Python 2.7"
-                        sh 'tox -e py27 --sitepackages -vv'
+                        sh 'tox -e py27 -vv'
                     }
                 }
 
@@ -65,7 +65,7 @@ pipeline {
                     steps {
                         echo "Not yet implemented."
                         // echo "Running nosetests on Python 3.6"
-                        // sh 'tox -e py36 --sitepackages -vv'
+                        // sh 'tox -e py36 -vv'
                     }
                 }
             }
