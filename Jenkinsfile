@@ -57,15 +57,15 @@ pipeline {
                 stage ('py27') {
                     steps {
                         echo "Running nosetests on Python 2.7"
-                        sh 'tox -e py27'
+                        sh 'tox -e py27 --sitepackages -vv'
                     }
                 }
 
                 stage ('py36') {
                     steps {
                         echo "Not yet implemented."
-                        //echo "Running nosetests on Python 3.6"
-                        //sh 'tox -e py36'
+                        // echo "Running nosetests on Python 3.6"
+                        // sh 'tox -e py36 --sitepackages -vv'
                     }
                 }
             }
@@ -81,10 +81,10 @@ pipeline {
                         autoUpdateHealth: true,
                         autoUpdateStability: true,
                         zoomCoverageChart: true,
-                        //lineCoverageTargets: '80, 80, 80',
-                        //conditionalCoverageTargets: '80, 80, 80',
-                        //classCoverageTargets: '80, 80, 80',
-                        //fileCoverageTargets: '80, 80, 80',
+                        // lineCoverageTargets: '80, 80, 80',
+                        // conditionalCoverageTargets: '80, 80, 80',
+                        // classCoverageTargets: '80, 80, 80',
+                        // fileCoverageTargets: '80, 80, 80',
                     )
                     archiveArtifacts '*.xml'
                 }
