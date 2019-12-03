@@ -23,18 +23,18 @@ pipeline {
             }
         }
 
-        stage ('Static analysis') {
-            steps {
-                sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
-                //sh "lint_diff.sh -r ${KATPACKAGE}"
-            }
+        // stage ('Static analysis') {
+        //     steps {
+        //         sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
+        //         sh "lint_diff.sh -r ${KATPACKAGE}"
+        //     }
 
-            post {
-                always {
-                    recordIssues(tool: pyLint(pattern: 'pylint.out'))
-                }
-            }
-        }
+        //     post {
+        //         always {
+        //             recordIssues(tool: pyLint(pattern: 'pylint.out'))
+        //         }
+        //     }
+        // }
 
         stage ('Start Services') {
             steps {
