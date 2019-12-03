@@ -40,6 +40,7 @@ pipeline {
             steps {
                 sh 'nohup service mysql start'
                 sh 'nohup service tango-db start'
+                sh 'python -m pip install nose_xunitmp'
             }
         }
 
