@@ -36,22 +36,56 @@ pipeline {
             }
         }
 
+        stage ('Start Services') {
+            steps {
+                sh 'nohup service mysql start'
+                sh 'nohup service tango-db start'
+            }
+        }
+
         stage ('Install & Unit Tests') {
             options {
                 timestamps()
                 timeout(time: 30, unit: 'MINUTES')
             }
-            steps {
-                sh 'nohup service mysql start'
-                sh 'nohup service tango-db start'
-                sh 'pip install . -U --user'
-                sh 'pip install nose_xunitmp --user'
-                sh "python setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE}"
+
+            environment {
+                test_flags = "${KATPACKAGE}"
             }
+
+             parallel {
+                stage ('py27') {
+                    steps {
+                        echo "Running nosetests on Python 2.7"
+                        sh 'tox -e py27'
+                    }
+                }
+
+                stage ('py36') {
+                    steps {
+                        echo "Not yet implemented."
+                        //echo "Running nosetests on Python 3.6"
+                        //sh 'tox -e py36'
+                    }
+                }
+            }
+
             post {
                 always {
-                    junit 'nosetests.xml'
-                    cobertura coberturaReportFile: 'coverage.xml'
+                    junit 'nosetests_*.xml'
+                    cobertura (
+                        coberturaReportFile: 'coverage_*.xml',
+                        failNoReports: true,
+                        failUnhealthy: true,
+                        failUnstable: true,
+                        autoUpdateHealth: true,
+                        autoUpdateStability: true,
+                        zoomCoverageChart: true,
+                        lineCoverageTargets: '80, 80, 80',
+                        conditionalCoverageTargets: '80, 80, 80',
+                        classCoverageTargets: '80, 80, 80',
+                        fileCoverageTargets: '80, 80, 80',
+                    )
                     archiveArtifacts '*.xml'
                 }
             }
