@@ -1,4 +1,4 @@
-######################################################################################### 
+#########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
@@ -6,10 +6,10 @@
 import weakref
 
 from tango import Attr, AttrWriteType, DevDouble, DevState, UserDefaultAttrProp
-from tango.server import attribute, Device, device_property, DeviceMeta
-
+from tango.server import Device, DeviceMeta, attribute, device_property
 from tango_simlib import model
 from tango_simlib.utilities.helper_module import generate_cmd_handler
+
 
 class TangoTestDeviceServerBase(Device):
     __metaclass__ = DeviceMeta
@@ -17,8 +17,8 @@ class TangoTestDeviceServerBase(Device):
     instances = weakref.WeakValueDictionary()
 
     model_key = device_property(
-        dtype=str, doc=
-        "Simulator model key, usually the TANGO name of the simulated device.")
+        dtype=str,
+        doc="Simulator model key, usually the TANGO name of the simulated device.")
 
     def __init__(self, dev_class, name):
         super(TangoTestDeviceServerBase, self).__init__(dev_class, name)
@@ -54,7 +54,7 @@ class TangoTestDeviceServerBase(Device):
             self.add_command(cmd_handler, device_level=True)
 
     def initialize_dynamic_attributes(self):
-        """The device method that sets up attributes during run time"""
+        """The device method that sets up attributes during run time."""
         # Get attributes to control the device model quantities
         # from class variables of the quantities included in the device model.
         models = set([quant.__class__
@@ -84,7 +84,7 @@ class TangoTestDeviceServerBase(Device):
         setattr(self.model, 'paused', is_active)
 
     def read_attributes(self, attr):
-        """Method reading an attribute value
+        """Method reading an attribute value.
 
         Parameters
         ----------
@@ -96,7 +96,7 @@ class TangoTestDeviceServerBase(Device):
         attr.set_value(getattr(self.model_quantity, name))
 
     def write_attributes(self, attr):
-        """Method writing an attribute value
+        """Method writing an attribute value.
 
         Parameters
         ----------

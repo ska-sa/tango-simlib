@@ -1,4 +1,4 @@
-######################################################################################### 
+#########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
@@ -6,15 +6,15 @@
 """This module performs the parsing of the Simulator Description Datafile,
 containing the information needed to instantiate a useful device simulator.
 """
-import logging
 import json
-import pkg_resources
-from jsonschema import validate
+import logging
 
-from tango import CmdArgType, AttrDataFormat
+import pkg_resources
+
+from jsonschema import validate
+from tango import AttrDataFormat, CmdArgType
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.base_parser import Parser
-
 
 MODULE_LOGGER = logging.getLogger(__name__)
 EXPECTED_SIMULATION_PARAMETERS = {
@@ -36,7 +36,7 @@ class SimddParser(Parser):
 
     """
     def __init__(self):
-        super(SimddParser, self).__init__() 
+        super(SimddParser, self).__init__()
         self._device_override_class = {}
 
     def parse(self, simdd_json_file):
@@ -85,7 +85,7 @@ class SimddParser(Parser):
                 self._device_override_class.update(device_prop_info)
 
     def get_device_data_components_dict(self, elements, element_type):
-        """Extract description data from the simdd json element
+        """Extract description data from the simdd json element.
 
         Parameters
         ----------
@@ -151,7 +151,7 @@ class SimddParser(Parser):
                 `self._device_attributes` or `self._device_commands`
 
         """
-        device_dict = dict()
+        device_dict = {}
         params_template = helper_module.DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE.copy()
         for element_data in elements:
             for element_info in element_data.values():
@@ -268,7 +268,7 @@ class SimddParser(Parser):
                     for param_name, param_val in self._get_reformatted_data(
                     value, element_type).items()]
 
-        formated_info = dict()
+        formated_info = {}
         for param_name, param_val in sim_device_element_info.items():
             if isinstance(param_val, dict):
                 if 'dataSimulationParameters' in param_name:
@@ -309,7 +309,7 @@ class SimddParser(Parser):
             elif param_name in ['actions']:
                 actions = []
                 for item in param_val:
-                    string_items = dict()
+                    string_items = {}
                     for key, value in item.iteritems():
                         string_items[str(key)] = str(value)
                     actions.append(string_items)
@@ -413,7 +413,7 @@ class SimddParser(Parser):
 
     def get_device_cmd_override_metadata(self):
         """Returns more formatted device override info data structure in dict format.
-        
+
         e.g.
             {
                 'Sim_<class-name>_Override': {

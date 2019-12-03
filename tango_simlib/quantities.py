@@ -1,19 +1,18 @@
-######################################################################################### 
+#########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+import abc
 import logging
 import time
-import abc
-
 from random import gauss
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
 inf = float('inf')
 ninf = float('-inf')
-registry = dict()
+registry = {}
 
 
 def register_quantity_class(cls):
@@ -23,7 +22,7 @@ def register_quantity_class(cls):
 
 
 class Quantity(object):
-    """Attributes that should be adjustable via a simulation control interface
+    """Attributes that should be adjustable via a simulation control interface.
 
     Parameters
     ----------
@@ -63,7 +62,7 @@ class Quantity(object):
 
     @abc.abstractmethod
     def next_val(self, t):
-        """Return the next simulated value for simulation time at t seconds
+        """Return the next simulated value for simulation time at t seconds.
 
         Must update attributes `last_val` with the new value and `last_update_time` with
         the simulation time
@@ -77,7 +76,7 @@ class Quantity(object):
         pass
 
     def set_val(self, val, t):
-        """Set a value to the quantity
+        """Set a value to the quantity.
 
         Parameters
         ----------
@@ -91,7 +90,7 @@ class Quantity(object):
         self.last_val = val
 
     def default_val(self, t):
-        """Set a default value of 0 to the quantity
+        """Set a default value of 0 to the quantity.
 
         Parameters
         ----------
@@ -104,7 +103,7 @@ class Quantity(object):
 
 
 class GaussianSlewLimited(Quantity):
-    """A Gaussian random variable a slew-rate limit and clipping
+    """A Gaussian random variable a slew-rate limit and clipping.
 
     Parameters
     ----------
@@ -141,7 +140,7 @@ class GaussianSlewLimited(Quantity):
         self.last_val = mean
 
     def next_val(self, t):
-        """Returns the next value of the simulation
+        """Returns the next value of the simulation.
 
         Parameters
         ----------
@@ -164,10 +163,10 @@ register_quantity_class(GaussianSlewLimited)
 
 
 class ConstantQuantity(Quantity):
-    """A quantity that does not change unless explicitly set"""
+    """A quantity that does not change unless explicitly set."""
 
     def next_val(self, t):
-        """Returns the last value as the next simulated value
+        """Returns the last value as the next simulated value.
 
         Parameters
         ----------
@@ -178,7 +177,7 @@ class ConstantQuantity(Quantity):
         return self.last_val
 
     def default_val(self, t):
-        """Set a default value of `True` to the quantity
+        """Set a default value of `True` to the quantity.
 
         Parameters
         ----------

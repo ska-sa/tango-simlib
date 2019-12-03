@@ -1,15 +1,17 @@
-######################################################################################### 
+#########################################################################################
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 import abc
 
+
 class Parser(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self):
-        """Parser class handling a simulator description datafile.
+        """
+        Parser class handling a simulator description datafile.
 
         Creating an instance of this class requires calling :meth:`parse`
         afterwards to extract all the provided tango attributes, commands,
@@ -29,7 +31,7 @@ class Parser(object):
     @abc.abstractmethod
     def parse(self, data_file):
         pass
-    
+
     @abc.abstractmethod
     def get_device_attribute_metadata(self):
         pass
@@ -41,7 +43,7 @@ class Parser(object):
     @abc.abstractmethod
     def get_device_properties_metadata(self, property_group):
         pass
-    
+
     @abc.abstractmethod
     def get_device_cmd_override_metadata(self):
         pass

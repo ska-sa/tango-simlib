@@ -4,18 +4,19 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-"""This module performs the parsing of the TANGO device data json file as produced by
+"""
+This module performs the parsing of the TANGO device data json file as produced by
 the fandango library, containing the information needed to instantiate a useful device
 simulator.
+
 Instructions on how to create this json file can be found at the link below:
 https://github.com/tango-controls/fandango/blob/master/doc/recipes/ExportDeviceData.rst
 """
 
-import logging
 import json
+import logging
 
-from tango import CmdArgType, AttrDataFormat
-
+from tango import AttrDataFormat, CmdArgType
 from tango_simlib.utilities.base_parser import Parser
 from tango_simlib.utilities.helper_module import json_load_byteified
 
@@ -52,15 +53,16 @@ class FandangoExportDeviceParser(Parser):
                 self.update_property_data(elements)
             elif data_component == 'dev_class':
                 self.device_class_name = elements
-    
+
     def preprocess_command_types(self, command_data):
-        """Convert the command input and output data types from strings to the TANGO
+        """
+        Convert the command input and output data types from strings to the TANGO
         types and rename the command properties to match with the keyword arguments of
         the command signature.
         """
         for cmd_name, cmd_config in command_data.items():
             self._device_commands[cmd_name] = {}
-            
+
             for cmd_prop, cmd_prop_value in cmd_config.items():
                 try:
                     if cmd_prop in ['in_type', 'out_type']:
@@ -75,8 +77,7 @@ class FandangoExportDeviceParser(Parser):
                         "parameter in the TANGO library", cmd_prop)
 
     def preprocess_attribute_types(self, attribute_data):
-        """Convert the attribute data types from strings to the TANGO types.
-        """
+        """Convert the attribute data types from strings to the TANGO types."""
         for attr, attr_config in attribute_data.items():
             # assign 'READ_WRITE' to all attributes with 'WT_UNKNOWN'
             attr_access = ['READ', 'WRITE', 'READ_WRITE', 'READ_WITH_WRITE']
@@ -92,7 +93,8 @@ class FandangoExportDeviceParser(Parser):
         self._device_attributes.update(attribute_data)
 
     def update_property_data(self, property_data):
-        """Update key values to a dict with keys 'DefaultPropValue','name' and 'type'
+        """
+        Update key values to a dict with keys 'DefaultPropValue','name' and 'type'.
 
         Parameters
         ----------
@@ -130,9 +132,9 @@ class FandangoExportDeviceParser(Parser):
         property_data = dict(prop_data)
 
         self._device_properties.update(property_data)
-        
+
     def get_device_attribute_metadata(self):
-        """Returns the device's attributes' configuration.
+        """Returns the device's attributes configuration.
 
         Returns
         -------
@@ -198,8 +200,8 @@ class FandangoExportDeviceParser(Parser):
         return self._device_attributes
 
     def get_device_command_metadata(self):
-        """Returns the device's commands' configuration.
-        
+        """Returns the device's commands configuration.
+
         Returns
         -------
         self._device_attributes: dict
@@ -219,7 +221,7 @@ class FandangoExportDeviceParser(Parser):
 
     def get_device_properties_metadata(self, property_group):
         """Returns the device's class or device property configuration.
-        
+
         Returns
         -------
         self._device_attributes: dict

@@ -3,15 +3,15 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+import importlib
 import logging
+import sys
 import time
 import weakref
-import sys
-import importlib
-
 from functools import partial
-from tango_simlib import quantities
+
 from tango import CmdArgType
+from tango_simlib import quantities
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ INITIAL_CONSTANT_VALUE_TYPES = {
 
 
 class Model(object):
-    """Tango Device main model with quantities and actions
+    """Tango Device main model with quantities and actions.
 
     Parameters
     ----------
@@ -88,7 +88,8 @@ class Model(object):
         self.quantity_state = self._sim_state
 
     def setup_sim_quantities(self):
-        """Set up self.sim_quantities with simulated quantities
+        """
+        Set up self.sim_quantities with simulated quantities.
 
         Subclasses should implement this method. Should place simulated quantities in
         self.sim_quantities dict. Keyed by name of quantity, value must be instances
@@ -132,7 +133,7 @@ class Model(object):
             override_update(self, sim_time, dt)
 
     def set_sim_action(self, name, handler):
-        """Add an action handler function
+        """Add an action handler function.
 
         Parameters
         ----------
@@ -146,7 +147,7 @@ class Model(object):
         self.sim_actions[name] = partial(handler, self)
 
     def set_test_sim_action(self, name, handler):
-        """Add an action handler function
+        """Add an action handler function.
 
         Parameters
         ----------
@@ -164,7 +165,7 @@ class Model(object):
 
 
 class PopulateModelQuantities(object):
-    """Used to populate/update model quantities
+    """Used to populate/update model quantities.
 
     Populates the model quantities using the data from the TANGO device information
     captured in the json file / POGO generated xmi / FANDANGO generated fgo file.
@@ -192,7 +193,7 @@ class PopulateModelQuantities(object):
         self.setup_sim_quantities()
 
     def setup_sim_quantities(self):
-        """Set up self.sim_quantities from Model with simulated quantities
+        """Set up self.sim_quantities from Model with simulated quantities.
 
         Places simulated quantities in sim_quantities dict. Keyed by name of
         quantity, value must be instances satifying the
@@ -333,7 +334,7 @@ class PopulateModelQuantities(object):
 
     def sim_attribute_quantities(self, min_bound, max_bound, max_slew_rate,
                                  mean, std_dev):
-        """Simulate attribute quantities with a Guassian value distribution
+        """Simulate attribute quantities with a Guassian value distribution.
 
         Parameters
         ----------
@@ -355,7 +356,7 @@ class PopulateModelQuantities(object):
             Dict of Gaussian simulated quantities
 
         """
-        sim_attribute_quantities = dict()
+        sim_attribute_quantities = {}
         sim_attribute_quantities['max_slew_rate'] = max_slew_rate
         sim_attribute_quantities['min_bound'] = min_bound
         sim_attribute_quantities['max_bound'] = max_bound
@@ -365,7 +366,7 @@ class PopulateModelQuantities(object):
 
 
 class PopulateModelActions(object):
-    """Used to populate/update model actions
+    """Used to populate/update model actions.
 
     Populates the model actions using the data from the TANGO device information
     captured in the json file / POGO generated xmi / FANDANGO generated fgo file.
@@ -498,7 +499,7 @@ class PopulateModelActions(object):
                 raise Exception("Only lower-case overide method names are supported.")
 
     def generate_action_handler(self, action_name, action_output_type, actions=None):
-        """Generates and returns an action handler to manage tango commands
+        """Generates and returns an action handler to manage tango commands.
 
         Parameters
         ----------
@@ -520,7 +521,7 @@ class PopulateModelActions(object):
             actions = []
 
         def action_handler(model, data_input=None, tango_dev=None):
-            """Action handler taking command input arguments
+            """Action handler taking command input arguments.
 
             Parameters
             ----------
@@ -589,7 +590,7 @@ class PopulateModelActions(object):
 
 
 class PopulateModelProperties(object):
-    """Used to populate/update model properties
+    """Used to populate/update model properties.
 
     Populates the model properties using the data from the TANGO device information
     captured in the json file / POGO generated xmi / FANDANGO generated fgo file.
