@@ -40,7 +40,6 @@ pipeline {
             steps {
                 sh 'nohup service mysql start'
                 sh 'nohup service tango-db start'
-                sh 'python -m pip install nose_xunitmp'
             }
         }
 
@@ -58,7 +57,9 @@ pipeline {
                 stage ('py27') {
                     steps {
                         echo "Running nosetests on Python 2.7"
-                        sh 'tox -e py27 -vv'
+                        sh 'python2 -m pip install . -U'
+                        sh 'python2 -m pip install nose_xunitmp katcp'
+                        sh "python2 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE} --xunit-file=nosetests_{envname}.xml"
                     }
                 }
 
@@ -66,16 +67,18 @@ pipeline {
                     steps {
                         echo "Not yet implemented."
                         // echo "Running nosetests on Python 3.6"
-                        // sh 'tox -e py36 -vv'
+                        // sh 'python3.6 -m pip install . -U --user'
+                        // sh 'python3.6 -m pip install nose_xunitmp --user'
+                        // sh "python3.6 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE}"
                     }
                 }
             }
 
             post {
                 always {
-                    junit 'nosetests_*.xml'
+                    junit 'nosetests.xml'
                     cobertura (
-                        coberturaReportFile: 'coverage_*.xml',
+                        coberturaReportFile: 'coverage.xml',
                         failNoReports: true,
                         failUnhealthy: true,
                         failUnstable: true,
