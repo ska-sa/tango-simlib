@@ -173,17 +173,7 @@ class XmiParser(Parser):
             }
 
         """
-        #class_data = description_data.attrib   # This contains the additional
-                                                # information about the Tango device
-                                                # class, however it is not useful for
-                                                # the current problem.
-        #class_data['identification'] = {}
-        #identification = description_data.find('identification')
-        #class_data['identification']['contact'] = identification.attrib['contact']
-        #class_data['identification']['author'] = identification.attrib['author']
-        #class_data['identification']['emailDomain'] = (
-        #    identification.attrib['emailDomain'])
-        #    class_data['identification'].append(id.attrib)
+
         class_data = {}
         class_data['super_classes'] = []
         super_classes = description_data.findall('inheritances')
