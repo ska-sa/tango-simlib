@@ -65,11 +65,11 @@ pipeline {
 
                 stage ('py36') {
                     steps {
-                        echo "Not yet implemented."
-                        // echo "Running nosetests on Python 3.6"
-                        // sh 'python3.6 -m pip install . -U --user'
-                        // sh 'python3.6 -m pip install nose_xunitmp --user'
-                        // sh "python3.6 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE}"
+                        //echo "Not yet implemented."
+                         echo "Running nosetests on Python 3.6"
+                         sh 'python3.6 -m pip install . -U --user'
+                         sh 'python3.6 -m pip install nose_xunitmp --user'
+                         sh "python3.6 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE}"
                     }
                 }
             }
