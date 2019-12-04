@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(name="tango_simlib",
       description="Generic library for creating simulated TANGO devices.",
@@ -24,6 +24,9 @@ setup(name="tango_simlib",
           "PyTango>=9.2.2",
           "numpy",
           "jsonschema"],
+      tests_require=[
+          'katcp',
+          'numpy'],
       zip_safe=False,
       include_package_data=True,
       package_data={'tango_simlib': ['utilities/SimDD.schema',
