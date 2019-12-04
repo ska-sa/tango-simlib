@@ -22,6 +22,7 @@ from tango_simlib.utilities.testutils import cleanup_tempfile
 from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
 from tango_simlib.utilities import sim_xmi_parser, helper_module
 
+from katcp.compat import ensure_native_str
 
 LOGGER = logging.getLogger(__name__)
 
@@ -447,7 +448,7 @@ class test_XmiParser(GenericSetup):
         # Compare the values of the attribute properties captured in the POGO generated
         # xmi file and the ones in the parsed attribute data structure.
         for prop in expected_pressure_attr_info:
-            self.assertEquals(actual_parsed_pressure_attr_info[prop].encode('utf-8'),
+            self.assertEquals(ensure_native_str(actual_parsed_pressure_attr_info[prop]),
                               expected_pressure_attr_info[prop],
                               "The expected value for the parameter '%s' does not match"
                               " with the actual value" % (prop))
