@@ -447,7 +447,7 @@ class test_XmiParser(GenericSetup):
         # Compare the values of the attribute properties captured in the POGO generated
         # xmi file and the ones in the parsed attribute data structure.
         for prop in expected_pressure_attr_info:
-            self.assertEquals(actual_parsed_pressure_attr_info[prop],
+            self.assertEquals(actual_parsed_pressure_attr_info[prop].encode('utf-8'),
                               expected_pressure_attr_info[prop],
                               "The expected value for the parameter '%s' does not match"
                               " with the actual value" % (prop))
