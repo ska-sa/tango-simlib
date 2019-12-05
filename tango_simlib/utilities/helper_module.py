@@ -1,21 +1,18 @@
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
-
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from __future__ import absolute_import, division, print_function
+
 from future import standard_library
 standard_library.install_aliases()
 
-import os
-import sys
-import socket
-import logging
 import json
+import logging
+import os
+import socket
+import sys
 
 from tango import Database
 from tango.server import command

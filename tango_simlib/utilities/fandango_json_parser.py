@@ -12,13 +12,9 @@ simulator.
 Instructions on how to create this json file can be found at the link below:
 https://github.com/tango-controls/fandango/blob/master/doc/recipes/ExportDeviceData.rst
 """
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
+from __future__ import absolute_import, division, print_function
 
 from future import standard_library
-
 standard_library.install_aliases()
 
 import json

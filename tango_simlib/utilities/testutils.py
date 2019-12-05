@@ -1,27 +1,23 @@
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
-
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from __future__ import absolute_import, division, print_function
 
 from future import standard_library
-
 standard_library.install_aliases()
 
-from builtins import object
-import logging
-import time
-import mock
-import shutil
-import tempfile
-import sys
 import errno
+import logging
+import mock
 import os
+import shutil
+import sys
+import tempfile
+import time
+
+from builtins import object
 
 LOGGER = logging.getLogger(__name__)
 

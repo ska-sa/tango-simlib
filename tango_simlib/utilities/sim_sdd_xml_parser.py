@@ -6,13 +6,9 @@
 """This module performs the parsing of the SKA Self-Description Data XML schema
 file generated from the DSL.
 """
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
+from __future__ import absolute_import, division, print_function
 
 from future import standard_library
-
 standard_library.install_aliases()
 
 import xml.etree.ElementTree as ET

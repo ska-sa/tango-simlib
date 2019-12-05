@@ -7,22 +7,15 @@
 Simlib library generic simulator generator utility to be used to generate an actual
 TANGO device that exhibits the behaviour defined in the data description file.
 """
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
+from __future__ import absolute_import, division, print_function
 
 from future import standard_library
-
 standard_library.install_aliases()
 
-
 import logging
-
 import xml.etree.ElementTree as ET
 
 from tango import AttrDataFormat, CmdArgType, DevBoolean, DevEnum, DevString
-
 from tango_simlib.utilities.base_parser import Parser
 
 MODULE_LOGGER = logging.getLogger(__name__)
