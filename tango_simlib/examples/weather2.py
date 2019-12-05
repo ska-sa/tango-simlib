@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 from PyTango.server import server_run
 from tango_simlib.tango_sim_generator import (configure_device_models, get_tango_device_server)
 

@@ -8,6 +8,9 @@
 Simlib library generic simulator generator utility to be used to generate an actual
 TANGO device that exhibits the behaviour defined in the data description file.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import argparse
 import logging
