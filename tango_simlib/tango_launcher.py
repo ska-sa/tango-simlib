@@ -73,6 +73,7 @@ def register_device(name, device_class, server_name, instance, db):
 
 
 def put_device_property(dev_name, property_name, property_value, db):
+
     print(
         "Setting device {!r} property {!r}: {!r}".format(
             dev_name, property_name, property_value
