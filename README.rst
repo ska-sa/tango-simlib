@@ -68,13 +68,13 @@ install ``tango-simlib``. For more, documentation_.
 Installation from source_, working directory where source is checked out
 
 .. code-block:: bash
-  
+
     $ pip install .
 
 This package is available on *PYPI*, allowing
 
 .. code-block:: bash
-  
+
     $ pip install tango-simlib
 
 Documentation
