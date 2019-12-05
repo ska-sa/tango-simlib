@@ -8,6 +8,9 @@
 
 Helps by auto-registering a TANGO device if needed.
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import division
 import os
 import sys
 import argparse
@@ -44,14 +47,14 @@ def register_device(name, device_class, server_name, instance, db):
     dev_info.name = name
     dev_info._class = device_class
     dev_info.server = "{}/{}".format(server_name.split('.')[0], instance)
-    print """Attempting to register TANGO device {!r}
+    print("""Attempting to register TANGO device {!r}
     class: {!r}  server: {!r}.""".format(
-        dev_info.name, dev_info._class, dev_info.server)
+        dev_info.name, dev_info._class, dev_info.server))
     db.add_device(dev_info)
 
 def put_device_property(dev_name, property_name, property_value, db):
-    print "Setting device {!r} property {!r}: {!r}".format(
-        dev_name, property_name, property_value)
+    print("Setting device {!r} property {!r}: {!r}".format(
+        dev_name, property_name, property_value))
     db.put_device_property(dev_name, {property_name:[property_value]})
 
 def start_device(opts):
@@ -80,8 +83,8 @@ def start_device(opts):
         args = ['python %s' % opts.server_command, opts.server_instance]
         if opts.file_name:
             args.append('-file={}'.format(opts.file_name))
-        print "Starting TANGO device server:\n{}".format(
-              " ".join(["{!r}".format(arg) for arg in args]))
+        print("Starting TANGO device server:\n{}".format(
+              " ".join(["{!r}".format(arg) for arg in args])))
         sys.stdout.flush()
         sys.stderr.flush()
         os.system(" ".join(args))
@@ -91,8 +94,8 @@ def start_device(opts):
                '-ORBendPoint', 'giop:tcp::{}'.format(opts.port)]
         if opts.file_name:
             args.append('-file={}'.format(opts.file_name))
-        print "Starting TANGO device server:\n{}".format(
-              " ".join(["{!r}".format(arg) for arg in args]))
+        print("Starting TANGO device server:\n{}".format(
+              " ".join(["{!r}".format(arg) for arg in args])))
         sys.stdout.flush()
         sys.stderr.flush()
         os.execvp(opts.server_command, args)
