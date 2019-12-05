@@ -11,7 +11,9 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 
+
 from future import standard_library
+
 standard_library.install_aliases()
 
 
@@ -579,10 +581,9 @@ class XmiParser(Parser):
 
         for pogo_attribute_data in self._device_attributes:
             attribute_meta = {}
-            for (
-                prop_group,
-                default_attr_props,
-            ) in list(POGO_USER_DEFAULT_ATTR_PROP_MAP.items()):
+            for (prop_group, default_attr_props,) in list(
+                POGO_USER_DEFAULT_ATTR_PROP_MAP.items()
+            ):
                 for pogo_prop, user_default_prop in list(default_attr_props.items()):
                     try:
                         attribute_meta[user_default_prop] = pogo_attribute_data[

@@ -1,17 +1,29 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from past.builtins import cmp
+from future import standard_library
+
+standard_library.install_aliases()
+
+from builtins import object
 import abc
 import logging
 import time
 from random import gauss
+from future.utils import with_metaclass
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
-inf = float('inf')
-ninf = float('-inf')
+inf = float("inf")
+ninf = float("-inf")
 registry = {}
 
 
@@ -21,7 +33,7 @@ def register_quantity_class(cls):
     Quantity.register(cls)
 
 
-class Quantity(object):
+class Quantity(with_metaclass(abc.ABCMeta, object)):
     """Attributes that should be adjustable via a simulation control interface.
 
     Parameters
@@ -31,9 +43,9 @@ class Quantity(object):
     start_value : float
         The initial value of a quantity.
     meta : dict
-        This data structure must contain all the attribute desciption data
+        This data structure must contain all the attribute description data
         of all quantities that represent tango device simulator attributes.
-        List of all available tango attibute description data:
+        List of all available tango attribute description data:
         abs_change, archive_abs_change, archive_period, archive_rel_change,
         label, max_alarm, max_value, max_warning, min_alarm, min_value,
         delta_t, delta_val, description, display_unit, format,
@@ -49,8 +61,8 @@ class Quantity(object):
     the `last_val` attribute with the initial quantity value.
 
     """
-    __metaclass__ = abc.ABCMeta
-    adjustable_attributes = frozenset(['last_val', 'last_update_time'])
+
+    adjustable_attributes = frozenset(["last_val", "last_update_time"])
 
     def __init__(self, start_value=None, start_time=None, meta=None):
         """Subclasses must call this super __init__()"""
@@ -120,17 +132,26 @@ class GaussianSlewLimited(Quantity):
         Maximum quantity value, random values will be clipped if needed.
 
     """
-    adjustable_attributes = Quantity.adjustable_attributes | frozenset(
-        ['mean', 'std_dev', 'max_slew_rate', 'min_bound', 'max_bound'])
 
-    def __init__(self, mean, std_dev,
-                 max_slew_rate=inf, meta=None,
-                 min_bound=ninf, max_bound=inf,
-                 start_value=None, start_time=None):
+    adjustable_attributes = Quantity.adjustable_attributes | frozenset(
+        ["mean", "std_dev", "max_slew_rate", "min_bound", "max_bound"]
+    )
+
+    def __init__(
+        self,
+        mean,
+        std_dev,
+        max_slew_rate=inf,
+        meta=None,
+        min_bound=ninf,
+        max_bound=inf,
+        start_value=None,
+        start_time=None,
+    ):
         start_value = start_value if start_value is not None else mean
-        super(GaussianSlewLimited, self).__init__(start_value=start_value,
-                                                  start_time=start_time,
-                                                  meta=meta)
+        super(GaussianSlewLimited, self).__init__(
+            start_value=start_value, start_time=start_time, meta=meta
+        )
         self.mean = mean
         self.std_dev = std_dev
         assert max_slew_rate > 0
@@ -149,7 +170,7 @@ class GaussianSlewLimited(Quantity):
 
         """
         dt = t - self.last_update_time
-        max_slew = self.max_slew_rate*dt
+        max_slew = self.max_slew_rate * dt
         new_val = gauss(self.mean, self.std_dev)
         delta = new_val - self.last_val
         val = self.last_val + cmp(delta, 0) * min(abs(delta), max_slew)
@@ -158,6 +179,7 @@ class GaussianSlewLimited(Quantity):
         self.last_val = val
         self.last_update_time = t
         return val
+
 
 register_quantity_class(GaussianSlewLimited)
 
@@ -187,5 +209,6 @@ class ConstantQuantity(Quantity):
         """
         self.last_val = True
         self.last_update_time = t
+
 
 register_quantity_class(ConstantQuantity)

@@ -8,7 +8,19 @@
 Simlib library generic simulator generator utility to be used to generate an actual
 TANGO device that exhibits the behaviour defined in the data description file.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
+
+from future import standard_library
+
+standard_library.install_aliases()
+
+from builtins import map
+from builtins import range
+
+from builtins import object
 import argparse
 import logging
 import os
@@ -17,21 +29,34 @@ import weakref
 from functools import partial
 
 import numpy as np
-from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType,
-                   CmdArgType, Database, DevState, UserDefaultAttrProp)
-from tango.server import Device, DeviceMeta, attribute, command
-from tango_simlib.model import (INITIAL_CONSTANT_VALUE_TYPES, Model,
-                                PopulateModelActions, PopulateModelProperties,
-                                PopulateModelQuantities)
+from tango import (
+    Attr,
+    AttrDataFormat,
+    AttrQuality,
+    AttrWriteType,
+    CmdArgType,
+    DevState,
+    UserDefaultAttrProp,
+)
+from tango.server import Device, DeviceMeta, attribute
+from tango_simlib.model import (
+    INITIAL_CONSTANT_VALUE_TYPES,
+    Model,
+    PopulateModelActions,
+    PopulateModelProperties,
+    PopulateModelQuantities,
+)
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.utilities import helper_module
-from tango_simlib.utilities.fandango_json_parser import \
-    FandangoExportDeviceParser
+from tango_simlib.utilities.fandango_json_parser import FandangoExportDeviceParser
 from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
+from future.utils import with_metaclass
+
 
 MODULE_LOGGER = logging.getLogger(__name__)
+
 
 class TangoDeviceServerBase(Device):
     instances = weakref.WeakValueDictionary()
@@ -109,7 +134,8 @@ def get_tango_device_server(models, sim_data_files):
     def write_fn(tango_device_instance, val):
         tango_device_instance._attribute_name_index = val
         tango_device_instance.model_quantity = tango_device_instance.model.sim_quantities[
-            sorted(tango_device_instance.model.sim_quantities.keys())[val]]
+            sorted(tango_device_instance.model.sim_quantities.keys())[val]
+        ]
 
     def add_static_attribute(tango_device_class, attr_name, attr_meta):
         """Add any TANGO attribute of to the device server before start-up.
@@ -126,17 +152,19 @@ def get_tango_device_server(models, sim_data_files):
 
         Note
         ====
-        This is needed for DevEnum and spectrum type attribues
+        This is needed for DevEnum and spectrum type attributes
 
         """
-        attr = attribute(label=attr_meta['label'], dtype=attr_meta['data_type'],
-                         enum_labels=attr_meta['enum_labels']
-                         if 'enum_labels' in attr_meta else '',
-                         doc=attr_meta['description'],
-                         dformat=attr_meta['data_format'],
-                         max_dim_x=attr_meta['max_dim_x'],
-                         max_dim_y=attr_meta['max_dim_y'],
-                         access=getattr(AttrWriteType, attr_meta['writable']))
+        attr = attribute(
+            label=attr_meta["label"],
+            dtype=attr_meta["data_type"],
+            enum_labels=attr_meta["enum_labels"] if "enum_labels" in attr_meta else "",
+            doc=attr_meta["description"],
+            dformat=attr_meta["data_format"],
+            max_dim_x=attr_meta["max_dim_x"],
+            max_dim_y=attr_meta["max_dim_y"],
+            access=getattr(AttrWriteType, attr_meta["writable"]),
+        )
         attr.__name__ = attr_name
         # Attribute read method
         def read_meth(tango_device_instance, attr):
@@ -150,20 +178,27 @@ def get_tango_device_server(models, sim_data_files):
                 attr.set_value_date_quality(value, update_time, quality)
             else:
                 attr.set_value_date_quality(int(value), update_time, quality)
+
         # Attribute write method for writable attributes
-        if str(attr_meta['writable']) in ('READ_WRITE', 'WRITE'):
+        if str(attr_meta["writable"]) in ("READ_WRITE", "WRITE"):
+
             @attr.write
             def attr(tango_device_instance, new_val):
                 # When selecting a model quantity we use the enum labels list indexing
                 # to return the string value corresponding to the respective enum value
                 # since an integer value is returned by device server when
                 # attribute value is read
-                MODULE_LOGGER.info("Writing value %s to attribute '%s'." % (new_val, attr_name))
-                tango_device_instance.model_quantity = (
-                        tango_device_instance.model.sim_quantities[attr_name])
+                MODULE_LOGGER.info(
+                    "Writing value %s to attribute '%s'." % (new_val, attr_name)
+                )
+                tango_device_instance.model_quantity = tango_device_instance.model.sim_quantities[
+                    attr_name
+                ]
                 tango_device_instance.model_quantity.set_val(
-                        new_val, tango_device_instance.model.time_func())
-        read_meth.__name__ = 'read_{}'.format(attr_name)
+                    new_val, tango_device_instance.model.time_func()
+                )
+
+        read_meth.__name__ = "read_{}".format(attr_name)
         # Add the read method and the attribute to the class object
         setattr(tango_device_class, read_meth.__name__, read_meth)
         setattr(tango_device_class, attr.__name__, attr)
@@ -171,30 +206,33 @@ def get_tango_device_server(models, sim_data_files):
 
     # Sim test interface static attribute `attribute_name` info
     # Pick the first model instance in the dict.
-    controllable_attribute_names = models.values()[0].sim_quantities.keys()
+    controllable_attribute_names = list(models.values())[0].sim_quantities.keys()
     attr_control_meta = dict()
-    attr_control_meta['enum_labels'] = sorted(controllable_attribute_names)
-    attr_control_meta['data_format'] = AttrDataFormat.SCALAR
-    attr_control_meta['data_type'] = CmdArgType.DevEnum
-    attr_control_meta['label'] = 'Attribute name'
-    attr_control_meta['description'] = 'Attribute name to control'
-    attr_control_meta['max_dim_x'] = 1
-    attr_control_meta['max_dim_y'] = 0
-    attr_control_meta['writable'] = 'READ_WRITE'
+    attr_control_meta["enum_labels"] = sorted(controllable_attribute_names)
+    attr_control_meta["data_format"] = AttrDataFormat.SCALAR
+    attr_control_meta["data_type"] = CmdArgType.DevEnum
+    attr_control_meta["label"] = "Attribute name"
+    attr_control_meta["description"] = "Attribute name to control"
+    attr_control_meta["max_dim_x"] = 1
+    attr_control_meta["max_dim_y"] = 0
+    attr_control_meta["writable"] = "READ_WRITE"
 
     TangoTestDeviceServerStaticAttrs.read_fn = read_fn
     TangoTestDeviceServerStaticAttrs.write_fn = write_fn
     attr = attribute(
-        label=attr_control_meta['label'], dtype=attr_control_meta['data_type'],
-        enum_labels=attr_control_meta['enum_labels']
-        if 'enum_labels' in attr_control_meta else '',
-        doc=attr_control_meta['description'],
-        dformat=attr_control_meta['data_format'],
-        max_dim_x=attr_control_meta['max_dim_x'],
-        max_dim_y=attr_control_meta['max_dim_y'],
-        access=getattr(AttrWriteType, attr_control_meta['writable']),
+        label=attr_control_meta["label"],
+        dtype=attr_control_meta["data_type"],
+        enum_labels=attr_control_meta["enum_labels"]
+        if "enum_labels" in attr_control_meta
+        else "",
+        doc=attr_control_meta["description"],
+        dformat=attr_control_meta["data_format"],
+        max_dim_x=attr_control_meta["max_dim_x"],
+        max_dim_y=attr_control_meta["max_dim_y"],
+        access=getattr(AttrWriteType, attr_control_meta["writable"]),
         fget=TangoTestDeviceServerStaticAttrs.read_fn,
-        fset=TangoTestDeviceServerStaticAttrs.write_fn)
+        fset=TangoTestDeviceServerStaticAttrs.write_fn,
+    )
     TangoTestDeviceServerStaticAttrs.attribute_name = attr
     # We use the `add_static_attribute` method to add DevEnum and Spectrum type
     # attributes statically to the tango device before start-up since the
@@ -203,17 +241,21 @@ def get_tango_device_server(models, sim_data_files):
     # TODO(AR 02-03-2017): Ask the tango community on the upcoming Stack
     # Exchange community (AskTango) and also make follow ups on the next tango
     # releases.
-    for quantity_name, quantity in models.values()[0].sim_quantities.items():
-        d_type = quantity.meta['data_type']
-        d_type = str(quantity.meta['data_type'])
-        d_format = str(quantity.meta['data_format'])
-        if d_type == 'DevEnum' or d_format == 'SPECTRUM':
-            add_static_attribute(TangoDeviceServerStaticAttrs, quantity_name,
-                                 quantity.meta)
+    for quantity_name, quantity in list(models.values())[0].sim_quantities.items():
+        d_type = quantity.meta["data_type"]
+        d_type = str(quantity.meta["data_type"])
+        d_format = str(quantity.meta["data_format"])
+        if d_type == "DevEnum" or d_format == "SPECTRUM":
+            add_static_attribute(
+                TangoDeviceServerStaticAttrs, quantity_name, quantity.meta
+            )
 
-
-    class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
-        __metaclass__ = DeviceMeta
+    class TangoDeviceServer(
+        with_metaclass(
+            DeviceMeta,
+            type("NewBase", (TangoDeviceServerBase, TangoDeviceServerStaticAttrs), {}),
+        )
+    ):
         _models = models
 
         def init_device(self):
@@ -228,32 +270,32 @@ def get_tango_device_server(models, sim_data_files):
             """Reset the model's quantities' adjustable attributes to their default
             values.
             """
-            simulated_quantities = self.model.sim_quantities.values()
+            simulated_quantities = list(self.model.sim_quantities.values())
             model_time = self.model.start_time
             for simulated_quantity in simulated_quantities:
                 sim_quantity_meta_info = simulated_quantity.meta
-                key_vals = sim_quantity_meta_info.keys()
-                attr_data_type = sim_quantity_meta_info['data_type']
+                key_vals = list(sim_quantity_meta_info.keys())
+                attr_data_type = sim_quantity_meta_info["data_type"]
                 # the xmi, json and fgo files have data_format attributes indicating
                 # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
-                # key in its attribute list. It has a key labelled possiblevalues which
+                # key in its attribute list. It has a key labelled possible values which
                 # is a list. Hence, SPECTRUM is no data_format is found.
                 try:
-                    attr_data_format = str(sim_quantity_meta_info['data_format'])
+                    attr_data_format = str(sim_quantity_meta_info["data_format"])
                 except KeyError:
-                    attr_data_format = 'SPECTRUM'
-                expected_key_vals = ['max_dim_x', 'max_dim_y', 'maxX', 'maxY']
+                    attr_data_format = "SPECTRUM"
+                expected_key_vals = ["max_dim_x", "max_dim_y", "maxX", "maxY"]
                 # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
                 # (maxX, maxY) keys. If none of these keys are found in them or in the
                 # xml file, we use default values of 1 for x and 2 for y - same applies
                 # for files where the keys have empty values.
                 if any(key_val in expected_key_vals for key_val in key_vals):
                     try:
-                        max_dim_x = sim_quantity_meta_info['max_dim_x']
-                        max_dim_y = sim_quantity_meta_info['max_dim_y']
+                        max_dim_x = sim_quantity_meta_info["max_dim_x"]
+                        max_dim_y = sim_quantity_meta_info["max_dim_y"]
                     except KeyError:
-                        max_dim_x = sim_quantity_meta_info.get('maxX', 1)
-                        max_dim_y = sim_quantity_meta_info.get('maxY', 2)
+                        max_dim_x = sim_quantity_meta_info.get("maxX", 1)
+                        max_dim_y = sim_quantity_meta_info.get("maxY", 2)
                     # just in case the keys exist but have no values
                     if not max_dim_x:
                         max_dim_x = 1
@@ -261,56 +303,66 @@ def get_tango_device_server(models, sim_data_files):
                         max_dim_y = 2
 
                 val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
-                expected_key_vals = ['value', 'possiblevalues']
+                expected_key_vals = ["value", "possiblevalues"]
                 adjustable_attrs = simulated_quantity.adjustable_attributes
                 for attr in adjustable_attrs:
-                    if attr == 'last_update_time':
+                    if attr == "last_update_time":
                         simulated_quantity.last_update_time = model_time
                         continue
                     else:
                         try:
-                            sim_quantity_meta_info['quantity_simulation_type']
+                            sim_quantity_meta_info["quantity_simulation_type"]
                         except KeyError:
                             if any(key_val in expected_key_vals for key_val in key_vals):
                                 try:
-                                    adjustable_val = sim_quantity_meta_info['value']
+                                    adjustable_val = sim_quantity_meta_info["value"]
                                 except KeyError:
                                     adjustable_val = sim_quantity_meta_info[
-                                                        'possiblevalues']
-                                if attr_data_format == 'SCALAR':
+                                        "possiblevalues"
+                                    ]
+                                if attr_data_format == "SCALAR":
                                     adjustable_val = val_type(adjustable_val)
-                                elif attr_data_format == 'SPECTRUM':
-                                    adjustable_val = map(val_type, adjustable_val)
+                                elif attr_data_format == "SPECTRUM":
+                                    adjustable_val = list(map(val_type, adjustable_val))
                                 else:
-                                    adjustable_val = [[val_type(curr_val) for curr_val in
-                                                      sublist] for sublist in
-                                                      adjustable_val]
+                                    adjustable_val = [
+                                        [val_type(curr_val) for curr_val in sublist]
+                                        for sublist in adjustable_val
+                                    ]
                             else:
-                                if attr_data_format == 'SCALAR':
+                                if attr_data_format == "SCALAR":
                                     adjustable_val = val
-                                elif attr_data_format == 'SPECTRUM':
+                                elif attr_data_format == "SPECTRUM":
                                     adjustable_val = [val] * max_dim_x
                                 else:
-                                    adjustable_val = [[val] * max_dim_x
-                                                      for i in range(max_dim_y)]
+                                    adjustable_val = [
+                                        [val] * max_dim_x for i in range(max_dim_y)
+                                    ]
                         else:
-                            if (sim_quantity_meta_info['quantity_simulation_type'] ==
-                                'ConstantQuantity'):
+                            if (
+                                sim_quantity_meta_info["quantity_simulation_type"]
+                                == "ConstantQuantity"
+                            ):
                                 try:
                                     initial_value = sim_quantity_meta_info[
-                                                        'initial_value']
+                                        "initial_value"
+                                    ]
                                 except KeyError:
                                     initial_value = None
-                                adjustable_val = (initial_value if initial_value not in
-                                                  [None, ""] else val)
+                                adjustable_val = (
+                                    initial_value
+                                    if initial_value not in [None, ""]
+                                    else val
+                                )
                                 if val_type is None:
                                     adjustable_val = None
                                 else:
                                     adjustable_val = val_type(adjustable_val)
                             else:
-                                if attr == 'last_val':
-                                    simulated_quantity.last_val = (
-                                        float(sim_quantity_meta_info['mean']))
+                                if attr == "last_val":
+                                    simulated_quantity.last_val = float(
+                                        sim_quantity_meta_info["mean"]
+                                    )
                                     continue
                                 else:
                                     adjustable_val = float(sim_quantity_meta_info[attr])
@@ -318,35 +370,36 @@ def get_tango_device_server(models, sim_data_files):
                         setattr(simulated_quantity, attr, adjustable_val)
 
         def initialize_dynamic_commands(self):
-            for action_name, action_handler in self.model.sim_actions.items():
+            for action_name, action_handler in list(self.model.sim_actions.items()):
                 cmd_handler = helper_module.generate_cmd_handler(
-                    self.model, action_name, action_handler)
+                    self.model, action_name, action_handler
+                )
                 setattr(TangoDeviceServer, action_name, cmd_handler)
                 self.add_command(cmd_handler, device_level=True)
 
         def initialize_dynamic_attributes(self):
             model_sim_quants = self.model.sim_quantities
-            attribute_list = set([attr for attr in model_sim_quants.keys()])
+            attribute_list = set([attr for attr in list(model_sim_quants.keys())])
             for attribute_name in attribute_list:
                 meta_data = model_sim_quants[attribute_name].meta
-                attr_dtype = meta_data['data_type']
-                d_format = meta_data['data_format']
+                attr_dtype = meta_data["data_type"]
+                d_format = meta_data["data_format"]
                 # Dynamically add all attributes except those with DevEnum data type,
                 # and SPECTRUM data format since they are added statically to the device
                 # class prior to start-up. Also exclude attributes with a data format
                 # 'IMAGE' as we currently do not handle them.
-                if str(attr_dtype) == 'DevEnum':
+                if str(attr_dtype) == "DevEnum":
                     continue
-                elif str(d_format) == 'SPECTRUM':
+                elif str(d_format) == "SPECTRUM":
                     continue
-                elif str(d_format) == 'IMAGE':
+                elif str(d_format) == "IMAGE":
                     self._not_added_attributes.append(attribute_name)
                     continue
                 else:
                     # The return value of rwType is a string and it is required as a
                     # PyTango data type when passed to the Attr function.
                     # e.g. 'READ' -> tango._tango.AttrWriteType.READ
-                    rw_type = meta_data['writable']
+                    rw_type = meta_data["writable"]
                     rw_type = getattr(AttrWriteType, rw_type)
                     # Add a try/except clause when creating an instance of Attr class
                     # as PyTango may raise an error when things go wrong.
@@ -354,18 +407,22 @@ def get_tango_device_server(models, sim_data_files):
                         attr = Attr(attribute_name, attr_dtype, rw_type)
                     except Exception as e:
                         self._not_added_attributes.append(attribute_name)
-                        MODULE_LOGGER.info("Attribute %s could not be added dynamically"
-                                           " due to an error raised %s.", attribute_name,
-                                           str(e))
+                        MODULE_LOGGER.info(
+                            "Attribute %s could not be added dynamically"
+                            " due to an error raised %s.",
+                            attribute_name,
+                            str(e),
+                        )
                         continue
                     attr_props = UserDefaultAttrProp()
-                    for prop in meta_data.keys():
-                        attr_prop_setter = getattr(attr_props, 'set_' + prop, None)
+                    for prop in list(meta_data.keys()):
+                        attr_prop_setter = getattr(attr_props, "set_" + prop, None)
                         if attr_prop_setter:
                             attr_prop_setter(str(meta_data[prop]))
                         else:
                             MODULE_LOGGER.info(
-                                "No setter function for " + prop + " property")
+                                "No setter function for " + prop + " property"
+                            )
                     attr.set_default_properties(attr_props)
 
                     if rw_type in (AttrWriteType.READ, AttrWriteType.READ_WITH_WRITE):
@@ -374,25 +431,39 @@ def get_tango_device_server(models, sim_data_files):
                         self.add_attribute(attr, w_meth=self.write_attributes)
                     elif rw_type == AttrWriteType.READ_WRITE:
                         self.add_attribute(
-                            attr, self.read_attributes, self.write_attributes)
+                            attr, self.read_attributes, self.write_attributes
+                        )
 
-                    MODULE_LOGGER.info("Added dynamic {} attribute"
-                                       .format(attribute_name))
+                    MODULE_LOGGER.info(
+                        "Added dynamic {} attribute".format(attribute_name)
+                    )
 
-        @attribute(dtype=(str,), doc="List of attributes that were not added to the "
-                   "device due to an error.",
-                   max_dim_x=10000)
+        @attribute(
+            dtype=(str,),
+            doc="List of attributes that were not added to the "
+            "device due to an error.",
+            max_dim_x=10000,
+        )
         def AttributesNotAdded(self):
             return self._not_added_attributes
 
-        @attribute(dtype=int, doc="Number of attributes not added to the device due "
-                   "to an error.")
+        @attribute(
+            dtype=int,
+            doc="Number of attributes not added to the device due " "to an error.",
+        )
         def NumAttributesNotAdded(self):
             return len(self._not_added_attributes)
 
-    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs):
-        __metaclass__ = DeviceMeta
-
+    class SimControl(
+        with_metaclass(
+            DeviceMeta,
+            type(
+                "NewBase",
+                (TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs),
+                {},
+            ),
+        )
+    ):
         instances = weakref.WeakValueDictionary()
 
         def init_device(self):
@@ -401,13 +472,13 @@ def get_tango_device_server(models, sim_data_files):
             name = self.get_name()
             self.instances[name] = self
 
-
     klass_name = get_device_class(sim_data_files)
     TangoDeviceServer.TangoClassName = klass_name
     TangoDeviceServer.__name__ = klass_name
-    SimControl.TangoClassName = '%sSimControl' % klass_name
-    SimControl.__name__ = '%sSimControl' % klass_name
+    SimControl.TangoClassName = "%sSimControl" % klass_name
+    SimControl.__name__ = "%sSimControl" % klass_name
     return [TangoDeviceServer, SimControl]
+
 
 def write_device_properties_to_db(device_name, model, db_instance=None):
     """Writes device properties, including optional default value, to tango DB.
@@ -424,9 +495,11 @@ def write_device_properties_to_db(device_name, model, db_instance=None):
     if not db_instance:
         db_instance = helper_module.get_database()
 
-    for prop_name, prop_meta in model.sim_properties.items():
+    for prop_name, prop_meta in list(model.sim_properties.items()):
         db_instance.put_device_property(
-            device_name, {prop_name: prop_meta['DefaultPropValue']})
+            device_name, {prop_name: prop_meta["DefaultPropValue"]}
+        )
+
 
 def get_parser_instance(sim_datafile):
     """This method returns an appropriate parser instance to generate a Tango device.
@@ -460,15 +533,20 @@ def get_parser_instance(sim_datafile):
         parser_instance.parse(sim_datafile)
     return parser_instance
 
+
 def configure_device_model(sim_data_file=None, test_device_name=None):
     models = configure_device_models(sim_data_file, test_device_name)
     if len(models) == 1:
         return models
     else:
-        raise RuntimeError('Single model expected, but found {} devices'
-                           ' registered under device server class {}. Rather use'
-                           ' `configure_device_models`.'
-                           .format(len(models), get_device_class(sim_data_file)))
+        raise RuntimeError(
+            "Single model expected, but found {} devices"
+            " registered under device server class {}. Rather use"
+            " `configure_device_models`.".format(
+                len(models), get_device_class(sim_data_file)
+            )
+        )
+
 
 def configure_device_models(sim_data_file=None, test_device_name=None):
     """
@@ -503,9 +581,9 @@ def configure_device_models(sim_data_file=None, test_device_name=None):
         db_datum = db_instance.get_device_name(server_name, klass_name)
         # We assume that at least one device instance has been
         # registered for that class and device server.
-        dev_names = getattr(db_datum, 'value_string')
+        dev_names = getattr(db_datum, "value_string")
         if not dev_names:
-            dev_name = 'test/nodb/tangodeviceserver'
+            dev_name = "test/nodb/tangodeviceserver"
     else:
         dev_name = test_device_name
 
@@ -524,20 +602,23 @@ def configure_device_models(sim_data_file=None, test_device_name=None):
         models[dev_name] = Model(dev_name)
 
     # In case there is more than one parser instance for each file
-    for model in models.values():
+    for model in list(models.values()):
         command_info = {}
         properties_info = {}
         override_info = {}
         for parser in parsers:
             PopulateModelQuantities(parser, model.name, model)
             command_info.update(parser.get_device_command_metadata())
-            properties_info.update(parser.get_device_properties_metadata('deviceProperties'))
+            properties_info.update(
+                parser.get_device_properties_metadata("deviceProperties")
+            )
             override_info.update(parser.get_device_cmd_override_metadata())
         PopulateModelActions(command_info, override_info, model.name, model)
         PopulateModelProperties(properties_info, model.name, model)
     return models
 
-def generate_device_server(server_name, sim_data_files, directory=''):
+
+def generate_device_server(server_name, sim_data_files, directory=""):
     """Create a tango device server python file.
 
     Parameters
@@ -548,22 +629,27 @@ def generate_device_server(server_name, sim_data_files, directory=''):
         A list of direct paths to either xmi/xml/json data files.
 
     """
-    lines = ['#!/usr/bin/env python',
-             'from tango.server import server_run',
-             ('from tango_simlib.tango_sim_generator import ('
-              'configure_device_models, get_tango_device_server)'),
-             '\n\n# File generated on {} by tango-simlib-generator'.format(time.ctime()),
-             '\n\ndef main():',
-             '    sim_data_files = %s' % sim_data_files,
-             '    models = configure_device_models(sim_data_files)',
-             '    TangoDeviceServers = get_tango_device_server(models, sim_data_files)',
-             '    server_run(TangoDeviceServers)',
-             '\nif __name__ == "__main__":',
-             '    main()\n']
-    with open(os.path.join(directory, "%s" % server_name), 'w') as dserver:
-        dserver.write('\n'.join(lines))
+    lines = [
+        "#!/usr/bin/env python",
+        "from tango.server import server_run",
+        (
+            "from tango_simlib.tango_sim_generator import ("
+            "configure_device_models, get_tango_device_server)"
+        ),
+        "\n\n# File generated on {} by tango-simlib-generator".format(time.ctime()),
+        "\n\ndef main():",
+        "    sim_data_files = %s" % sim_data_files,
+        "    models = configure_device_models(sim_data_files)",
+        "    TangoDeviceServers = get_tango_device_server(models, sim_data_files)",
+        "    server_run(TangoDeviceServers)",
+        '\nif __name__ == "__main__":',
+        "    main()\n",
+    ]
+    with open(os.path.join(directory, "%s" % server_name), "w") as dserver:
+        dserver.write("\n".join(lines))
     # Make the script executable
     os.chmod(os.path.join(directory, "%s" % server_name), 477)
+
 
 def get_device_class(sim_data_files):
     """Get device class name from specified xmi/simdd description file.
@@ -580,11 +666,11 @@ def get_device_class(sim_data_files):
 
     """
     if len(sim_data_files) < 1:
-        raise Exception('No simulator data file specified.')
+        raise Exception("No simulator data file specified.")
 
     parser_instance = None
-    klass_name = ''
-    precedence_map = {'.xmi': 1, '.fgo': 2, '.json': 3}
+    klass_name = ""
+    precedence_map = {".xmi": 1, ".fgo": 2, ".json": 3}
 
     def get_precedence(file_name):
         extension = os.path.splitext(file_name)[-1]
@@ -600,26 +686,34 @@ def get_device_class(sim_data_files):
     if parser_instance:
         klass_name = parser_instance.device_class_name
     else:
-        klass_name = 'TangoDeviceServer'
+        klass_name = "TangoDeviceServer"
 
     return klass_name
+
 
 def get_argparser():
     parser = argparse.ArgumentParser(
         description="Generate a tango data driven simulator, handling"
-        " registration as needed. Supports multiple device per process.")
+        " registration as needed. Supports multiple device per process."
+    )
     required_argument = partial(parser.add_argument, required=True)
-    required_argument('--sim-data-file', action='append',
-                      help='Simulator description data files(s) '
-                      '.i.e. can specify multiple files')
-    required_argument('--directory', help='TANGO server executable path', default='')
-    required_argument('--dserver-name', help='TANGO server executable command')
+    required_argument(
+        "--sim-data-file",
+        action="append",
+        help="Simulator description data files(s) " ".i.e. can specify multiple files",
+    )
+    required_argument("--directory", help="TANGO server executable path", default="")
+    required_argument("--dserver-name", help="TANGO server executable command")
     return parser
+
 
 def main():
     arg_parser = get_argparser()
     opts = arg_parser.parse_args()
-    generate_device_server(opts.dserver_name, opts.sim_data_file, directory=opts.directory)
+    generate_device_server(
+        opts.dserver_name, opts.sim_data_file, directory=opts.directory
+    )
+
 
 if __name__ == "__main__":
     main()
