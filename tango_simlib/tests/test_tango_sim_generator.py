@@ -399,7 +399,7 @@ class test_MultiModel(test_TangoSimGenerator2):
 
     def test_configure_model(self):
         with self.assertRaises(RuntimeError) as cm:
-            model = tango_sim_generator.configure_device_model(self.data_descr_files)
+            tango_sim_generator.configure_device_model(self.data_descr_files)
         err = cm.exception
         num_devices = len(
             self.db_instance.get_device_name(

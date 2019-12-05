@@ -11,6 +11,7 @@ TANGO device that exhibits the behaviour defined in the data description file.
 from __future__ import absolute_import, division, print_function
 
 from future import standard_library
+
 standard_library.install_aliases()
 
 import argparse
@@ -185,9 +186,8 @@ def get_tango_device_server(models, sim_data_files):
                 MODULE_LOGGER.info(
                     "Writing value %s to attribute '%s'." % (new_val, attr_name)
                 )
-                tango_device_instance.model_quantity = tango_device_instance.model.sim_quantities[
-                    attr_name
-                ]
+                _sim_quantities = tango_device_instance.model.sim_quantities
+                tango_device_instance.model_quantity = _sim_quantities[attr_name]
                 tango_device_instance.model_quantity.set_val(
                     new_val, tango_device_instance.model.time_func()
                 )
@@ -196,7 +196,9 @@ def get_tango_device_server(models, sim_data_files):
         # Add the read method and the attribute to the class object
         setattr(tango_device_class, read_meth.__name__, read_meth)
         setattr(tango_device_class, attr.__name__, attr)
-        MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
+        MODULE_LOGGER.info(
+            "Adding static attribute {} to the device.".format(attr_name)
+        )
 
     # Sim test interface static attribute `attribute_name` info
     # Pick the first model instance in the dict.
@@ -307,7 +309,9 @@ def get_tango_device_server(models, sim_data_files):
                         try:
                             sim_quantity_meta_info["quantity_simulation_type"]
                         except KeyError:
-                            if any(key_val in expected_key_vals for key_val in key_vals):
+                            if any(
+                                key_val in expected_key_vals for key_val in key_vals
+                            ):
                                 try:
                                     adjustable_val = sim_quantity_meta_info["value"]
                                 except KeyError:

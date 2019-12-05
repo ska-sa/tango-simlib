@@ -8,6 +8,7 @@
 from __future__ import absolute_import, division, print_function
 
 from future import standard_library
+
 standard_library.install_aliases()
 
 import logging
@@ -36,7 +37,7 @@ TANGO_CMD_PARAMS_NAME_MAP = {
 
 # Mandatory parameters required to create a well configure Tango command.
 EXPECTED_MANDATORY_CMD_PARAMETERS = frozenset(
-    ["dformat_in", "dformat_out", "doc_in", "doc_out", "dtype_in", "dtype_out", "name",]
+    ["dformat_in", "dformat_out", "doc_in", "doc_out", "dtype_in", "dtype_out", "name"]
 )
 
 # Mandatory parameters required by each override_class.
@@ -213,7 +214,9 @@ class test_PopulateModelQuantities(GenericSetup):
             "The device name and the model name do not match.",
         )
         attribute_metadata = self.simdd_parser.get_device_attribute_metadata()
-        for sim_quantity_name, sim_quantity in list(pmq.sim_model.sim_quantities.items()):
+        for sim_quantity_name, sim_quantity in list(
+            pmq.sim_model.sim_quantities.items()
+        ):
             sim_quantity_metadata = getattr(sim_quantity, "meta")
             attr_meta = attribute_metadata[sim_quantity_name]
             for attr_param_name, attr_param_val in list(attr_meta.items()):
@@ -419,7 +422,12 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         captured in the SimDD data description file.
         """
         command_data = self.simdd_json_parser.get_device_command_metadata()
-        extra_command_parameters = ["dformat_in", "dformat_out", "description", "actions"]
+        extra_command_parameters = [
+            "dformat_in",
+            "dformat_out",
+            "description",
+            "actions",
+        ]
         for cmd_name, cmd_metadata in list(command_data.items()):
             cmd_config_info = self.device.get_command_config(cmd_name)
             for cmd_prop, cmd_prop_value in list(cmd_metadata.items()):
@@ -507,7 +515,8 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         # thus it is rounded to two decimal places before checking if it's the
         # same as the `data_in` value
         self.assertEqual(
-            round(getattr(self.device.read_attribute("Temperature"), "value"), 2), data_in
+            round(getattr(self.device.read_attribute("Temperature"), "value"), 2),
+            data_in,
         )
 
 
