@@ -26,15 +26,15 @@ from tango_simlib.utilities.helper_module import json_load_byteified
 MODULE_LOGGER = logging.getLogger(__name__)
 
 CMD_PROP_MAP = {
-    'name': 'name',
-    'in_type': 'dtype_in',
-    'in_type_desc': 'doc_in',
-    'out_type': 'dtype_out',
-    'out_type_desc': 'doc_out'
+    "name": "name",
+    "in_type": "dtype_in",
+    "in_type_desc": "doc_in",
+    "out_type": "dtype_out",
+    "out_type_desc": "doc_out",
 }
 
-class FandangoExportDeviceParser(Parser):
 
+class FandangoExportDeviceParser(Parser):
     def __init__(self):
         super(FandangoExportDeviceParser, self).__init__()
 
@@ -46,15 +46,15 @@ class FandangoExportDeviceParser(Parser):
             device_data = json_load_byteified(dev_data_file)
 
         for data_component, elements in device_data.items():
-            if data_component == 'attributes':
+            if data_component == "attributes":
                 self.preprocess_attribute_types(elements)
-            elif data_component == 'commands':
+            elif data_component == "commands":
                 self.preprocess_command_types(elements)
-            elif data_component == 'class_properties':
+            elif data_component == "class_properties":
                 self._device_class_properties.update(elements)
-            elif data_component == 'properties':
+            elif data_component == "properties":
                 self.update_property_data(elements)
-            elif data_component == 'dev_class':
+            elif data_component == "dev_class":
                 self.device_class_name = elements
 
     def preprocess_command_types(self, command_data):
@@ -68,30 +68,32 @@ class FandangoExportDeviceParser(Parser):
 
             for cmd_prop, cmd_prop_value in cmd_config.items():
                 try:
-                    if cmd_prop in ['in_type', 'out_type']:
-                        if cmd_prop_value.find('Const') != -1:
-                            cmd_prop_value = cmd_prop_value.replace('Const', '')
+                    if cmd_prop in ["in_type", "out_type"]:
+                        if cmd_prop_value.find("Const") != -1:
+                            cmd_prop_value = cmd_prop_value.replace("Const", "")
                         cmd_prop_value = getattr(CmdArgType, cmd_prop_value)
                     self._device_commands[cmd_name].update(
-                        {CMD_PROP_MAP[cmd_prop]: cmd_prop_value})
+                        {CMD_PROP_MAP[cmd_prop]: cmd_prop_value}
+                    )
                 except KeyError:
                     MODULE_LOGGER.info(
                         "The property '%s' cannot be translated to a corresponding "
-                        "parameter in the TANGO library", cmd_prop)
+                        "parameter in the TANGO library",
+                        cmd_prop,
+                    )
 
     def preprocess_attribute_types(self, attribute_data):
         """Convert the attribute data types from strings to the TANGO types."""
         for attr, attr_config in attribute_data.items():
             # assign 'READ_WRITE' to all attributes with 'WT_UNKNOWN'
-            attr_access = ['READ', 'WRITE', 'READ_WRITE', 'READ_WITH_WRITE']
-            if attr_config['writable'] not in attr_access:
-                attr_config['writable'] = 'READ_WRITE'
+            attr_access = ["READ", "WRITE", "READ_WRITE", "READ_WITH_WRITE"]
+            if attr_config["writable"] not in attr_access:
+                attr_config["writable"] = "READ_WRITE"
             for attr_prop, attr_prop_value in attr_config.items():
-                if attr_prop == 'data_type':
+                if attr_prop == "data_type":
                     attr_config[attr_prop] = getattr(CmdArgType, attr_prop_value)
-                elif attr_prop == 'data_format':
-                    attr_config[attr_prop] = (
-                        getattr(AttrDataFormat, attr_prop_value))
+                elif attr_prop == "data_format":
+                    attr_config[attr_prop] = getattr(AttrDataFormat, attr_prop_value)
 
         self._device_attributes.update(attribute_data)
 
@@ -124,13 +126,16 @@ class FandangoExportDeviceParser(Parser):
         prop_data = [
             (
                 prop,
-                dict([
-                        ('DefaultPropValue', prop_val),
-                        ('name', prop),
-                        ('type', 'VarStringArray')
-                        ])
-                ) for prop, prop_val in property_data.items()
-            ]
+                dict(
+                    [
+                        ("DefaultPropValue", prop_val),
+                        ("name", prop),
+                        ("type", "VarStringArray"),
+                    ]
+                ),
+            )
+            for prop, prop_val in property_data.items()
+        ]
 
         property_data = dict(prop_data)
 

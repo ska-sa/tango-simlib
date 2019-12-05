@@ -21,11 +21,17 @@ from tango_simlib.utilities.base_parser import Parser
 
 MODULE_LOGGER = logging.getLogger(__name__)
 EXPECTED_SIMULATION_PARAMETERS = {
-    'GaussianSlewLimited':
-        ['min_bound', 'max_bound', 'max_slew_rate', 'mean', 'std_dev',
-         'quantity_simulation_type', 'update_period'],
-    'ConstantQuantity':
-        ['quantity_simulation_type', 'initial_value']}
+    "GaussianSlewLimited": [
+        "min_bound",
+        "max_bound",
+        "max_slew_rate",
+        "mean",
+        "std_dev",
+        "quantity_simulation_type",
+        "update_period",
+    ],
+    "ConstantQuantity": ["quantity_simulation_type", "initial_value"],
+}
 
 
 class SimddParser(Parser):
@@ -38,6 +44,7 @@ class SimddParser(Parser):
     device_class_name: str
 
     """
+
     def __init__(self):
         super(SimddParser, self).__init__()
         self._device_override_class = {}
@@ -60,7 +67,8 @@ class SimddParser(Parser):
 
         """
         simdd_schema_file = pkg_resources.resource_filename(
-                'tango_simlib.utilities', 'SimDD.schema')
+            "tango_simlib.utilities", "SimDD.schema"
+        )
         with open(simdd_schema_file) as simdd_schema:
             schema_data = json.load(simdd_schema)
         self.data_description_file_name = simdd_json_file
@@ -68,23 +76,27 @@ class SimddParser(Parser):
             device_data = json.load(simdd_file)
         validate(device_data, schema_data)
         for data_component, elements in device_data.items():
-            if data_component == 'class_name':
+            if data_component == "class_name":
                 self.device_class_name = str(elements)
-            elif data_component == 'dynamicAttributes':
+            elif data_component == "dynamicAttributes":
                 attribute_info = self.get_device_data_components_dict(
-                        elements, data_component)
+                    elements, data_component
+                )
                 self._device_attributes.update(attribute_info)
-            elif data_component == 'commands':
+            elif data_component == "commands":
                 command_info = self.get_device_data_components_dict(
-                        elements, data_component)
+                    elements, data_component
+                )
                 self._device_commands.update(command_info)
-            elif data_component == 'deviceProperties':
+            elif data_component == "deviceProperties":
                 device_prop_info = self.get_device_data_components_dict(
-                        elements, data_component)
+                    elements, data_component
+                )
                 self._device_properties.update(device_prop_info)
-            elif data_component == 'class_overrides':
+            elif data_component == "class_overrides":
                 device_prop_info = self.get_device_data_components_dict(
-                        elements, data_component)
+                    elements, data_component
+                )
                 self._device_override_class.update(device_prop_info)
 
     def get_device_data_components_dict(self, elements, element_type):
@@ -158,11 +170,12 @@ class SimddParser(Parser):
         params_template = helper_module.DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE.copy()
         for element_data in elements:
             for element_info in element_data.values():
-                name = element_info['name']
+                name = element_info["name"]
                 element_params = self._get_reformatted_data(element_info, element_type)
-                if 'Attributes' in element_type:
-                    device_dict[str(name)] = dict(params_template.items() +
-                                                  element_params.items())
+                if "Attributes" in element_type:
+                    device_dict[str(name)] = dict(
+                        params_template.items() + element_params.items()
+                    )
                 else:
                     device_dict[str(name)] = element_params
         return device_dict
@@ -264,68 +277,77 @@ class SimddParser(Parser):
             }
 
         """
+
         def expand(value):
             """Method to expand values of a value if it is an instance of dict."""
             # Recursively call get_reformatted_data if value is still a dict
-            return [(param_name, param_val)
-                    for param_name, param_val in self._get_reformatted_data(
-                    value, element_type).items()]
+            return [
+                (param_name, param_val)
+                for param_name, param_val in self._get_reformatted_data(
+                    value, element_type
+                ).items()
+            ]
 
         formated_info = {}
         for param_name, param_val in sim_device_element_info.items():
             if isinstance(param_val, dict):
-                if 'dataSimulationParameters' in param_name:
+                if "dataSimulationParameters" in param_name:
                     try:
-                        sim_type = param_val['quantity_simulation_type']
+                        sim_type = param_val["quantity_simulation_type"]
                     except ValueError:
-                        raise ValueError("{} with name {} has no quantity "
-                                         "simulation type specified".format(
-                                             str(element_type),
-                                             str(sim_device_element_info['name'])))
+                        raise ValueError(
+                            "{} with name {} has no quantity "
+                            "simulation type specified".format(
+                                str(element_type), str(sim_device_element_info["name"])
+                            )
+                        )
                     for sim_param in param_val:
                         try:
                             assert str(sim_param) in (
-                                    EXPECTED_SIMULATION_PARAMETERS[sim_type])
+                                EXPECTED_SIMULATION_PARAMETERS[sim_type]
+                            )
                         except AssertionError:
-                            raise ValueError("{} with name {} has "
-                                             "unexpected simulation parameter {}"
-                                             .format(
-                                                 str(element_type),
-                                                 str(sim_device_element_info['name']),
-                                                 str(sim_param)))
+                            raise ValueError(
+                                "{} with name {} has "
+                                "unexpected simulation parameter {}".format(
+                                    str(element_type),
+                                    str(sim_device_element_info["name"]),
+                                    str(sim_param),
+                                )
+                            )
 
                 for item in expand(param_val):
                     property_key = str(item[0])
                     # Since the data type specified in the SimDD is a string format
                     # e.g. String, it is require in Tango device as a CmdArgType
                     # i.e. tango._tango.CmdArgType.DevString
-                    if property_key in ['dtype_in', 'dtype_out']:
+                    if property_key in ["dtype_in", "dtype_out"]:
                         # Here we extract the CmdArgType object since for later when
                         # creating a Tango command, data type is required in this format.
-                        val = getattr(CmdArgType, 'Dev%s' % str(item[1]))
+                        val = getattr(CmdArgType, "Dev%s" % str(item[1]))
                         formated_info[property_key] = val
-                    elif property_key in ['dformat_in', 'dformat_out']:
+                    elif property_key in ["dformat_in", "dformat_out"]:
                         val = getattr(AttrDataFormat, str(item[1]).upper())
                         formated_info[property_key] = val
                     else:
                         formated_info[property_key] = str(item[1])
-            elif param_name in ['actions']:
+            elif param_name in ["actions"]:
                 actions = []
                 for item in param_val:
                     string_items = {}
                     for key, value in item.iteritems():
                         string_items[str(key)] = str(value)
                     actions.append(string_items)
-                formated_info['actions'] = actions
+                formated_info["actions"] = actions
             else:
                 # Since the data type specified in the SimDD is a string format
                 # e.g. Double, it is required in Tango device as a CmdArgType
                 # i.e. tango._tango.CmdArgType.DevDouble
-                if str(param_name) in ['data_type']:
+                if str(param_name) in ["data_type"]:
                     # Here we extract the CmdArgType object since for later when creating
                     # a Tango attibute, data type is required in this format.
-                    val = getattr(CmdArgType, 'Dev%s' % str(param_val))
-                elif str(param_name) in ['DefaultPropValue']:
+                    val = getattr(CmdArgType, "Dev%s" % str(param_val))
+                elif str(param_name) in ["DefaultPropValue"]:
                     # Default property value can be an string, number and array
                     # NB: It is also an optional parameter
                     val = param_val
