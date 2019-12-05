@@ -1,24 +1,23 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-from past.builtins import cmp
-from future import standard_library
+from __future__ import absolute_import, division, print_function
 
+from future import standard_library
 standard_library.install_aliases()
 
-from builtins import object
 import abc
 import logging
 import time
+
 from random import gauss
+
+from builtins import object
 from future.utils import with_metaclass
+from past.builtins import cmp
+
 
 MODULE_LOGGER = logging.getLogger(__name__)
 

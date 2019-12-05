@@ -4,18 +4,12 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-"""This module tests the tango_sim_generator on the xmi and fangodango files in config
-"""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+"""This module tests the tango_sim_generator on the xmi and fangodango files in config."""
+from __future__ import absolute_import, division, print_function
 
 from future import standard_library
-
 standard_library.install_aliases()
 
-
-from builtins import object
 import time
 import logging
 import unittest
@@ -23,11 +17,13 @@ import shutil
 import tempfile
 import subprocess
 import pkg_resources
-from mock import Mock
 
 import tango
-from tango import Database
 
+from builtins import object
+from mock import Mock
+
+from tango import Database
 from tango_simlib import tango_sim_generator
 from tango_simlib.tests import test_sim_test_interface
 from tango_simlib.utilities import (

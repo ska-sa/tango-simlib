@@ -1,32 +1,25 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-
 #########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from __future__ import absolute_import, division, print_function
+
 from future import standard_library
-
 standard_library.install_aliases()
-from builtins import zip
 
+import pkg_resources
 import time
 import unittest
-import pkg_resources
-import mock
 
-from mock import Mock, call
-
-from tango import DevFailed
-from tango.test_context import DeviceTestContext
+from builtins import zip
 
 from katcp.testutils import start_thread_with_cleanup
-
-from tango_simlib import tango_sim_generator, model
+from mock import Mock, call, patch
+from tango import DevFailed
+from tango.test_context import DeviceTestContext
+from tango_simlib import tango_sim_generator
 from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
 
 
@@ -368,7 +361,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             80.99,
             90.99,
         ]
-        with mock.patch.object(self.model, "time_func") as mock_time:
+        with patch.object(self.model, "time_func") as mock_time:
             mock_time.side_effect = sim_time_update
 
             for update_x in sim_time_update:
@@ -468,7 +461,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             120.00,
         ]
 
-        with mock.patch.object(self.model, "time_func") as mock_time:
+        with patch.object(self.model, "time_func") as mock_time:
             mock_time.side_effect = sim_time_update
 
             for update_x, expected_azim_position, expected_elev_position in zip(
@@ -529,7 +522,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             )
 
     def test_long_running(self):
-        with mock.patch("time.sleep") as sleep_mock:
+        with patch("time.sleep") as sleep_mock:
             # We use the value '4.5' as an arbitrary value here
             self.model.sim_actions["LongRun"](4.5)
             # We use value '5' as the time the long_running cmd is going sleep for.

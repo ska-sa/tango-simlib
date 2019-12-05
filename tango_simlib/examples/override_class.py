@@ -3,24 +3,18 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-"""
-An example of the user-defined override class.
-"""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+"""An example of the user-defined override class."""
+from __future__ import absolute_import, division, print_function
 
-
-from past.builtins import cmp
 from future import standard_library
-
 standard_library.install_aliases()
 
-
-from builtins import object
 import logging
 
+from builtins import object
+from past.builtins import cmp
 from PyTango import DevState, Except, ErrSeverity
+
 
 MODULE_LOGGER = logging.getLogger(__name__)
 

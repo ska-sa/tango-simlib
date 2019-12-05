@@ -1,26 +1,20 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-from future import standard_library
+from __future__ import absolute_import, division, print_function
 
+from future import standard_library
 standard_library.install_aliases()
 
-from builtins import map
-from builtins import range
-
-from builtins import object
 import importlib
 import logging
 import sys
 import time
 import weakref
+
+from builtins import map, object, range
 from functools import partial
 
 from tango import CmdArgType

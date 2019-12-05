@@ -8,27 +8,22 @@
 Simlib library generic simulator generator utility to be used to generate an actual
 TANGO device that exhibits the behaviour defined in the data description file.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
+from __future__ import absolute_import, division, print_function
 
 from future import standard_library
-
 standard_library.install_aliases()
 
-from builtins import map
-from builtins import range
-
-from builtins import object
 import argparse
 import logging
+import numpy as np
 import os
 import time
 import weakref
+
 from functools import partial
 
-import numpy as np
+from builtins import map, object, range
+from future.utils import with_metaclass
 from tango import (
     Attr,
     AttrDataFormat,
@@ -52,7 +47,6 @@ from tango_simlib.utilities.fandango_json_parser import FandangoExportDevicePars
 from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
-from future.utils import with_metaclass
 
 
 MODULE_LOGGER = logging.getLogger(__name__)
