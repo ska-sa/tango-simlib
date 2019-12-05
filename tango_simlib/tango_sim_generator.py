@@ -10,44 +10,35 @@ TANGO device that exhibits the behaviour defined in the data description file.
 """
 from __future__ import absolute_import, division, print_function
 
-from future import standard_library
-
-standard_library.install_aliases()
-
 import argparse
 import logging
-import numpy as np
 import os
 import time
 import weakref
-
+from builtins import map, object, range
 from functools import partial
 
-from builtins import map, object, range
+import numpy as np
+from future import standard_library
 from future.utils import with_metaclass
-from tango import (
-    Attr,
-    AttrDataFormat,
-    AttrQuality,
-    AttrWriteType,
-    CmdArgType,
-    DevState,
-    UserDefaultAttrProp,
-)
+from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType,
+                   CmdArgType, DevState, UserDefaultAttrProp)
 from tango.server import Device, DeviceMeta, attribute
-from tango_simlib.model import (
-    INITIAL_CONSTANT_VALUE_TYPES,
-    Model,
-    PopulateModelActions,
-    PopulateModelProperties,
-    PopulateModelQuantities,
-)
+from tango_simlib.model import (INITIAL_CONSTANT_VALUE_TYPES, Model,
+                                PopulateModelActions, PopulateModelProperties,
+                                PopulateModelQuantities)
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.utilities import helper_module
-from tango_simlib.utilities.fandango_json_parser import FandangoExportDeviceParser
+from tango_simlib.utilities.fandango_json_parser import \
+    FandangoExportDeviceParser
 from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
+
+standard_library.install_aliases()
+
+
+
 
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -416,7 +407,7 @@ def get_tango_device_server(models, sim_data_files):
                     for prop in list(meta_data.keys()):
                         attr_prop_setter = getattr(attr_props, "set_" + prop, None)
                         if attr_prop_setter:
-                            attr_prop_setter(str(meta_data[prop]))
+                            attr_prop_setter(str(meta_data[prop]).encode('ascii', 'replace'))
                         else:
                             MODULE_LOGGER.info(
                                 "No setter function for " + prop + " property"
