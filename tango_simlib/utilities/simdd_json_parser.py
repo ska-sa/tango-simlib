@@ -10,6 +10,9 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 
+
+
+
 from future import standard_library
 standard_library.install_aliases()
 
@@ -340,7 +343,7 @@ class SimddParser(Parser):
                 actions = []
                 for item in param_val:
                     string_items = {}
-                    for key, value in item.items():
+                    for key, value in list(item.items()):
                         string_items[str(key)] = str(value)
                     actions.append(string_items)
                 formated_info["actions"] = actions

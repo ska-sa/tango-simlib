@@ -2,22 +2,25 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from future import standard_library
+standard_library.install_aliases()
+
 import weakref
 
 from tango import Attr, AttrWriteType, DevDouble, DevState, UserDefaultAttrProp
 from tango.server import Device, DeviceMeta, attribute, device_property
 from tango_simlib import model
 from tango_simlib.utilities.helper_module import generate_cmd_handler
+from future.utils import with_metaclass
 
 
-class TangoTestDeviceServerBase(Device):
-    __metaclass__ = DeviceMeta
-
+class TangoTestDeviceServerBase(with_metaclass(DeviceMeta, Device)):
     instances = weakref.WeakValueDictionary()
 
     model_key = device_property(
@@ -48,12 +51,12 @@ class TangoTestDeviceServerBase(Device):
                 '{}. Set the "model_key" device property to the '
                 "correct value.".format(self.model_key)
             )
-        self.sim_device_attributes = self.model.sim_quantities.keys()
+        self.sim_device_attributes = list(self.model.sim_quantities.keys())
         self.set_state(DevState.ON)
         self.initialize_dynamic_commands()
 
     def initialize_dynamic_commands(self):
-        for action_name, action_handler in self.model.test_sim_actions.items():
+        for action_name, action_handler in list(self.model.test_sim_actions.items()):
             cmd_handler = generate_cmd_handler(self.model, action_name, action_handler)
             # You might need to turn cmd_handler into an unbound method before you add
             # it to the class
@@ -64,7 +67,7 @@ class TangoTestDeviceServerBase(Device):
         """The device method that sets up attributes during run time."""
         # Get attributes to control the device model quantities
         # from class variables of the quantities included in the device model.
-        models = set([quant.__class__ for quant in self.model.sim_quantities.values()])
+        models = set([quant.__class__ for quant in list(self.model.sim_quantities.values())])
         control_attributes = []
 
         for cls in models:

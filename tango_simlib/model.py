@@ -2,11 +2,19 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from future import standard_library
+standard_library.install_aliases()
+
+from builtins import map
+from builtins import range
+
+from builtins import object
 import importlib
 import logging
 import sys
@@ -110,7 +118,7 @@ class Model(object):
         self._sim_state.update(
             {
                 var: (quant.last_val, quant.last_update_time)
-                for var, quant in self.sim_quantities.items()
+                for var, quant in list(self.sim_quantities.items())
             }
         )
 
@@ -120,7 +128,7 @@ class Model(object):
         if dt < self.min_update_period or self.paused:
             # Updating the sim_state in case the test interface or external command
             # updated the quantities.
-            for var, quant in self.sim_quantities.items():
+            for var, quant in list(self.sim_quantities.items()):
                 self._sim_state[var] = (quant.last_val, quant.last_update_time)
             MODULE_LOGGER.debug(
                 "Sim {} skipping update at {}, dt {} < {} and pause {}".format(
@@ -135,7 +143,7 @@ class Model(object):
         MODULE_LOGGER.info("Stepping at {}, dt: {}".format(sim_time, dt))
         self.last_update_time = sim_time
         try:
-            for var, quant in self.sim_quantities.items():
+            for var, quant in list(self.sim_quantities.items()):
                 self._sim_state[var] = (quant.next_val(sim_time), sim_time)
         except Exception:
             MODULE_LOGGER.exception("Exception in update loop")
@@ -222,7 +230,7 @@ class PopulateModelQuantities(object):
         start_time = self.sim_model.start_time
         attributes = self.parser_instance.get_device_attribute_metadata()
 
-        for attr_name, attr_props in attributes.items():
+        for attr_name, attr_props in list(attributes.items()):
             # When using more than one config file, the attribute meta data can be
             # overwritten, so we need to update it instead of reassigning a different
             # object.
@@ -243,10 +251,10 @@ class PopulateModelQuantities(object):
                 # i.e. All optional parameters not provided in the SimDD
                 attr_props = dict(
                     (param_key, param_val)
-                    for param_key, param_val in attr_props.iteritems()
+                    for param_key, param_val in attr_props.items()
                     if param_val
                 )
-                model_attr_props = dict(model_attr_props.items() + attr_props.items())
+                model_attr_props = dict(list(model_attr_props.items()) + list(attr_props.items()))
 
             if "quantity_simulation_type" in model_attr_props:
                 if model_attr_props["quantity_simulation_type"] == "ConstantQuantity":
@@ -304,7 +312,7 @@ class PopulateModelQuantities(object):
                         **sim_attr_quantities
                     )
             else:
-                key_vals = model_attr_props.keys()
+                key_vals = list(model_attr_props.keys())
                 attr_data_type = model_attr_props["data_type"]
                 # the xmi, json and fgo files have data_format attributes indicating
                 # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
@@ -342,7 +350,7 @@ class PopulateModelQuantities(object):
                     if attr_data_format == "SCALAR":
                         default_val = val_type(default_val)
                     elif attr_data_format == "SPECTRUM":
-                        default_val = map(val_type, default_val)
+                        default_val = list(map(val_type, default_val))
                     else:
                         default_val = [
                             [val_type(curr_val) for curr_val in sublist]
@@ -456,7 +464,7 @@ class PopulateModelActions(object):
             else:
                 self.sim_model.override_post_updates.append(post_update_overwrite)
 
-        for cmd_name, cmd_meta in self.cmd_info.items():
+        for cmd_name, cmd_meta in list(self.cmd_info.items()):
             # Exclude the TANGO default commands as they have their own built in handlers
             # provided.
             if cmd_name in DEFAULT_TANGO_COMMANDS:
@@ -509,7 +517,7 @@ class PopulateModelActions(object):
 
     def _get_class_instances(self, override_class_info):
         instances = {}
-        for klass_info in override_class_info.values():
+        for klass_info in list(override_class_info.values()):
             if klass_info["module_directory"] == "None":
                 module = importlib.import_module(klass_info["module_name"])
             else:

@@ -10,6 +10,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+
+from past.builtins import cmp
+from future import standard_library
+standard_library.install_aliases()
+
+
+from builtins import object
 import logging
 
 from PyTango import DevState, Except, ErrSeverity
@@ -127,17 +134,17 @@ class OverrideVds(object):
         except KeyError:
             raise VdsSimError(
                 "Invalid argument ({}) provided. Please provide a string of either"
-                " {} value.".format(data_input, camera_power_state.keys())
+                " {} value.".format(data_input, list(camera_power_state.keys()))
             )
 
         quant_camera_power_on.set_val(camera_power_state_value, model.time_func())
 
         if camera_power_state[data_input.lower()]:
-            for quantity in model.sim_quantities.values():
+            for quantity in list(model.sim_quantities.values()):
                 quantity.default_val(model.time_func())
             tango_dev.set_state(DevState.ON)
         else:
-            for quantity in model.sim_quantities.values():
+            for quantity in list(model.sim_quantities.values()):
                 quantity.set_val(None, model.time_func())
             tango_dev.set_state(DevState.OFF)
 
@@ -160,7 +167,7 @@ class OverrideVds(object):
         except KeyError:
             raise VdsSimError(
                 "Invalid argument ({}) provided. Please provide a string of either"
-                " {} value.".format(data_input, flood_lights_state.keys())
+                " {} value.".format(data_input, list(flood_lights_state.keys()))
             )
 
         quant_flood_lights_on.set_val(flood_lights_state_value, model.time_func())
@@ -249,7 +256,7 @@ class OverrideVds(object):
                 )
             )
 
-        for position in presets.keys():
+        for position in list(presets.keys()):
             try:
                 model_quant = model.sim_quantities["%s_position" % position]
             except KeyError:

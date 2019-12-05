@@ -3,11 +3,13 @@ from __future__ import division
 from __future__ import absolute_import
 
 
+
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+
 from future import standard_library
 standard_library.install_aliases()
 
@@ -183,7 +185,7 @@ def json_loads_byteified(json_text):
 
 def _byteify(data, ignore_dicts=False):
     """If this is a unicode string, return its string representation."""
-    if isinstance(data, unicode):
+    if isinstance(data, str):
         return data.encode("utf-8")
     # if this is a list of values, return list of byteified values
     if isinstance(data, list):
@@ -193,7 +195,7 @@ def _byteify(data, ignore_dicts=False):
     if isinstance(data, dict) and not ignore_dicts:
         return {
             _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
-            for key, value in data.items()
+            for key, value in list(data.items())
         }
     # if it's anything else, return it in its original form
     return data
