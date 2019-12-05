@@ -7,7 +7,6 @@
 """Utility to help launch a TANGO device in a KATCP eco-system.
 
 Helps by auto-registering a TANGO device if needed.
-
 """
 import os
 import sys

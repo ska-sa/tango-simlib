@@ -1,14 +1,14 @@
-######################################################################################### 
+#########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-import time
 import unittest
 import mock
 
 from tango_simlib import quantities
+
 
 class test_Quantity(unittest.TestCase):
 

@@ -1,4 +1,4 @@
-######################################################################################### 
+#########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
@@ -18,8 +18,7 @@ from tango.test_context import DeviceTestContext
 
 from tango_simlib import model, tango_sim_generator, quantities
 from tango_simlib.utilities import helper_module
-from tango_simlib.utilities.testutils import (ClassCleanupUnittestMixin, cleanup_tempdir,
-                                              cleanup_tempfile)
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
 
 
 class FixtureModel(model.Model):
@@ -79,6 +78,7 @@ def control_attributes(test_model):
     """Function collects all the available models and gets all the
     adjustable_attributes which will be control attributes on the
     simulator test interface device.
+
     Returns
     =======
     control_attributes : list
@@ -194,6 +194,7 @@ class test_SimControl(unittest.TestCase):
     def _quants_before_dict(self, test_model):
         """Function generate a dictionary of all the expected
         quantity values of the initial test model.
+
         Returns
         =======
         quants_before : dict

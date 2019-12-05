@@ -18,8 +18,6 @@ from mock import Mock
 import tango
 from tango import Database
 
-from katcp.testutils import start_thread_with_cleanup
-
 from tango_simlib import tango_sim_generator
 from tango_simlib.tests import test_sim_test_interface
 from tango_simlib.utilities import (helper_module, sim_xmi_parser,
@@ -30,11 +28,11 @@ MODULE_LOGGER = logging.getLogger(__name__)
 
 class BaseTest(object):
     """The class below (in this case, TangoSimGenDeviceIntegration) contains functions
-    that are named with test prefixing the function names. Due to this, Nosetest first 
-    calls this class which has none type class variables and thus, makes the tests 
+    that are named with test prefixing the function names. Due to this, Nosetest first
+    calls this class which has none type class variables and thus, makes the tests
     fail. From the suggestion in this link from stackoverflow,
     https://stackoverflow.com/questions/1323455/python-unit-test-with-base-and-sub-class
-    wrapping a class around the base class  would make Nosetest begin execution from the 
+    wrapping a class around the base class  would make Nosetest begin execution from the
     derived classes where the test should be done instead of the base class.
     """
     class TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
@@ -130,7 +128,7 @@ class BaseTest(object):
             self.assertEqual(
                 attributes - implemented_attr,
                 set(control_attributes))
-                
+
         def test_sim_control_device_attribute_change(self):
             """Setting the desired attribute value for the device's attribute from
             the simulator controller device
@@ -277,7 +275,7 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         self.assertEqual(set(expected_attributes), remaining_device_attrs,
                          "Actual tango device attribute list differs from expected "
                          "list!")
-    
+
     def test_device_command_list(self):
         """Testing whether commands from running simulated device match commands from
         simmdd json file

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from PyTango.server import server_run
 from tango_simlib.tango_sim_generator import (configure_device_models, get_tango_device_server)
 

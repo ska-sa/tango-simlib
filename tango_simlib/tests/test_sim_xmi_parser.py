@@ -1,13 +1,10 @@
-######################################################################################### 
+#########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-import mock
 import logging
-import numpy as np
-import time
 import unittest
 import pkg_resources
 
@@ -63,7 +60,7 @@ expected_mandatory_default_cmds_info = [
         "argoutDescription": 'Device state',
         "argoutType": tango.utils.DevState,
         "description": 'This command gets the device state (stored in its '
-            'device_state data member) and returns it to the caller.',
+                       'device_state data member) and returns it to the caller.',
         "displayLevel": 'OPERATOR',
         "polledPeriod": '0',
         "execMethod": 'dev_state',

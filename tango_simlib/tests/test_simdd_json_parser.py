@@ -1,10 +1,9 @@
-######################################################################################### 
+#########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-import mock
 import unittest
 import logging
 import pkg_resources
@@ -78,8 +77,7 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
 
 
 class GenericSetup(unittest.TestCase):
-    """A class providing the setUp method definition for the other test classes.
-    """
+    """A class providing the setUp method definition for the other test classes."""
     longMessage = True
 
     def setUp(self):
@@ -90,8 +88,7 @@ class GenericSetup(unittest.TestCase):
         self.simdd_parser.parse(self.simdd_json_file[0])
 
 class test_SimddJsonParser(GenericSetup):
-    """A test class that tests that the SimddJsonParser works correctly.
-    """
+    """A test class that tests that the SimddJsonParser works correctly."""
 
     def test_parsed_attributes(self):
         """Testing that the attribute information parsed matches with the one captured
@@ -394,7 +391,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
                          "value does not match with the expected return value.")
 
     def test_Off_command(self):
-        """Testing that the Off command changes the State attribute's value of the Tango
+        """Testing that the Off command changes the State attributes value of the Tango
         device to OFF.
         """
         command_name = 'Off'
@@ -406,7 +403,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
     def test_set_temperature_command(self):
         """Testing that the SetTemperature command changes the temperature
-        attribute's value of the Tango device to the specified input parameter.
+        attributes value of the Tango device to the specified input parameter.
         """
         command_name = 'SetTemperature'
         data_in = 25.0
@@ -488,7 +485,7 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
 
 class test_SourceSimulatorInfo(unittest.TestCase):
     """This class is not testing the code, but only testing that the test XMI and SimDD
-    files are consistant with each other.
+    files are consistent with each other.
     """
     longMessage = True
 
@@ -506,7 +503,7 @@ class test_SourceSimulatorInfo(unittest.TestCase):
     def test_source_data_attributes(self):
         """Testing attribute information from data files.
 
-        Check if the attribute information in the SimDD is consistant with the"
+        Check if the attribute information in the SimDD is consistent with the"
         information captured in the XMI file generated using POGO.
 
         """
@@ -530,7 +527,7 @@ class test_SourceSimulatorInfo(unittest.TestCase):
     def test_source_data_commands(self):
         """Testing command information from data files.
 
-        Check if the commands information in the SimDD is consistant with the"
+        Check if the commands information in the SimDD is consistent with the"
         information captured in the XMI file generated using POGO.
 
         """
@@ -554,7 +551,7 @@ class test_SourceSimulatorInfo(unittest.TestCase):
     def test_source_data_device_properties(self):
         """Testing device properties information from data files.
 
-        Check if the device properties information in the SimDD is consistant with the
+        Check if the device properties information in the SimDD is consistent with the
         information captured in the XMI file generated using POGO.
 
         """
@@ -570,7 +567,7 @@ class test_SourceSimulatorInfo(unittest.TestCase):
                          property_name, self.simdd_json_file[0], self.sim_xmi_file[0]))
 
     def test_source_data_class_properties(self):
-        """Testing if the class properties information in the SimDD is consistant with the"
+        """Testing if the class properties information in the SimDD is consistent with the
         information captured in the XMI file generated using POGO.
         """
         xmi_parser_properties = (

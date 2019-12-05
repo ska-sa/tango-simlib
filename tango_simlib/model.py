@@ -27,7 +27,7 @@ ARBITRARY_DATA_TYPE_RETURN_VALUES = {
     CmdArgType.DevLong: 3,
     CmdArgType.DevVoid: None}
 
-# In the case where an attribute with contant quantity simulation type is
+# In the case where an attribute with constant quantity simulation type is
 # specified, this dict is used to convert the initial value if specified to
 # the data-type corresponding to the attribute data-type.
 INITIAL_CONSTANT_VALUE_TYPES = {
@@ -59,7 +59,7 @@ class Model(object):
     start_time : float
         Time at instantiation of the model
     min_update_period : float
-        Minimun update period of the quantites in the model
+        Minimum update period of the quantities in the model
     time_func : time function
         Function that return current time i.e. time.time
 
@@ -93,7 +93,7 @@ class Model(object):
 
         Subclasses should implement this method. Should place simulated quantities in
         self.sim_quantities dict. Keyed by name of quantity, value must be instances
-        satisfying the :class:`quantites.Quantity` interface.
+        satisfying the :class:`quantities.Quantity` interface.
 
         Notes
         =====
@@ -168,7 +168,7 @@ class PopulateModelQuantities(object):
     """Used to populate/update model quantities.
 
     Populates the model quantities using the data from the TANGO device information
-    captured in the json file / POGO generated xmi / FANDANGO generated fgo file.
+    captured in the json file / POGO generated xmi / FANDANGO generated to file.
 
     Attributes
     ----------
@@ -196,7 +196,7 @@ class PopulateModelQuantities(object):
         """Set up self.sim_quantities from Model with simulated quantities.
 
         Places simulated quantities in sim_quantities dict. Keyed by name of
-        quantity, value must be instances satifying the
+        quantity, value must be instances satisfying the
         :class:`quantities.Quantity` interface
 
         Notes
@@ -268,7 +268,7 @@ class PopulateModelQuantities(object):
                     except KeyError:
                         raise ValueError(
                             "Attribute with name '{}' specified in the configuration"
-                            " file [{}] has no mininum or maximum values set".format(
+                            " file [{}] has no minimum or maximum values set".format(
                                 attr_name,
                                 self.parser_instance.data_description_file_name))
                     quantity_factory = (
@@ -281,7 +281,7 @@ class PopulateModelQuantities(object):
                 attr_data_type = model_attr_props['data_type']
                 # the xmi, json and fgo files have data_format attributes indicating
                 # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
-                # key in its attribute list. It has a key labelled possiblevalues which
+                # key in its attribute list. It has a key labelled possible values which
                 # is a list. Hence, SPECTRUM is no data_format is found.
                 try:
                     attr_data_format = str(model_attr_props['data_format'])
@@ -334,7 +334,7 @@ class PopulateModelQuantities(object):
 
     def sim_attribute_quantities(self, min_bound, max_bound, max_slew_rate,
                                  mean, std_dev):
-        """Simulate attribute quantities with a Guassian value distribution.
+        """Simulate attribute quantities with a Gaussian value distribution.
 
         Parameters
         ----------
@@ -348,7 +348,7 @@ class PopulateModelQuantities(object):
         mean : float
             average value of the simulated quantity
         std_dev : float
-            starndard deviation value of the simulated quantity
+            standard deviation value of the simulated quantity
 
         Returns
         -------
@@ -496,7 +496,7 @@ class PopulateModelActions(object):
             try:
                 instance_attributes.index(action_type.format(cmd_name.lower()))
             except ValueError:
-                raise Exception("Only lower-case overide method names are supported.")
+                raise Exception("Only lower-case override method names are supported.")
 
     def generate_action_handler(self, action_name, action_output_type, actions=None):
         """Generates and returns an action handler to manage tango commands.
@@ -537,7 +537,7 @@ class PopulateModelActions(object):
 
             """
             # TODO (KM 18-01-2016): Need to remove the tango_dev parameter from
-            # action hanlder, currently used for testing functionality of the
+            # action handler, currently used for testing functionality of the
             # override class actions.
             temp_variables = {}
             return_value = None
