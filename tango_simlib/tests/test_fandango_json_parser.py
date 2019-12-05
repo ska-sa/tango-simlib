@@ -3,8 +3,7 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-"""This module tests the fandango_json_parser script.
-"""
+"""This module tests the fandango_json_parser script."""
 import unittest
 import logging
 import pkg_resources
@@ -87,8 +86,7 @@ EXPECTED_STATUS_ATTR_INFO = {
 
 
 class GenericSetup(unittest.TestCase):
-    """A class providing the setUp method definition for the other test classes.
-    """
+    """A class providing the setUp method definition for the other test classes."""
     longMessage = True
 
     def setUp(self):
@@ -100,8 +98,7 @@ class GenericSetup(unittest.TestCase):
 
 
 class test_FandangoJsonParser(GenericSetup):
-    """A test class that tests that the fandango json parser works correctly.
-    """
+    """A test class that tests that the fandango json parser works correctly."""
     def test_preprocess_command_types(self):
         """Testing that command property mapping was done well and command type
         of mapped properties is of tango type.

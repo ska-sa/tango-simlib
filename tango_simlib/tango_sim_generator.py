@@ -18,20 +18,21 @@ from functools import partial
 
 import numpy as np
 from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType,
-                   CmdArgType, Database, DevState, UserDefaultAttrProp)
-from tango.server import Device, DeviceMeta, attribute, command
+                   CmdArgType, DevState, UserDefaultAttrProp)
+from tango.server import Device, DeviceMeta, attribute
 from tango_simlib.model import (INITIAL_CONSTANT_VALUE_TYPES, Model,
                                 PopulateModelActions, PopulateModelProperties,
                                 PopulateModelQuantities)
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.utilities import helper_module
-from tango_simlib.utilities.fandango_json_parser import \
-    FandangoExportDeviceParser
+from tango_simlib.utilities.fandango_json_parser import FandangoExportDeviceParser
 from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
 
+
 MODULE_LOGGER = logging.getLogger(__name__)
+
 
 class TangoDeviceServerBase(Device):
     instances = weakref.WeakValueDictionary()
@@ -126,7 +127,7 @@ def get_tango_device_server(models, sim_data_files):
 
         Note
         ====
-        This is needed for DevEnum and spectrum type attribues
+        This is needed for DevEnum and spectrum type attributes
 
         """
         attr = attribute(label=attr_meta['label'], dtype=attr_meta['data_type'],
@@ -236,7 +237,7 @@ def get_tango_device_server(models, sim_data_files):
                 attr_data_type = sim_quantity_meta_info['data_type']
                 # the xmi, json and fgo files have data_format attributes indicating
                 # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
-                # key in its attribute list. It has a key labelled possiblevalues which
+                # key in its attribute list. It has a key labelled possible values which
                 # is a list. Hence, SPECTRUM is no data_format is found.
                 try:
                     attr_data_format = str(sim_quantity_meta_info['data_format'])

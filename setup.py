@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(name="tango_simlib",
       description="Generic library for creating simulated TANGO devices.",
@@ -27,7 +27,7 @@ setup(name="tango_simlib",
       tests_require=[
           'katcp',
           'numpy',
-          'nose_xunitmp'],
+          ],
       extras_require={
           'docs': ["sphinx-pypi-upload",
                    "numpydoc",

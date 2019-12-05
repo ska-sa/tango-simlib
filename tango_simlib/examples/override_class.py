@@ -1,4 +1,4 @@
-######################################################################################### 
+#########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
@@ -268,8 +268,7 @@ class OverrideVds(object):
         model.presets.update(tmp_presets)
 
     def action_stop(self, model, tango_dev=None, data_input=None):
-        """Stop camera.
-        """
+        """Stop camera."""
         pass
 
     def action_tilt(self, model, tango_dev=None, data_input=None):
@@ -362,6 +361,7 @@ class OverrideVds(object):
 
     def _format_receptor_name(self, receptor_name):
         """Format the receptor name by removing the first character(m).
+
         Parameters:
         -----------
         receptor_name : str
@@ -417,8 +417,7 @@ class OverrideWeatherSimControl(object):
 
     def test_action_simulatefaultdevicestate(
             self, model, tango_dev=None, data_input=None):
-        """This command sets the current device state to fault/on.
-        """
+        """This command sets the current device state to fault/on."""
         if str(tango_dev.get_status()) in ['FAULT']:
             tango_dev.set_state(DevState.ON)
         else:
@@ -426,8 +425,7 @@ class OverrideWeatherSimControl(object):
 
     def test_action_stopquantitysimulation(
             self, model, tango_dev=None, data_input=None):
-        """Totally sets the simulated quantities` values to a constant value of zero.
-        """
+        """Totally sets the simulated quantities` values to a constant value of zero."""
         for quantity in data_input:
             try:
                 simulated_quantity = model.sim_quantities[quantity]
@@ -442,8 +440,7 @@ class OverrideWeatherSimControl(object):
                                         " instance.", simulated_quantity)
 
     def test_action_stoprainfall(self, model, tango_dev=None, data_input=None):
-        """Totally sets the simulated quantity rainfall to a constant value of zero.
-        """
+        """Totally sets the simulated quantity rainfall to a constant value of zero."""
         try:
             quant_rainfall = model.sim_quantities['rainfall']
         except KeyError:
@@ -473,6 +470,7 @@ class OverrideWeatherSimControl(object):
             quant_wind_speed.mean = 1.00
 
     def test_action_setoffrainstorm(self, model, tango_dev=None, data_input=None):
+
         try:
             quant_rainfall = model.sim_quantities['rainfall']
         except KeyError:

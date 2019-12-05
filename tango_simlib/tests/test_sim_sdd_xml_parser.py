@@ -1,4 +1,4 @@
-######################################################################################### 
+#########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
@@ -11,7 +11,7 @@ import pkg_resources
 from tango import DevDouble
 
 from tango_simlib import model
-from tango_simlib.utilities import sim_sdd_xml_parser, sim_xmi_parser
+from tango_simlib.utilities import sim_sdd_xml_parser
 
 LOGGER = logging.getLogger(__name__)
 

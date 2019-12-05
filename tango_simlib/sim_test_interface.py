@@ -64,7 +64,7 @@ class TangoTestDeviceServerBase(Device):
         for cls in models:
             control_attributes += [attr for attr in cls.adjustable_attributes]
 
-        # Add a list of float attributes from the list of Guassian variables
+        # Add a list of float attributes from the list of Gaussian variables
         for attribute_name in control_attributes:
             model.MODULE_LOGGER.info(
                 "Added weather {} attribute control".format(attribute_name))

@@ -31,9 +31,9 @@ class Quantity(object):
     start_value : float
         The initial value of a quantity.
     meta : dict
-        This data structure must contain all the attribute desciption data
+        This data structure must contain all the attribute description data
         of all quantities that represent tango device simulator attributes.
-        List of all available tango attibute description data:
+        List of all available tango attribute description data:
         abs_change, archive_abs_change, archive_period, archive_rel_change,
         label, max_alarm, max_value, max_warning, min_alarm, min_value,
         delta_t, delta_val, description, display_unit, format,
