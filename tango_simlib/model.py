@@ -9,6 +9,7 @@ from __future__ import print_function
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 from future import standard_library
+
 standard_library.install_aliases()
 
 from builtins import map
@@ -254,7 +255,9 @@ class PopulateModelQuantities(object):
                     for param_key, param_val in attr_props.items()
                     if param_val
                 )
-                model_attr_props = dict(list(model_attr_props.items()) + list(attr_props.items()))
+                model_attr_props = dict(
+                    list(model_attr_props.items()) + list(attr_props.items())
+                )
 
             if "quantity_simulation_type" in model_attr_props:
                 if model_attr_props["quantity_simulation_type"] == "ConstantQuantity":

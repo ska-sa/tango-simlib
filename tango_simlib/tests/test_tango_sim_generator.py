@@ -11,6 +11,7 @@ from __future__ import division
 from __future__ import print_function
 
 from future import standard_library
+
 standard_library.install_aliases()
 
 
@@ -280,7 +281,9 @@ class test_FandangoFile(BaseTest.TangoSimGenDeviceIntegration):
         fandango file
         """
         actual_device_cmds = self.sim_device.get_command_list()
-        expected_cmd_list = list(self.sim_file_parser.get_device_command_metadata().keys())
+        expected_cmd_list = list(
+            self.sim_file_parser.get_device_command_metadata().keys()
+        )
         self.assertEquals(
             set(actual_device_cmds),
             set(expected_cmd_list),
@@ -333,7 +336,9 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         """
         default_cmds = helper_module.DEFAULT_TANGO_DEVICE_COMMANDS
         actual_device_cmds = set(self.sim_device.get_command_list()) - default_cmds
-        expected_cmd_list = list(self.sim_file_parser.get_device_command_metadata().keys())
+        expected_cmd_list = list(
+            self.sim_file_parser.get_device_command_metadata().keys()
+        )
         self.assertEquals(
             actual_device_cmds,
             set(expected_cmd_list),

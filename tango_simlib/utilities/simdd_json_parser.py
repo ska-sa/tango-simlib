@@ -11,9 +11,8 @@ from __future__ import division
 from __future__ import absolute_import
 
 
-
-
 from future import standard_library
+
 standard_library.install_aliases()
 
 
@@ -291,9 +290,9 @@ class SimddParser(Parser):
             # Recursively call get_reformatted_data if value is still a dict
             return [
                 (param_name, param_val)
-                for param_name, param_val in list(self._get_reformatted_data(
-                    value, element_type
-                ).items())
+                for param_name, param_val in list(
+                    self._get_reformatted_data(value, element_type).items()
+                )
             ]
 
         formated_info = {}

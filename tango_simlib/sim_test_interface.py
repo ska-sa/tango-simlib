@@ -9,6 +9,7 @@ from __future__ import print_function
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 from future import standard_library
+
 standard_library.install_aliases()
 
 import weakref
@@ -67,7 +68,9 @@ class TangoTestDeviceServerBase(with_metaclass(DeviceMeta, Device)):
         """The device method that sets up attributes during run time."""
         # Get attributes to control the device model quantities
         # from class variables of the quantities included in the device model.
-        models = set([quant.__class__ for quant in list(self.model.sim_quantities.values())])
+        models = set(
+            [quant.__class__ for quant in list(self.model.sim_quantities.values())]
+        )
         control_attributes = []
 
         for cls in models:

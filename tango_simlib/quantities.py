@@ -10,6 +10,7 @@ from __future__ import print_function
 #########################################################################################
 from past.builtins import cmp
 from future import standard_library
+
 standard_library.install_aliases()
 
 from builtins import object
@@ -60,6 +61,7 @@ class Quantity(with_metaclass(abc.ABCMeta, object)):
     the `last_val` attribute with the initial quantity value.
 
     """
+
     adjustable_attributes = frozenset(["last_val", "last_update_time"])
 
     def __init__(self, start_value=None, start_time=None, meta=None):

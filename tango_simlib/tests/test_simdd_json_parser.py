@@ -10,6 +10,7 @@ from __future__ import print_function
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 from future import standard_library
+
 standard_library.install_aliases()
 
 import unittest
@@ -132,7 +133,9 @@ class test_SimddJsonParser(GenericSetup):
 
         # Test if all the parsed attributes have the mandatory properties
         for attr_name, attribute_metadata in list(actual_parsed_attrs.items()):
-            for param in list(helper_module.DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE.keys()):
+            for param in list(
+                helper_module.DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE.keys()
+            ):
                 self.assertIn(
                     param,
                     list(attribute_metadata.keys()),
@@ -390,8 +393,8 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
-        expected_attributes = (
-            list(self.simdd_json_parser.get_device_attribute_metadata().keys())
+        expected_attributes = list(
+            self.simdd_json_parser.get_device_attribute_metadata().keys()
         )
 
         self.assertEqual(
@@ -405,8 +408,8 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         specified in the SimDD data description file.
         """
         actual_device_commands = set(self.device.get_command_list())
-        expected_command_list = (
-            list(self.simdd_json_parser.get_device_command_metadata().keys())
+        expected_command_list = list(
+            self.simdd_json_parser.get_device_command_metadata().keys()
         )
         expected_command_list.extend(helper_module.DEFAULT_TANGO_DEVICE_COMMANDS)
         self.assertEquals(

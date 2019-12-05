@@ -9,6 +9,7 @@ from __future__ import division
 from __future__ import print_function
 
 from future import standard_library
+
 standard_library.install_aliases()
 
 import unittest
@@ -116,10 +117,9 @@ class test_FandangoJsonParser(GenericSetup):
         # testing that the command properties have been renamed to
         # match values in command signature
 
-        for (
-            cmd_name,
-            cmd_metadata,
-        ) in list(self.fandango_parser.get_device_command_metadata().items()):
+        for (cmd_name, cmd_metadata,) in list(
+            self.fandango_parser.get_device_command_metadata().items()
+        ):
             self.assertEquals(
                 sorted(EXPECTED_CMD_PROPERTY_PARAMETERS),
                 sorted(cmd_metadata.keys()),

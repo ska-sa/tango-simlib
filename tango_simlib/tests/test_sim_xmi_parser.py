@@ -10,6 +10,7 @@ from __future__ import print_function
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 from future import standard_library
+
 standard_library.install_aliases()
 
 
@@ -746,7 +747,9 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
             "The attribute {} is not in the device attribute list".format(attr_name),
         )
         attr_config = self.device.get_attribute_config(attr_name)
-        for attr_prop, attr_prop_val in list(expected_admin_mode_devenum_attr_info.items()):
+        for attr_prop, attr_prop_val in list(
+            expected_admin_mode_devenum_attr_info.items()
+        ):
             device_attr_prop_val = getattr(attr_config, attr_prop, None)
             if device_attr_prop_val:
                 # Tango device return attribute properties with Not pecified
@@ -786,10 +789,9 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
             "The attribute {} is not in the device attribute list".format(attr_name),
         )
         attr_config = self.device.get_attribute_config(attr_name)
-        for (
-            attr_prop,
-            attr_prop_val,
-        ) in list(expected_achieved_pointing_spectrum_attr_info.items()):
+        for (attr_prop, attr_prop_val,) in list(
+            expected_achieved_pointing_spectrum_attr_info.items()
+        ):
             device_attr_prop_val = getattr(attr_config, attr_prop, None)
             if device_attr_prop_val:
                 # Tango device return attribute properties with 'Not specified'
