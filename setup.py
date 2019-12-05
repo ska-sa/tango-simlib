@@ -27,7 +27,7 @@ setup(name="tango_simlib",
       tests_require=[
           'katcp',
           'numpy',
-          'nose_xunitmp'],
+          ],
       extras_require={
           'docs': ["sphinx-pypi-upload",
                    "numpydoc",
