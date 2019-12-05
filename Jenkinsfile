@@ -22,19 +22,18 @@ pipeline {
                 ])
             }
         }
-        // TODO: This is commented out for efficient and quick response cycle should be uncommented once migration is done
-        // stage ('Static analysis') {
-        //     steps {
-        //         sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
-        //         sh "lint_diff.sh -r ${KATPACKAGE}"
-        //     }
+        stage ('Static analysis') {
+            steps {
+                sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
+                sh "lint_diff.sh -r ${KATPACKAGE}"
+            }
 
-        //     post {
-        //         always {
-        //             recordIssues(tool: pyLint(pattern: 'pylint.out'))
-        //         }
-        //     }
-        // }
+            post {
+                always {
+                    recordIssues(tool: pyLint(pattern: 'pylint.out'))
+                }
+            }
+        }
 
         stage ('Start Services') {
             steps {
@@ -105,6 +104,7 @@ pipeline {
                 echo "Generating Sphinx documentation."
                 sh 'make -C doc html'
             }
+        }
 
         stage ('Build & publish packages') {
             when {
