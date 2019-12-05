@@ -168,7 +168,7 @@ class PopulateModelQuantities(object):
     """Used to populate/update model quantities.
 
     Populates the model quantities using the data from the TANGO device information
-    captured in the json file / POGO generated xmi / FANDANGO generated to file.
+    captured in the json file / POGO generated xmi / FANDANGO generated fgo file.
 
     Attributes
     ----------
