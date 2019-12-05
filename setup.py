@@ -10,7 +10,7 @@ files = {"Readme": "README.rst", "Changelog": "CHANGELOG.rst"}
 
 long_description = ""
 for name, filename in files.items():
-    if name != 'Readme':
+    if name != "Readme":
         long_description += "# {}\n".format(name)
     with open(os.path.join(this_directory, filename)) as _f:
         file_contents = _f.read()
@@ -20,7 +20,7 @@ setup(
     name="tango_simlib",
     description="Generic library for creating simulated TANGO devices.",
     long_description=long_description,
-    long_description_content_type='text/x-rst',
+    long_description_content_type="text/x-rst",
     author="MeerKAT CAM Team",
     author_email="cam@ska.ac.za",
     packages=find_packages(),
@@ -54,7 +54,7 @@ setup(
         "PyTango>=9.2.2",
     ],
     tests_require=["katcp", "numpy"],
-    extras_require={"docs": ["sphinx-pypi-upload", "numpydoc", "Sphinx"]},
+    extras_require={"docs": ["sphinx-pypi-upload", "numpydoc", "Sphinx", "mock"]},
     zip_safe=False,
     include_package_data=True,
     package_data={
