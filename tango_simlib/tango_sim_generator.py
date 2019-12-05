@@ -407,7 +407,8 @@ def get_tango_device_server(models, sim_data_files):
                     for prop in list(meta_data.keys()):
                         attr_prop_setter = getattr(attr_props, "set_" + prop, None)
                         if attr_prop_setter:
-                            attr_prop_setter(str(meta_data[prop]).encode('ascii', 'replace'))
+                            attr_prop_setter(str(meta_data[prop]).encode('ascii',
+                                                                         'replace'))
                         else:
                             MODULE_LOGGER.info(
                                 "No setter function for " + prop + " property"
