@@ -59,7 +59,7 @@ pipeline {
                         echo "Running nosetests on Python 2.7"
                         sh 'python2 -m pip install . -U'
                         sh 'python2 -m pip install nose_xunitmp'
-                        sh "python2 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE} --xunit-file=nosetests_{envname}.xml"
+                        sh "python2 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE} --with-xunit --xunit-file=nosetests_py27.xml"
                     }
                 }
 
