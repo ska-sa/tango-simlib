@@ -6,24 +6,30 @@
 """This module performs the parsing of the SKA Self-Description Data XML schema
 file generated from the DSL.
 """
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 import xml.etree.ElementTree as ET
 
 from tango import DevBoolean, DevDouble, DevLong, DevString
 from tango_simlib.utilities.base_parser import Parser
 
 SDD_MP_PARAMS_TANGO_MAP = {
-    'name': 'name',
-    'Description': 'description',
-    'DataType': 'data_type',
-    'MinValue': 'min_value',
-    'MaxValue': 'max_value',
-    'RWType': 'writable'}
+    "name": "name",
+    "Description": "description",
+    "DataType": "data_type",
+    "MinValue": "min_value",
+    "MaxValue": "max_value",
+    "RWType": "writable",
+}
 
 SDD_TYPES_TO_TANGO_TYPES = {
-    'int': DevLong,
-    'float': DevDouble,
-    'boolean': DevBoolean,
-    'string': DevString}
+    "int": DevLong,
+    "float": DevDouble,
+    "boolean": DevBoolean,
+    "string": DevString,
+}
+
 
 class SDDParser(Parser):
     """Parses the SDD XML file generated from DSL.
@@ -35,16 +41,17 @@ class SDDParser(Parser):
     device_class_name: str
 
     """
+
     def parse(self, sdd_xml_file):
         # TODO (KM 18-11-2016) Might make use of the libraries mentioned to parse XML
         # files in this URL http://docs.python-guide.org/en/latest/scenarios/xml/
         self.data_description_file_name = sdd_xml_file
         tree = ET.parse(sdd_xml_file)
         root = tree.getroot()
-        self._device_commands.update(self._extract_command_info(root.find(
-            'CommandList')))
-        self._device_attributes.update(self._extract_monitoring_point_info(
-            root.find('MonitoringPointsList')))
+        self._device_commands.update(self._extract_command_info(root.find("CommandList")))
+        self._device_attributes.update(
+            self._extract_monitoring_point_info(root.find("MonitoringPointsList"))
+        )
 
         self._convert_attribute_info()
 
@@ -127,24 +134,22 @@ class SDDParser(Parser):
             cmd_metadata = {}
             for prop in command:
                 cmd_metadata[prop.tag] = {}
-                if prop.tag in ['CommandParameters']:
+                if prop.tag in ["CommandParameters"]:
                     cmd_meta_prop = {}
                     for parameter in prop:
                         cmd_param_meta = {}
                         for parameter_prop in parameter:
-                            cmd_param_meta[parameter_prop.tag] = (
-                                parameter_prop.text)
-                        cmd_meta_prop[cmd_param_meta['ParameterName']] = (
-                            cmd_param_meta)
+                            cmd_param_meta[parameter_prop.tag] = parameter_prop.text
+                        cmd_meta_prop[cmd_param_meta["ParameterName"]] = cmd_param_meta
                     cmd_metadata[prop.tag].update(cmd_meta_prop)
-                elif prop.tag in ['ResponseList']:
+                elif prop.tag in ["ResponseList"]:
                     self._extract_response_list_info(cmd_metadata, prop)
-                elif prop.tag in ['AvailableInModes']:
+                elif prop.tag in ["AvailableInModes"]:
                     for prop_param in prop:
                         cmd_metadata[prop.tag][prop_param.tag] = prop_param.text
                 else:
                     cmd_metadata[prop.tag] = prop.text
-            cmds[cmd_metadata['CommandName']] = cmd_metadata
+            cmds[cmd_metadata["CommandName"]] = cmd_metadata
         return cmds
 
     def _extract_response_list_info(self, cmd_meta, prop):
@@ -198,23 +203,21 @@ class SDDParser(Parser):
         for response in prop:
             cmd_response_meta = {}  # Stores the response properties
             for resp_prop in response:
-                if resp_prop.tag in ['ResponseParameters']:
+                if resp_prop.tag in ["ResponseParameters"]:
                     response_params = {}  # Stores the response paramaters
                     cmd_response_meta[resp_prop.tag] = {}
                     for parameter in resp_prop:
                         # Stores the properties of the parameter
                         resp_params_prop = {}
                         for parameter_prop in parameter:
-                            resp_params_prop[parameter_prop.tag] = (
-                                    parameter_prop.text)
-                        response_params[resp_params_prop['ParameterName']] = (
-                            resp_params_prop)
-                        cmd_response_meta[resp_prop.tag].update(
-                            response_params)
+                            resp_params_prop[parameter_prop.tag] = parameter_prop.text
+                        response_params[
+                            resp_params_prop["ParameterName"]
+                        ] = resp_params_prop
+                        cmd_response_meta[resp_prop.tag].update(response_params)
                 else:
                     cmd_response_meta[resp_prop.tag] = resp_prop.text
-            cmd_responses[cmd_response_meta['ResponseName']] = (
-                        cmd_response_meta)
+            cmd_responses[cmd_response_meta["ResponseName"]] = cmd_response_meta
 
         cmd_meta[prop.tag].update(cmd_responses)
 
@@ -278,14 +281,13 @@ class SDDParser(Parser):
         monitoring_points = mp_info.getchildren()
         for mnt_pt in monitoring_points:
             dev_mnt_pts_meta = {}
-            dev_mnt_pts_meta['name'] = mnt_pt.attrib['name']
-            dev_mnt_pts_meta['id'] = mnt_pt.attrib['id']
+            dev_mnt_pts_meta["name"] = mnt_pt.attrib["name"]
+            dev_mnt_pts_meta["id"] = mnt_pt.attrib["id"]
             for prop in mnt_pt:
-                if prop.tag in ['ValueRange', 'SamplingFrequency']:
+                if prop.tag in ["ValueRange", "SamplingFrequency"]:
                     dev_mnt_pts_meta[prop.tag] = {}
                     for inner_prop in prop:
-                        dev_mnt_pts_meta[prop.tag][inner_prop.tag] = (
-                            inner_prop.text)
+                        dev_mnt_pts_meta[prop.tag][inner_prop.tag] = inner_prop.text
                 elif prop.tag == "PossibleValues":
                     vals = []
                     for possible_val in prop:
@@ -295,13 +297,14 @@ class SDDParser(Parser):
                     try:
                         dev_mnt_pts_meta[prop.tag] = SDD_TYPES_TO_TANGO_TYPES[prop.text]
                     except KeyError:
-                        raise KeyError("The monitoring point '{}''s data type '{}' cannot"
-                                       " be mapped to any TANGO type"
-                                       .format(mnt_pt, prop))
+                        raise KeyError(
+                            "The monitoring point '{}''s data type '{}' cannot"
+                            " be mapped to any TANGO type".format(mnt_pt, prop)
+                        )
                 else:
                     dev_mnt_pts_meta[prop.tag] = prop.text
 
-            dev_mnt_pts[mnt_pt.attrib['name']] = dev_mnt_pts_meta
+            dev_mnt_pts[mnt_pt.attrib["name"]] = dev_mnt_pts_meta
         return dev_mnt_pts
 
     def get_device_attribute_metadata(self):
@@ -354,18 +357,20 @@ class SDDParser(Parser):
                 # Unpack the min and max values from the ValueRange dictionary
                 if metadata_prop_name == "ValueRange":
                     for extremity, extremity_val in metadata_prop_val.items():
-                       # This will not raise a keyerror exception as the the keys
-                       # (MaxValue/MinValue) will be available in the tag 'ValueRange'
-                       # appears in the SDD XML file.
-                       monitoring_pts[mpt_name][SDD_MP_PARAMS_TANGO_MAP[extremity]] = (
-                           extremity_val)
+                        # This will not raise a keyerror exception as the the keys
+                        # (MaxValue/MinValue) will be available in the tag 'ValueRange'
+                        # appears in the SDD XML file.
+                        monitoring_pts[mpt_name][
+                            SDD_MP_PARAMS_TANGO_MAP[extremity]
+                        ] = extremity_val
                 else:
                     try:
                         parameter_name = SDD_MP_PARAMS_TANGO_MAP[metadata_prop_name]
                         monitoring_pts[mpt_name][parameter_name] = metadata_prop_val
                     except KeyError:
-                        monitoring_pts[mpt_name][metadata_prop_name.lower()] = (
-                            metadata_prop_val)
+                        monitoring_pts[mpt_name][
+                            metadata_prop_name.lower()
+                        ] = metadata_prop_val
         self._device_attributes = monitoring_pts
 
     def get_device_properties_metadata(self, property_group):
