@@ -2,17 +2,21 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 
+
 #########################################################################################
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from future import standard_library
+standard_library.install_aliases()
+
+from builtins import object
 import abc
+from future.utils import with_metaclass
 
 
-class Parser(object):
-    __metaclass__ = abc.ABCMeta
-
+class Parser(with_metaclass(abc.ABCMeta, object)):
     def __init__(self):
         """
         Parser class handling a simulator description datafile.
