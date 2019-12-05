@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 ######################################################################################### 
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
@@ -32,7 +35,7 @@ def cleanup_tempfile(test_instance, unlink=False, *mkstemp_args, **mkstemp_kwarg
     def cleanup():
         try:
             os.unlink(fname)
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.ENOENT: pass
             else: raise
     test_instance.addCleanup(cleanup)
@@ -50,7 +53,7 @@ def cleanup_tempdir(test_instance, *mkdtemp_args, **mkdtemp_kwargs):
     def cleanup():
         try:
             shutil.rmtree(dirname)
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.ENOENT: pass
             else: raise
     test_instance.addCleanup(cleanup)

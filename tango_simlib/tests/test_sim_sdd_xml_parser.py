@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 #########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
@@ -151,7 +154,7 @@ class test_PopModelQuantities(GenericSetup):
             sim_quantity_metadata = getattr(sim_quantity, 'meta')
             mpt_meta = mnt_pt_metadata[sim_quantity_name]
             for mnt_pt_param_name, mnt_pt_param_val in mpt_meta.items():
-                self.assertTrue(sim_quantity_metadata.has_key(mnt_pt_param_name),
+                self.assertTrue(mnt_pt_param_name in sim_quantity_metadata,
                                 "The param '%s' was not added to the model quantity"
                                 " '%s'" % (mnt_pt_param_name, sim_quantity_name))
                 self.assertEqual(sim_quantity_metadata[mnt_pt_param_name],

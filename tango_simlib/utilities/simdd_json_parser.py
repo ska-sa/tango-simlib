@@ -6,6 +6,9 @@
 """This module performs the parsing of the Simulator Description Datafile,
 containing the information needed to instantiate a useful device simulator.
 """
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 import json
 import logging
 
