@@ -6,15 +6,16 @@
 """An example of the user-defined override class."""
 from __future__ import absolute_import, division, print_function
 
+import logging
+from builtins import object
+
 from future import standard_library
+from past.builtins import cmp
+from PyTango import DevState, ErrSeverity, Except
 
 standard_library.install_aliases()
 
-import logging
 
-from builtins import object
-from past.builtins import cmp
-from PyTango import DevState, Except, ErrSeverity
 
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -129,17 +130,17 @@ class OverrideVds(object):
         except KeyError:
             raise VdsSimError(
                 "Invalid argument ({}) provided. Please provide a string of either"
-                " {} value.".format(data_input, list(camera_power_state.keys()))
+                " {} value.".format(data_input, camera_power_state.keys())
             )
 
         quant_camera_power_on.set_val(camera_power_state_value, model.time_func())
 
         if camera_power_state[data_input.lower()]:
-            for quantity in list(model.sim_quantities.values()):
+            for quantity in model.sim_quantities.values():
                 quantity.default_val(model.time_func())
             tango_dev.set_state(DevState.ON)
         else:
-            for quantity in list(model.sim_quantities.values()):
+            for quantity in model.sim_quantities.values():
                 quantity.set_val(None, model.time_func())
             tango_dev.set_state(DevState.OFF)
 
@@ -162,7 +163,7 @@ class OverrideVds(object):
         except KeyError:
             raise VdsSimError(
                 "Invalid argument ({}) provided. Please provide a string of either"
-                " {} value.".format(data_input, list(flood_lights_state.keys()))
+                " {} value.".format(data_input, flood_lights_state.keys())
             )
 
         quant_flood_lights_on.set_val(flood_lights_state_value, model.time_func())
@@ -252,7 +253,7 @@ class OverrideVds(object):
                 )
             )
 
-        for position in list(presets.keys()):
+        for position in presets.keys():
             try:
                 model_quant = model.sim_quantities["%s_position" % position]
             except KeyError:

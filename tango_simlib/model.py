@@ -5,20 +5,22 @@
 #########################################################################################
 from __future__ import absolute_import, division, print_function
 
-from future import standard_library
-standard_library.install_aliases()
-
 import importlib
 import logging
 import sys
 import time
 import weakref
-
 from builtins import map, object, range
 from functools import partial
 
+from future import standard_library
 from tango import CmdArgType
 from tango_simlib import quantities
+
+standard_library.install_aliases()
+
+
+
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -113,7 +115,7 @@ class Model(object):
         self._sim_state.update(
             {
                 var: (quant.last_val, quant.last_update_time)
-                for var, quant in list(self.sim_quantities.items())
+                for var, quant in self.sim_quantities.items()
             }
         )
 
@@ -123,7 +125,7 @@ class Model(object):
         if dt < self.min_update_period or self.paused:
             # Updating the sim_state in case the test interface or external command
             # updated the quantities.
-            for var, quant in list(self.sim_quantities.items()):
+            for var, quant in self.sim_quantities.items():
                 self._sim_state[var] = (quant.last_val, quant.last_update_time)
             MODULE_LOGGER.debug(
                 "Sim {} skipping update at {}, dt {} < {} and pause {}".format(
@@ -138,7 +140,7 @@ class Model(object):
         MODULE_LOGGER.info("Stepping at {}, dt: {}".format(sim_time, dt))
         self.last_update_time = sim_time
         try:
-            for var, quant in list(self.sim_quantities.items()):
+            for var, quant in self.sim_quantities.items():
                 self._sim_state[var] = (quant.next_val(sim_time), sim_time)
         except Exception:
             MODULE_LOGGER.exception("Exception in update loop")
@@ -225,7 +227,7 @@ class PopulateModelQuantities(object):
         start_time = self.sim_model.start_time
         attributes = self.parser_instance.get_device_attribute_metadata()
 
-        for attr_name, attr_props in list(attributes.items()):
+        for attr_name, attr_props in attributes.items():
             # When using more than one config file, the attribute meta data can be
             # overwritten, so we need to update it instead of reassigning a different
             # object.
@@ -250,7 +252,7 @@ class PopulateModelQuantities(object):
                     if param_val
                 )
                 model_attr_props = dict(
-                    list(model_attr_props.items()) + list(attr_props.items())
+                    model_attr_props.items() + attr_props.items()
                 )
 
             if "quantity_simulation_type" in model_attr_props:
@@ -309,7 +311,7 @@ class PopulateModelQuantities(object):
                         **sim_attr_quantities
                     )
             else:
-                key_vals = list(model_attr_props.keys())
+                key_vals = model_attr_props.keys()
                 attr_data_type = model_attr_props["data_type"]
                 # the xmi, json and fgo files have data_format attributes indicating
                 # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
@@ -461,7 +463,7 @@ class PopulateModelActions(object):
             else:
                 self.sim_model.override_post_updates.append(post_update_overwrite)
 
-        for cmd_name, cmd_meta in list(self.cmd_info.items()):
+        for cmd_name, cmd_meta in self.cmd_info.items():
             # Exclude the TANGO default commands as they have their own built in handlers
             # provided.
             if cmd_name in DEFAULT_TANGO_COMMANDS:
@@ -514,7 +516,7 @@ class PopulateModelActions(object):
 
     def _get_class_instances(self, override_class_info):
         instances = {}
-        for klass_info in list(override_class_info.values()):
+        for klass_info in override_class_info.values():
             if klass_info["module_directory"] == "None":
                 module = importlib.import_module(klass_info["module_name"])
             else:
