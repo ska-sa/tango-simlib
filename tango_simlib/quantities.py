@@ -1,3 +1,7 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
@@ -10,8 +14,8 @@ from random import gauss
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
-inf = float('inf')
-ninf = float('-inf')
+inf = float("inf")
+ninf = float("-inf")
 registry = {}
 
 
@@ -49,8 +53,9 @@ class Quantity(object):
     the `last_val` attribute with the initial quantity value.
 
     """
+
     __metaclass__ = abc.ABCMeta
-    adjustable_attributes = frozenset(['last_val', 'last_update_time'])
+    adjustable_attributes = frozenset(["last_val", "last_update_time"])
 
     def __init__(self, start_value=None, start_time=None, meta=None):
         """Subclasses must call this super __init__()"""
@@ -120,17 +125,26 @@ class GaussianSlewLimited(Quantity):
         Maximum quantity value, random values will be clipped if needed.
 
     """
-    adjustable_attributes = Quantity.adjustable_attributes | frozenset(
-        ['mean', 'std_dev', 'max_slew_rate', 'min_bound', 'max_bound'])
 
-    def __init__(self, mean, std_dev,
-                 max_slew_rate=inf, meta=None,
-                 min_bound=ninf, max_bound=inf,
-                 start_value=None, start_time=None):
+    adjustable_attributes = Quantity.adjustable_attributes | frozenset(
+        ["mean", "std_dev", "max_slew_rate", "min_bound", "max_bound"]
+    )
+
+    def __init__(
+        self,
+        mean,
+        std_dev,
+        max_slew_rate=inf,
+        meta=None,
+        min_bound=ninf,
+        max_bound=inf,
+        start_value=None,
+        start_time=None,
+    ):
         start_value = start_value if start_value is not None else mean
-        super(GaussianSlewLimited, self).__init__(start_value=start_value,
-                                                  start_time=start_time,
-                                                  meta=meta)
+        super(GaussianSlewLimited, self).__init__(
+            start_value=start_value, start_time=start_time, meta=meta
+        )
         self.mean = mean
         self.std_dev = std_dev
         assert max_slew_rate > 0
@@ -149,7 +163,7 @@ class GaussianSlewLimited(Quantity):
 
         """
         dt = t - self.last_update_time
-        max_slew = self.max_slew_rate*dt
+        max_slew = self.max_slew_rate * dt
         new_val = gauss(self.mean, self.std_dev)
         delta = new_val - self.last_val
         val = self.last_val + cmp(delta, 0) * min(abs(delta), max_slew)
@@ -158,6 +172,7 @@ class GaussianSlewLimited(Quantity):
         self.last_val = val
         self.last_update_time = t
         return val
+
 
 register_quantity_class(GaussianSlewLimited)
 
@@ -187,5 +202,6 @@ class ConstantQuantity(Quantity):
         """
         self.last_val = True
         self.last_update_time = t
+
 
 register_quantity_class(ConstantQuantity)

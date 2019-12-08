@@ -7,6 +7,9 @@
 Simlib library generic simulator generator utility to be used to generate an actual
 TANGO device that exhibits the behaviour defined in the data description file.
 """
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 import logging
 
 import xml.etree.ElementTree as ET
@@ -18,62 +21,68 @@ from tango_simlib.utilities.base_parser import Parser
 MODULE_LOGGER = logging.getLogger(__name__)
 CONSTANT_DATA_TYPES = frozenset([DevBoolean, DevEnum, DevString])
 POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP = {
-    'Image': AttrDataFormat.IMAGE,
-    'Scalar': AttrDataFormat.SCALAR,
-    'Spectrum': AttrDataFormat.SPECTRUM}
+    "Image": AttrDataFormat.IMAGE,
+    "Scalar": AttrDataFormat.SCALAR,
+    "Spectrum": AttrDataFormat.SPECTRUM,
+}
 
 INT_TYPE_MAP = {
-    'Int': 'Long',
-    'UInt': 'ULong',
-    'IntArray': 'LongArray',
-    'UIntArray': 'ULongArray'
-    }
+    "Int": "Long",
+    "UInt": "ULong",
+    "IntArray": "LongArray",
+    "UIntArray": "ULongArray",
+}
 # TODO(KM 31-10-2016): Need to add xmi attributes' properties that are currently
 # not being handled by the parser e.g. [displayLevel, enumLabels] etc.
 POGO_USER_DEFAULT_ATTR_PROP_MAP = {
-    'dynamicAttributes': {
-        'name': 'name',
-        'dataType': 'data_type',
-        'rwType': 'writable',
-        'polledPeriod': 'period',
-        'attType': 'data_format',
-        'enum_labels': 'enum_labels',
-        'maxX': 'max_dim_x',
-        'maxY': 'max_dim_y'},
-    'eventArchiveCriteria': {
-        'absChange': 'archive_abs_change',
-        'period': 'archive_period',
-        'relChange': 'archive_rel_change'},
-    'eventCriteria': {
-        'absChange': 'abs_change',
-        'period': 'event_period',
-        'relChange': 'rel_change'},
-    'properties': {
-        'maxAlarm': 'max_alarm',
-        'maxValue': 'max_value',
-        'maxWarning': 'max_warning',
-        'minAlarm': 'min_alarm',
-        'deltaTime': 'delta_t',
-        'minValue': 'min_value',
-        'deltaValue': 'delta_val',
-        'minWarning': 'min_warning',
-        'description': 'description',
-        'displayUnit': 'display_unit',
-        'standardUnit': 'standard_unit',
-        'format': 'format',
-        'label': 'label',
-        'unit': 'unit',
-        'inherited': 'inherited'
-        }
-    }
+    "dynamicAttributes": {
+        "name": "name",
+        "dataType": "data_type",
+        "rwType": "writable",
+        "polledPeriod": "period",
+        "attType": "data_format",
+        "enum_labels": "enum_labels",
+        "maxX": "max_dim_x",
+        "maxY": "max_dim_y",
+    },
+    "eventArchiveCriteria": {
+        "absChange": "archive_abs_change",
+        "period": "archive_period",
+        "relChange": "archive_rel_change",
+    },
+    "eventCriteria": {
+        "absChange": "abs_change",
+        "period": "event_period",
+        "relChange": "rel_change",
+    },
+    "properties": {
+        "maxAlarm": "max_alarm",
+        "maxValue": "max_value",
+        "maxWarning": "max_warning",
+        "minAlarm": "min_alarm",
+        "deltaTime": "delta_t",
+        "minValue": "min_value",
+        "deltaValue": "delta_val",
+        "minWarning": "min_warning",
+        "description": "description",
+        "displayUnit": "display_unit",
+        "standardUnit": "standard_unit",
+        "format": "format",
+        "label": "label",
+        "unit": "unit",
+        "inherited": "inherited",
+    },
+}
 
 POGO_USER_DEFAULT_CMD_PROP_MAP = {
-    'name': 'name',
-    'arginDescription': 'doc_in',
-    'arginType': 'dtype_in',
-    'argoutDescription': 'doc_out',
-    'argoutType': 'dtype_out',
-    'inherited': 'inherited'}
+    "name": "name",
+    "arginDescription": "doc_in",
+    "arginType": "dtype_in",
+    "argoutDescription": "doc_out",
+    "argoutType": "dtype_out",
+    "inherited": "inherited",
+}
+
 
 class XmiParser(Parser):
     """Parses the XMI file generated from POGO.
@@ -84,6 +93,7 @@ class XmiParser(Parser):
 
     device_class_name: str
     """
+
     def __init__(self):
         super(XmiParser, self).__init__()
         self._device_attributes = []
@@ -120,33 +130,37 @@ class XmiParser(Parser):
 
         # ensure all unicode attribute values are converted to byte strings
         # as TANGO does not handle unicode
-        for child in tree.findall('.//'):
+        for child in tree.findall(".//"):
             for key, value in child.attrib.items():
                 if isinstance(value, unicode):
-                    child.attrib[key] = value.encode('ascii', 'replace')
+                    child.attrib[key] = value.encode("ascii", "replace")
 
         self._tree = tree
         root = tree.getroot()
-        device_class = root.find('classes')
-        self.device_class_name = device_class.attrib['name']
+        device_class = root.find("classes")
+        self.device_class_name = device_class.attrib["name"]
         for class_description_data in device_class:
-            if class_description_data.tag in ['description']:
+            if class_description_data.tag in ["description"]:
                 self.extract_device_class_descr(class_description_data)
-            elif class_description_data.tag in ['commands']:
-                command_info = (
-                    self.extract_command_description_data(class_description_data))
+            elif class_description_data.tag in ["commands"]:
+                command_info = self.extract_command_description_data(
+                    class_description_data
+                )
                 self._device_commands.append(command_info)
-            elif class_description_data.tag in ['dynamicAttributes', 'attributes']:
+            elif class_description_data.tag in ["dynamicAttributes", "attributes"]:
                 attribute_info = self.extract_attributes_description_data(
-                    class_description_data)
+                    class_description_data
+                )
                 self._device_attributes.append(attribute_info)
-            elif class_description_data.tag in ['deviceProperties']:
+            elif class_description_data.tag in ["deviceProperties"]:
                 device_property_info = self.extract_property_description_data(
-                    class_description_data, class_description_data.tag)
+                    class_description_data, class_description_data.tag
+                )
                 self._device_properties.append(device_property_info)
-            elif class_description_data.tag in ['classProperties']:
+            elif class_description_data.tag in ["classProperties"]:
                 class_property_info = self.extract_property_description_data(
-                    class_description_data, class_description_data.tag)
+                    class_description_data, class_description_data.tag
+                )
                 self._device_class_properties.append(class_property_info)
 
     def extract_device_class_descr(self, description_data):
@@ -176,10 +190,10 @@ class XmiParser(Parser):
         """
 
         class_data = {}
-        class_data['super_classes'] = []
-        super_classes = description_data.findall('inheritances')
+        class_data["super_classes"] = []
+        super_classes = description_data.findall("inheritances")
         for super_class in super_classes:
-            class_data['super_classes'].append(super_class.attrib)
+            class_data["super_classes"].append(super_class.attrib)
 
         self._class_description.update(class_data)
 
@@ -209,14 +223,13 @@ class XmiParser(Parser):
 
         """
         command_data = description_data.attrib.copy()
-        input_parameter = description_data.find('argin')
-        command_data['arginDescription'] = input_parameter.attrib['description']
-        command_data['arginType'] = self._get_arg_type(input_parameter)
-        output_parameter = description_data.find('argout')
-        command_data['argoutDescription'] = output_parameter.attrib['description']
-        command_data['argoutType'] = self._get_arg_type(output_parameter)
-        command_data['inherited'] = (
-            description_data.find('status').attrib['inherited'])
+        input_parameter = description_data.find("argin")
+        command_data["arginDescription"] = input_parameter.attrib["description"]
+        command_data["arginType"] = self._get_arg_type(input_parameter)
+        output_parameter = description_data.find("argout")
+        command_data["argoutDescription"] = output_parameter.attrib["description"]
+        command_data["argoutType"] = self._get_arg_type(output_parameter)
+        command_data["inherited"] = description_data.find("status").attrib["inherited"]
         return command_data
 
     def extract_attributes_description_data(self, description_data):
@@ -284,46 +297,57 @@ class XmiParser(Parser):
 
         """
         attribute_data = {}
-        attribute_data['dynamicAttributes'] = description_data.attrib.copy()
+        attribute_data["dynamicAttributes"] = description_data.attrib.copy()
 
-        attType = attribute_data['dynamicAttributes']['attType']
+        attType = attribute_data["dynamicAttributes"]["attType"]
         if attType in POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP.keys():
-            attribute_data['dynamicAttributes']['attType'] = (
-                POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP[attType])
+            attribute_data["dynamicAttributes"][
+                "attType"
+            ] = POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP[attType]
 
-        attribute_data['dynamicAttributes']['maxX'] = (
-            1 if attribute_data['dynamicAttributes']['maxX'] == ''
-            else int(attribute_data['dynamicAttributes']['maxX']))
-        attribute_data['dynamicAttributes']['maxY'] = (
-            0 if attribute_data['dynamicAttributes']['maxY'] == ''
-            else int(attribute_data['dynamicAttributes']['maxY']))
+        attribute_data["dynamicAttributes"]["maxX"] = (
+            1
+            if attribute_data["dynamicAttributes"]["maxX"] == ""
+            else int(attribute_data["dynamicAttributes"]["maxX"])
+        )
+        attribute_data["dynamicAttributes"]["maxY"] = (
+            0
+            if attribute_data["dynamicAttributes"]["maxY"] == ""
+            else int(attribute_data["dynamicAttributes"]["maxY"])
+        )
 
-        attribute_data['dynamicAttributes']['dataType'] = (
-            self._get_arg_type(description_data))
-        if str(attribute_data['dynamicAttributes']['dataType']) == 'DevEnum':
+        attribute_data["dynamicAttributes"]["dataType"] = self._get_arg_type(
+            description_data
+        )
+        if str(attribute_data["dynamicAttributes"]["dataType"]) == "DevEnum":
             enum_labels = []
             for child in description_data.getchildren():
-                if child.tag == 'enumLabels':
+                if child.tag == "enumLabels":
                     enum_labels.append(child.text)
-            attribute_data['dynamicAttributes']['enum_labels'] = sorted(enum_labels)
+            attribute_data["dynamicAttributes"]["enum_labels"] = sorted(enum_labels)
 
-        attribute_data['properties'] = description_data.find('properties').attrib
-        attribute_data['properties']['inherited'] = (
-            description_data.find('status').attrib['inherited'])
-
-        try:
-            attribute_data['eventCriteria'] = description_data.find(
-                'eventCriteria').attrib
-        except AttributeError:
-            MODULE_LOGGER.info(
-                "No periodic/change event(s) information was captured in the XMI file")
+        attribute_data["properties"] = description_data.find("properties").attrib
+        attribute_data["properties"]["inherited"] = description_data.find(
+            "status"
+        ).attrib["inherited"]
 
         try:
-            attribute_data['eventArchiveCriteria'] = description_data.find(
-                'evArchiveCriteria').attrib
+            attribute_data["eventCriteria"] = description_data.find(
+                "eventCriteria"
+            ).attrib
         except AttributeError:
             MODULE_LOGGER.info(
-                "No archive event(s) information was captured in the XMI file.")
+                "No periodic/change event(s) information was captured in the XMI file"
+            )
+
+        try:
+            attribute_data["eventArchiveCriteria"] = description_data.find(
+                "evArchiveCriteria"
+            ).attrib
+        except AttributeError:
+            MODULE_LOGGER.info(
+                "No archive event(s) information was captured in the XMI file."
+            )
 
         return attribute_data
 
@@ -358,20 +382,24 @@ class XmiParser(Parser):
         """
         property_data = {}
         property_data[property_group] = description_data.attrib.copy()
-        property_data[property_group]['type'] = (
-            self._get_arg_type(description_data))
-        property_data[property_group]['inherited'] = (
-            description_data.find('status').attrib['inherited'])
+        property_data[property_group]["type"] = self._get_arg_type(description_data)
+        property_data[property_group]["inherited"] = description_data.find(
+            "status"
+        ).attrib["inherited"]
         try:
-            default_prop_values = description_data.findall('DefaultPropValue')
+            default_prop_values = description_data.findall("DefaultPropValue")
             default_values = [prop_value.text for prop_value in default_prop_values]
-            property_data[property_group]['DefaultPropValue'] = (
-                default_values if default_values else '')
+            property_data[property_group]["DefaultPropValue"] = (
+                default_values if default_values else ""
+            )
         except KeyError:
             MODULE_LOGGER.info("%s has no default value(s) specified", property_group)
         except AttributeError:
-            MODULE_LOGGER.info("The 'DefaultPropValue' element is not specified in the"
-                               " description file for the %s tag", property_group)
+            MODULE_LOGGER.info(
+                "The 'DefaultPropValue' element is not specified in the"
+                " description file for the %s tag",
+                property_group,
+            )
         return property_data
 
     def _get_arg_type(self, description_data):
@@ -392,20 +420,20 @@ class XmiParser(Parser):
             Tango argument type
 
         """
-        if description_data.tag in ['attributes', 'dynamicAttributes']:
-            pogo_type = description_data.find('dataType').attrib.values()[0]
+        if description_data.tag in ["attributes", "dynamicAttributes"]:
+            pogo_type = description_data.find("dataType").attrib.values()[0]
         else:
-            pogo_type = description_data.find('type').attrib.values()[0]
+            pogo_type = description_data.find("type").attrib.values()[0]
         # pogo_type has format -> pogoDsl:DoubleType
         # tango type must be of the form DevDouble
-        arg_type = pogo_type.split(':')[1].replace('Type', '')
+        arg_type = pogo_type.split(":")[1].replace("Type", "")
         # pogo_type for status turns out to be 'pogoDsl:ConstStringType
         # For now it will be treated as normal DevString type
-        if arg_type.find('Const') != -1:
-            arg_type = arg_type.replace('Const', '')
+        if arg_type.find("Const") != -1:
+            arg_type = arg_type.replace("Const", "")
         # The out_type of the device State command is
         # tango._tango.CmdArgType.DevState instead of the default tango.utils.DevState.
-        if arg_type == 'State':
+        if arg_type == "State":
             return CmdArgType.DevState
         try:
             # Substituting the 'Int' type with 'Long'. 'DevInt' is not a supported
@@ -417,25 +445,43 @@ class XmiParser(Parser):
 
             # The DevVarTypeArray data type specified in pogo writes
             # TypeArray in xmi file instead.
-            if arg_type in ['FloatArray', 'DoubleArray',
-                            'StringArray', 'CharArray',
-                            'LongArray', 'ULongArray',
-                            'ShortArray', 'UShortArray',
-                            'IntArray', 'UIntArray',
-                            'LongStringArray', 'DoubleStringArray']:
-                arg_type = getattr(CmdArgType, 'DevVar' + arg_type)
-            elif arg_type in ['FloatVector', 'DoubleVector', 'StringVector',
-                              'ShortVector', 'IntVector', 'LongVector', 'ULongVector']:
-                arg_type = (
-                    getattr(CmdArgType, 'DevVar' + arg_type.replace('Vector', 'Array')))
+            if arg_type in [
+                "FloatArray",
+                "DoubleArray",
+                "StringArray",
+                "CharArray",
+                "LongArray",
+                "ULongArray",
+                "ShortArray",
+                "UShortArray",
+                "IntArray",
+                "UIntArray",
+                "LongStringArray",
+                "DoubleStringArray",
+            ]:
+                arg_type = getattr(CmdArgType, "DevVar" + arg_type)
+            elif arg_type in [
+                "FloatVector",
+                "DoubleVector",
+                "StringVector",
+                "ShortVector",
+                "IntVector",
+                "LongVector",
+                "ULongVector",
+            ]:
+                arg_type = getattr(
+                    CmdArgType, "DevVar" + arg_type.replace("Vector", "Array")
+                )
             else:
-                arg_type = getattr(CmdArgType, 'Dev' + arg_type)
+                arg_type = getattr(CmdArgType, "Dev" + arg_type)
         except AttributeError:
             MODULE_LOGGER.debug(
-                "tango.utils.CmdArgType has no attribute 'Dev{}'".format(arg_type))
+                "tango.utils.CmdArgType has no attribute 'Dev{}'".format(arg_type)
+            )
             raise AttributeError(
                 "tango.utils.CmdArgType has no attribute 'Dev{}'.\n Try replacing"
-                " '{}' with 'Var{}' in the configuration file".format(*(3*(arg_type,))))
+                " '{}' with 'Var{}' in the configuration file".format(*(3 * (arg_type,)))
+            )
 
         return arg_type
 
@@ -528,16 +574,21 @@ class XmiParser(Parser):
 
         for pogo_attribute_data in self._device_attributes:
             attribute_meta = {}
-            for (prop_group, default_attr_props) in (
-                    POGO_USER_DEFAULT_ATTR_PROP_MAP.items()):
+            for (
+                prop_group,
+                default_attr_props,
+            ) in POGO_USER_DEFAULT_ATTR_PROP_MAP.items():
                 for pogo_prop, user_default_prop in default_attr_props.items():
                     try:
-                        attribute_meta[user_default_prop] = (
-                            pogo_attribute_data[prop_group][pogo_prop])
+                        attribute_meta[user_default_prop] = pogo_attribute_data[
+                            prop_group
+                        ][pogo_prop]
                     except KeyError:
-                        MODULE_LOGGER.debug("{} information is not captured in the XMI"
-                                            " file".format(pogo_prop))
-            attributes[attribute_meta['name']] = attribute_meta
+                        MODULE_LOGGER.debug(
+                            "{} information is not captured in the XMI"
+                            " file".format(pogo_prop)
+                        )
+            attributes[attribute_meta["name"]] = attribute_meta
         return attributes
 
     def get_device_command_metadata(self):
@@ -578,7 +629,7 @@ class XmiParser(Parser):
         """
         temp_commands = {}
         for cmd_info in self._device_commands:
-            temp_commands[cmd_info['name']] = cmd_info
+            temp_commands[cmd_info["name"]] = cmd_info
 
         commands = {}
         # Need to convert the POGO parameter names to the TANGO names
@@ -587,12 +638,14 @@ class XmiParser(Parser):
             for cmd_prop_name, cmd_prop_value in cmd_metadata.items():
                 try:
                     commands_metadata.update(
-                        {POGO_USER_DEFAULT_CMD_PROP_MAP[cmd_prop_name]: cmd_prop_value})
+                        {POGO_USER_DEFAULT_CMD_PROP_MAP[cmd_prop_name]: cmd_prop_value}
+                    )
                 except KeyError:
                     MODULE_LOGGER.info(
                         "The property '%s' cannot be translated to a "
                         "corresponding parameter in the TANGO library",
-                        cmd_prop_name)
+                        cmd_prop_name,
+                    )
             commands[cmd_name] = commands_metadata
         return commands
 
@@ -653,16 +706,17 @@ class XmiParser(Parser):
                 }
         """
         properties = {}
-        if property_group == 'deviceProperties':
+        if property_group == "deviceProperties":
             props = self._device_properties
-        elif property_group == 'classProperties':
+        elif property_group == "classProperties":
             props = self._device_class_properties
         else:
             raise Exception("Wrong argument provided")
 
         for properties_info in props:
-            properties[properties_info[property_group]['name']] = (
-                properties_info[property_group])
+            properties[properties_info[property_group]["name"]] = properties_info[
+                property_group
+            ]
 
         return properties
 

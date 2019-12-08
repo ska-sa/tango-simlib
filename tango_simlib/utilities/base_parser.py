@@ -1,3 +1,7 @@
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+
 #########################################################################################
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
@@ -22,8 +26,8 @@ class Parser(object):
         :meth:`get_device_properties_metadata` and
         :meth:`get_device_cmd_override_metadata`
         """
-        self.data_description_file_name = ''
-        self.device_class_name = ''
+        self.data_description_file_name = ""
+        self.device_class_name = ""
         self._device_attributes = {}
         self._device_commands = {}
         self._device_properties = {}
