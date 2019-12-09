@@ -1,7 +1,3 @@
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
@@ -124,11 +120,7 @@ def append_device_to_db_file(
     db = Database(db_file_name)
     # Patched the property dict to avoid a PyTango bug
     patched = dict(
-<<<<<<< HEAD
-        (key, value if value != "" else " ") for key, value in list(properties.items())
-=======
         (key, value if value != "" else " ") for key, value in properties.items()
->>>>>>> master
     )
     # Write properties
     db.put_device_property(device, patched)

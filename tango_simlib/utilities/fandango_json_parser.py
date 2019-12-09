@@ -12,16 +12,10 @@ simulator.
 Instructions on how to create this json file can be found at the link below:
 https://github.com/tango-controls/fandango/blob/master/doc/recipes/ExportDeviceData.rst
 """
-<<<<<<< HEAD
 from __future__ import absolute_import, division, print_function
 
 from future import standard_library
 standard_library.install_aliases()
-=======
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
->>>>>>> master
 
 import json
 import logging
@@ -52,11 +46,7 @@ class FandangoExportDeviceParser(Parser):
         with open(json_file) as dev_data_file:
             device_data = json_load_byteified(dev_data_file)
 
-<<<<<<< HEAD
-        for data_component, elements in list(device_data.items()):
-=======
         for data_component, elements in device_data.items():
->>>>>>> master
             if data_component == "attributes":
                 self.preprocess_attribute_types(elements)
             elif data_component == "commands":
@@ -74,10 +64,10 @@ class FandangoExportDeviceParser(Parser):
         types and rename the command properties to match with the keyword arguments of
         the command signature.
         """
-        for cmd_name, cmd_config in list(command_data.items()):
+        for cmd_name, cmd_config in command_data.items():
             self._device_commands[cmd_name] = {}
 
-            for cmd_prop, cmd_prop_value in list(cmd_config.items()):
+            for cmd_prop, cmd_prop_value in cmd_config.items():
                 try:
                     if cmd_prop in ["in_type", "out_type"]:
                         if cmd_prop_value.find("Const") != -1:
@@ -100,11 +90,7 @@ class FandangoExportDeviceParser(Parser):
             attr_access = ["READ", "WRITE", "READ_WRITE", "READ_WITH_WRITE"]
             if attr_config["writable"] not in attr_access:
                 attr_config["writable"] = "READ_WRITE"
-<<<<<<< HEAD
-            for attr_prop, attr_prop_value in list(attr_config.items()):
-=======
             for attr_prop, attr_prop_value in attr_config.items():
->>>>>>> master
                 if attr_prop == "data_type":
                     attr_config[attr_prop] = getattr(CmdArgType, attr_prop_value)
                 elif attr_prop == "data_format":
@@ -149,11 +135,7 @@ class FandangoExportDeviceParser(Parser):
                     ]
                 ),
             )
-<<<<<<< HEAD
-            for prop, prop_val in list(property_data.items())
-=======
             for prop, prop_val in property_data.items()
->>>>>>> master
         ]
 
         property_data = dict(prop_data)

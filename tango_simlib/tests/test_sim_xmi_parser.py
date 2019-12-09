@@ -1,21 +1,11 @@
-<<<<<<< HEAD
-=======
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
->>>>>>> master
 #########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-<<<<<<< HEAD
 from __future__ import absolute_import, division, print_function
 
-=======
->>>>>>> master
 import logging
 import unittest
 
@@ -31,9 +21,6 @@ from tango_simlib.utilities.testutils import (ClassCleanupUnittestMixin,
                                               cleanup_tempfile)
 
 standard_library.install_aliases()
-
-
-
 
 
 LOGGER = logging.getLogger(__name__)
@@ -330,7 +317,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         not_added_attr = self.device.read_attribute("AttributesNotAdded")
         not_added_attr_names = not_added_attr.value
 
-        for attr_name, attr_metadata in list(attribute_data.items()):
+        for attr_name, attr_metadata in attribute_data.items():
             if attr_name in not_added_attr_names:
                 continue
             self.assertIn(
@@ -458,9 +445,9 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
     def test_command_properties(self):
         command_data = self.xmi_parser.get_device_command_metadata()
 
-        for cmd_name, cmd_metadata in list(command_data.items()):
+        for cmd_name, cmd_metadata in command_data.items():
             cmd_config_info = self.device.get_command_config(cmd_name)
-            for cmd_prop, cmd_prop_value in list(cmd_metadata.items()):
+            for cmd_prop, cmd_prop_value in cmd_metadata.items():
                 # The 'inherited' parameter is not part of the TANGO device command
                 # properties.
                 if cmd_prop == "inherited":
@@ -500,11 +487,7 @@ class test_XmiParser(GenericSetup):
         XMI file.
         """
         actual_parsed_attrs = self.xmi_parser.get_device_attribute_metadata()
-<<<<<<< HEAD
-        actual_parsed_attr_list = list(actual_parsed_attrs.keys())
-=======
         actual_parsed_attr_list = actual_parsed_attrs.keys()
->>>>>>> master
         self.assertGreater(
             len(actual_parsed_attr_list), 0, "There is no attribute information parsed"
         )
@@ -515,15 +498,11 @@ class test_XmiParser(GenericSetup):
         )
 
         # Test if all the parsed attributes have the mandatory properties
-        for attribute_metadata in list(actual_parsed_attrs.values()):
+        for attribute_metadata in actual_parsed_attrs.values():
             for param in expected_mandatory_attr_parameters:
                 self.assertIn(
                     param,
-<<<<<<< HEAD
-                    list(attribute_metadata.keys()),
-=======
                     attribute_metadata.keys(),
->>>>>>> master
                     "The parsed attribute '%s' does not the mandotory parameter"
                     " '%s' " % (attribute_metadata["name"], param),
                 )
@@ -532,11 +511,7 @@ class test_XmiParser(GenericSetup):
         # the full test data for the other attributes.
         self.assertIn(
             "pressure",
-<<<<<<< HEAD
-            list(actual_parsed_attrs.keys()),
-=======
             actual_parsed_attrs.keys(),
->>>>>>> master
             "The attribute pressure is not in the parsed attribute list",
         )
         actual_parsed_pressure_attr_info = actual_parsed_attrs["pressure"]
@@ -544,7 +519,6 @@ class test_XmiParser(GenericSetup):
         # Compare the values of the attribute properties captured in the POGO generated
         # xmi file and the ones in the parsed attribute data structure.
         for prop in expected_pressure_attr_info:
-<<<<<<< HEAD
             if isinstance(actual_parsed_pressure_attr_info[prop], unicode):
                 self.assertEquals(
                     actual_parsed_pressure_attr_info[prop].encode('ascii', "replace"),
@@ -559,14 +533,6 @@ class test_XmiParser(GenericSetup):
                     "The expected value for the parameter '%s' does not match"
                     " with the actual value" % (prop),
                 )
-=======
-            self.assertEquals(
-                actual_parsed_pressure_attr_info[prop],
-                expected_pressure_attr_info[prop],
-                "The expected value for the parameter '%s' does not match"
-                " with the actual value" % (prop),
-            )
->>>>>>> master
 
     def test_parsed_commands(self):
         """Test the parsed device commands.
@@ -577,11 +543,7 @@ class test_XmiParser(GenericSetup):
         """
         actual_parsed_cmds = self.xmi_parser.get_device_command_metadata()
         expected_cmd_list = ["On", "Off", "Add", "cmd1"] + default_pogo_commands
-<<<<<<< HEAD
-        actual_parsed_cmd_list = list(actual_parsed_cmds.keys())
-=======
         actual_parsed_cmd_list = actual_parsed_cmds.keys()
->>>>>>> master
         self.assertGreater(
             len(actual_parsed_cmd_list),
             len(default_pogo_commands),
@@ -594,15 +556,11 @@ class test_XmiParser(GenericSetup):
         )
 
         # Test if all the parsed commands have the mandatory properties
-        for command_metadata in list(actual_parsed_cmds.values()):
+        for command_metadata in actual_parsed_cmds.values():
             for param in expected_mandatory_cmd_parameters:
                 self.assertIn(
                     param,
-<<<<<<< HEAD
-                    list(command_metadata.keys()),
-=======
                     command_metadata.keys(),
->>>>>>> master
                     "The parsed command '%s' does not the mandatory parameter"
                     " '%s' " % (command_metadata["name"], param),
                 )
@@ -611,11 +569,7 @@ class test_XmiParser(GenericSetup):
         # generated the full test data for the other commands.
         self.assertIn(
             "On",
-<<<<<<< HEAD
-            list(actual_parsed_cmds.keys()),
-=======
             actual_parsed_cmds.keys(),
->>>>>>> master
             "The 'On' command is not in the parsed command list",
         )
         actual_on_cmd_info = actual_parsed_cmds["On"]
@@ -635,11 +589,7 @@ class test_XmiParser(GenericSetup):
             "deviceProperties"
         )
         expected_device_properties_list = ["sim_xmi_description_file"]
-<<<<<<< HEAD
-        actual_parsed_dev_props_list = list(actual_parsed_dev_properties.keys())
-=======
         actual_parsed_dev_props_list = actual_parsed_dev_properties.keys()
->>>>>>> master
         self.assertEqual(
             set(expected_device_properties_list),
             set(actual_parsed_dev_props_list),
@@ -651,11 +601,7 @@ class test_XmiParser(GenericSetup):
             for param in expected_mandatory_device_property_parameters:
                 self.assertIn(
                     param,
-<<<<<<< HEAD
-                    list(dev_prop_metadata.keys()),
-=======
                     dev_prop_metadata.keys(),
->>>>>>> master
                     "The parsed device property '%s' does not have the"
                     " mandatory parameter '%s' " % (dev_prop_metadata["name"], param),
                 )
@@ -664,11 +610,7 @@ class test_XmiParser(GenericSetup):
         # property we have for our device
         self.assertIn(
             "sim_xmi_description_file",
-<<<<<<< HEAD
-            list(actual_parsed_dev_properties.keys()),
-=======
             actual_parsed_dev_properties.keys(),
->>>>>>> master
             "The 'sim_xmi_description_file' device property is not in the"
             "parsed device properties' list",
         )
@@ -705,11 +647,7 @@ class test_PopModelQuantities(GenericSetup):
             pmq.sim_model.name,
             "The device name and the model name do not match.",
         )
-<<<<<<< HEAD
-        actual_quantities_list = list(pmq.sim_model.sim_quantities.keys())
-=======
         actual_quantities_list = pmq.sim_model.sim_quantities.keys()
->>>>>>> master
         self.assertEqual(
             set(EXPECTED_QUANTITIES_LIST),
             set(actual_quantities_list),
@@ -732,7 +670,7 @@ class test_PopModelActions(GenericSetup):
             len(sim_model.sim_quantities), 0, "The model has some unexpected quantities"
         )
 
-        for cmd_name in list(cmd_info.keys()):
+        for cmd_name in cmd_info.keys():
             # Exclude the State and Status command (cmd_handlers for them are created
             # automatically by TANGO
             if cmd_name not in ["State", "Status"]:
@@ -810,9 +748,7 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
             "The attribute {} is not in the device attribute list".format(attr_name),
         )
         attr_config = self.device.get_attribute_config(attr_name)
-        for attr_prop, attr_prop_val in list(
-            expected_admin_mode_devenum_attr_info.items()
-        ):
+        for attr_prop, attr_prop_val in expected_admin_mode_devenum_attr_info.items():
             device_attr_prop_val = getattr(attr_config, attr_prop, None)
             if device_attr_prop_val:
                 # Tango device return attribute properties with Not pecified
@@ -852,16 +788,10 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
             "The attribute {} is not in the device attribute list".format(attr_name),
         )
         attr_config = self.device.get_attribute_config(attr_name)
-<<<<<<< HEAD
-        for (attr_prop, attr_prop_val,) in list(
-            expected_achieved_pointing_spectrum_attr_info.items()
-        ):
-=======
         for (
             attr_prop,
             attr_prop_val,
         ) in expected_achieved_pointing_spectrum_attr_info.items():
->>>>>>> master
             device_attr_prop_val = getattr(attr_config, attr_prop, None)
             if device_attr_prop_val:
                 # Tango device return attribute properties with 'Not specified'
