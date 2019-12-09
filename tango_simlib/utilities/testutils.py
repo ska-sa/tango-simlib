@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-=======
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
->>>>>>> master
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
@@ -108,11 +101,7 @@ def set_attributes_polling(test_case, device_proxy, device_server, poll_periods)
     # some reason it only works if the device_proxy is used to set polling, but the
     # device_server is used to clear the polling. If polling is cleared using device_proxy
     # it seem to be impossible to restore the polling afterwards.
-<<<<<<< HEAD
-    attributes = list(poll_periods.keys())
-=======
     attributes = poll_periods.keys()
->>>>>>> master
     initial_polling = {
         attr: device_proxy.get_attribute_poll_period(attr) for attr in attributes
     }
@@ -149,7 +138,7 @@ def set_attributes_polling(test_case, device_proxy, device_server, poll_periods)
 
     def restore_polling():
         """Restore initial polling, for use during cleanup / teardown"""
-        for attr, period in list(initial_polling.items()):
+        for attr, period in initial_polling.items():
             if period == 0:
                 continue  # zero period implies no polling, nothing to do
             try:

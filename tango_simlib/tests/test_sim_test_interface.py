@@ -6,23 +6,27 @@
 #########################################################################################
 from __future__ import absolute_import, division, print_function
 
-from future import standard_library
-standard_library.install_aliases()
-
 import os
-import pkg_resources
 import subprocess
 import time
 import unittest
-
 from functools import partial
 
+import pkg_resources
+
+from future import standard_library
 from mock import Mock
-from tango import DevState, AttrDataFormat, DeviceProxy
+from tango import AttrDataFormat, DeviceProxy, DevState
 from tango.test_context import DeviceTestContext
-from tango_simlib import model, tango_sim_generator, quantities
+from tango_simlib import model, quantities, tango_sim_generator
 from tango_simlib.utilities import helper_module
-from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
+from tango_simlib.utilities.testutils import (ClassCleanupUnittestMixin,
+                                              cleanup_tempdir)
+
+standard_library.install_aliases()
+
+
+
 
 
 class FixtureModel(model.Model):
@@ -194,7 +198,7 @@ class test_SimControl(unittest.TestCase):
         expected_model : default instance test model
         """
         # test that expected values from the instantiated model match that of sim control
-        for quantity in expected_model.sim_quantities.keys()):
+        for quantity in expected_model.sim_quantities.keys():
             # sets the sensor name for which to evaluate the quantities to be controlled
             self.device.attribute_name = list(self.attr_name_enum_labels).index(quantity)
             desired_quantity = expected_model.sim_quantities[quantity]
@@ -418,7 +422,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         command_name = "StopQuantitySimulation"
         expected_result = {"temperature": 0.0, "insolation": 0.0}
         device_attributes = self.sim_device.get_attribute_list()
-        for quantity_name in list(expected_result.keys()):
+        for quantity_name in expected_result.keys():
             self.assertIn(quantity_name, device_attributes)
 
         self.sim_control_device.command_inout(command_name, expected_result.keys())
