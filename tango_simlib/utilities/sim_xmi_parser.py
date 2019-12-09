@@ -7,17 +7,10 @@
 Simlib library generic simulator generator utility to be used to generate an actual
 TANGO device that exhibits the behaviour defined in the data description file.
 """
-<<<<<<< HEAD
 from __future__ import absolute_import, division, print_function
 
-# # from future import standard_library
-# standard_library.install_aliases()
-=======
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-import logging
->>>>>>> master
+from future import standard_library
+standard_library.install_aliases()
 
 import logging
 import xml.etree.ElementTree as ET
@@ -138,13 +131,8 @@ class XmiParser(Parser):
         # ensure all unicode attribute values are converted to byte strings
         # as TANGO does not handle unicode
         for child in tree.findall(".//"):
-<<<<<<< HEAD
-            for key, value in list(child.attrib.items()):
-                if isinstance(value, str):
-=======
             for key, value in child.attrib.items():
                 if isinstance(value, unicode):
->>>>>>> master
                     child.attrib[key] = value.encode("ascii", "replace")
 
         self._tree = tree
@@ -312,11 +300,7 @@ class XmiParser(Parser):
         attribute_data["dynamicAttributes"] = description_data.attrib.copy()
 
         attType = attribute_data["dynamicAttributes"]["attType"]
-<<<<<<< HEAD
-        if attType in list(POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP.keys()):
-=======
         if attType in POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP.keys():
->>>>>>> master
             attribute_data["dynamicAttributes"][
                 "attType"
             ] = POGO_PYTANGO_ATTR_FORMAT_TYPES_MAP[attType]
@@ -437,15 +421,9 @@ class XmiParser(Parser):
 
         """
         if description_data.tag in ["attributes", "dynamicAttributes"]:
-<<<<<<< HEAD
-            pogo_type = list(description_data.find("dataType").attrib.values())[0]
-        else:
-            pogo_type = list(description_data.find("type").attrib.values())[0]
-=======
             pogo_type = description_data.find("dataType").attrib.values()[0]
         else:
             pogo_type = description_data.find("type").attrib.values()[0]
->>>>>>> master
         # pogo_type has format -> pogoDsl:DoubleType
         # tango type must be of the form DevDouble
         arg_type = pogo_type.split(":")[1].replace("Type", "")
@@ -596,18 +574,11 @@ class XmiParser(Parser):
 
         for pogo_attribute_data in self._device_attributes:
             attribute_meta = {}
-<<<<<<< HEAD
-            for (prop_group, default_attr_props,) in list(
-                POGO_USER_DEFAULT_ATTR_PROP_MAP.items()
-            ):
-                for pogo_prop, user_default_prop in list(default_attr_props.items()):
-=======
             for (
                 prop_group,
                 default_attr_props,
             ) in POGO_USER_DEFAULT_ATTR_PROP_MAP.items():
                 for pogo_prop, user_default_prop in default_attr_props.items():
->>>>>>> master
                     try:
                         attribute_meta[user_default_prop] = pogo_attribute_data[
                             prop_group
@@ -662,9 +633,9 @@ class XmiParser(Parser):
 
         commands = {}
         # Need to convert the POGO parameter names to the TANGO names
-        for cmd_name, cmd_metadata in list(temp_commands.items()):
+        for cmd_name, cmd_metadata in temp_commands.items():
             commands_metadata = {}
-            for cmd_prop_name, cmd_prop_value in list(cmd_metadata.items()):
+            for cmd_prop_name, cmd_prop_value in cmd_metadata.items():
                 try:
                     commands_metadata.update(
                         {POGO_USER_DEFAULT_CMD_PROP_MAP[cmd_prop_name]: cmd_prop_value}

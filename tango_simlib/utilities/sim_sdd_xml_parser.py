@@ -6,17 +6,11 @@
 """This module performs the parsing of the SKA Self-Description Data XML schema
 file generated from the DSL.
 """
-<<<<<<< HEAD
 from __future__ import absolute_import, division, print_function
 
 from future import standard_library
 standard_library.install_aliases()
 
-=======
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
->>>>>>> master
 import xml.etree.ElementTree as ET
 
 from tango import DevBoolean, DevDouble, DevLong, DevString
@@ -364,11 +358,7 @@ class SDDParser(Parser):
             for metadata_prop_name, metadata_prop_val in list(mpt_metadata.items()):
                 # Unpack the min and max values from the ValueRange dictionary
                 if metadata_prop_name == "ValueRange":
-<<<<<<< HEAD
-                    for extremity, extremity_val in list(metadata_prop_val.items()):
-=======
                     for extremity, extremity_val in metadata_prop_val.items():
->>>>>>> master
                         # This will not raise a keyerror exception as the the keys
                         # (MaxValue/MinValue) will be available in the tag 'ValueRange'
                         # appears in the SDD XML file.
