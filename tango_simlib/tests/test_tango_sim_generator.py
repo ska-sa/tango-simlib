@@ -4,12 +4,20 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+<<<<<<< HEAD
 """This module tests the tango_sim_generator on the xmi and fangodango files in config."""
 from __future__ import absolute_import, division, print_function
 
 from future import standard_library
 standard_library.install_aliases()
 
+=======
+"""This module tests the tango_sim_generator on the xmi and fangodango files in config
+"""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+>>>>>>> master
 import time
 import logging
 import unittest
@@ -20,10 +28,13 @@ import pkg_resources
 
 import tango
 
+<<<<<<< HEAD
 from builtins import object
 from mock import Mock
 
 from tango import Database
+=======
+>>>>>>> master
 from tango_simlib import tango_sim_generator
 from tango_simlib.tests import test_sim_test_interface
 from tango_simlib.utilities import (
@@ -117,7 +128,11 @@ class BaseTest(object):
             self.expected_models = tango_sim_generator.configure_device_models(
                 self.data_descr_file, self.sim_device.name()
             )
+<<<<<<< HEAD
             self.expected_model = list(self.expected_models.values())[0]
+=======
+            self.expected_model = self.expected_models.values()[0]
+>>>>>>> master
             self.attr_name_enum_labels = sorted(
                 self.sim_control_device.attribute_query("attribute_name").enum_labels
             )
@@ -145,7 +160,11 @@ class BaseTest(object):
             tango_sim_generator.write_device_properties_to_db(
                 self.sim_device.name(), self.expected_model, self.db_instance
             )
+<<<<<<< HEAD
             num_expected_properties = len(list(self.expected_model.sim_properties.keys()))
+=======
+            num_expected_properties = len(self.expected_model.sim_properties.keys())
+>>>>>>> master
             final_count = self._count_device_properties()
             num_added_properties = final_count - initial_count
             self.assertEquals(num_expected_properties, num_added_properties)
@@ -260,7 +279,11 @@ class test_FandangoFile(BaseTest.TangoSimGenDeviceIntegration):
         not_added_attr_names = not_added_attr.value
 
         expected_attributes = []
+<<<<<<< HEAD
         for attr_prop in list(self.sim_file_parser._device_attributes.values()):
+=======
+        for attr_prop in self.sim_file_parser._device_attributes.values():
+>>>>>>> master
             expected_attributes.append(attr_prop["name"])
         expected_attributes = set(expected_attributes)
         # checking to see if there were any attributes not added
@@ -277,9 +300,13 @@ class test_FandangoFile(BaseTest.TangoSimGenDeviceIntegration):
         fandango file
         """
         actual_device_cmds = self.sim_device.get_command_list()
+<<<<<<< HEAD
         expected_cmd_list = list(
             self.sim_file_parser.get_device_command_metadata().keys()
         )
+=======
+        expected_cmd_list = self.sim_file_parser.get_device_command_metadata().keys()
+>>>>>>> master
         self.assertEquals(
             set(actual_device_cmds),
             set(expected_cmd_list),
@@ -314,7 +341,11 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         not_added_attr_names = not_added_attr.value
 
         expected_attributes = []
+<<<<<<< HEAD
         for attr_prop in list(self.sim_file_parser._device_attributes.values()):
+=======
+        for attr_prop in self.sim_file_parser._device_attributes.values():
+>>>>>>> master
             expected_attributes.append(attr_prop["name"])
         expected_attributes = set(expected_attributes)
         # checking to see if there were any attributes not added
@@ -332,9 +363,13 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         """
         default_cmds = helper_module.DEFAULT_TANGO_DEVICE_COMMANDS
         actual_device_cmds = set(self.sim_device.get_command_list()) - default_cmds
+<<<<<<< HEAD
         expected_cmd_list = list(
             self.sim_file_parser.get_device_command_metadata().keys()
         )
+=======
+        expected_cmd_list = self.sim_file_parser.get_device_command_metadata().keys()
+>>>>>>> master
         self.assertEquals(
             actual_device_cmds,
             set(expected_cmd_list),
@@ -395,11 +430,19 @@ class test_TangoSimGenerator2(ClassCleanupUnittestMixin, unittest.TestCase):
 class test_MultiModel(test_TangoSimGenerator2):
     def test_configure_models(self):
         models = tango_sim_generator.configure_device_models(self.data_descr_files)
+<<<<<<< HEAD
         self.assertEqual(len(list(models.keys())), self.num_of_registered_devices)
 
     def test_configure_model(self):
         with self.assertRaises(RuntimeError) as cm:
             tango_sim_generator.configure_device_model(self.data_descr_files)
+=======
+        self.assertEqual(len(models.keys()), self.num_of_registered_devices)
+
+    def test_configure_model(self):
+        with self.assertRaises(RuntimeError) as cm:
+            model = tango_sim_generator.configure_device_model(self.data_descr_files)
+>>>>>>> master
         err = cm.exception
         num_devices = len(
             self.db_instance.get_device_name(

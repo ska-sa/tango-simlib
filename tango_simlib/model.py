@@ -14,10 +14,12 @@ from builtins import map, object, range
 from functools import partial
 
 from future import standard_library
+standard_library.install_aliases()
+
 from tango import CmdArgType
 from tango_simlib import quantities
 
-standard_library.install_aliases()
+
 
 
 
@@ -248,12 +250,10 @@ class PopulateModelQuantities(object):
                 # i.e. All optional parameters not provided in the SimDD
                 attr_props = dict(
                     (param_key, param_val)
-                    for param_key, param_val in attr_props.items()
+                    for param_key, param_val in attr_props.iteritems()
                     if param_val
                 )
-                model_attr_props = dict(
-                    model_attr_props.items() + attr_props.items()
-                )
+                model_attr_props = dict(model_attr_props.items() + attr_props.items())
 
             if "quantity_simulation_type" in model_attr_props:
                 if model_attr_props["quantity_simulation_type"] == "ConstantQuantity":

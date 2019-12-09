@@ -3,8 +3,17 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+<<<<<<< HEAD
 """An example of the user-defined override class."""
 from __future__ import absolute_import, division, print_function
+=======
+"""
+An example of the user-defined override class.
+"""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+>>>>>>> master
 
 import logging
 from builtins import object
@@ -101,8 +110,14 @@ class OverrideVds(object):
                 pan_position = 0
             except ValueError:
                 raise VdsSimError(
+<<<<<<< HEAD
                     "Optional argument provided ({}) cannot be "
                     "converted to a float".format(data_input[1])
+=======
+                    "Optional argument provided ({}) cannot be converted to a float".format(
+                        data_input[1]
+                    )
+>>>>>>> master
                 )
         elif pan_direction == "left":
             pan_position = float(quant_pan_position.meta["min_value"])
@@ -199,8 +214,14 @@ class OverrideVds(object):
                 focus_position = 0
             except ValueError:
                 raise VdsSimError(
+<<<<<<< HEAD
                     "Optional argument provided ({}) cannot be converted"
                     " to a float".format(data_input[1])
+=======
+                    "Optional argument provided ({}) cannot be converted to a float".format(
+                        data_input[1]
+                    )
+>>>>>>> master
                 )
         elif focus_direction == "near":
             focus_position = float(quant_focus_position.meta["min_value"])
@@ -242,9 +263,13 @@ class OverrideVds(object):
             presets = model.presets[preset_id]
         except KeyError:
             raise VdsSimError(
+<<<<<<< HEAD
                 "There are no preset position values for receptor {}.".format(
                     data_input
                 )
+=======
+                "There are no preset position values for receptor {}.".format(data_input)
+>>>>>>> master
             )
         except AttributeError:
             raise VdsSimError(
@@ -455,9 +480,13 @@ class OverrideWeatherSimControl(object):
         else:
             tango_dev.set_state(DevState.FAULT)
 
+<<<<<<< HEAD
     def test_action_stopquantitysimulation(
         self, model, tango_dev=None, data_input=None
     ):
+=======
+    def test_action_stopquantitysimulation(self, model, tango_dev=None, data_input=None):
+>>>>>>> master
         """Totally sets the simulated quantities` values to a constant value of zero."""
         for quantity in data_input:
             try:
@@ -896,8 +925,12 @@ class OverrideDish(object):
 
         if current_pnt_state_str_val == "READY":
             MODULE_LOGGER.info(
+<<<<<<< HEAD
                 "Skipping quantity updates. Dish quantity state"
                 " already in READY mode."
+=======
+                "Skipping quantity updates. Dish quantity state" " already in READY mode."
+>>>>>>> master
             )
             return
 
@@ -932,9 +965,13 @@ class OverrideDish(object):
         new_position_elev = (
             achieved_elev + cmp(desired_elev, achieved_elev) * move_delta_elev
         )
+<<<<<<< HEAD
         sim_model.sim_quantities["achievedElevation"].set_val(
             new_position_elev, sim_time
         )
+=======
+        sim_model.sim_quantities["achievedElevation"].set_val(new_position_elev, sim_time)
+>>>>>>> master
 
         sim_model.sim_quantities["achievedPointing"].set_val(
             [

@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+>>>>>>> master
 #########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
@@ -115,7 +122,11 @@ def control_attributes(test_model):
         A list of all the adjustable attributes
     """
     control_attributes = []
+<<<<<<< HEAD
     models = set([quant.__class__ for quant in list(test_model.sim_quantities.values())])
+=======
+    models = set([quant.__class__ for quant in test_model.sim_quantities.values()])
+>>>>>>> master
     for cls in models:
         control_attributes += [
             attr for attr in cls.adjustable_attributes if attr not in control_attributes
@@ -237,7 +248,11 @@ class test_SimControl(unittest.TestCase):
         """
         quants_before = {}
         # expected values of the model quantities before the attributes change
+<<<<<<< HEAD
         for quant_name, quant in list(test_model.sim_quantities.items()):
+=======
+        for quant_name, quant in test_model.sim_quantities.items():
+>>>>>>> master
             quants_before[quant_name] = {
                 attr: getattr(quant, attr) for attr in quant.adjustable_attributes
             }
@@ -429,7 +444,11 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         # reading the attribute value. So instead we use the sleep method to allow for
         # 'dt' to be large enough.
         time.sleep(1)
+<<<<<<< HEAD
         for quantity_name, quantity_value in list(expected_result.items()):
+=======
+        for quantity_name, quantity_value in expected_result.items():
+>>>>>>> master
             self.assertEqual(
                 quantity_value,
                 getattr(self.sim_device.read_attribute(quantity_name), "value"),

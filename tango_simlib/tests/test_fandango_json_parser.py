@@ -4,8 +4,15 @@
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 """This module tests the fandango_json_parser script."""
+<<<<<<< HEAD
 from __future__ import absolute_import, division, print_function
 
+=======
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+import unittest
+>>>>>>> master
 import logging
 import unittest
 
@@ -118,7 +125,14 @@ class test_FandangoJsonParser(GenericSetup):
         # testing that the command properties have been renamed to
         # match values in command signature
 
+<<<<<<< HEAD
         for (cmd_name, cmd_metadata,) in self.fandango_parser.get_device_command_metadata().items():
+=======
+        for (
+            cmd_name,
+            cmd_metadata,
+        ) in self.fandango_parser.get_device_command_metadata().items():
+>>>>>>> master
             self.assertEquals(
                 sorted(EXPECTED_CMD_PROPERTY_PARAMETERS),
                 sorted(cmd_metadata.keys()),

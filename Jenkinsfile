@@ -28,10 +28,10 @@ pipeline {
                 sh "lint_diff.sh -r ${KATPACKAGE}"
             }
 
-            post {
-                always {
-                    recordIssues(tool: pyLint(pattern: 'pylint.out'))
-                }
+        stage ('Start Services') {
+            steps {
+                sh 'nohup service mysql start'
+                sh 'nohup service tango-db start'
             }
         }
 

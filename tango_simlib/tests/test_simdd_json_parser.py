@@ -1,9 +1,17 @@
+<<<<<<< HEAD
+=======
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+>>>>>>> master
 #########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+<<<<<<< HEAD
 
 from __future__ import absolute_import, division, print_function
 
@@ -11,6 +19,9 @@ from future import standard_library
 
 standard_library.install_aliases()
 
+=======
+import unittest
+>>>>>>> master
 import logging
 import pkg_resources
 import unittest
@@ -37,7 +48,11 @@ TANGO_CMD_PARAMS_NAME_MAP = {
 
 # Mandatory parameters required to create a well configure Tango command.
 EXPECTED_MANDATORY_CMD_PARAMETERS = frozenset(
+<<<<<<< HEAD
     ["dformat_in", "dformat_out", "doc_in", "doc_out", "dtype_in", "dtype_out", "name"]
+=======
+    ["dformat_in", "dformat_out", "doc_in", "doc_out", "dtype_in", "dtype_out", "name",]
+>>>>>>> master
 )
 
 # Mandatory parameters required by each override_class.
@@ -135,7 +150,11 @@ class test_SimddJsonParser(GenericSetup):
             ):
                 self.assertIn(
                     param,
+<<<<<<< HEAD
                     list(attribute_metadata.keys()),
+=======
+                    attribute_metadata.keys(),
+>>>>>>> master
                     "The parsed attribute '%s' does not have the mandotory parameter "
                     "'%s' " % (attr_name, param),
                 )
@@ -144,7 +163,11 @@ class test_SimddJsonParser(GenericSetup):
         # haven't generated the full test data for the other attributes.
         self.assertIn(
             "temperature",
+<<<<<<< HEAD
             list(actual_parsed_attrs.keys()),
+=======
+            actual_parsed_attrs.keys(),
+>>>>>>> master
             "The attribute temperature is not in the parsed attribute list",
         )
         actual_parsed_temperature_attr_info = actual_parsed_attrs["temperature"]
@@ -168,7 +191,11 @@ class test_SimddJsonParser(GenericSetup):
             for param in EXPECTED_MANDATORY_OVERRIDE_CLASS_PARAMETERS:
                 self.assertIn(
                     param,
+<<<<<<< HEAD
                     list(klass_info.keys()),
+=======
+                    klass_info.keys(),
+>>>>>>> master
                     "Class override info missing" " some important parameter.",
                 )
 
@@ -195,7 +222,11 @@ class test_PopulateModelQuantities(GenericSetup):
             "wind-direction",
             "wind-speed",
         ]
+<<<<<<< HEAD
         actual_quantities_list = list(pmq.sim_model.sim_quantities.keys())
+=======
+        actual_quantities_list = pmq.sim_model.sim_quantities.keys()
+>>>>>>> master
         self.assertEqual(
             set(expected_quantities_list),
             set(actual_quantities_list),
@@ -214,12 +245,19 @@ class test_PopulateModelQuantities(GenericSetup):
             "The device name and the model name do not match.",
         )
         attribute_metadata = self.simdd_parser.get_device_attribute_metadata()
+<<<<<<< HEAD
         for sim_quantity_name, sim_quantity in list(
             pmq.sim_model.sim_quantities.items()
         ):
             sim_quantity_metadata = getattr(sim_quantity, "meta")
             attr_meta = attribute_metadata[sim_quantity_name]
             for attr_param_name, attr_param_val in list(attr_meta.items()):
+=======
+        for sim_quantity_name, sim_quantity in pmq.sim_model.sim_quantities.items():
+            sim_quantity_metadata = getattr(sim_quantity, "meta")
+            attr_meta = attribute_metadata[sim_quantity_name]
+            for attr_param_name, attr_param_val in attr_meta.items():
+>>>>>>> master
                 self.assertTrue(
                     attr_param_name in sim_quantity_metadata,
                     "The param '%s' was not added to the model quantity"
@@ -268,7 +306,11 @@ class test_PopulateModelActions(GenericSetup):
         override_info = self.simdd_parser.get_device_cmd_override_metadata()
         model.PopulateModelActions(cmd_info, override_info, device_name, sim_model)
 
+<<<<<<< HEAD
         actual_actions_list = list(sim_model.sim_actions.keys())
+=======
+        actual_actions_list = sim_model.sim_actions.keys()
+>>>>>>> master
         expected_actions_list = [
             "On",
             "Off",
@@ -370,7 +412,11 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.simdd_json_parser.parse(self.data_descr_file[0])
 
         default_metadata_values = {}
+<<<<<<< HEAD
         for quantity in list(self.instance.model.sim_quantities.keys()):
+=======
+        for quantity in self.instance.model.sim_quantities.keys():
+>>>>>>> master
             if hasattr(self.instance.model.sim_quantities[quantity], "max_bound"):
                 default_metadata_values[quantity] = self.instance.model.sim_quantities[
                     quantity
@@ -379,7 +425,11 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.addCleanup(self._restore_model, default_metadata_values)
 
     def _restore_model(self, default_metadata_values):
+<<<<<<< HEAD
         for quantity in list(self.instance.model.sim_quantities.keys()):
+=======
+        for quantity in self.instance.model.sim_quantities.keys():
+>>>>>>> master
             if hasattr(self.instance.model.sim_quantities[quantity], "max_bound"):
                 self.instance.model.sim_quantities[
                     quantity
@@ -392,7 +442,11 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         attributes = set(self.device.get_attribute_list())
         expected_attributes = []
         default_attributes = helper_module.DEFAULT_TANGO_DEVICE_ATTRIBUTES
+<<<<<<< HEAD
         expected_attributes = list(
+=======
+        expected_attributes = (
+>>>>>>> master
             self.simdd_json_parser.get_device_attribute_metadata().keys()
         )
 
@@ -407,7 +461,11 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         specified in the SimDD data description file.
         """
         actual_device_commands = set(self.device.get_command_list())
+<<<<<<< HEAD
         expected_command_list = list(
+=======
+        expected_command_list = (
+>>>>>>> master
             self.simdd_json_parser.get_device_command_metadata().keys()
         )
         expected_command_list.extend(helper_module.DEFAULT_TANGO_DEVICE_COMMANDS)
@@ -422,6 +480,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         captured in the SimDD data description file.
         """
         command_data = self.simdd_json_parser.get_device_command_metadata()
+<<<<<<< HEAD
         extra_command_parameters = [
             "dformat_in",
             "dformat_out",
@@ -429,6 +488,10 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
             "actions",
         ]
         for cmd_name, cmd_metadata in list(command_data.items()):
+=======
+        extra_command_parameters = ["dformat_in", "dformat_out", "description", "actions"]
+        for cmd_name, cmd_metadata in command_data.items():
+>>>>>>> master
             cmd_config_info = self.device.get_command_config(cmd_name)
             for cmd_prop, cmd_prop_value in list(cmd_metadata.items()):
                 # Exclude parameters that are not part of the TANGO command configuration
@@ -515,8 +578,12 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         # thus it is rounded to two decimal places before checking if it's the
         # same as the `data_in` value
         self.assertEqual(
+<<<<<<< HEAD
             round(getattr(self.device.read_attribute("Temperature"), "value"), 2),
             data_in,
+=======
+            round(getattr(self.device.read_attribute("Temperature"), "value"), 2), data_in
+>>>>>>> master
         )
 
 
@@ -547,8 +614,13 @@ MKAT_VDS_COMMAND_LIST = frozenset(
         "Zoom",
     ]
 )
+<<<<<<< HEAD
 
 
+=======
+
+
+>>>>>>> master
 class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
 
     longMessage = True
@@ -820,7 +892,11 @@ class test_XmiSimddSupplementaryDeviceIntegration(
         ] = expected_device_temperature_attr_overridden_info
         expected_device_attr_xmi_overridden = expected_device_attr_xmi_info_copy
         sim_quantities = self.instance.model.sim_quantities
+<<<<<<< HEAD
         for expected_quantity in list(expected_device_attr_xmi_info.keys()):
+=======
+        for expected_quantity in expected_device_attr_xmi_info.keys():
+>>>>>>> master
             self.assertIn(
                 expected_quantity,
                 sim_quantities,
@@ -884,7 +960,11 @@ class test_XmiSimddSupplementaryDeviceIntegration(
             if expected_action not in helper_module.DEFAULT_TANGO_DEVICE_COMMANDS:
                 self.assertIn(
                     expected_action,
+<<<<<<< HEAD
                     list(sim_actions.keys()),
+=======
+                    sim_actions.keys(),
+>>>>>>> master
                     "The command {} is not in the parsed "
                     "command list".format(expected_action),
                 )

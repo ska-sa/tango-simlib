@@ -6,11 +6,17 @@
 """This module performs the parsing of the Simulator Description Datafile,
 containing the information needed to instantiate a useful device simulator.
 """
+<<<<<<< HEAD
 from __future__ import absolute_import, division, print_function
 
 from future import standard_library
 standard_library.install_aliases()
 
+=======
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+>>>>>>> master
 import json
 import logging
 import pkg_resources
@@ -76,7 +82,11 @@ class SimddParser(Parser):
         with open(simdd_json_file) as simdd_file:
             device_data = json.load(simdd_file)
         validate(device_data, schema_data)
+<<<<<<< HEAD
         for data_component, elements in list(device_data.items()):
+=======
+        for data_component, elements in device_data.items():
+>>>>>>> master
             if data_component == "class_name":
                 self.device_class_name = str(elements)
             elif data_component == "dynamicAttributes":
@@ -170,12 +180,20 @@ class SimddParser(Parser):
         device_dict = {}
         params_template = helper_module.DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE.copy()
         for element_data in elements:
+<<<<<<< HEAD
             for element_info in list(element_data.values()):
+=======
+            for element_info in element_data.values():
+>>>>>>> master
                 name = element_info["name"]
                 element_params = self._get_reformatted_data(element_info, element_type)
                 if "Attributes" in element_type:
                     device_dict[str(name)] = dict(
+<<<<<<< HEAD
                         list(params_template.items()) + list(element_params.items())
+=======
+                        params_template.items() + element_params.items()
+>>>>>>> master
                     )
                 else:
                     device_dict[str(name)] = element_params
@@ -284,9 +302,15 @@ class SimddParser(Parser):
             # Recursively call get_reformatted_data if value is still a dict
             return [
                 (param_name, param_val)
+<<<<<<< HEAD
                 for param_name, param_val in list(
                     self._get_reformatted_data(value, element_type).items()
                 )
+=======
+                for param_name, param_val in self._get_reformatted_data(
+                    value, element_type
+                ).items()
+>>>>>>> master
             ]
 
         formated_info = {}

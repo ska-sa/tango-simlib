@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+>>>>>>> master
 #########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
@@ -15,14 +22,20 @@ from future import standard_library
 from tango import DevDouble
 from tango_simlib import model
 from tango_simlib.utilities import sim_sdd_xml_parser
+<<<<<<< HEAD
 
 standard_library.install_aliases()
 
 
+=======
+>>>>>>> master
 
 
+<<<<<<< HEAD
 LOGGER = logging.getLogger(__name__)
 
+=======
+>>>>>>> master
 expected_mandatory_monitoring_point_parameters = frozenset(
     [
         "name",

@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+>>>>>>> master
 #########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
@@ -90,6 +97,78 @@ DISH_ELEMENT_MASTER_ATTRIBUTE_LIST = frozenset(
     ]
 )
 
+<<<<<<< HEAD
+=======
+from katcp.testutils import start_thread_with_cleanup
+
+from tango_simlib import tango_sim_generator, model
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
+
+
+DISH_ELEMENT_MASTER_COMMAND_LIST = frozenset(
+    [
+        "Capture",
+        "ConfigureAttenuation",
+        "ConfigureBand1",
+        "ConfigureBand2",
+        "ConfigureBand3",
+        "ConfigureBand4",
+        "ConfigureBand5",
+        "ConfigureNoiseDiode",
+        "EnableEngInterface",
+        "LowPower",
+        "LongRun",
+        "FlushCmdQueue",
+        "Scan",
+        "Slew",
+        "SetMaintenanceMode",
+        "SetOperateMode",
+        "SetStandbyFPMode",
+        "SetStandbyLPMode",
+        "SetStowMode",
+        "SetPntModelPars",
+        "Synchronise",
+        "Track",
+    ]
+)
+
+DISH_ELEMENT_MASTER_ATTRIBUTE_LIST = frozenset(
+    [
+        "adminMode",
+        "band1CapabilityHealthStatus",
+        "band1CapabilityState",
+        "band2CapabilityHealthStatus",
+        "band2CapabilityState",
+        "band3CapabilityHealthStatus",
+        "band3CapabilityState",
+        "band4CapabilityHealthStatus",
+        "band4CapabilityState",
+        "band5CapabilityHealthStatus",
+        "band5CapabilityState",
+        "centralLogLevel",
+        "configurationDelayExpected",
+        "configurationProgress",
+        "controlMode",
+        "elementLogLevel",
+        "healthState",
+        "obsMode",
+        "obsState",
+        "pointingState",
+        "powerState",
+        "simulationMode",
+        "storageLogLevel",
+        "dishMode",
+        "achievedAzimuth",
+        "achievedElevation",
+        "desiredAzimuth",
+        "desiredElevation",
+        "pointModelPars",
+        "desiredPointing",
+        "achievedPointing",
+    ]
+)
+
+>>>>>>> master
 
 class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
 
@@ -365,7 +444,11 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             80.99,
             90.99,
         ]
+<<<<<<< HEAD
         with patch.object(self.model, "time_func") as mock_time:
+=======
+        with mock.patch.object(self.model, "time_func") as mock_time:
+>>>>>>> master
             mock_time.side_effect = sim_time_update
 
             for update_x in sim_time_update:
@@ -465,7 +548,11 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             120.00,
         ]
 
+<<<<<<< HEAD
         with patch.object(self.model, "time_func") as mock_time:
+=======
+        with mock.patch.object(self.model, "time_func") as mock_time:
+>>>>>>> master
             mock_time.side_effect = sim_time_update
 
             for update_x, expected_azim_position, expected_elev_position in zip(
@@ -490,6 +577,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
                     self.model.sim_quantities["achievedAzimuth"].last_val,
                     expected_azim_position,
                 )
+<<<<<<< HEAD
                 self.assertEqual(
                     self.model.sim_quantities["achievedElevation"].last_val,
                     expected_elev_position,
@@ -499,6 +587,17 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
                     update_x,
                 )
                 self.assertEqual(
+=======
+                self.assertEqual(
+                    self.model.sim_quantities["achievedElevation"].last_val,
+                    expected_elev_position,
+                )
+                self.assertEqual(
+                    self.model.sim_quantities["achievedElevation"].last_update_time,
+                    update_x,
+                )
+                self.assertEqual(
+>>>>>>> master
                     self.model.sim_quantities["achievedAzimuth"].last_update_time,
                     update_x,
                 )
@@ -509,6 +608,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
                 self.model.sim_quantities["achievedAzimuth"].last_update_time,
                 sim_time_update[-2],
             )
+<<<<<<< HEAD
             self.assertEqual(
                 self.model.sim_quantities["achievedElevation"].last_update_time,
                 sim_time_update[-2],
@@ -522,11 +622,30 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
                 self.model.sim_quantities["desiredElevation"].last_val,
             )
             self.assertEqual(
+=======
+            self.assertEqual(
+                self.model.sim_quantities["achievedElevation"].last_update_time,
+                sim_time_update[-2],
+            )
+            self.assertEqual(
+                self.model.sim_quantities["achievedAzimuth"].last_val,
+                self.model.sim_quantities["desiredAzimuth"].last_val,
+            )
+            self.assertEqual(
+                self.model.sim_quantities["achievedElevation"].last_val,
+                self.model.sim_quantities["desiredElevation"].last_val,
+            )
+            self.assertEqual(
+>>>>>>> master
                 pointing_state_quant.last_val, pointing_state_enum_labels.index("READY")
             )
 
     def test_long_running(self):
+<<<<<<< HEAD
         with patch("time.sleep") as sleep_mock:
+=======
+        with mock.patch("time.sleep") as sleep_mock:
+>>>>>>> master
             # We use the value '4.5' as an arbitrary value here
             self.model.sim_actions["LongRun"](4.5)
             # We use value '5' as the time the long_running cmd is going sleep for.
