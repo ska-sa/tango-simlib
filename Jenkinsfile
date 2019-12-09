@@ -27,12 +27,6 @@ pipeline {
                 sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
                 sh "lint_diff.sh -r ${KATPACKAGE}"
             }
-
-        stage ('Start Services') {
-            steps {
-                sh 'nohup service mysql start'
-                sh 'nohup service tango-db start'
-            }
         }
 
         stage ('Start Services') {
@@ -125,4 +119,3 @@ pipeline {
         }
     }
 }
-
