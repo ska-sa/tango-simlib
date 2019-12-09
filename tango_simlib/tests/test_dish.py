@@ -1,32 +1,27 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-
 #########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-from future import standard_library
-standard_library.install_aliases()
-from builtins import zip
+from __future__ import absolute_import, division, print_function
 
 import time
 import unittest
+from builtins import zip
+
 import pkg_resources
-import mock
 
-from mock import Mock, call
-
-from tango import DevFailed
-from tango.test_context import DeviceTestContext
+from future import standard_library
+standard_library.install_aliases()
 
 from katcp.testutils import start_thread_with_cleanup
-
-from tango_simlib import tango_sim_generator, model
-from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
+from mock import Mock, call, patch
+from tango import DevFailed
+from tango.test_context import DeviceTestContext
+from tango_simlib import tango_sim_generator
+from tango_simlib.utilities.testutils import (ClassCleanupUnittestMixin,
+                                              cleanup_tempfile)
 
 
 DISH_ELEMENT_MASTER_COMMAND_LIST = frozenset(
@@ -114,14 +109,14 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.models = tango_sim_generator.configure_device_models(
             cls.data_descr_files, cls.device_name
         )
-        cls.model = list(cls.models.values())[0]
+        cls.model = cls.models.values()[0]
 
     def setUp(self):
         super(test_DishElementMaster, self).setUp()
         self.addCleanup(self._reset_model_defaults)
 
     def _reset_model_defaults(self):
-        for quantity in list(self.model.sim_quantities.values()):
+        for quantity in self.model.sim_quantities.values():
             quantity.last_val = 0.0
 
     def test_attribute_list(self):
@@ -367,7 +362,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             80.99,
             90.99,
         ]
-        with mock.patch.object(self.model, "time_func") as mock_time:
+        with patch.object(self.model, "time_func") as mock_time:
             mock_time.side_effect = sim_time_update
 
             for update_x in sim_time_update:
@@ -467,7 +462,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             120.00,
         ]
 
-        with mock.patch.object(self.model, "time_func") as mock_time:
+        with patch.object(self.model, "time_func") as mock_time:
             mock_time.side_effect = sim_time_update
 
             for update_x, expected_azim_position, expected_elev_position in zip(
@@ -528,7 +523,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
             )
 
     def test_long_running(self):
-        with mock.patch("time.sleep") as sleep_mock:
+        with patch("time.sleep") as sleep_mock:
             # We use the value '4.5' as an arbitrary value here
             self.model.sim_actions["LongRun"](4.5)
             # We use value '5' as the time the long_running cmd is going sleep for.

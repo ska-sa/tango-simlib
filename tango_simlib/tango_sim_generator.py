@@ -8,50 +8,33 @@
 Simlib library generic simulator generator utility to be used to generate an actual
 TANGO device that exhibits the behaviour defined in the data description file.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
-
-from future import standard_library
-standard_library.install_aliases()
-
-from builtins import map
-from builtins import range
-
-from builtins import object
 import argparse
 import logging
 import os
 import time
 import weakref
+from builtins import map, object, range
 from functools import partial
 
 import numpy as np
-from tango import (
-    Attr,
-    AttrDataFormat,
-    AttrQuality,
-    AttrWriteType,
-    CmdArgType,
-    DevState,
-    UserDefaultAttrProp,
-)
+from future import standard_library
+standard_library.install_aliases()
+from future.utils import with_metaclass
+
+from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType,
+                   CmdArgType, DevState, UserDefaultAttrProp)
 from tango.server import Device, DeviceMeta, attribute
-from tango_simlib.model import (
-    INITIAL_CONSTANT_VALUE_TYPES,
-    Model,
-    PopulateModelActions,
-    PopulateModelProperties,
-    PopulateModelQuantities,
-)
+from tango_simlib.model import (INITIAL_CONSTANT_VALUE_TYPES, Model,
+                                PopulateModelActions, PopulateModelProperties,
+                                PopulateModelQuantities)
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.fandango_json_parser import FandangoExportDeviceParser
 from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
-from future.utils import with_metaclass
 
 
 MODULE_LOGGER = logging.getLogger(__name__)
@@ -190,9 +173,8 @@ def get_tango_device_server(models, sim_data_files):
                 MODULE_LOGGER.info(
                     "Writing value %s to attribute '%s'." % (new_val, attr_name)
                 )
-                tango_device_instance.model_quantity = tango_device_instance.model.sim_quantities[
-                    attr_name
-                ]
+                _sim_quantities = tango_device_instance.model.sim_quantities
+                tango_device_instance.model_quantity = _sim_quantities[attr_name]
                 tango_device_instance.model_quantity.set_val(
                     new_val, tango_device_instance.model.time_func()
                 )
@@ -201,12 +183,14 @@ def get_tango_device_server(models, sim_data_files):
         # Add the read method and the attribute to the class object
         setattr(tango_device_class, read_meth.__name__, read_meth)
         setattr(tango_device_class, attr.__name__, attr)
-        MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
+        MODULE_LOGGER.info(
+            "Adding static attribute {} to the device.".format(attr_name)
+        )
 
     # Sim test interface static attribute `attribute_name` info
     # Pick the first model instance in the dict.
-    controllable_attribute_names = list(models.values())[0].sim_quantities.keys()
-    attr_control_meta = dict()
+    controllable_attribute_names = models.values()[0].sim_quantities.keys()
+    attr_control_meta = {}
     attr_control_meta["enum_labels"] = sorted(controllable_attribute_names)
     attr_control_meta["data_format"] = AttrDataFormat.SCALAR
     attr_control_meta["data_type"] = CmdArgType.DevEnum
@@ -240,7 +224,7 @@ def get_tango_device_server(models, sim_data_files):
     # TODO(AR 02-03-2017): Ask the tango community on the upcoming Stack
     # Exchange community (AskTango) and also make follow ups on the next tango
     # releases.
-    for quantity_name, quantity in list(models.values())[0].sim_quantities.items():
+    for quantity_name, quantity in models.values()[0].sim_quantities.items():
         d_type = quantity.meta["data_type"]
         d_type = str(quantity.meta["data_type"])
         d_format = str(quantity.meta["data_format"])
@@ -249,7 +233,12 @@ def get_tango_device_server(models, sim_data_files):
                 TangoDeviceServerStaticAttrs, quantity_name, quantity.meta
             )
 
-    class TangoDeviceServer(with_metaclass(DeviceMeta, type('NewBase', (TangoDeviceServerBase, TangoDeviceServerStaticAttrs), {}))):
+    class TangoDeviceServer(
+        with_metaclass(
+            DeviceMeta,
+            type("NewBase", (TangoDeviceServerBase, TangoDeviceServerStaticAttrs), {}),
+        )
+    ):
         _models = models
 
         def init_device(self):
@@ -264,11 +253,11 @@ def get_tango_device_server(models, sim_data_files):
             """Reset the model's quantities' adjustable attributes to their default
             values.
             """
-            simulated_quantities = list(self.model.sim_quantities.values())
+            simulated_quantities = self.model.sim_quantities.values()
             model_time = self.model.start_time
             for simulated_quantity in simulated_quantities:
                 sim_quantity_meta_info = simulated_quantity.meta
-                key_vals = list(sim_quantity_meta_info.keys())
+                key_vals = sim_quantity_meta_info.keys()
                 attr_data_type = sim_quantity_meta_info["data_type"]
                 # the xmi, json and fgo files have data_format attributes indicating
                 # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
@@ -307,7 +296,9 @@ def get_tango_device_server(models, sim_data_files):
                         try:
                             sim_quantity_meta_info["quantity_simulation_type"]
                         except KeyError:
-                            if any(key_val in expected_key_vals for key_val in key_vals):
+                            if any(
+                                key_val in expected_key_vals for key_val in key_vals
+                            ):
                                 try:
                                     adjustable_val = sim_quantity_meta_info["value"]
                                 except KeyError:
@@ -364,7 +355,7 @@ def get_tango_device_server(models, sim_data_files):
                         setattr(simulated_quantity, attr, adjustable_val)
 
         def initialize_dynamic_commands(self):
-            for action_name, action_handler in list(self.model.sim_actions.items()):
+            for action_name, action_handler in self.model.sim_actions.items():
                 cmd_handler = helper_module.generate_cmd_handler(
                     self.model, action_name, action_handler
                 )
@@ -373,7 +364,7 @@ def get_tango_device_server(models, sim_data_files):
 
         def initialize_dynamic_attributes(self):
             model_sim_quants = self.model.sim_quantities
-            attribute_list = set([attr for attr in list(model_sim_quants.keys())])
+            attribute_list = set([attr for attr in model_sim_quants.keys()])
             for attribute_name in attribute_list:
                 meta_data = model_sim_quants[attribute_name].meta
                 attr_dtype = meta_data["data_type"]
@@ -409,10 +400,11 @@ def get_tango_device_server(models, sim_data_files):
                         )
                         continue
                     attr_props = UserDefaultAttrProp()
-                    for prop in list(meta_data.keys()):
+                    for prop in meta_data.keys():
                         attr_prop_setter = getattr(attr_props, "set_" + prop, None)
                         if attr_prop_setter:
-                            attr_prop_setter(str(meta_data[prop]))
+                            attr_prop_setter(str(meta_data[prop]).encode('ascii',
+                                                                         'replace'))
                         else:
                             MODULE_LOGGER.info(
                                 "No setter function for " + prop + " property"
@@ -448,7 +440,16 @@ def get_tango_device_server(models, sim_data_files):
         def NumAttributesNotAdded(self):
             return len(self._not_added_attributes)
 
-    class SimControl(with_metaclass(DeviceMeta, type('NewBase', (TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs), {}))):
+    class SimControl(
+        with_metaclass(
+            DeviceMeta,
+            type(
+                "NewBase",
+                (TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs),
+                {},
+            ),
+        )
+    ):
         instances = weakref.WeakValueDictionary()
 
         def init_device(self):
@@ -480,7 +481,7 @@ def write_device_properties_to_db(device_name, model, db_instance=None):
     if not db_instance:
         db_instance = helper_module.get_database()
 
-    for prop_name, prop_meta in list(model.sim_properties.items()):
+    for prop_name, prop_meta in model.sim_properties.items():
         db_instance.put_device_property(
             device_name, {prop_name: prop_meta["DefaultPropValue"]}
         )
@@ -587,7 +588,7 @@ def configure_device_models(sim_data_file=None, test_device_name=None):
         models[dev_name] = Model(dev_name)
 
     # In case there is more than one parser instance for each file
-    for model in list(models.values()):
+    for model in models.values():
         command_info = {}
         properties_info = {}
         override_info = {}

@@ -1,21 +1,18 @@
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
-
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from __future__ import absolute_import, division, print_function
+
 from future import standard_library
 standard_library.install_aliases()
 
-import os
-import sys
-import socket
-import logging
 import json
+import logging
+import os
+import socket
+import sys
 
 from tango import Database
 from tango.server import command
@@ -123,7 +120,7 @@ def append_device_to_db_file(
     db = Database(db_file_name)
     # Patched the property dict to avoid a PyTango bug
     patched = dict(
-        (key, value if value != "" else " ") for key, value in list(properties.items())
+        (key, value if value != "" else " ") for key, value in properties.items()
     )
     # Write properties
     db.put_device_property(device, patched)
@@ -182,8 +179,8 @@ def json_loads_byteified(json_text):
 
 
 def _byteify(data, ignore_dicts=False):
-    """If this is a unicode string, return its string representation."""
-    if isinstance(data, str):
+    # If this is a unicode string, return its string representation.
+    if isinstance(data, unicode):
         return data.encode("utf-8")
     # if this is a list of values, return list of byteified values
     if isinstance(data, list):

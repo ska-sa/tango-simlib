@@ -1,25 +1,23 @@
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
-
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from __future__ import absolute_import, division, print_function
+
 from future import standard_library
 standard_library.install_aliases()
 
-from builtins import object
-import logging
-import time
-import mock
-import shutil
-import tempfile
-import sys
 import errno
+import logging
+import mock
 import os
+import shutil
+import sys
+import tempfile
+import time
+
+from builtins import object
 
 LOGGER = logging.getLogger(__name__)
 
@@ -103,7 +101,7 @@ def set_attributes_polling(test_case, device_proxy, device_server, poll_periods)
     # some reason it only works if the device_proxy is used to set polling, but the
     # device_server is used to clear the polling. If polling is cleared using device_proxy
     # it seem to be impossible to restore the polling afterwards.
-    attributes = list(poll_periods.keys())
+    attributes = poll_periods.keys()
     initial_polling = {
         attr: device_proxy.get_attribute_poll_period(attr) for attr in attributes
     }
@@ -140,7 +138,7 @@ def set_attributes_polling(test_case, device_proxy, device_server, poll_periods)
 
     def restore_polling():
         """Restore initial polling, for use during cleanup / teardown"""
-        for attr, period in list(initial_polling.items()):
+        for attr, period in initial_polling.items():
             if period == 0:
                 continue  # zero period implies no polling, nothing to do
             try:

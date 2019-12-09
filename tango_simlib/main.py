@@ -4,19 +4,16 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 from future import standard_library
 standard_library.install_aliases()
 
-import sys
 import logging
+import sys
 import threading
 
 from tango.server import server_run
-
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 
 

@@ -22,19 +22,12 @@ pipeline {
                 ])
             }
         }
-        // TODO: This is commented out for efficient and quick response cycle should be uncommented once migration is done
-        // stage ('Static analysis') {
-        //     steps {
-        //         sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
-        //         sh "lint_diff.sh -r ${KATPACKAGE}"
-        //     }
-
-        //     post {
-        //         always {
-        //             recordIssues(tool: pyLint(pattern: 'pylint.out'))
-        //         }
-        //     }
-        // }
+        stage ('Static analysis') {
+            steps {
+                sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
+                sh "lint_diff.sh -r ${KATPACKAGE}"
+            }
+        }
 
         stage ('Start Services') {
             steps {
@@ -65,26 +58,26 @@ pipeline {
 
                 stage ('py36') {
                     steps {
-                        echo "Not yet implemented."
-                        // echo "Running nosetests on Python 3.6"
-                        // sh 'python3.6 -m pip install . -U --user'
-                        // sh 'python3.6 -m pip install nose_xunitmp --user'
-                        // sh "python3.6 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE}"
+                         echo "Running nosetests on Python 3.6"
+                         sh 'python3.6 -m pip install . -U --user'
+                         sh 'python3.6 -m pip install nose_xunitmp --user'
+                         sh "python3.6 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE} --with-xunit --xunit-file=nosetests_py36.xml"
                     }
                 }
             }
 
             post {
                 always {
-                    junit 'nosetests.xml'
+                    junit 'nosetests_*.xml'
                     cobertura (
-                        coberturaReportFile: 'coverage.xml',
+                        coberturaReportFile: 'coverage_*.xml',
                         failNoReports: true,
                         failUnhealthy: true,
                         failUnstable: true,
                         autoUpdateHealth: true,
                         autoUpdateStability: true,
                         zoomCoverageChart: true,
+                        // TODO: The reason this is commented out is because tango-simlib test coverage is currently at 70% instead of minimum 80%.
                         // lineCoverageTargets: '80, 80, 80',
                         // conditionalCoverageTargets: '80, 80, 80',
                         // classCoverageTargets: '80, 80, 80',
@@ -92,6 +85,18 @@ pipeline {
                     )
                     archiveArtifacts '*.xml'
                 }
+            }
+        }
+
+        stage ('Generate documentation.') {
+            options {
+                timestamps()
+                timeout(time: 30, unit: 'MINUTES')
+            }
+
+            steps {
+                echo "Generating Sphinx documentation."
+                sh 'make -C doc html'
             }
         }
 
@@ -114,4 +119,3 @@ pipeline {
         }
     }
 }
-
