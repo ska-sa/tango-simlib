@@ -9,6 +9,11 @@ containing the information needed to instantiate a useful device simulator.
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
+
+from future import standard_library
+standard_library.install_aliases()
+
+
 import json
 import logging
 
@@ -75,7 +80,7 @@ class SimddParser(Parser):
         with open(simdd_json_file) as simdd_file:
             device_data = json.load(simdd_file)
         validate(device_data, schema_data)
-        for data_component, elements in device_data.items():
+        for data_component, elements in list(device_data.items()):
             if data_component == "class_name":
                 self.device_class_name = str(elements)
             elif data_component == "dynamicAttributes":
@@ -169,12 +174,12 @@ class SimddParser(Parser):
         device_dict = {}
         params_template = helper_module.DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE.copy()
         for element_data in elements:
-            for element_info in element_data.values():
+            for element_info in list(element_data.values()):
                 name = element_info["name"]
                 element_params = self._get_reformatted_data(element_info, element_type)
                 if "Attributes" in element_type:
                     device_dict[str(name)] = dict(
-                        params_template.items() + element_params.items()
+                        list(params_template.items()) + list(element_params.items())
                     )
                 else:
                     device_dict[str(name)] = element_params
@@ -283,13 +288,13 @@ class SimddParser(Parser):
             # Recursively call get_reformatted_data if value is still a dict
             return [
                 (param_name, param_val)
-                for param_name, param_val in self._get_reformatted_data(
+                for param_name, param_val in list(self._get_reformatted_data(
                     value, element_type
-                ).items()
+                ).items())
             ]
 
         formated_info = {}
-        for param_name, param_val in sim_device_element_info.items():
+        for param_name, param_val in list(sim_device_element_info.items()):
             if isinstance(param_val, dict):
                 if "dataSimulationParameters" in param_name:
                     try:
@@ -335,7 +340,7 @@ class SimddParser(Parser):
                 actions = []
                 for item in param_val:
                     string_items = {}
-                    for key, value in item.iteritems():
+                    for key, value in item.items():
                         string_items[str(key)] = str(value)
                     actions.append(string_items)
                 formated_info["actions"] = actions

@@ -7,6 +7,10 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
+from future import standard_library
+standard_library.install_aliases()
+
 import unittest
 import logging
 import pkg_resources
@@ -115,7 +119,7 @@ class test_FandangoJsonParser(GenericSetup):
         for (
             cmd_name,
             cmd_metadata,
-        ) in self.fandango_parser.get_device_command_metadata().items():
+        ) in list(self.fandango_parser.get_device_command_metadata().items()):
             self.assertEquals(
                 sorted(EXPECTED_CMD_PROPERTY_PARAMETERS),
                 sorted(cmd_metadata.keys()),
@@ -139,7 +143,7 @@ class test_FandangoJsonParser(GenericSetup):
         """
 
         # testing that data type of specified attr property values is a tango type
-        dev_attr = self.fandango_parser.get_device_attribute_metadata().items()
+        dev_attr = list(self.fandango_parser.get_device_attribute_metadata().items())
         for attr_name, attr_metadata in dev_attr:
             self.assertEquals(
                 tango._tango.CmdArgType,
@@ -170,7 +174,7 @@ class test_FandangoJsonParser(GenericSetup):
             "StoredProcedureRelease",
             "Timing_minimum",
         ]
-        actual_parsed_attr_list = actual_parsed_attrs.keys()
+        actual_parsed_attr_list = list(actual_parsed_attrs.keys())
         self.assertGreater(
             len(actual_parsed_attr_list), 0, "There is no attribute information parsed"
         )
@@ -183,7 +187,7 @@ class test_FandangoJsonParser(GenericSetup):
         # Using the 'Status' attribute expected results
         self.assertIn(
             "Status",
-            actual_parsed_attrs.keys(),
+            list(actual_parsed_attrs.keys()),
             "The attribute Status is not in the parsed attribute list",
         )
         actual_parsed_status_attr_info = actual_parsed_attrs["Status"]

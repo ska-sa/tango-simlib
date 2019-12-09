@@ -9,6 +9,10 @@ file generated from the DSL.
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
+
+from future import standard_library
+standard_library.install_aliases()
+
 import xml.etree.ElementTree as ET
 
 from tango import DevBoolean, DevDouble, DevLong, DevString
@@ -351,12 +355,12 @@ class SDDParser(Parser):
 
         """
         monitoring_pts = {}
-        for mpt_name, mpt_metadata in self._device_attributes.items():
+        for mpt_name, mpt_metadata in list(self._device_attributes.items()):
             monitoring_pts[mpt_name] = {}
-            for metadata_prop_name, metadata_prop_val in mpt_metadata.items():
+            for metadata_prop_name, metadata_prop_val in list(mpt_metadata.items()):
                 # Unpack the min and max values from the ValueRange dictionary
                 if metadata_prop_name == "ValueRange":
-                    for extremity, extremity_val in metadata_prop_val.items():
+                    for extremity, extremity_val in list(metadata_prop_val.items()):
                         # This will not raise a keyerror exception as the the keys
                         # (MaxValue/MinValue) will be available in the tag 'ValueRange'
                         # appears in the SDD XML file.

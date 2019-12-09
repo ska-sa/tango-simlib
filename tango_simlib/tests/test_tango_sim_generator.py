@@ -9,6 +9,12 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
+from future import standard_library
+standard_library.install_aliases()
+
+
+from builtins import object
 import time
 import logging
 import unittest
@@ -114,7 +120,7 @@ class BaseTest(object):
             self.expected_models = tango_sim_generator.configure_device_models(
                 self.data_descr_file, self.sim_device.name()
             )
-            self.expected_model = self.expected_models.values()[0]
+            self.expected_model = list(self.expected_models.values())[0]
             self.attr_name_enum_labels = sorted(
                 self.sim_control_device.attribute_query("attribute_name").enum_labels
             )
@@ -142,7 +148,7 @@ class BaseTest(object):
             tango_sim_generator.write_device_properties_to_db(
                 self.sim_device.name(), self.expected_model, self.db_instance
             )
-            num_expected_properties = len(self.expected_model.sim_properties.keys())
+            num_expected_properties = len(list(self.expected_model.sim_properties.keys()))
             final_count = self._count_device_properties()
             num_added_properties = final_count - initial_count
             self.assertEquals(num_expected_properties, num_added_properties)
@@ -257,7 +263,7 @@ class test_FandangoFile(BaseTest.TangoSimGenDeviceIntegration):
         not_added_attr_names = not_added_attr.value
 
         expected_attributes = []
-        for attr_prop in self.sim_file_parser._device_attributes.values():
+        for attr_prop in list(self.sim_file_parser._device_attributes.values()):
             expected_attributes.append(attr_prop["name"])
         expected_attributes = set(expected_attributes)
         # checking to see if there were any attributes not added
@@ -274,7 +280,7 @@ class test_FandangoFile(BaseTest.TangoSimGenDeviceIntegration):
         fandango file
         """
         actual_device_cmds = self.sim_device.get_command_list()
-        expected_cmd_list = self.sim_file_parser.get_device_command_metadata().keys()
+        expected_cmd_list = list(self.sim_file_parser.get_device_command_metadata().keys())
         self.assertEquals(
             set(actual_device_cmds),
             set(expected_cmd_list),
@@ -309,7 +315,7 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         not_added_attr_names = not_added_attr.value
 
         expected_attributes = []
-        for attr_prop in self.sim_file_parser._device_attributes.values():
+        for attr_prop in list(self.sim_file_parser._device_attributes.values()):
             expected_attributes.append(attr_prop["name"])
         expected_attributes = set(expected_attributes)
         # checking to see if there were any attributes not added
@@ -327,7 +333,7 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         """
         default_cmds = helper_module.DEFAULT_TANGO_DEVICE_COMMANDS
         actual_device_cmds = set(self.sim_device.get_command_list()) - default_cmds
-        expected_cmd_list = self.sim_file_parser.get_device_command_metadata().keys()
+        expected_cmd_list = list(self.sim_file_parser.get_device_command_metadata().keys())
         self.assertEquals(
             actual_device_cmds,
             set(expected_cmd_list),
@@ -388,7 +394,7 @@ class test_TangoSimGenerator2(ClassCleanupUnittestMixin, unittest.TestCase):
 class test_MultiModel(test_TangoSimGenerator2):
     def test_configure_models(self):
         models = tango_sim_generator.configure_device_models(self.data_descr_files)
-        self.assertEqual(len(models.keys()), self.num_of_registered_devices)
+        self.assertEqual(len(list(models.keys())), self.num_of_registered_devices)
 
     def test_configure_model(self):
         with self.assertRaises(RuntimeError) as cm:

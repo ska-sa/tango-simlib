@@ -2,12 +2,16 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+
 #########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from future import standard_library
+standard_library.install_aliases()
+
 import logging
 import unittest
 import pkg_resources
@@ -109,7 +113,7 @@ class test_Sdd_Xml_Parser(GenericSetup):
             "Wind_Direction",
             "Wind_Speed",
         ]
-        actual_parsed_monitoring_points_list = actual_parsed_mnt_pts.keys()
+        actual_parsed_monitoring_points_list = list(actual_parsed_mnt_pts.keys())
         self.assertGreater(
             len(actual_parsed_monitoring_points_list),
             0,
@@ -122,11 +126,11 @@ class test_Sdd_Xml_Parser(GenericSetup):
         )
 
         # Test if all the parsed monitoring points have the mandatory properties
-        for mnt_pt_name, mnt_pt_metadata in actual_parsed_mnt_pts.items():
+        for mnt_pt_name, mnt_pt_metadata in list(actual_parsed_mnt_pts.items()):
             for param_name in expected_mandatory_monitoring_point_parameters:
                 self.assertIn(
                     param_name,
-                    mnt_pt_metadata.keys(),
+                    list(mnt_pt_metadata.keys()),
                     "The parsed monitoring point '%s' does not the mandatory"
                     " parameter '%s' " % (mnt_pt_name, param_name),
                 )
@@ -135,7 +139,7 @@ class test_Sdd_Xml_Parser(GenericSetup):
         # generated the full test data for the other attributes.
         self.assertIn(
             "Pressure",
-            actual_parsed_mnt_pts.keys(),
+            list(actual_parsed_mnt_pts.keys()),
             "The attribute pressure is not in the parsed attribute list",
         )
         actual_parsed_pressure_mnt_pt_info = actual_parsed_mnt_pts["Pressure"]
@@ -174,7 +178,7 @@ class test_PopModelQuantities(GenericSetup):
             "Wind_Direction",
             "Wind_Speed",
         ]
-        actual_quantities_list = pmq.sim_model.sim_quantities.keys()
+        actual_quantities_list = list(pmq.sim_model.sim_quantities.keys())
         self.assertEqual(
             set(expected_quantities_list),
             set(actual_quantities_list),
@@ -193,10 +197,10 @@ class test_PopModelQuantities(GenericSetup):
             "The device name and the model name do not match.",
         )
         mnt_pt_metadata = self.xml_parser.get_device_attribute_metadata()
-        for sim_quantity_name, sim_quantity in pmq.sim_model.sim_quantities.items():
+        for sim_quantity_name, sim_quantity in list(pmq.sim_model.sim_quantities.items()):
             sim_quantity_metadata = getattr(sim_quantity, "meta")
             mpt_meta = mnt_pt_metadata[sim_quantity_name]
-            for mnt_pt_param_name, mnt_pt_param_val in mpt_meta.items():
+            for mnt_pt_param_name, mnt_pt_param_val in list(mpt_meta.items()):
                 self.assertTrue(
                     mnt_pt_param_name in sim_quantity_metadata,
                     "The param '%s' was not added to the model quantity"

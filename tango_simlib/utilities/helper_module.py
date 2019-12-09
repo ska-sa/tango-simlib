@@ -2,11 +2,15 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 
+
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from future import standard_library
+standard_library.install_aliases()
+
 import os
 import sys
 import socket
@@ -119,7 +123,7 @@ def append_device_to_db_file(
     db = Database(db_file_name)
     # Patched the property dict to avoid a PyTango bug
     patched = dict(
-        (key, value if value != "" else " ") for key, value in properties.items()
+        (key, value if value != "" else " ") for key, value in list(properties.items())
     )
     # Write properties
     db.put_device_property(device, patched)
@@ -179,7 +183,7 @@ def json_loads_byteified(json_text):
 
 def _byteify(data, ignore_dicts=False):
     """If this is a unicode string, return its string representation."""
-    if isinstance(data, unicode):
+    if isinstance(data, str):
         return data.encode("utf-8")
     # if this is a list of values, return list of byteified values
     if isinstance(data, list):
@@ -189,7 +193,7 @@ def _byteify(data, ignore_dicts=False):
     if isinstance(data, dict) and not ignore_dicts:
         return {
             _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
-            for key, value in data.iteritems()
+            for key, value in data.items()
         }
     # if it's anything else, return it in its original form
     return data
