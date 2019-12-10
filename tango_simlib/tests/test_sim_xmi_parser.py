@@ -519,7 +519,7 @@ class test_XmiParser(GenericSetup):
         # Compare the values of the attribute properties captured in the POGO generated
         # xmi file and the ones in the parsed attribute data structure.
         for prop in expected_pressure_attr_info:
-            if isinstance(actual_parsed_pressure_attr_info[prop], unicode):
+            if isinstance(actual_parsed_pressure_attr_info[prop], unicode): # noqa
                 self.assertEquals(
                     actual_parsed_pressure_attr_info[prop].encode('ascii', "replace"),
                     expected_pressure_attr_info[prop],

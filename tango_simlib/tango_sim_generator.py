@@ -215,6 +215,7 @@ def get_tango_device_server(models, sim_data_files):
         fget=TangoTestDeviceServerStaticAttrs.read_fn,
         fset=TangoTestDeviceServerStaticAttrs.write_fn,
     )
+    attr.setter(TangoTestDeviceServerStaticAttrs.write_fn)
     TangoTestDeviceServerStaticAttrs.attribute_name = attr
     # We use the `add_static_attribute` method to add DevEnum and Spectrum type
     # attributes statically to the tango device before start-up since the
