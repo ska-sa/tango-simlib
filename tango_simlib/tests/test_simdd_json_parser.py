@@ -6,7 +6,6 @@
 #########################################################################################
 
 from __future__ import absolute_import, division, print_function
-
 from future import standard_library
 standard_library.install_aliases()
 
@@ -822,7 +821,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(
                 # properties.
                 if prop == "inherited":
                     continue
-                if prop not in list(simdd_specified_temperature_attr_params.keys()):
+                if prop not in simdd_specified_temperature_attr_params.keys():
                     self.assertEquals(
                         expected_device_attr_xmi_info[expected_quantity][prop],
                         actual_device_attr_info[prop],
@@ -869,7 +868,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(
         ] = expected_device_on_cmd_overridden_info
         expected_device_cmd_xmi_overridden = expected_device_cmd_xmi_info_copy
         sim_actions = self.instance.model.sim_actions_meta
-        for expected_action in list(expected_device_cmd_xmi_info.keys()):
+        for expected_action in expected_device_cmd_xmi_info.keys():
             if expected_action not in helper_module.DEFAULT_TANGO_DEVICE_COMMANDS:
                 self.assertIn(
                     expected_action,

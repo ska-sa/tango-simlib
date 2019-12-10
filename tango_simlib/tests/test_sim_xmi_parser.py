@@ -5,6 +5,8 @@
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 from __future__ import absolute_import, division, print_function
+from future import standard_library
+standard_library.install_aliases()
 
 import logging
 import unittest
@@ -12,16 +14,13 @@ import unittest
 import pkg_resources
 
 import tango
-from future import standard_library
+
 from katcp.testutils import start_thread_with_cleanup
 from tango.test_context import DeviceTestContext
 from tango_simlib import model, tango_sim_generator
 from tango_simlib.utilities import helper_module, sim_xmi_parser
 from tango_simlib.utilities.testutils import (ClassCleanupUnittestMixin,
                                               cleanup_tempfile)
-
-standard_library.install_aliases()
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -597,7 +596,7 @@ class test_XmiParser(GenericSetup):
         )
 
         # Test if all the parsed device properties have the mandatoy parameters
-        for dev_prop_metadata in list(actual_parsed_dev_properties.values()):
+        for dev_prop_metadata in actual_parsed_dev_properties.values():
             for param in expected_mandatory_device_property_parameters:
                 self.assertIn(
                     param,

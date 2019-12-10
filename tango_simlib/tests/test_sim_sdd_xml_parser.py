@@ -5,19 +5,17 @@
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 from __future__ import absolute_import, division, print_function
+from future import standard_library
+standard_library.install_aliases()
 
 import logging
 import unittest
 
 import pkg_resources
 
-from future import standard_library
-standard_library.install_aliases()
-
 from tango import DevDouble
 from tango_simlib import model
 from tango_simlib.utilities import sim_sdd_xml_parser
-
 
 LOGGER = logging.getLogger(__name__)
 
