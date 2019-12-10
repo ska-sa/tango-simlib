@@ -8,7 +8,6 @@ Simlib library generic simulator generator utility to be used to generate an act
 TANGO device that exhibits the behaviour defined in the data description file.
 """
 from __future__ import absolute_import, division, print_function
-
 from future import standard_library
 standard_library.install_aliases()
 
