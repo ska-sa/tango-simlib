@@ -5,18 +5,14 @@
 #########################################################################################
 """An example of the user-defined override class."""
 from __future__ import absolute_import, division, print_function
+from future import standard_library
+standard_library.install_aliases()
 
 import logging
 from builtins import object
 
-from future import standard_library
 from past.builtins import cmp
 from PyTango import DevState, ErrSeverity, Except
-
-standard_library.install_aliases()
-
-
-
 
 MODULE_LOGGER = logging.getLogger(__name__)
 

@@ -4,12 +4,11 @@
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 from __future__ import absolute_import, division, print_function
-
-import weakref
-
 from future import standard_library
 standard_library.install_aliases()
 from future.utils import with_metaclass
+
+import weakref
 
 from tango import Attr, AttrWriteType, DevDouble, DevState, UserDefaultAttrProp
 from tango.server import Device, DeviceMeta, attribute, device_property

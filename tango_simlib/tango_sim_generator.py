@@ -9,6 +9,9 @@ Simlib library generic simulator generator utility to be used to generate an act
 TANGO device that exhibits the behaviour defined in the data description file.
 """
 from __future__ import absolute_import, division, print_function
+from future import standard_library
+standard_library.install_aliases()
+from future.utils import with_metaclass
 
 import argparse
 import logging
@@ -19,9 +22,6 @@ from builtins import map, object, range
 from functools import partial
 
 import numpy as np
-from future import standard_library
-standard_library.install_aliases()
-from future.utils import with_metaclass
 
 from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType,
                    CmdArgType, DevState, UserDefaultAttrProp)
@@ -35,7 +35,6 @@ from tango_simlib.utilities.fandango_json_parser import FandangoExportDevicePars
 from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
-
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -171,7 +170,7 @@ def get_tango_device_server(models, sim_data_files):
                 # since an integer value is returned by device server when
                 # attribute value is read
                 MODULE_LOGGER.info(
-                    "Writing value %s to attribute '%s'." % (new_val, attr_name)
+                    "Writing value {} to attribute '{}'.".format(new_val, attr_name)
                 )
                 _sim_quantities = tango_device_instance.model.sim_quantities
                 tango_device_instance.model_quantity = _sim_quantities[attr_name]
@@ -624,7 +623,7 @@ def generate_device_server(server_name, sim_data_files, directory=""):
         ),
         "\n\n# File generated on {} by tango-simlib-generator".format(time.ctime()),
         "\n\ndef main():",
-        "    sim_data_files = %s" % sim_data_files,
+        "    sim_data_files = {}" % sim_data_files,
         "    models = configure_device_models(sim_data_files)",
         "    TangoDeviceServers = get_tango_device_server(models, sim_data_files)",
         "    server_run(TangoDeviceServers)",

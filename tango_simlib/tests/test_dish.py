@@ -5,15 +5,14 @@
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 from __future__ import absolute_import, division, print_function
+from future import standard_library
+standard_library.install_aliases()
 
 import time
 import unittest
 from builtins import zip
 
 import pkg_resources
-
-from future import standard_library
-standard_library.install_aliases()
 
 from katcp.testutils import start_thread_with_cleanup
 from mock import Mock, call, patch
