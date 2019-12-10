@@ -24,7 +24,6 @@ from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.testutils import (ClassCleanupUnittestMixin,
                                               cleanup_tempdir)
 
- 
 class FixtureModel(model.Model):
     def setup_sim_quantities(self):
         start_time = self.start_time
