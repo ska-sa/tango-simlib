@@ -624,7 +624,7 @@ def generate_device_server(server_name, sim_data_files, directory=""):
         ),
         "\n\n# File generated on {} by tango-simlib-generator".format(time.ctime()),
         "\n\ndef main():",
-        "    sim_data_files = {}" % sim_data_files,
+        "    sim_data_files = {}".format(sim_data_files),
         "    models = configure_device_models(sim_data_files)",
         "    TangoDeviceServers = get_tango_device_server(models, sim_data_files)",
         "    server_run(TangoDeviceServers)",
