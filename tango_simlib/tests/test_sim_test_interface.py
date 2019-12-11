@@ -5,6 +5,8 @@
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 from __future__ import absolute_import, division, print_function
+from future import standard_library
+standard_library.install_aliases()
 
 import os
 import subprocess
@@ -14,7 +16,6 @@ from functools import partial
 
 import pkg_resources
 
-from future import standard_library
 from mock import Mock
 from tango import AttrDataFormat, DeviceProxy, DevState
 from tango.test_context import DeviceTestContext
@@ -22,12 +23,6 @@ from tango_simlib import model, quantities, tango_sim_generator
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.testutils import (ClassCleanupUnittestMixin,
                                               cleanup_tempdir)
-
-standard_library.install_aliases()
-
-
-
-
 
 class FixtureModel(model.Model):
     def setup_sim_quantities(self):

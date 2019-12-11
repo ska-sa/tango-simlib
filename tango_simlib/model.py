@@ -4,6 +4,8 @@
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 from __future__ import absolute_import, division, print_function
+from future import standard_library
+standard_library.install_aliases()
 
 import importlib
 import logging
@@ -13,16 +15,8 @@ import weakref
 from builtins import map, object, range
 from functools import partial
 
-from future import standard_library
-standard_library.install_aliases()
-
 from tango import CmdArgType
 from tango_simlib import quantities
-
-
-
-
-
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -186,7 +180,7 @@ class PopulateModelQuantities(object):
     """Used to populate/update model quantities.
 
     Populates the model quantities using the data from the TANGO device information
-    captured in the json file / POGO generated xmi / FANDANGO generated to file.
+    captured in the json file / POGO generated xmi / FANDANGO generated fgo file.
 
     Attributes
     ----------

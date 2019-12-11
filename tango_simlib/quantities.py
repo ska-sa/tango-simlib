@@ -4,7 +4,6 @@
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 from __future__ import absolute_import, division, print_function
-
 from future import standard_library
 standard_library.install_aliases()
 
@@ -17,7 +16,6 @@ from random import gauss
 from builtins import object
 from future.utils import with_metaclass
 from past.builtins import cmp
-
 
 MODULE_LOGGER = logging.getLogger(__name__)
 

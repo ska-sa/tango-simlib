@@ -8,8 +8,8 @@ Simlib library generic simulator generator utility to be used to generate an act
 TANGO device that exhibits the behaviour defined in the data description file.
 """
 from __future__ import absolute_import, division, print_function
-
 from future import standard_library
+
 standard_library.install_aliases()
 
 import logging
@@ -588,7 +588,12 @@ class XmiParser(Parser):
                             "{} information is not captured in the XMI"
                             " file".format(pogo_prop)
                         )
-            attributes[attribute_meta["name"]] = attribute_meta
+            if isinstance(attribute_meta, unicode):  # noqa
+                attributes[attribute_meta["name"]] = attribute_meta.encode(
+                    "ascii", "replace"
+                )
+            else:
+                attributes[attribute_meta["name"]] = attribute_meta
         return attributes
 
     def get_device_command_metadata(self):
