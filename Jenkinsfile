@@ -50,8 +50,8 @@ pipeline {
                 stage ('py27') {
                     steps {
                         echo "Running nosetests on Python 2.7"
-                        sh 'python2 -m pip install . -U --ignore-installed'
-                        sh 'python2 -m pip install --ignore-installed nose_xunitmp'
+                        sh 'python2 -m pip install -U .'
+                        sh 'python2 -m pip install nose_xunitmp'
                         sh "python2 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE} --with-xunit --xunit-file=nosetests_py27.xml"
                     }
                 }
@@ -59,8 +59,8 @@ pipeline {
                 stage ('py36') {
                     steps {
                          echo "Running nosetests on Python 3.6"
-                         sh 'python3.6 -m pip install . -U --ignore-installed'
-                         sh 'python3.6 -m pip install --ignore-installed nose_xunitmp '
+                         sh 'python3.6 -m pip install -U .'
+                         sh 'python3.6 -m pip install nose_xunitmp'
                          sh "python3.6 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE} --with-xunit --xunit-file=nosetests_py36.xml"
                     }
                 }
