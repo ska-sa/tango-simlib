@@ -587,7 +587,12 @@ class XmiParser(Parser):
                             "{} information is not captured in the XMI"
                             " file".format(pogo_prop)
                         )
-            attributes[attribute_meta["name"]] = attribute_meta
+            if isinstance(attribute_meta, unicode):  # noqa
+                attributes[attribute_meta["name"]] = attribute_meta.encode(
+                    "ascii", "replace"
+                )
+            else:
+                attributes[attribute_meta["name"]] = attribute_meta
         return attributes
 
     def get_device_command_metadata(self):
