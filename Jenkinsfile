@@ -1,7 +1,9 @@
 pipeline {
 
     agent {
-        label 'camtango_db'
+        // TODO: Update with the appropriate docker image once PR(https://github.com/ska-sa/kattrap/pull/90)
+        // Is merged.
+        label 'camtango_db_bionic'
     }
 
     environment {
@@ -29,10 +31,11 @@ pipeline {
             }
         }
 
-        stage ('Start Services') {
+        stage ('Check running services.') {
+            // Fail stage if services are not running.
             steps {
-                sh 'nohup service mysql start'
-                sh 'nohup service tango-db start'
+                sh 'service mysql status || exit 1'
+                sh 'service tango-db status || exit 1'
             }
         }
 
@@ -51,7 +54,6 @@ pipeline {
                     steps {
                         echo "Running nosetests on Python 2.7"
                         sh 'python2 -m pip install -U .'
-                        sh 'python2 -m pip install nose_xunitmp'
                         sh "python2 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE} --with-xunit --xunit-file=nosetests_py27.xml"
                     }
                 }
@@ -59,9 +61,8 @@ pipeline {
                 stage ('py36') {
                     steps {
                          echo "Running nosetests on Python 3.6"
-                         sh 'python3.6 -m pip install -U .'
-                         sh 'python3.6 -m pip install nose_xunitmp'
-                         sh "python3.6 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE} --with-xunit --xunit-file=nosetests_py36.xml"
+                         sh 'python3 -m pip install -U .'
+                         sh "python3 setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE} --with-xunit --xunit-file=nosetests_py36.xml"
                     }
                 }
             }
