@@ -10,6 +10,9 @@ TANGO device that exhibits the behaviour defined in the data description file.
 from __future__ import absolute_import, division, print_function
 from future import standard_library
 standard_library.install_aliases()  # noqa: E402
+import future
+from future.utils import itervalues
+
 
 import logging
 import xml.etree.ElementTree as ET
@@ -83,6 +86,28 @@ POGO_USER_DEFAULT_CMD_PROP_MAP = {
 }
 
 
+if future.utils.PY2:
+    def ensure_native_str(value):
+        """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
+        if isinstance(value, str):
+            return value
+        elif isinstance(value, unicode):
+            return value.encode("ascii", "replace")
+        else:
+            raise TypeError(
+                "Invalid type for string conversion: {}".format(type(value)))
+else:
+    def ensure_native_str(value):
+        """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
+        if isinstance(value, str):
+            return value
+        elif isinstance(value, bytes):
+            return value.decode("ascii", "replace")
+        else:
+            raise TypeError(
+                "Invalid type for string conversion: {}".format(type(value)))
+
+
 class XmiParser(Parser):
     """Parses the XMI file generated from POGO.
 
@@ -131,8 +156,9 @@ class XmiParser(Parser):
         # as TANGO does not handle unicode
         for child in tree.findall(".//"):
             for key, value in child.attrib.items():
-                if isinstance(value, unicode):
-                    child.attrib[key] = value.encode("ascii", "replace")
+                child.attrib[key] = ensure_native_str(value)
+                #if isinstance(value, unicode):
+                #    child.attrib[key] = value.encode("ascii", "replace")
 
         self._tree = tree
         root = tree.getroot()
@@ -420,9 +446,9 @@ class XmiParser(Parser):
 
         """
         if description_data.tag in ["attributes", "dynamicAttributes"]:
-            pogo_type = description_data.find("dataType").attrib.values()[0]
+            pogo_type = list(itervalues(description_data.find("dataType").attrib))[0]
         else:
-            pogo_type = description_data.find("type").attrib.values()[0]
+            pogo_type = list(itervalues(description_data.find("type").attrib))[0]
         # pogo_type has format -> pogoDsl:DoubleType
         # tango type must be of the form DevDouble
         arg_type = pogo_type.split(":")[1].replace("Type", "")
@@ -587,12 +613,16 @@ class XmiParser(Parser):
                             "{} information is not captured in the XMI"
                             " file".format(pogo_prop)
                         )
-            if isinstance(attribute_meta, unicode):  # noqa
-                attributes[attribute_meta["name"]] = attribute_meta.encode(
-                    "ascii", "replace"
-                )
-            else:
+            #if isinstance(attribute_meta, unicode):  # noqa
+            #    attributes[attribute_meta["name"]] = attribute_meta.encode(
+            #        "ascii", "replace"
+            #    )
+            try:
+                attributes[attribute_meta["name"]] = ensure_native_str(attribute_meta)
+            except TypeError:
                 attributes[attribute_meta["name"]] = attribute_meta
+            #else:
+            #    attributes[attribute_meta["name"]] = attribute_meta
         return attributes
 
     def get_device_command_metadata(self):

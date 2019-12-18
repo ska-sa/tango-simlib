@@ -6,6 +6,7 @@
 from __future__ import absolute_import, division, print_function
 from future import standard_library
 standard_library.install_aliases()  # noqa: E402
+import future
 
 import json
 import logging
@@ -66,6 +67,28 @@ DEFAULT_TANGO_ATTRIBUTE_PARAMETER_TEMPLATE = {
 TANGO_NOT_SPECIFIED_PROPS = ["Not specified", "No display unit", "No standard unit"]
 
 DEFAULT_CMD_PROPS = ("name", "doc_in", "dtype_in", "doc_out", "dtype_out")
+
+
+if future.utils.PY2:
+    def ensure_native_str(value):
+        """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
+        if isinstance(value, str):
+            return value
+        elif isinstance(value, unicode):
+            return value.encode("ascii", "replace")
+        else:
+            raise TypeError(
+                "Invalid type for string conversion: {}".format(type(value)))
+else:
+    def ensure_native_str(value):
+        """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
+        if isinstance(value, str):
+            return value
+        elif isinstance(value, bytes):
+            return value.decode("ascii", "replace")
+        else:
+            raise TypeError(
+                "Invalid type for string conversion: {}".format(type(value)))
 
 
 def get_server_name():
@@ -179,8 +202,12 @@ def json_loads_byteified(json_text):
 
 def _byteify(data, ignore_dicts=False):
     # If this is a unicode string, return its string representation.
-    if isinstance(data, unicode):
-        return data.encode("utf-8")
+    try:
+        return ensure_native_str(data)
+    except TypeError:
+        pass
+    #if isinstance(data, unicode):
+    #    return data.encode("utf-8")
     # if this is a list of values, return list of byteified values
     if isinstance(data, list):
         return [_byteify(item, ignore_dicts=True) for item in data]
@@ -191,5 +218,6 @@ def _byteify(data, ignore_dicts=False):
             _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
             for key, value in data.items()
         }
+
     # if it's anything else, return it in its original form
     return data
