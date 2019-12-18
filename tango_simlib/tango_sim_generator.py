@@ -12,6 +12,7 @@ from __future__ import absolute_import, division, print_function
 from future import standard_library
 standard_library.install_aliases()  # noqa: E402
 from future.utils import with_metaclass
+from future.utils import itervalues
 
 import argparse
 import logging
@@ -188,7 +189,7 @@ def get_tango_device_server(models, sim_data_files):
 
     # Sim test interface static attribute `attribute_name` info
     # Pick the first model instance in the dict.
-    controllable_attribute_names = models.values()[0].sim_quantities.keys()
+    controllable_attribute_names = list(itervalues(models))[0].sim_quantities.keys()
     attr_control_meta = {}
     attr_control_meta["enum_labels"] = sorted(controllable_attribute_names)
     attr_control_meta["data_format"] = AttrDataFormat.SCALAR
@@ -224,7 +225,7 @@ def get_tango_device_server(models, sim_data_files):
     # TODO(AR 02-03-2017): Ask the tango community on the upcoming Stack
     # Exchange community (AskTango) and also make follow ups on the next tango
     # releases.
-    for quantity_name, quantity in models.values()[0].sim_quantities.items():
+    for quantity_name, quantity in list(itervalues(models))[0].sim_quantities.items():
         d_type = quantity.meta["data_type"]
         d_type = str(quantity.meta["data_type"])
         d_format = str(quantity.meta["data_format"])
