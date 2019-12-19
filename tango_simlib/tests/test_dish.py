@@ -118,7 +118,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         self.addCleanup(self._reset_model_defaults)
 
     def _reset_model_defaults(self):
-        for quantity in list(itervalues(self.model.sim_quantities)):
+        for quantity in itervalues(self.model.sim_quantities):
             quantity.last_val = 0.0
 
     def test_attribute_list(self):

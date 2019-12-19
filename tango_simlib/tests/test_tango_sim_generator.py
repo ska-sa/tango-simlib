@@ -133,6 +133,7 @@ class BaseTest(object):
             return int(num_properties)
 
         def test_initial_device_properties(self):
+        def test_initial_device_properties(self):
             """Test initial device properties added to the tangoDB"""
             expected_count = 1  # model_key property already present in db
             self.assertEquals(expected_count, self._count_device_properties())
@@ -312,7 +313,7 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         not_added_attr_names = not_added_attr.value
 
         expected_attributes = []
-        for attr_prop in list(itervalues(self.sim_file_parser._device_attributes)):
+        for attr_prop in itervalues(self.sim_file_parser._device_attributes):
             expected_attributes.append(attr_prop["name"])
         expected_attributes = set(expected_attributes)
         # checking to see if there were any attributes not added
