@@ -70,20 +70,6 @@ pipeline {
             post {
                 always {
                     junit 'nosetests_*.xml'
-                    cobertura (
-                        coberturaReportFile: 'coverage_*.xml',
-                        failNoReports: true,
-                        failUnhealthy: true,
-                        failUnstable: true,
-                        autoUpdateHealth: true,
-                        autoUpdateStability: true,
-                        zoomCoverageChart: true,
-                        // TODO: The reason this is commented out is because tango-simlib test coverage is currently at 70% instead of minimum 80%.
-                        // lineCoverageTargets: '80, 80, 80',
-                        // conditionalCoverageTargets: '80, 80, 80',
-                        // classCoverageTargets: '80, 80, 80',
-                        // fileCoverageTargets: '80, 80, 80',
-                    )
                     archiveArtifacts '*.xml'
                 }
             }
