@@ -133,7 +133,6 @@ class BaseTest(object):
             return int(num_properties)
 
         def test_initial_device_properties(self):
-        def test_initial_device_properties(self):
             """Test initial device properties added to the tangoDB"""
             expected_count = 1  # model_key property already present in db
             self.assertEquals(expected_count, self._count_device_properties())
