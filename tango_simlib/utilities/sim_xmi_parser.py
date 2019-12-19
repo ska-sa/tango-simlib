@@ -14,12 +14,12 @@ standard_library.install_aliases()  # noqa: E402
 import future
 from future.utils import itervalues
 
-
 import logging
 import xml.etree.ElementTree as ET
 
 from tango import AttrDataFormat, CmdArgType, DevBoolean, DevEnum, DevString
 from tango_simlib.utilities.base_parser import Parser
+from tango_simlib.compat import ensure_native_str
 
 MODULE_LOGGER = logging.getLogger(__name__)
 CONSTANT_DATA_TYPES = frozenset([DevBoolean, DevEnum, DevString])
@@ -85,30 +85,6 @@ POGO_USER_DEFAULT_CMD_PROP_MAP = {
     "argoutType": "dtype_out",
     "inherited": "inherited",
 }
-
-
-if future.utils.PY2:
-
-    def ensure_native_str(value):
-        """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
-        if isinstance(value, str):
-            return value
-        elif isinstance(value, unicode): # noqa
-            return value.encode("ascii", "replace")
-        else:
-            raise TypeError("Invalid type for string conversion: {}".format(type(value)))
-
-
-else:
-
-    def ensure_native_str(value):
-        """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
-        if isinstance(value, str):
-            return value
-        elif isinstance(value, bytes):
-            return value.decode("ascii", "replace")
-        else:
-            raise TypeError("Invalid type for string conversion: {}".format(type(value)))
 
 
 class XmiParser(Parser):

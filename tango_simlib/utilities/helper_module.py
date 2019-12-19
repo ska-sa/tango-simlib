@@ -17,6 +17,7 @@ import sys
 
 from tango import Database
 from tango.server import command
+from tango_simlib.compat import ensure_native_str
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -69,29 +70,6 @@ TANGO_NOT_SPECIFIED_PROPS = ["Not specified", "No display unit", "No standard un
 
 DEFAULT_CMD_PROPS = ("name", "doc_in", "dtype_in", "doc_out", "dtype_out")
 
-
-if future.utils.PY2:
-
-    def ensure_native_str(value):
-        """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
-        if isinstance(value, str):
-            return value
-        elif isinstance(value, unicode): # noqa
-            return value.encode("ascii", "replace")
-        else:
-            raise TypeError("Invalid type for string conversion: {}".format(type(value)))
-
-
-else:
-
-    def ensure_native_str(value):
-        """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
-        if isinstance(value, str):
-            return value
-        elif isinstance(value, bytes):
-            return value.decode("ascii", "replace")
-        else:
-            raise TypeError("Invalid type for string conversion: {}".format(type(value)))
 
 
 def get_server_name():
