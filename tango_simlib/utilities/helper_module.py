@@ -76,7 +76,7 @@ if future.utils.PY2:
         """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
         if isinstance(value, str):
             return value
-        elif isinstance(value, unicode):
+        elif isinstance(value, unicode): # noqa
             return value.encode("ascii", "replace")
         else:
             raise TypeError("Invalid type for string conversion: {}".format(type(value)))
@@ -209,8 +209,6 @@ def _byteify(data, ignore_dicts=False):
         return ensure_native_str(data)
     except TypeError:
         pass
-    # if isinstance(data, unicode):
-    #    return data.encode("utf-8")
     # if this is a list of values, return list of byteified values
     if isinstance(data, list):
         return [_byteify(item, ignore_dicts=True) for item in data]

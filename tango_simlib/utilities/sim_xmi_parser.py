@@ -93,7 +93,7 @@ if future.utils.PY2:
         """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
         if isinstance(value, str):
             return value
-        elif isinstance(value, unicode):
+        elif isinstance(value, unicode): # noqa
             return value.encode("ascii", "replace")
         else:
             raise TypeError("Invalid type for string conversion: {}".format(type(value)))
@@ -160,8 +160,6 @@ class XmiParser(Parser):
         for child in tree.findall(".//"):
             for key, value in child.attrib.items():
                 child.attrib[key] = ensure_native_str(value)
-                # if isinstance(value, unicode):
-                #    child.attrib[key] = value.encode("ascii", "replace")
 
         self._tree = tree
         root = tree.getroot()
@@ -616,10 +614,7 @@ class XmiParser(Parser):
                             "{} information is not captured in the XMI"
                             " file".format(pogo_prop)
                         )
-            # if isinstance(attribute_meta, unicode):  # noqa
-            #    attributes[attribute_meta["name"]] = attribute_meta.encode(
-            #        "ascii", "replace"
-            #    )
+
             try:
                 attributes[attribute_meta["name"]] = ensure_native_str(attribute_meta)
             except TypeError:
