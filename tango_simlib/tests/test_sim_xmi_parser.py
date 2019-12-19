@@ -483,6 +483,7 @@ class GenericSetup(unittest.TestCase):
 
 
 class test_XmiParser(GenericSetup):
+    @unittest.skipIf((not future.utils.PY2), "Only for Python 2")
     def test_parsed_attributes(self):
         """Test attribute information parsed matches with the one captured in the
         XMI file.
