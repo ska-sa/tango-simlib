@@ -8,7 +8,6 @@
 from __future__ import absolute_import, division, print_function
 from future import standard_library
 standard_library.install_aliases()  # noqa: E402
-from future.utils import itervalues
 
 import logging
 import pkg_resources
@@ -405,7 +404,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         expected_command_list = (
             self.simdd_json_parser.get_device_command_metadata().keys()
         )
-        expected_command_list = list(itervalues(expected_command_list))
+        expected_command_list = list(expected_command_list)
         expected_command_list.extend(helper_module.DEFAULT_TANGO_DEVICE_COMMANDS)
         self.assertEquals(
             actual_device_commands,
