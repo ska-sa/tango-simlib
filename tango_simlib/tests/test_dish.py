@@ -111,7 +111,7 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.models = tango_sim_generator.configure_device_models(
             cls.data_descr_files, cls.device_name
         )
-        cls.model = list(itervalues(cls.models.values))[0]
+        cls.model = list(itervalues(cls.models))[0]
 
     def setUp(self):
         super(test_DishElementMaster, self).setUp()
