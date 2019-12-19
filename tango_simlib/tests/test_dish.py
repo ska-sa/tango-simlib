@@ -8,6 +8,9 @@ from __future__ import absolute_import, division, print_function
 from future import standard_library
 standard_library.install_aliases()  # noqa: E402
 
+from future.utils import itervalues
+
+
 import time
 import unittest
 from builtins import zip
@@ -108,14 +111,14 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.models = tango_sim_generator.configure_device_models(
             cls.data_descr_files, cls.device_name
         )
-        cls.model = cls.models.values()[0]
+        cls.model = list(itervalues(cls.models.values))[0]
 
     def setUp(self):
         super(test_DishElementMaster, self).setUp()
         self.addCleanup(self._reset_model_defaults)
 
     def _reset_model_defaults(self):
-        for quantity in self.model.sim_quantities.values():
+        for quantity in list(itervalues(self.model.sim_quantities)):
             quantity.last_val = 0.0
 
     def test_attribute_list(self):
