@@ -53,6 +53,7 @@ pipeline {
                 stage ('py27') {
                     steps {
                         echo "Running nosetests on Python 2.7"
+                        sh 'python2 -m pip install -U .'
                         sh 'python2 -m coverage run --source="${KATPACKAGE}" -m nose --with-xunitmp --xunitmp-file=nosetests_py27.xml'
                         sh 'python2 -m coverage xml -o coverage_27.xml'
                         sh 'python2 -m coverage report -m --skip-covered'
@@ -63,6 +64,7 @@ pipeline {
                 stage ('py36') {
                     steps {
                         echo "Running nosetests on Python 3.6"
+                        sh 'python3 -m pip install -U .'
                         sh 'python3 -m coverage run --source="${KATPACKAGE}" -m nose --with-xunitmp --xunitmp-file=nosetests_py36.xml'
                         sh 'python3 -m coverage xml -o coverage_36.xml'
                         sh 'python3 -m coverage report -m --skip-covered'
@@ -74,14 +76,13 @@ pipeline {
                 always {
                     junit 'nosetests_*.xml'
                     cobertura (
-                        coberturaReportFile: 'coverage_*.xml',
+                        coberturaReportFile: 'coverag_*.xml',
                         failNoReports: true,
                         failUnhealthy: true,
                         failUnstable: true,
                         autoUpdateHealth: true,
                         autoUpdateStability: true,
                         zoomCoverageChart: true,
-                        // TODO: The reason this is commented out is because tango-simlib test coverage is currently at 70% instead of minimum 80%.
                         // lineCoverageTargets: '80, 80, 80',
                         // conditionalCoverageTargets: '80, 80, 80',
                         // classCoverageTargets: '80, 80, 80',
