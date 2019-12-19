@@ -53,16 +53,19 @@ pipeline {
                 stage ('py27') {
                     steps {
                         echo "Running nosetests on Python 2.7"
-                        sh 'python2 -m pip install -U .'
-                        sh "python2 setup.py nosetests --with-xunitmp --xunitmp-file=nosetests_py27.xml"
+                        sh 'python2 -m coverage run --source="${KATPACKAGE}" -m nose --with-xunitmp --xunitmp-file=nosetests_py27.xml'
+                        sh 'python2 -m coverage xml -o coverage_27.xml'
+                        sh 'python2 -m coverage report -m --skip-covered'
+
                     }
                 }
 
                 stage ('py36') {
                     steps {
-                         echo "Running nosetests on Python 3.6"
-                         sh 'python3 -m pip install -U .'
-                         sh "python3 setup.py nosetests --with-xunitmp --xunitmp-file=nosetests_py36.xml"
+                        echo "Running nosetests on Python 3.6"
+                        sh 'python3 -m coverage run --source="${KATPACKAGE}" -m nose --with-xunitmp --xunitmp-file=nosetests_py36.xml'
+                        sh 'python3 -m coverage xml -o coverage_36.xml'
+                        sh 'python3 -m coverage report -m --skip-covered'
                     }
                 }
             }
