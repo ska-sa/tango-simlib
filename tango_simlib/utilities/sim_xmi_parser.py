@@ -619,8 +619,7 @@ class XmiParser(Parser):
                 attributes[attribute_meta["name"]] = ensure_native_str(attribute_meta)
             except TypeError:
                 attributes[attribute_meta["name"]] = attribute_meta
-            # else:
-            #    attributes[attribute_meta["name"]] = attribute_meta
+
         return attributes
 
     def get_device_command_metadata(self):

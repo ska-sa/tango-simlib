@@ -249,7 +249,6 @@ class PopulateModelQuantities(object):
                     for param_key, param_val in iteritems(attr_props)
                     if param_val
                 )
-                # model_attr_props = dict(model_attr_props.items() + attr_props.items())
                 model_attr_props.update(attr_props)
 
             if "quantity_simulation_type" in model_attr_props:
