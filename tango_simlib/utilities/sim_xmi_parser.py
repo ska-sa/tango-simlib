@@ -9,6 +9,7 @@ TANGO device that exhibits the behaviour defined in the data description file.
 """
 from __future__ import absolute_import, division, print_function
 from future import standard_library
+
 standard_library.install_aliases()  # noqa: E402
 import future
 from future.utils import itervalues
@@ -87,6 +88,7 @@ POGO_USER_DEFAULT_CMD_PROP_MAP = {
 
 
 if future.utils.PY2:
+
     def ensure_native_str(value):
         """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
         if isinstance(value, str):
@@ -94,9 +96,11 @@ if future.utils.PY2:
         elif isinstance(value, unicode):
             return value.encode("ascii", "replace")
         else:
-            raise TypeError(
-                "Invalid type for string conversion: {}".format(type(value)))
+            raise TypeError("Invalid type for string conversion: {}".format(type(value)))
+
+
 else:
+
     def ensure_native_str(value):
         """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
         if isinstance(value, str):
@@ -104,8 +108,7 @@ else:
         elif isinstance(value, bytes):
             return value.decode("ascii", "replace")
         else:
-            raise TypeError(
-                "Invalid type for string conversion: {}".format(type(value)))
+            raise TypeError("Invalid type for string conversion: {}".format(type(value)))
 
 
 class XmiParser(Parser):
@@ -157,7 +160,7 @@ class XmiParser(Parser):
         for child in tree.findall(".//"):
             for key, value in child.attrib.items():
                 child.attrib[key] = ensure_native_str(value)
-                #if isinstance(value, unicode):
+                # if isinstance(value, unicode):
                 #    child.attrib[key] = value.encode("ascii", "replace")
 
         self._tree = tree
@@ -613,7 +616,7 @@ class XmiParser(Parser):
                             "{} information is not captured in the XMI"
                             " file".format(pogo_prop)
                         )
-            #if isinstance(attribute_meta, unicode):  # noqa
+            # if isinstance(attribute_meta, unicode):  # noqa
             #    attributes[attribute_meta["name"]] = attribute_meta.encode(
             #        "ascii", "replace"
             #    )
@@ -621,7 +624,7 @@ class XmiParser(Parser):
                 attributes[attribute_meta["name"]] = ensure_native_str(attribute_meta)
             except TypeError:
                 attributes[attribute_meta["name"]] = attribute_meta
-            #else:
+            # else:
             #    attributes[attribute_meta["name"]] = attribute_meta
         return attributes
 

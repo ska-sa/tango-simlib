@@ -5,6 +5,7 @@
 #########################################################################################
 from __future__ import absolute_import, division, print_function
 from future import standard_library
+
 standard_library.install_aliases()  # noqa: E402
 import future
 
@@ -70,6 +71,7 @@ DEFAULT_CMD_PROPS = ("name", "doc_in", "dtype_in", "doc_out", "dtype_out")
 
 
 if future.utils.PY2:
+
     def ensure_native_str(value):
         """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
         if isinstance(value, str):
@@ -77,9 +79,11 @@ if future.utils.PY2:
         elif isinstance(value, unicode):
             return value.encode("ascii", "replace")
         else:
-            raise TypeError(
-                "Invalid type for string conversion: {}".format(type(value)))
+            raise TypeError("Invalid type for string conversion: {}".format(type(value)))
+
+
 else:
+
     def ensure_native_str(value):
         """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
         if isinstance(value, str):
@@ -87,8 +91,7 @@ else:
         elif isinstance(value, bytes):
             return value.decode("ascii", "replace")
         else:
-            raise TypeError(
-                "Invalid type for string conversion: {}".format(type(value)))
+            raise TypeError("Invalid type for string conversion: {}".format(type(value)))
 
 
 def get_server_name():
@@ -206,7 +209,7 @@ def _byteify(data, ignore_dicts=False):
         return ensure_native_str(data)
     except TypeError:
         pass
-    #if isinstance(data, unicode):
+    # if isinstance(data, unicode):
     #    return data.encode("utf-8")
     # if this is a list of values, return list of byteified values
     if isinstance(data, list):
