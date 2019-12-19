@@ -77,7 +77,7 @@ pipeline {
                 always {
                     junit 'nosetests_*.xml'
                     cobertura (
-                        coberturaReportFile: 'coverag_*.xml',
+                        coberturaReportFile: 'coverage_*.xml',
                         failNoReports: true,
                         failUnhealthy: true,
                         failUnstable: true,
