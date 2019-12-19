@@ -420,7 +420,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         for quantity_name in expected_result.keys():
             self.assertIn(quantity_name, device_attributes)
 
-        self.sim_control_device.command_inout(command_name, expected_result.keys())
+        self.sim_control_device.command_inout(command_name, list(expected_result))
         # The model needs 'dt' to be greater than the min_update_period for it to update
         # the model.quantity_state dictionary. If it was posssible to get hold of the
         # model instance, we would manipulate the value of the last_update_time of the
