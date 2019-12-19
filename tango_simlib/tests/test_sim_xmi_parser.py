@@ -310,7 +310,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
             "Actual tango device attribute list differs from expected " "list!",
         )
 
-    @unittest.skipIf(if not future.utils.PY2, "Only for Python 2")
+    @unittest.skipIf((not future.utils.PY2), "Only for Python 2")
     def test_attribute_properties(self):
         attribute_list = self.device.get_attribute_list()
         attribute_data = self.xmi_parser.get_device_attribute_metadata()
