@@ -84,6 +84,7 @@ pipeline {
                         autoUpdateHealth: true,
                         autoUpdateStability: true,
                         zoomCoverageChart: true,
+                        // TODO: The reason this is commented out is because tango-simlib test coverage is currently at 70% instead of minimum 80%.
                         // lineCoverageTargets: '80, 80, 80',
                         // conditionalCoverageTargets: '80, 80, 80',
                         // classCoverageTargets: '80, 80, 80',
