@@ -7,6 +7,7 @@
 
 from __future__ import absolute_import, division, print_function
 from future import standard_library
+
 standard_library.install_aliases()  # noqa: E402
 
 import future
@@ -17,10 +18,11 @@ if future.utils.PY2:
         """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
         if isinstance(value, str):
             return value
-        elif isinstance(value, unicode): # noqa
+        elif isinstance(value, unicode):  # noqa
             return value.encode("ascii", "replace")
         else:
             raise TypeError("Invalid type for string conversion: {}".format(type(value)))
+
 
 else:
 
