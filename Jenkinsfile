@@ -102,7 +102,6 @@ pipeline {
 
             steps {
                 echo "Generating Sphinx documentation."
-                sh 'python2 -m pip install .[docs]'
                 sh 'make -C doc html'
             }
         }
