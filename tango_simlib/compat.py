@@ -22,7 +22,6 @@ if future.utils.PY2:
         else:
             raise TypeError("Invalid type for string conversion: {}".format(type(value)))
 
-
 else:
 
     def ensure_native_str(value):
