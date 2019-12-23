@@ -260,7 +260,7 @@ class test_FandangoFile(BaseTest.TangoSimGenDeviceIntegration):
         not_added_attr_names = not_added_attr.value
 
         expected_attributes = []
-        for attr_prop in list(self.sim_file_parser._device_attributes.values()):
+        for attr_prop in self.sim_file_parser._device_attributes.values():
             expected_attributes.append(attr_prop["name"])
         expected_attributes = set(expected_attributes)
         # checking to see if there were any attributes not added
