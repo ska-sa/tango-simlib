@@ -6,6 +6,7 @@
 #########################################################################################
 from __future__ import absolute_import, division, print_function
 from future import standard_library
+
 standard_library.install_aliases()  # noqa: E402
 
 from future.utils import itervalues
@@ -22,8 +23,7 @@ from mock import Mock, call, patch
 from tango import DevFailed
 from tango.test_context import DeviceTestContext
 from tango_simlib import tango_sim_generator
-from tango_simlib.utilities.testutils import (ClassCleanupUnittestMixin,
-                                              cleanup_tempfile)
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
 
 
 DISH_ELEMENT_MASTER_COMMAND_LIST = frozenset(
