@@ -12,8 +12,7 @@ from __future__ import absolute_import, division, print_function
 from future import standard_library
 
 standard_library.install_aliases()  # noqa: E402
-from future.utils import with_metaclass
-from future.utils import itervalues
+from future.utils import itervalues, with_metaclass
 
 import argparse
 import logging
