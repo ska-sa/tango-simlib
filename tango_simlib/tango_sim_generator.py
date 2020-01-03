@@ -235,7 +235,8 @@ def get_tango_device_server(models, sim_data_files):
     # TODO(AR 02-03-2017): Ask the tango community on the upcoming Stack
     # Exchange community (AskTango) and also make follow ups on the next tango
     # releases.
-    for quantity_name, quantity in list(itervalues(models))[0].sim_quantities.items():
+    models_list = list(itervalues(models))
+    for quantity_name, quantity in models_list[0].sim_quantities.items():
         d_type = quantity.meta["data_type"]
         d_type = str(quantity.meta["data_type"])
         d_format = str(quantity.meta["data_format"])
