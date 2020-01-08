@@ -591,7 +591,9 @@ class XmiParser(Parser):
                         )
 
             try:
-                attributes[attribute_meta["name"]] = encode_unicode_to_ascii(attribute_meta)
+                attributes[attribute_meta["name"]] = encode_unicode_to_ascii(
+                    attribute_meta
+                )
             except TypeError:
                 attributes[attribute_meta["name"]] = attribute_meta
 
