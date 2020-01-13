@@ -11,11 +11,11 @@ from __future__ import absolute_import, division, print_function
 from future import standard_library
 
 standard_library.install_aliases()  # noqa: E402
-from future.utils import itervalues
 
 import logging
 import xml.etree.ElementTree as ET
 
+from future.utils import itervalues
 from tango import AttrDataFormat, CmdArgType, DevBoolean, DevEnum, DevString
 from tango_simlib.utilities.base_parser import Parser
 from tango_simlib.compat import ensure_native_str
