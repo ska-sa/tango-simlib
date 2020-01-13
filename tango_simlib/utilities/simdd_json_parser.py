@@ -174,7 +174,6 @@ class SimddParser(Parser):
                 name = element_info["name"]
                 element_params = self._get_reformatted_data(element_info, element_type)
                 if "Attributes" in element_type:
-
                     device_dict[str(name)] = {}
                     device_dict[str(name)].update(params_template.items())
                     device_dict[str(name)].update(element_params.items())
