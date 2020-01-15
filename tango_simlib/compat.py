@@ -14,7 +14,7 @@ import future
 
 if future.utils.PY2:
 
-    def ensure_byte_str(value):
+    def ensure_native_ascii_str(value):
         """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
         if isinstance(value, str):
             return value
@@ -26,7 +26,7 @@ if future.utils.PY2:
 
 else:
 
-    def ensure_byte_str(value):
+    def ensure_native_ascii_str(value):
         """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
         if isinstance(value, str):
             return value.encode('ascii', 'replace').decode()
