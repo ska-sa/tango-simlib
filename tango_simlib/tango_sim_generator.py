@@ -411,8 +411,7 @@ def get_tango_device_server(models, sim_data_files):
                     attr_props = UserDefaultAttrProp()
                     for prop in meta_data.keys():
                         attr_prop_setter = getattr(attr_props, "set_" + prop, None)
-                        # TODO (MTO): Add exception handling
-                        # Code silently breaks
+                        # CAVEAT (MTO): breaks silently; take note when debugging
                         if attr_prop_setter:
                             attr_prop_setter(
                                 meta_data[prop]
