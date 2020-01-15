@@ -591,7 +591,9 @@ class XmiParser(Parser):
                         )
 
             try:
-                attributes[attribute_meta["name"]] = ensure_native_ascii_str(attribute_meta)
+                attributes[attribute_meta["name"]] = ensure_native_ascii_str(
+                    attribute_meta
+                )
             except TypeError:
                 attributes[attribute_meta["name"]] = attribute_meta
 
