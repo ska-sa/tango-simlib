@@ -413,7 +413,7 @@ def get_tango_device_server(models, sim_data_files):
                         attr_prop_setter = getattr(attr_props, "set_" + prop, None)
                         if attr_prop_setter:
                             attr_prop_setter(
-                                str(meta_data[prop]).encode("ascii", "replace")
+                                meta_data[prop]
                             )
                         else:
                             MODULE_LOGGER.info(
