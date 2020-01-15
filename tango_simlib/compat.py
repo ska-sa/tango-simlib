@@ -28,9 +28,9 @@ else:
 
     def ensure_byte_str(value):
         """Coerce unicode string or bytes to native string type (UTF-8 encoding)."""
-        if isinstance(value, str):
+        if isinstance(value, bytes):
             return value
-        elif isinstance(value, bytes):
-            return value.decode("ascii", "replace")
+        elif isinstance(value, str):
+            return value.encode("ascii", "replace")
         else:
             raise TypeError("Invalid type for string conversion: {}".format(type(value)))
