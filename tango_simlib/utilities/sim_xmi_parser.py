@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 from future.utils import itervalues
 from tango import AttrDataFormat, CmdArgType, DevBoolean, DevEnum, DevString
 from tango_simlib.utilities.base_parser import Parser
-from tango_simlib.compat import ensure_byte_str
+from tango_simlib.compat import ensure_native_ascii_str
 
 MODULE_LOGGER = logging.getLogger(__name__)
 CONSTANT_DATA_TYPES = frozenset([DevBoolean, DevEnum, DevString])
@@ -134,7 +134,7 @@ class XmiParser(Parser):
         # as TANGO does not handle unicode
         for child in tree.findall(".//"):
             for key, value in child.attrib.items():
-                child.attrib[key] = ensure_byte_str(value)
+                child.attrib[key] = ensure_native_ascii_str(value)
 
         self._tree = tree
         root = tree.getroot()
@@ -591,7 +591,7 @@ class XmiParser(Parser):
                         )
 
             try:
-                attributes[attribute_meta["name"]] = ensure_byte_str(attribute_meta)
+                attributes[attribute_meta["name"]] = ensure_native_ascii_str(attribute_meta)
             except TypeError:
                 attributes[attribute_meta["name"]] = attribute_meta
 

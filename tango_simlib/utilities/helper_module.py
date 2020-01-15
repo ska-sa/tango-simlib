@@ -16,7 +16,7 @@ import sys
 
 from tango import Database
 from tango.server import command
-from tango_simlib.compat import ensure_byte_str
+from tango_simlib.compat import ensure_native_ascii_str
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -182,7 +182,7 @@ def json_loads_byteified(json_text):
 def _byteify(data, ignore_dicts=False):
     # If this is a unicode string, return its string representation.
     try:
-        return ensure_byte_str(data)
+        return ensure_native_ascii_str(data)
     except TypeError:
         pass
     # if this is a list of values, return list of byteified values
