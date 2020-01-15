@@ -57,6 +57,8 @@ pipeline {
                         sh 'python2 -m coverage xml -o coverage_27.xml'
                         sh 'python2 -m coverage report -m --skip-covered'
 
+                        sh 'unlink /usr/bin/python && ln -s /usr/bin/python3.6 /usr/bin/python'
+
                         echo "Running nosetests on Python 3.6"
                         sh 'python3 -m pip install -U .'
                         sh 'python3 -m coverage run --source="${KATPACKAGE}" -m nose --with-xunitmp --xunitmp-file=nosetests_py36.xml'
