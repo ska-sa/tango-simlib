@@ -23,7 +23,7 @@ from tango.test_context import DeviceTestContext
 from tango_simlib import model, quantities, tango_sim_generator
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
-
+from tango_simlib.compat import PYTHON_SYS_VERSION
 
 class FixtureModel(model.Model):
     def setup_sim_quantities(self):
@@ -355,7 +355,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         )
         cls.sub_proc = subprocess.Popen(
             [
-                "python",
+                "python{}".format(PYTHON_SYS_VERSION),
                 "{}/{}".format(cls.temp_dir, server_name),
                 server_instance,
                 "-file={}".format(database_filename),

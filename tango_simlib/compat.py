@@ -10,6 +10,8 @@ from future import standard_library
 
 standard_library.install_aliases()  # noqa: E402
 
+import sys
+
 import future
 
 if future.utils.PY2:
@@ -34,3 +36,5 @@ else:
             return value.decode('ascii', 'replace')
         else:
             raise TypeError('Invalid type for string conversion: {}'.format(type(value)))
+
+PYTHON_SYS_VERSION = "{}.{}".format(sys.version_info.major, sys.version_info.minor)

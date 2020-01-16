@@ -34,6 +34,7 @@ from tango_simlib.utilities import (
     simdd_json_parser,
 )
 from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
+from tango_simlib.compat import PYTHON_SYS_VERSION
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -92,7 +93,7 @@ class BaseTest(object):
             )
             cls.sub_proc = subprocess.Popen(
                 [
-                    "python",
+                    "python{}".format(PYTHON_SYS_VERSION),
                     "{}/{}".format(cls.temp_dir, cls.server_name),
                     server_instance,
                     "-file={}".format(database_filename),
