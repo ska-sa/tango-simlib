@@ -1,8 +1,6 @@
 pipeline {
 
     agent {
-        // TODO: Update with the appropriate docker image once PR(https://github.com/ska-sa/kattrap/pull/90)
-        // Is merged.
         label 'camtango_db_bionic'
     }
 
