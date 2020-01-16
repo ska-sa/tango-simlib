@@ -7,16 +7,18 @@
 Simlib library generic simulator generator utility to be used to generate an actual
 TANGO device that exhibits the behaviour defined in the data description file.
 """
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-import logging
+from __future__ import absolute_import, division, print_function
+from future import standard_library
 
+standard_library.install_aliases()  # noqa: E402
+
+import logging
 import xml.etree.ElementTree as ET
 
+from future.utils import itervalues
 from tango import AttrDataFormat, CmdArgType, DevBoolean, DevEnum, DevString
-
 from tango_simlib.utilities.base_parser import Parser
+from tango_simlib.compat import ensure_native_ascii_str
 
 MODULE_LOGGER = logging.getLogger(__name__)
 CONSTANT_DATA_TYPES = frozenset([DevBoolean, DevEnum, DevString])
@@ -132,8 +134,7 @@ class XmiParser(Parser):
         # as TANGO does not handle unicode
         for child in tree.findall(".//"):
             for key, value in child.attrib.items():
-                if isinstance(value, unicode):
-                    child.attrib[key] = value.encode("ascii", "replace")
+                child.attrib[key] = ensure_native_ascii_str(value)
 
         self._tree = tree
         root = tree.getroot()
@@ -421,9 +422,9 @@ class XmiParser(Parser):
 
         """
         if description_data.tag in ["attributes", "dynamicAttributes"]:
-            pogo_type = description_data.find("dataType").attrib.values()[0]
+            pogo_type = list(itervalues(description_data.find("dataType").attrib))[0]
         else:
-            pogo_type = description_data.find("type").attrib.values()[0]
+            pogo_type = list(itervalues(description_data.find("type").attrib))[0]
         # pogo_type has format -> pogoDsl:DoubleType
         # tango type must be of the form DevDouble
         arg_type = pogo_type.split(":")[1].replace("Type", "")
@@ -588,7 +589,14 @@ class XmiParser(Parser):
                             "{} information is not captured in the XMI"
                             " file".format(pogo_prop)
                         )
-            attributes[attribute_meta["name"]] = attribute_meta
+
+            try:
+                attributes[attribute_meta["name"]] = ensure_native_ascii_str(
+                    attribute_meta
+                )
+            except TypeError:
+                attributes[attribute_meta["name"]] = attribute_meta
+
         return attributes
 
     def get_device_command_metadata(self):

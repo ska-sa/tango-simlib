@@ -8,18 +8,21 @@
 Simlib library generic simulator generator utility to be used to generate an actual
 TANGO device that exhibits the behaviour defined in the data description file.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
+from future import standard_library
+
+standard_library.install_aliases()  # noqa: E402
 
 import argparse
 import logging
 import os
 import time
 import weakref
+from builtins import map, object, range
 from functools import partial
 
 import numpy as np
+
 from tango import (
     Attr,
     AttrDataFormat,
@@ -37,13 +40,14 @@ from tango_simlib.model import (
     PopulateModelProperties,
     PopulateModelQuantities,
 )
+from future.utils import with_metaclass
+from future.utils import itervalues
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.fandango_json_parser import FandangoExportDeviceParser
 from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
-
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -179,11 +183,10 @@ def get_tango_device_server(models, sim_data_files):
                 # since an integer value is returned by device server when
                 # attribute value is read
                 MODULE_LOGGER.info(
-                    "Writing value %s to attribute '%s'." % (new_val, attr_name)
+                    "Writing value {} to attribute '{}'.".format(new_val, attr_name)
                 )
-                tango_device_instance.model_quantity = tango_device_instance.model.sim_quantities[
-                    attr_name
-                ]
+                _sim_quantities = tango_device_instance.model.sim_quantities
+                tango_device_instance.model_quantity = _sim_quantities[attr_name]
                 tango_device_instance.model_quantity.set_val(
                     new_val, tango_device_instance.model.time_func()
                 )
@@ -196,8 +199,8 @@ def get_tango_device_server(models, sim_data_files):
 
     # Sim test interface static attribute `attribute_name` info
     # Pick the first model instance in the dict.
-    controllable_attribute_names = models.values()[0].sim_quantities.keys()
-    attr_control_meta = dict()
+    controllable_attribute_names = list(itervalues(models))[0].sim_quantities.keys()
+    attr_control_meta = {}
     attr_control_meta["enum_labels"] = sorted(controllable_attribute_names)
     attr_control_meta["data_format"] = AttrDataFormat.SCALAR
     attr_control_meta["data_type"] = CmdArgType.DevEnum
@@ -223,6 +226,7 @@ def get_tango_device_server(models, sim_data_files):
         fget=TangoTestDeviceServerStaticAttrs.read_fn,
         fset=TangoTestDeviceServerStaticAttrs.write_fn,
     )
+    attr.setter(TangoTestDeviceServerStaticAttrs.write_fn)
     TangoTestDeviceServerStaticAttrs.attribute_name = attr
     # We use the `add_static_attribute` method to add DevEnum and Spectrum type
     # attributes statically to the tango device before start-up since the
@@ -231,7 +235,7 @@ def get_tango_device_server(models, sim_data_files):
     # TODO(AR 02-03-2017): Ask the tango community on the upcoming Stack
     # Exchange community (AskTango) and also make follow ups on the next tango
     # releases.
-    for quantity_name, quantity in models.values()[0].sim_quantities.items():
+    for quantity_name, quantity in list(itervalues(models))[0].sim_quantities.items():
         d_type = quantity.meta["data_type"]
         d_type = str(quantity.meta["data_type"])
         d_format = str(quantity.meta["data_format"])
@@ -240,8 +244,12 @@ def get_tango_device_server(models, sim_data_files):
                 TangoDeviceServerStaticAttrs, quantity_name, quantity.meta
             )
 
-    class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
-        __metaclass__ = DeviceMeta
+    class TangoDeviceServer(
+        with_metaclass(
+            DeviceMeta,
+            type("NewBase", (TangoDeviceServerBase, TangoDeviceServerStaticAttrs), {}),
+        )
+    ):
         _models = models
 
         def init_device(self):
@@ -309,7 +317,7 @@ def get_tango_device_server(models, sim_data_files):
                                 if attr_data_format == "SCALAR":
                                     adjustable_val = val_type(adjustable_val)
                                 elif attr_data_format == "SPECTRUM":
-                                    adjustable_val = map(val_type, adjustable_val)
+                                    adjustable_val = list(map(val_type, adjustable_val))
                                 else:
                                     adjustable_val = [
                                         [val_type(curr_val) for curr_val in sublist]
@@ -403,8 +411,11 @@ def get_tango_device_server(models, sim_data_files):
                     attr_props = UserDefaultAttrProp()
                     for prop in meta_data.keys():
                         attr_prop_setter = getattr(attr_props, "set_" + prop, None)
+                        # CAVEAT (MTO): breaks silently; take note when debugging
                         if attr_prop_setter:
-                            attr_prop_setter(str(meta_data[prop]))
+                            attr_prop_setter(
+                                meta_data[prop]
+                            )
                         else:
                             MODULE_LOGGER.info(
                                 "No setter function for " + prop + " property"
@@ -440,9 +451,16 @@ def get_tango_device_server(models, sim_data_files):
         def NumAttributesNotAdded(self):
             return len(self._not_added_attributes)
 
-    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs):
-        __metaclass__ = DeviceMeta
-
+    class SimControl(
+        with_metaclass(
+            DeviceMeta,
+            type(
+                "NewBase",
+                (TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs),
+                {},
+            ),
+        )
+    ):
         instances = weakref.WeakValueDictionary()
 
         def init_device(self):
@@ -617,7 +635,7 @@ def generate_device_server(server_name, sim_data_files, directory=""):
         ),
         "\n\n# File generated on {} by tango-simlib-generator".format(time.ctime()),
         "\n\ndef main():",
-        "    sim_data_files = %s" % sim_data_files,
+        "    sim_data_files = {}".format(sim_data_files),
         "    models = configure_device_models(sim_data_files)",
         "    TangoDeviceServers = get_tango_device_server(models, sim_data_files)",
         "    server_run(TangoDeviceServers)",

@@ -1,29 +1,29 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 #########################################################################################
 # Author: cam@ska.ac.za                                                                 #
 # Copyright 2018 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from __future__ import absolute_import, division, print_function
+from future import standard_library
+
+standard_library.install_aliases()  # noqa: E402
+
 import os
+import subprocess
 import time
 import unittest
-import subprocess
+from functools import partial
+
 import pkg_resources
 
-from functools import partial
 from mock import Mock
-
-from tango import DevState, AttrDataFormat, DeviceProxy
+from tango import AttrDataFormat, DeviceProxy, DevState
 from tango.test_context import DeviceTestContext
-
-from tango_simlib import model, tango_sim_generator, quantities
+from tango_simlib import model, quantities, tango_sim_generator
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
-
+from tango_simlib.compat import PYTHON_SYS_VERSION
 
 class FixtureModel(model.Model):
     def setup_sim_quantities(self):
@@ -355,7 +355,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         )
         cls.sub_proc = subprocess.Popen(
             [
-                "python",
+                "python{}".format(PYTHON_SYS_VERSION),
                 "{}/{}".format(cls.temp_dir, server_name),
                 server_instance,
                 "-file={}".format(database_filename),
@@ -421,7 +421,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         for quantity_name in expected_result.keys():
             self.assertIn(quantity_name, device_attributes)
 
-        self.sim_control_device.command_inout(command_name, expected_result.keys())
+        self.sim_control_device.command_inout(command_name, list(expected_result))
         # The model needs 'dt' to be greater than the min_update_period for it to update
         # the model.quantity_state dictionary. If it was posssible to get hold of the
         # model instance, we would manipulate the value of the last_update_time of the

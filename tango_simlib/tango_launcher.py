@@ -8,16 +8,22 @@
 
 Helps by auto-registering a TANGO device if needed.
 """
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import division
+from __future__ import absolute_import, division, print_function
+from future import standard_library
+
+standard_library.install_aliases()  # noqa: E402
+
+import argparse
 import os
 import sys
-import argparse
+
 from functools import partial
 
 import tango
 
+from builtins import range
+
+from tango_simlib.compat import PYTHON_SYS_VERSION
 
 parser = argparse.ArgumentParser(
     description="Launch a TANGO device, handling registration as needed. "
@@ -73,7 +79,6 @@ def register_device(name, device_class, server_name, instance, db):
 
 
 def put_device_property(dev_name, property_name, property_value, db):
-
     print(
         "Setting device {!r} property {!r}: {!r}".format(
             dev_name, property_name, property_value
@@ -108,7 +113,10 @@ def start_device(opts):
         put_device_property(dev_name, dev_property_name, dev_property_val, db)
 
     if ".py" in opts.server_command:
-        args = ["python %s" % opts.server_command, opts.server_instance]
+        args = [
+            "python%s %s" % (PYTHON_SYS_VERSION, opts.server_command),
+            opts.server_instance,
+        ]
         if opts.file_name:
             args.append("-file={}".format(opts.file_name))
         print(

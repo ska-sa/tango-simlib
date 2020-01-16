@@ -1,20 +1,22 @@
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-import os
-import sys
-import socket
-import logging
+from __future__ import absolute_import, division, print_function
+from future import standard_library
+
+standard_library.install_aliases()  # noqa: E402
+
 import json
+import logging
+import os
+import socket
+import sys
 
 from tango import Database
 from tango.server import command
+from tango_simlib.compat import ensure_native_ascii_str
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -178,9 +180,11 @@ def json_loads_byteified(json_text):
 
 
 def _byteify(data, ignore_dicts=False):
-    """If this is a unicode string, return its string representation."""
-    if isinstance(data, unicode):
-        return data.encode("utf-8")
+    # If this is a unicode string, return its string representation.
+    try:
+        return ensure_native_ascii_str(data)
+    except TypeError:
+        pass
     # if this is a list of values, return list of byteified values
     if isinstance(data, list):
         return [_byteify(item, ignore_dicts=True) for item in data]
@@ -189,7 +193,8 @@ def _byteify(data, ignore_dicts=False):
     if isinstance(data, dict) and not ignore_dicts:
         return {
             _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
-            for key, value in data.iteritems()
+            for key, value in data.items()
         }
+
     # if it's anything else, return it in its original form
     return data

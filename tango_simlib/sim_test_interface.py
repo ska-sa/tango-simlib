@@ -1,12 +1,14 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 #########################################################################################
 # Copyright 2017 SKA South Africa (http://ska.ac.za/)                                   #
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
+from __future__ import absolute_import, division, print_function
+from future import standard_library
+
+standard_library.install_aliases()  # noqa: E402
+from future.utils import with_metaclass
+
 import weakref
 
 from tango import Attr, AttrWriteType, DevDouble, DevState, UserDefaultAttrProp
@@ -15,9 +17,7 @@ from tango_simlib import model
 from tango_simlib.utilities.helper_module import generate_cmd_handler
 
 
-class TangoTestDeviceServerBase(Device):
-    __metaclass__ = DeviceMeta
-
+class TangoTestDeviceServerBase(with_metaclass(DeviceMeta, Device)):
     instances = weakref.WeakValueDictionary()
 
     model_key = device_property(

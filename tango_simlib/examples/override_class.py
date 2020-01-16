@@ -3,16 +3,17 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-"""
-An example of the user-defined override class.
-"""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+"""An example of the user-defined override class."""
+from __future__ import absolute_import, division, print_function
+from future import standard_library
+
+standard_library.install_aliases()  # noqa: E402
 
 import logging
+from builtins import object
 
-from PyTango import DevState, Except, ErrSeverity
+from past.builtins import cmp
+from PyTango import DevState, ErrSeverity, Except
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -97,9 +98,8 @@ class OverrideVds(object):
                 pan_position = 0
             except ValueError:
                 raise VdsSimError(
-                    "Optional argument provided ({}) cannot be converted to a float".format(
-                        data_input[1]
-                    )
+                    "Optional argument provided ({}) cannot be "
+                    "converted to a float".format(data_input[1])
                 )
         elif pan_direction == "left":
             pan_position = float(quant_pan_position.meta["min_value"])
@@ -196,9 +196,8 @@ class OverrideVds(object):
                 focus_position = 0
             except ValueError:
                 raise VdsSimError(
-                    "Optional argument provided ({}) cannot be converted to a float".format(
-                        data_input[1]
-                    )
+                    "Optional argument provided ({}) cannot be converted"
+                    " to a float".format(data_input[1])
                 )
         elif focus_direction == "near":
             focus_position = float(quant_focus_position.meta["min_value"])
@@ -890,7 +889,7 @@ class OverrideDish(object):
 
         if current_pnt_state_str_val == "READY":
             MODULE_LOGGER.info(
-                "Skipping quantity updates. Dish quantity state" " already in READY mode."
+                "Skipping quantity updates. Dish quantity state already in READY mode."
             )
             return
 

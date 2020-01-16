@@ -61,20 +61,25 @@ Basic Usage
 Installation
 ------------
 
-Note that installation requires the *TANGO* binary prerequisites to be
-installed. If you cannot install the PyTango_ package you will not be able to
+Note that installation requires the *TANGO* binary prerequisites to be installed.
+
+.. code-block:: bash
+    sudo apt-get install -y --no-install-recommends $(grep -vE "^\s*#" apt-build-requirements.txt | tr "\n" " ")
+
+
+If you cannot install the PyTango_ package you will not be able to
 install ``tango-simlib``. For more, documentation_.
 
 Installation from source_, working directory where source is checked out
 
 .. code-block:: bash
-  
-    $ pip install .
+
+    $ pythonX -m pip install . # Where 'x' is the version of Python
 
 This package is available on *PYPI*, allowing
 
 .. code-block:: bash
-  
+
     $ pip install tango-simlib
 
 Documentation

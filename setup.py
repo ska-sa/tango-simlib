@@ -1,14 +1,27 @@
 #!/usr/bin/env python
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+import os
+
 from setuptools import find_packages, setup
+
+this_directory = os.path.abspath(os.path.dirname(__file__))
+
+files = {"Readme": "README.rst", "Changelog": "CHANGELOG.rst"}
+
+long_description = ""
+for name, filename in files.items():
+    if name != "Readme":
+        long_description += "# {}\n".format(name)
+    with open(os.path.join(this_directory, filename)) as _f:
+        file_contents = _f.read()
+    long_description += file_contents + "\n\n"
 
 setup(
     name="tango_simlib",
     description="Generic library for creating simulated TANGO devices.",
-    author="SKA SA KAT-7 / MeerKAT CAM team",
+    long_description=long_description,
+    long_description_content_type="text/x-rst",
+    author="MeerKAT CAM Team",
     author_email="cam@ska.ac.za",
     packages=find_packages(),
     url="https://github.com/ska-sa/tango-simlib",
@@ -17,16 +30,31 @@ setup(
     license="BSD",
     classifiers=[
         "Intended Audience :: Developers",
+        "License :: OSI Approved :: BSD License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
         "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        # TODO something for control systems?,
     ],
     platforms=["OS Independent"],
     setup_requires=["katversion"],
     use_katversion=True,
-    install_requires=["PyTango>=9.2.2", "numpy", "jsonschema"],
-    tests_require=["katcp", "numpy",],
-    extras_require={"docs": ["sphinx-pypi-upload", "numpydoc", "Sphinx"],},
+    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
+    install_requires=[
+        "future",
+        "futures; python_version<'3'",
+        "jsonschema",
+        "numpy",
+        "PyTango>=9.2.2",
+    ],
+    tests_require=["katcp", "numpy", "mock", "nose-xunitmp", "coverage", "nose"],
+    extras_require={"docs": ["sphinx-pypi-upload", "numpydoc", "Sphinx", "mock"]},
     zip_safe=False,
     include_package_data=True,
     package_data={

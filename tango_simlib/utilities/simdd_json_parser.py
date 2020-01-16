@@ -6,12 +6,13 @@
 """This module performs the parsing of the Simulator Description Datafile,
 containing the information needed to instantiate a useful device simulator.
 """
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
+from __future__ import absolute_import, division, print_function
+from future import standard_library
+
+standard_library.install_aliases()  # noqa: E402
+
 import json
 import logging
-
 import pkg_resources
 
 from jsonschema import validate
@@ -173,9 +174,9 @@ class SimddParser(Parser):
                 name = element_info["name"]
                 element_params = self._get_reformatted_data(element_info, element_type)
                 if "Attributes" in element_type:
-                    device_dict[str(name)] = dict(
-                        params_template.items() + element_params.items()
-                    )
+                    device_dict[str(name)] = {}
+                    device_dict[str(name)].update(params_template.items())
+                    device_dict[str(name)].update(element_params.items())
                 else:
                     device_dict[str(name)] = element_params
         return device_dict
@@ -335,7 +336,7 @@ class SimddParser(Parser):
                 actions = []
                 for item in param_val:
                     string_items = {}
-                    for key, value in item.iteritems():
+                    for key, value in item.items():
                         string_items[str(key)] = str(value)
                     actions.append(string_items)
                 formated_info["actions"] = actions
