@@ -53,6 +53,7 @@ to take effect.
 .. _source: https://github.com/ska-sa/tango-simlib
 .. _documentation: http://tango-simlib.rtfd.io
 .. _license: https://github.com/ska-sa/tango-simlib/blob/master/LICENSE.txt
+.. _TANGO_BINARY https://tango-controls.readthedocs.io/en/latest/installation/binary_package.html
 
 ===========
 Basic Usage
@@ -65,7 +66,7 @@ Installation
 
 - *tango-simlib is compatible with Python2.7 and Python>3.4*
 
-- *Installation requires the `TANGO binary <https://tango-controls.readthedocs.io/en/latest/installation/binary_package.html>` prerequisites to be installed.*
+- *Installation requires the TANGO_BINARY_ prerequisites to be installed.*
 
 
 .. code-block:: bash
