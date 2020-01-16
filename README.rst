@@ -64,7 +64,7 @@ Installation
 
 **Please Note**
 
-- tango-simlib is compatible with Python2.7 and Python>3.4
+- tango-simlib is compatible with Python2.7 and Python>=3.5.
 
 - Installation requires the TANGOBINARY_ prerequisites to be installed.
 
