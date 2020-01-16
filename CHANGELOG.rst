@@ -3,6 +3,11 @@
 .. _56: https://github.com/ska-sa/tango-simlib/issues/56
 .. _91: https://github.com/ska-sa/tango-simlib/pull/91
 
+0.4.0
+-----
+- Added Python2.7 and Python>3.5 Compatibility
+- Formatted code with [black](https://github.com/psf/black)
+
 0.3.0
 -----
 - Support multiple device and control interfaces per server process (Enhancement)
