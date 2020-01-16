@@ -61,7 +61,10 @@ Basic Usage
 Installation
 ------------
 
-Note that installation requires the *TANGO* binary prerequisites to be installed.
+**Please Note**
+- *tango-simlib is compatible with Python2.7 and Python>3.4*
+- *that installation requires the *TANGO* binary prerequisites to be installed.*
+
 
 .. code-block:: bash
     sudo apt-get install -y --no-install-recommends $(grep -vE "^\s*#" apt-build-requirements.txt | tr "\n" " ")
