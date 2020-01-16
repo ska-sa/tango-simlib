@@ -74,7 +74,7 @@ Installation from source_, working directory where source is checked out
 
 .. code-block:: bash
 
-    $ pip install .
+    $ pythonX -m pip install . # Where 'x' is the version of Python
 
 This package is available on *PYPI*, allowing
 

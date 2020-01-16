@@ -12,8 +12,6 @@ from __future__ import absolute_import, division, print_function
 from future import standard_library
 
 standard_library.install_aliases()  # noqa: E402
-from future.utils import with_metaclass
-from future.utils import itervalues
 
 import argparse
 import logging
@@ -42,6 +40,8 @@ from tango_simlib.model import (
     PopulateModelProperties,
     PopulateModelQuantities,
 )
+from future.utils import with_metaclass
+from future.utils import itervalues
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.fandango_json_parser import FandangoExportDeviceParser
