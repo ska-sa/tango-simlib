@@ -7,7 +7,9 @@
 """This module tests the tango_sim_generator on the xmi and fangodango files in config."""
 from __future__ import absolute_import, division, print_function
 from future import standard_library
+
 standard_library.install_aliases()  # noqa: E402
+from future.utils import itervalues
 
 import time
 import logging
@@ -32,6 +34,7 @@ from tango_simlib.utilities import (
     simdd_json_parser,
 )
 from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin
+from tango_simlib.compat import PYTHON_SYS_VERSION
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -90,7 +93,7 @@ class BaseTest(object):
             )
             cls.sub_proc = subprocess.Popen(
                 [
-                    "python",
+                    "python{}".format(PYTHON_SYS_VERSION),
                     "{}/{}".format(cls.temp_dir, cls.server_name),
                     server_instance,
                     "-file={}".format(database_filename),
@@ -116,7 +119,7 @@ class BaseTest(object):
             self.expected_models = tango_sim_generator.configure_device_models(
                 self.data_descr_file, self.sim_device.name()
             )
-            self.expected_model = self.expected_models.values()[0]
+            self.expected_model = list(itervalues(self.expected_models))[0]
             self.attr_name_enum_labels = sorted(
                 self.sim_control_device.attribute_query("attribute_name").enum_labels
             )
@@ -259,7 +262,7 @@ class test_FandangoFile(BaseTest.TangoSimGenDeviceIntegration):
         not_added_attr_names = not_added_attr.value
 
         expected_attributes = []
-        for attr_prop in self.sim_file_parser._device_attributes.values():
+        for attr_prop in list(self.sim_file_parser._device_attributes.values()):
             expected_attributes.append(attr_prop["name"])
         expected_attributes = set(expected_attributes)
         # checking to see if there were any attributes not added
@@ -311,7 +314,7 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         not_added_attr_names = not_added_attr.value
 
         expected_attributes = []
-        for attr_prop in self.sim_file_parser._device_attributes.values():
+        for attr_prop in itervalues(self.sim_file_parser._device_attributes):
             expected_attributes.append(attr_prop["name"])
         expected_attributes = set(expected_attributes)
         # checking to see if there were any attributes not added
@@ -422,7 +425,7 @@ class test_MultiModelServer(test_TangoSimGenerator2):
         )
         cls.sub_proc = subprocess.Popen(
             [
-                "python",
+                "python{}".format(PYTHON_SYS_VERSION),
                 "{}/{}".format(cls.temp_dir, cls.server_name),
                 server_instance,
                 "-file={}".format(cls.db_file_name),

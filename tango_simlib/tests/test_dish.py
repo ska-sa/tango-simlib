@@ -6,7 +6,11 @@
 #########################################################################################
 from __future__ import absolute_import, division, print_function
 from future import standard_library
+
 standard_library.install_aliases()  # noqa: E402
+
+from future.utils import itervalues
+
 
 import time
 import unittest
@@ -19,8 +23,7 @@ from mock import Mock, call, patch
 from tango import DevFailed
 from tango.test_context import DeviceTestContext
 from tango_simlib import tango_sim_generator
-from tango_simlib.utilities.testutils import (ClassCleanupUnittestMixin,
-                                              cleanup_tempfile)
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
 
 
 DISH_ELEMENT_MASTER_COMMAND_LIST = frozenset(
@@ -108,14 +111,14 @@ class test_DishElementMaster(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.models = tango_sim_generator.configure_device_models(
             cls.data_descr_files, cls.device_name
         )
-        cls.model = cls.models.values()[0]
+        cls.model = list(itervalues(cls.models))[0]
 
     def setUp(self):
         super(test_DishElementMaster, self).setUp()
         self.addCleanup(self._reset_model_defaults)
 
     def _reset_model_defaults(self):
-        for quantity in self.model.sim_quantities.values():
+        for quantity in itervalues(self.model.sim_quantities):
             quantity.last_val = 0.0
 
     def test_attribute_list(self):

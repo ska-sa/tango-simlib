@@ -5,7 +5,9 @@
 #########################################################################################
 from __future__ import absolute_import, division, print_function
 from future import standard_library
+
 standard_library.install_aliases()  # noqa: E402
+from future.utils import iteritems
 
 import importlib
 import logging
@@ -244,10 +246,10 @@ class PopulateModelQuantities(object):
                 # i.e. All optional parameters not provided in the SimDD
                 attr_props = dict(
                     (param_key, param_val)
-                    for param_key, param_val in attr_props.iteritems()
+                    for param_key, param_val in iteritems(attr_props)
                     if param_val
                 )
-                model_attr_props = dict(model_attr_props.items() + attr_props.items())
+                model_attr_props.update(attr_props)
 
             if "quantity_simulation_type" in model_attr_props:
                 if model_attr_props["quantity_simulation_type"] == "ConstantQuantity":

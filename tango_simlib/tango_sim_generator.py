@@ -10,8 +10,10 @@ TANGO device that exhibits the behaviour defined in the data description file.
 """
 from __future__ import absolute_import, division, print_function
 from future import standard_library
+
 standard_library.install_aliases()  # noqa: E402
 from future.utils import with_metaclass
+from future.utils import itervalues
 
 import argparse
 import logging
@@ -23,12 +25,23 @@ from functools import partial
 
 import numpy as np
 
-from tango import (Attr, AttrDataFormat, AttrQuality, AttrWriteType,
-                   CmdArgType, DevState, UserDefaultAttrProp)
+from tango import (
+    Attr,
+    AttrDataFormat,
+    AttrQuality,
+    AttrWriteType,
+    CmdArgType,
+    DevState,
+    UserDefaultAttrProp,
+)
 from tango.server import Device, DeviceMeta, attribute
-from tango_simlib.model import (INITIAL_CONSTANT_VALUE_TYPES, Model,
-                                PopulateModelActions, PopulateModelProperties,
-                                PopulateModelQuantities)
+from tango_simlib.model import (
+    INITIAL_CONSTANT_VALUE_TYPES,
+    Model,
+    PopulateModelActions,
+    PopulateModelProperties,
+    PopulateModelQuantities,
+)
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.fandango_json_parser import FandangoExportDeviceParser
@@ -182,13 +195,11 @@ def get_tango_device_server(models, sim_data_files):
         # Add the read method and the attribute to the class object
         setattr(tango_device_class, read_meth.__name__, read_meth)
         setattr(tango_device_class, attr.__name__, attr)
-        MODULE_LOGGER.info(
-            "Adding static attribute {} to the device.".format(attr_name)
-        )
+        MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
 
     # Sim test interface static attribute `attribute_name` info
     # Pick the first model instance in the dict.
-    controllable_attribute_names = models.values()[0].sim_quantities.keys()
+    controllable_attribute_names = list(itervalues(models))[0].sim_quantities.keys()
     attr_control_meta = {}
     attr_control_meta["enum_labels"] = sorted(controllable_attribute_names)
     attr_control_meta["data_format"] = AttrDataFormat.SCALAR
@@ -224,7 +235,7 @@ def get_tango_device_server(models, sim_data_files):
     # TODO(AR 02-03-2017): Ask the tango community on the upcoming Stack
     # Exchange community (AskTango) and also make follow ups on the next tango
     # releases.
-    for quantity_name, quantity in models.values()[0].sim_quantities.items():
+    for quantity_name, quantity in list(itervalues(models))[0].sim_quantities.items():
         d_type = quantity.meta["data_type"]
         d_type = str(quantity.meta["data_type"])
         d_format = str(quantity.meta["data_format"])
@@ -296,9 +307,7 @@ def get_tango_device_server(models, sim_data_files):
                         try:
                             sim_quantity_meta_info["quantity_simulation_type"]
                         except KeyError:
-                            if any(
-                                key_val in expected_key_vals for key_val in key_vals
-                            ):
+                            if any(key_val in expected_key_vals for key_val in key_vals):
                                 try:
                                     adjustable_val = sim_quantity_meta_info["value"]
                                 except KeyError:
@@ -402,9 +411,11 @@ def get_tango_device_server(models, sim_data_files):
                     attr_props = UserDefaultAttrProp()
                     for prop in meta_data.keys():
                         attr_prop_setter = getattr(attr_props, "set_" + prop, None)
+                        # CAVEAT (MTO): breaks silently; take note when debugging
                         if attr_prop_setter:
-                            attr_prop_setter(str(meta_data[prop]).encode('ascii',
-                                                                         'replace'))
+                            attr_prop_setter(
+                                meta_data[prop]
+                            )
                         else:
                             MODULE_LOGGER.info(
                                 "No setter function for " + prop + " property"

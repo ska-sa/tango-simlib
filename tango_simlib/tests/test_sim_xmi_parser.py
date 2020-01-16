@@ -6,6 +6,7 @@
 #########################################################################################
 from __future__ import absolute_import, division, print_function
 from future import standard_library
+
 standard_library.install_aliases()  # noqa: E402
 
 import logging
@@ -19,8 +20,7 @@ from katcp.testutils import start_thread_with_cleanup
 from tango.test_context import DeviceTestContext
 from tango_simlib import model, tango_sim_generator
 from tango_simlib.utilities import helper_module, sim_xmi_parser
-from tango_simlib.utilities.testutils import (ClassCleanupUnittestMixin,
-                                              cleanup_tempfile)
+from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempfile
 
 LOGGER = logging.getLogger(__name__)
 

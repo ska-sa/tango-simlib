@@ -6,6 +6,7 @@
 """This module tests the fandango_json_parser script."""
 from __future__ import absolute_import, division, print_function
 from future import standard_library
+
 standard_library.install_aliases()  # noqa: E402
 
 import logging
@@ -171,7 +172,7 @@ class test_FandangoJsonParser(GenericSetup):
             "StoredProcedureRelease",
             "Timing_minimum",
         ]
-        actual_parsed_attr_list = actual_parsed_attrs.keys()
+        actual_parsed_attr_list = list(actual_parsed_attrs)
         self.assertGreater(
             len(actual_parsed_attr_list), 0, "There is no attribute information parsed"
         )
