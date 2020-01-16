@@ -425,7 +425,7 @@ class test_MultiModelServer(test_TangoSimGenerator2):
         )
         cls.sub_proc = subprocess.Popen(
             [
-                "python",
+                "python{}".format(PYTHON_SYS_VERSION),
                 "{}/{}".format(cls.temp_dir, cls.server_name),
                 server_instance,
                 "-file={}".format(cls.db_file_name),
