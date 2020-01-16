@@ -69,7 +69,7 @@ def register_device(name, device_class, server_name, instance, db):
     dev_info.name = name
     dev_info._class = device_class
     dev_info.server = "{}/{}".format(server_name.split(".")[0], instance)
-    print (
+    print(
         """Attempting to register TANGO device {!r}
     class: {!r}  server: {!r}.""".format(
             dev_info.name, dev_info._class, dev_info.server
@@ -79,7 +79,7 @@ def register_device(name, device_class, server_name, instance, db):
 
 
 def put_device_property(dev_name, property_name, property_value, db):
-    print (
+    print(
         "Setting device {!r} property {!r}: {!r}".format(
             dev_name, property_name, property_value
         )
@@ -119,7 +119,7 @@ def start_device(opts):
         ]
         if opts.file_name:
             args.append("-file={}".format(opts.file_name))
-        print (
+        print(
             "Starting TANGO device server:\n{}".format(
                 " ".join(["{!r}".format(arg) for arg in args])
             )
@@ -136,7 +136,7 @@ def start_device(opts):
         ]
         if opts.file_name:
             args.append("-file={}".format(opts.file_name))
-        print (
+        print(
             "Starting TANGO device server:\n{}".format(
                 " ".join(["{!r}".format(arg) for arg in args])
             )

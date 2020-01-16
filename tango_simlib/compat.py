@@ -21,9 +21,9 @@ if future.utils.PY2:
         if isinstance(value, str):
             return value
         elif isinstance(value, unicode):  # noqa
-            return value.encode('ascii', 'replace')
+            return value.encode("ascii", "replace")
         else:
-            raise TypeError('Invalid type for string conversion: {}'.format(type(value)))
+            raise TypeError("Invalid type for string conversion: {}".format(type(value)))
 
 
 else:
@@ -31,10 +31,11 @@ else:
     def ensure_native_ascii_str(value):
         """Coerce unicode string or bytes to native string type (ascii encoding)."""
         if isinstance(value, str):
-            return value.encode('ascii', 'replace').decode()
+            return value.encode("ascii", "replace").decode()
         elif isinstance(value, bytes):
-            return value.decode('ascii', 'replace')
+            return value.decode("ascii", "replace")
         else:
-            raise TypeError('Invalid type for string conversion: {}'.format(type(value)))
+            raise TypeError("Invalid type for string conversion: {}".format(type(value)))
+
 
 PYTHON_SYS_VERSION = "{}.{}".format(sys.version_info.major, sys.version_info.minor)
