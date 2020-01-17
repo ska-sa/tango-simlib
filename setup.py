@@ -11,8 +11,8 @@ files = {"Readme": "README.rst", "Changelog": "CHANGELOG.rst"}
 long_description = ""
 for name, filename in files.items():
     if name != "Readme":
-        header = '='*len(name)
-        long_description += "\n{}\n{}\n{}\n".format(header,name,header)
+        header = "=" * len(name)
+        long_description += "\n{}\n{}\n{}\n".format(header, name, header)
     with open(os.path.join(this_directory, filename)) as _f:
         file_contents = _f.read()
     long_description += "\n" + file_contents + "\n\n"
