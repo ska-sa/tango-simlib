@@ -69,7 +69,7 @@ Installation
 - Installation requires the TANGOBINARY_ prerequisites to be installed.
 
 
-.. code-block:: bash
+:: bash
     sudo apt-get install -y --no-install-recommends $(grep -vE "^\s*#" apt-build-requirements.txt | tr "\n" " ")
 
 
