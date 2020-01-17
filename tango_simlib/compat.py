@@ -21,12 +21,12 @@ if future.utils.PY2:
 
         Parameters
         ----------
-        value: String
+        value: str or unicode
             Any string value that needs to be converted to an ascii replaced string.
 
         Returns
         -------
-        value: String
+        value: str
             An ascii encode string of `value` with encoding errors replaced.
         """
         if isinstance(value, str):
@@ -41,14 +41,15 @@ else:
 
     def ensure_native_ascii_str(value):
         """Coerce unicode string or bytes to native string type (ascii encoding).
-                Parameters
+
+        Parameters
         ----------
-        value: String
+        value: str or bytes
             Any string value that needs to be converted to an ascii replaced string.
 
         Returns
         -------
-        value: String
+        value: str
             An ascii encode string of `value` with encoding errors replaced.
         """
         if isinstance(value, str):
