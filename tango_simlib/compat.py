@@ -17,7 +17,18 @@ import future
 if future.utils.PY2:
 
     def ensure_native_ascii_str(value):
-        """Coerce unicode string or bytes to native string type (ascii encoding)."""
+        """Coerce unicode string or bytes to native string type (ascii encoding).
+
+        Parameters
+        ----------
+        value: String
+            Any string value that needs to be converted to an ascii.
+
+        Returns
+        -------
+        value: String
+            An ascii encode string of `value` with encoding errors replaced
+        """
         if isinstance(value, str):
             return value
         elif isinstance(value, unicode):  # noqa
@@ -29,7 +40,17 @@ if future.utils.PY2:
 else:
 
     def ensure_native_ascii_str(value):
-        """Coerce unicode string or bytes to native string type (ascii encoding)."""
+        """Coerce unicode string or bytes to native string type (ascii encoding).
+                Parameters
+        ----------
+        value: String
+            Any string value that needs to be converted to an ascii.
+
+        Returns
+        -------
+        value: String
+            An ascii encode string of `value` with encoding errors replaced.
+        """
         if isinstance(value, str):
             return value.encode("ascii", "replace").decode()
         elif isinstance(value, bytes):
