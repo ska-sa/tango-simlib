@@ -22,12 +22,12 @@ if future.utils.PY2:
         Parameters
         ----------
         value: String
-            Any string value that needs to be converted to an ascii.
+            Any string value that needs to be converted to an ascii replaced string.
 
         Returns
         -------
         value: String
-            An ascii encode string of `value` with encoding errors replaced
+            An ascii encode string of `value` with encoding errors replaced.
         """
         if isinstance(value, str):
             return value
@@ -44,7 +44,7 @@ else:
                 Parameters
         ----------
         value: String
-            Any string value that needs to be converted to an ascii.
+            Any string value that needs to be converted to an ascii replaced string.
 
         Returns
         -------
