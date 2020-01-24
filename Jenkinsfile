@@ -1,15 +1,15 @@
 pipeline {
 
     agent {
-        label 'camtango_db'
-    } 
+        label 'camtango_db_bionic'
+    }
 
     environment {
         KATPACKAGE = "${(env.JOB_NAME - env.JOB_BASE_NAME) - '-multibranch/'}"
     }
-    
+
     stages {
-        
+
         stage ('Checkout SCM') {
             steps {
                 checkout([
@@ -22,15 +22,18 @@ pipeline {
                 ])
             }
         }
-
         stage ('Static analysis') {
             steps {
                 sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
+                sh "lint_diff.sh -r ${KATPACKAGE}"
             }
-            post {
-                always {
-                    recordIssues(tool: pyLint(pattern: 'pylint.out'))
-                }
+        }
+
+        stage ('Check running services.') {
+            // Fail stage if services are not running.
+            steps {
+                sh 'service mysql status || exit 1'
+                sh 'service tango-db status || exit 1'
             }
         }
 
@@ -39,23 +42,62 @@ pipeline {
                 timestamps()
                 timeout(time: 30, unit: 'MINUTES')
             }
-            steps {
-                sh 'nohup service mysql start'
-                sh 'nohup service tango-db start'
-                sh 'pip install . -U --user'
-                sh 'pip install nose_xunitmp --user'
-                sh "python setup.py nosetests --with-xunitmp --with-xcoverage --cover-package=${KATPACKAGE}"
+
+            environment {
+                test_flags = "${KATPACKAGE}"
             }
+
+             steps {
+
+                        echo "Running nosetests on Python 2.7"
+                        sh 'python2 -m pip install -U .'
+                        sh 'python2 -m coverage run --source="${KATPACKAGE}" -m nose --with-xunitmp --xunitmp-file=nosetests_py27.xml'
+                        sh 'python2 -m coverage xml -o coverage_27.xml'
+                        sh 'python2 -m coverage report -m --skip-covered'
+
+                        echo "Running nosetests on Python 3.6"
+                        sh 'python3 -m pip install -U .'
+                        sh 'python3 -m coverage run --source="${KATPACKAGE}" -m nose --with-xunitmp --xunitmp-file=nosetests_py36.xml'
+                        sh 'python3 -m coverage xml -o coverage_36.xml'
+                        sh 'python3 -m coverage report -m --skip-covered'
+
+            }
+
             post {
                 always {
-                    junit 'nosetests.xml'
-                    cobertura coberturaReportFile: 'coverage.xml'
+                    junit 'nosetests_*.xml'
+                    cobertura (
+                        coberturaReportFile: 'coverage_*.xml',
+                        failNoReports: true,
+                        failUnhealthy: true,
+                        failUnstable: true,
+                        autoUpdateHealth: true,
+                        autoUpdateStability: true,
+                        zoomCoverageChart: true,
+                        // TODO: The reason this is commented out is because tango-simlib test coverage is currently at 70% instead of minimum 80%.
+                        // lineCoverageTargets: '80, 80, 80',
+                        // conditionalCoverageTargets: '80, 80, 80',
+                        // classCoverageTargets: '80, 80, 80',
+                        // fileCoverageTargets: '80, 80, 80',
+                    )
                     archiveArtifacts '*.xml'
                 }
             }
         }
 
-        stage('Build & publish packages') {
+        stage ('Generate documentation.') {
+            options {
+                timestamps()
+                timeout(time: 30, unit: 'MINUTES')
+            }
+
+            steps {
+                echo "Generating Sphinx documentation."
+                sh 'make -C doc html'
+            }
+        }
+
+        stage ('Build & publish packages') {
             when {
                 branch 'master'
             }
@@ -74,4 +116,3 @@ pipeline {
         }
     }
 }
-

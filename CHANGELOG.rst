@@ -2,6 +2,15 @@
 .. _79: https://github.com/ska-sa/tango-simlib/issues/79
 .. _56: https://github.com/ska-sa/tango-simlib/issues/56
 .. _91: https://github.com/ska-sa/tango-simlib/pull/91
+.. _black: https://github.com/psf/black
+.. _110: https://github.com/ska-sa/tango-simlib/pull/110
+.. _101: https://github.com/ska-sa/tango-simlib/pull/101
+
+0.4.0
+-----
+- Added Python2.7 and Python>=3.5 Compatibility Pull Request 110_.
+- Formatted code with black_
+- Added some missing XMI parser types Pull Request 101_.
 
 0.3.0
 -----
