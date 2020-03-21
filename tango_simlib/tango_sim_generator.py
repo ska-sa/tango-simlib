@@ -96,6 +96,75 @@ class TangoDeviceServerBase(Device):
             self.model.sim_quantities[name].set_val(data, self.model.time_func())
 
 
+def add_static_attribute(tango_device_class, attr_name, attr_meta):
+    """Add any TANGO attribute of to the device server before start-up.
+
+    Parameters
+    ----------
+    cls: class
+        class object that the device server will inherit from
+    attr_name: str
+        Tango attribute name
+    attr_meta: dict
+        Meta data that enables the creation of a well configured attribute
+
+
+    Note
+    ====
+    This is needed for DevEnum and spectrum type attributes
+
+    """
+    enum_labels = attr_meta.get("enum_labels", "")
+    attr = attribute(
+        label=attr_meta["label"],
+        dtype=attr_meta["data_type"],
+        enum_labels=enum_labels,
+        doc=attr_meta["description"],
+        dformat=attr_meta["data_format"],
+        max_dim_x=attr_meta["max_dim_x"],
+        max_dim_y=attr_meta["max_dim_y"],
+        access=getattr(AttrWriteType, attr_meta["writable"]),
+    )
+    attr.__name__ = attr_name
+
+    # Attribute read method
+    def read_meth(tango_device_instance, attr):
+        name = attr.get_name()
+        value, update_time = tango_device_instance.model.quantity_state[name]
+        quality = AttrQuality.ATTR_VALID
+        # For attributes that have a SPECTRUM data format, there is no need to
+        # type cast them to an integer data type. we need assign the list of values
+        # to the attribute value parameter.
+        if type(value) in (list, np.ndarray):
+            attr.set_value_date_quality(value, update_time, quality)
+        else:
+            attr.set_value_date_quality(int(value), update_time, quality)
+
+    # Attribute write method for writable attributes
+    if str(attr_meta["writable"]) in ("READ_WRITE", "WRITE"):
+
+        @attr.write
+        def attr(tango_device_instance, new_val):
+            # When selecting a model quantity we use the enum labels list indexing
+            # to return the string value corresponding to the respective enum value
+            # since an integer value is returned by device server when
+            # attribute value is read
+            MODULE_LOGGER.info(
+                "Writing value {} to attribute '{}'.".format(new_val, attr_name)
+            )
+            _sim_quantities = tango_device_instance.model.sim_quantities
+            tango_device_instance.model_quantity = _sim_quantities[attr_name]
+            tango_device_instance.model_quantity.set_val(
+                new_val, tango_device_instance.model.time_func()
+            )
+
+    read_meth.__name__ = "read_{}".format(attr_name)
+    # Add the read method and the attribute to the class object
+    setattr(tango_device_class, read_meth.__name__, read_meth)
+    setattr(tango_device_class, attr.__name__, attr)
+    MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
+
+
 def get_tango_device_server(models, sim_data_files):
     """Declares a tango device class that inherits the Device class and then
     adds tango attributes (DevEnum and Spectrum type).
@@ -131,71 +200,7 @@ def get_tango_device_server(models, sim_data_files):
             sorted(tango_device_instance.model.sim_quantities.keys())[val]
         ]
 
-    def add_static_attribute(tango_device_class, attr_name, attr_meta):
-        """Add any TANGO attribute of to the device server before start-up.
-
-        Parameters
-        ----------
-        cls: class
-            class object that the device server will inherit from
-        attr_name: str
-            Tango attribute name
-        attr_meta: dict
-            Meta data that enables the creation of a well configured attribute
-
-
-        Note
-        ====
-        This is needed for DevEnum and spectrum type attributes
-
-        """
-        attr = attribute(
-            label=attr_meta["label"],
-            dtype=attr_meta["data_type"],
-            enum_labels=attr_meta["enum_labels"] if "enum_labels" in attr_meta else "",
-            doc=attr_meta["description"],
-            dformat=attr_meta["data_format"],
-            max_dim_x=attr_meta["max_dim_x"],
-            max_dim_y=attr_meta["max_dim_y"],
-            access=getattr(AttrWriteType, attr_meta["writable"]),
-        )
-        attr.__name__ = attr_name
-        # Attribute read method
-        def read_meth(tango_device_instance, attr):
-            name = attr.get_name()
-            value, update_time = tango_device_instance.model.quantity_state[name]
-            quality = AttrQuality.ATTR_VALID
-            # For attributes that have a SPECTRUM data format, there is no need to
-            # type cast them to an integer data type. we need assign the list of values
-            # to the attribute value parameter.
-            if type(value) in (list, np.ndarray):
-                attr.set_value_date_quality(value, update_time, quality)
-            else:
-                attr.set_value_date_quality(int(value), update_time, quality)
-
-        # Attribute write method for writable attributes
-        if str(attr_meta["writable"]) in ("READ_WRITE", "WRITE"):
-
-            @attr.write
-            def attr(tango_device_instance, new_val):
-                # When selecting a model quantity we use the enum labels list indexing
-                # to return the string value corresponding to the respective enum value
-                # since an integer value is returned by device server when
-                # attribute value is read
-                MODULE_LOGGER.info(
-                    "Writing value {} to attribute '{}'.".format(new_val, attr_name)
-                )
-                _sim_quantities = tango_device_instance.model.sim_quantities
-                tango_device_instance.model_quantity = _sim_quantities[attr_name]
-                tango_device_instance.model_quantity.set_val(
-                    new_val, tango_device_instance.model.time_func()
-                )
-
-        read_meth.__name__ = "read_{}".format(attr_name)
-        # Add the read method and the attribute to the class object
-        setattr(tango_device_class, read_meth.__name__, read_meth)
-        setattr(tango_device_class, attr.__name__, attr)
-        MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
+    
 
     # Sim test interface static attribute `attribute_name` info
     # Pick the first model instance in the dict.
