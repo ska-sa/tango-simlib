@@ -244,7 +244,6 @@ def get_tango_device_server(models, sim_data_files):
     # Exchange community (AskTango) and also make follow ups on the next tango
     # releases.
     for quantity_name, quantity in list(itervalues(models))[0].sim_quantities.items():
-        d_type = quantity.meta["data_type"]
         d_type = str(quantity.meta["data_type"])
         d_format = str(quantity.meta["data_format"])
         if d_type == "DevEnum" or d_format == "SPECTRUM":
