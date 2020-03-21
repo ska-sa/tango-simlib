@@ -178,7 +178,7 @@ def _create_sim_test_interface_atttribute(models, class_instance):
     attr_control_meta["max_dim_y"] = 0
     attr_control_meta["writable"] = "READ_WRITE"
 
-    enum_labels = attr_meta.get("enum_labels", "")
+    enum_labels = attr_control_meta.get("enum_labels", "")
     attr = attribute(
         label=attr_control_meta["label"],
         dtype=attr_control_meta["data_type"],
