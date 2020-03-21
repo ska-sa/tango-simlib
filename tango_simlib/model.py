@@ -235,9 +235,7 @@ class Model(object):
                         if "value" in sim_quantity_meta_info:
                             adjustable_val = sim_quantity_meta_info["value"]
                         elif "possiblevalues" in sim_quantity_meta_info:
-                            adjustable_val = sim_quantity_meta_info[
-                                "possiblevalues"
-                            ]
+                            adjustable_val = sim_quantity_meta_info["possiblevalues"]
 
                         if attr_data_format == "SCALAR":
                             adjustable_val = val_type(adjustable_val)
@@ -255,9 +253,7 @@ class Model(object):
                         elif attr_data_format == "SPECTRUM":
                             adjustable_val = [val] * max_dim_x
                         else:
-                            adjustable_val = [
-                                [val] * max_dim_x for i in range(max_dim_y)
-                            ]                   
+                            adjustable_val = [[val] * max_dim_x for i in range(max_dim_y)]
 
                 setattr(simulated_quantity, attribute, adjustable_val)
 

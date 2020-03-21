@@ -312,9 +312,7 @@ def get_tango_device_server(models, sim_data_files):
                         attr_prop_setter = getattr(attr_props, "set_" + prop, None)
                         # CAVEAT (MTO): breaks silently; take note when debugging
                         if attr_prop_setter:
-                            attr_prop_setter(
-                                meta_data[prop]
-                            )
+                            attr_prop_setter(meta_data[prop])
                         else:
                             MODULE_LOGGER.info(
                                 "No setter function for " + prop + " property"
