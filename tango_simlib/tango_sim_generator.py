@@ -165,6 +165,36 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
     MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
 
 
+def _create_sim_test_interface_atttribute(models, class_instance):
+    # Pick the first model instance in the dict.
+    controllable_attribute_names = list(itervalues(models))[0].sim_quantities.keys()
+    attr_control_meta = {}
+    attr_control_meta["enum_labels"] = sorted(controllable_attribute_names)
+    attr_control_meta["data_format"] = AttrDataFormat.SCALAR
+    attr_control_meta["data_type"] = CmdArgType.DevEnum
+    attr_control_meta["label"] = "Attribute name"
+    attr_control_meta["description"] = "Attribute name to control"
+    attr_control_meta["max_dim_x"] = 1
+    attr_control_meta["max_dim_y"] = 0
+    attr_control_meta["writable"] = "READ_WRITE"
+
+    enum_labels = attr_meta.get("enum_labels", "")
+    attr = attribute(
+        label=attr_control_meta["label"],
+        dtype=attr_control_meta["data_type"],
+        enum_labels=enum_labels,
+        doc=attr_control_meta["description"],
+        dformat=attr_control_meta["data_format"],
+        max_dim_x=attr_control_meta["max_dim_x"],
+        max_dim_y=attr_control_meta["max_dim_y"],
+        access=getattr(AttrWriteType, attr_control_meta["writable"]),
+        fget=class_instance.read_fn,
+        fset=class_instance.write_fn,
+    )
+
+    return attr
+
+
 def get_tango_device_server(models, sim_data_files):
     """Declares a tango device class that inherits the Device class and then
     adds tango attributes (DevEnum and Spectrum type).
@@ -200,37 +230,10 @@ def get_tango_device_server(models, sim_data_files):
             sorted(tango_device_instance.model.sim_quantities.keys())[val]
         ]
 
-    
-
     # Sim test interface static attribute `attribute_name` info
-    # Pick the first model instance in the dict.
-    controllable_attribute_names = list(itervalues(models))[0].sim_quantities.keys()
-    attr_control_meta = {}
-    attr_control_meta["enum_labels"] = sorted(controllable_attribute_names)
-    attr_control_meta["data_format"] = AttrDataFormat.SCALAR
-    attr_control_meta["data_type"] = CmdArgType.DevEnum
-    attr_control_meta["label"] = "Attribute name"
-    attr_control_meta["description"] = "Attribute name to control"
-    attr_control_meta["max_dim_x"] = 1
-    attr_control_meta["max_dim_y"] = 0
-    attr_control_meta["writable"] = "READ_WRITE"
-
     TangoTestDeviceServerStaticAttrs.read_fn = read_fn
     TangoTestDeviceServerStaticAttrs.write_fn = write_fn
-    attr = attribute(
-        label=attr_control_meta["label"],
-        dtype=attr_control_meta["data_type"],
-        enum_labels=attr_control_meta["enum_labels"]
-        if "enum_labels" in attr_control_meta
-        else "",
-        doc=attr_control_meta["description"],
-        dformat=attr_control_meta["data_format"],
-        max_dim_x=attr_control_meta["max_dim_x"],
-        max_dim_y=attr_control_meta["max_dim_y"],
-        access=getattr(AttrWriteType, attr_control_meta["writable"]),
-        fget=TangoTestDeviceServerStaticAttrs.read_fn,
-        fset=TangoTestDeviceServerStaticAttrs.write_fn,
-    )
+    attr = _create_sim_test_interface_atttribute(models, TangoTestDeviceServerStaticAttrs)
     attr.setter(TangoTestDeviceServerStaticAttrs.write_fn)
     TangoTestDeviceServerStaticAttrs.attribute_name = attr
     # We use the `add_static_attribute` method to add DevEnum and Spectrum type
