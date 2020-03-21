@@ -244,12 +244,7 @@ def get_tango_device_server(models, sim_data_files):
                 TangoDeviceServerStaticAttrs, quantity_name, quantity.meta
             )
 
-    class TangoDeviceServer(
-        with_metaclass(
-            DeviceMeta,
-            type("NewBase", (TangoDeviceServerBase, TangoDeviceServerStaticAttrs), {}),
-        )
-    ):
+    class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
         _models = models
 
         def init_device(self):
@@ -451,16 +446,7 @@ def get_tango_device_server(models, sim_data_files):
         def NumAttributesNotAdded(self):
             return len(self._not_added_attributes)
 
-    class SimControl(
-        with_metaclass(
-            DeviceMeta,
-            type(
-                "NewBase",
-                (TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs),
-                {},
-            ),
-        )
-    ):
+    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs):
         instances = weakref.WeakValueDictionary()
 
         def init_device(self):
