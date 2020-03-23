@@ -208,10 +208,10 @@ class Model(object):
                 quantity.last_update_time = self.start_time
                 continue
             else:
-                if "quantity_simulation_type" in quantity_meta_info:
-                    simulation_type = quantity_meta_info["quantity_simulation_type"]
+                if "quantity_simulation_type" in quantity_metadata:
+                    simulation_type = quantity_metadata["quantity_simulation_type"]
                     if simulation_type == "ConstantQuality":
-                        initial_value = quantity_meta_info.get("initial_value", None)
+                        initial_value = quantity_metadata.get("initial_value", None)
                         if initial_value not in [None, ""]:
                             adjustable_val = initial_value
                         else:
@@ -224,18 +224,18 @@ class Model(object):
                     else:
                         if attribute == "last_val":
                             quantity.last_val = float(
-                                quantity_meta_info["mean"]
+                                quantity_metadata["mean"]
                             )
                             continue
                         else:
-                            adjustable_val = float(quantity_meta_info[attribute])
+                            adjustable_val = float(quantity_metadata[attribute])
                 else:
                     if any(key_val in expected_key_vals for key_val in key_vals):
 
-                        if "value" in quantity_meta_info:
-                            adjustable_val = quantity_meta_info["value"]
-                        elif "possiblevalues" in quantity_meta_info:
-                            adjustable_val = quantity_meta_info["possiblevalues"]
+                        if "value" in quantity_metadata:
+                            adjustable_val = quantity_metadata["value"]
+                        elif "possiblevalues" in quantity_metadata:
+                            adjustable_val = quantity_metadata["possiblevalues"]
 
                         if attr_data_format == "SCALAR":
                             adjustable_val = val_type(adjustable_val)
