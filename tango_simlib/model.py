@@ -669,7 +669,7 @@ class PopulateModelActions(object):
         if actions is None:
             actions = []
 
-        def action_handler(model, data_input=None):
+        def action_handler(model, data_input=None, tango_dev=None):
             """Action handler taking command input arguments.
 
             Parameters
