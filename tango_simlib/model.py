@@ -255,9 +255,10 @@ class Model(object):
                         else:
                             adjustable_val = [[val] * max_dim_x for i in range(max_dim_y)]
 
-                setattr(simulated_quantity, attribute, adjustable_val)
+                setattr(quantity, attribute, adjustable_val)
 
     def _get_quantity_dimensions(quantity_metadata):
+        key_vals = quantity_metadata.keys()
         expected_key_vals = ["max_dim_x", "max_dim_y", "maxX", "maxY"]
         # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
         # (maxX, maxY) keys. If none of these keys are found in them or in the
