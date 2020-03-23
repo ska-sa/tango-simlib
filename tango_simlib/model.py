@@ -186,7 +186,7 @@ class Model(object):
             self._reset_quantity_adjustable_attributes_values(quantity)
 
     def _reset_quantity_adjustable_attributes_values(self, quantity):
-        quantitiy_metadata = quantity.meta
+        quantity_metadata = quantity.meta
         key_vals = quantitiy_metadata.keys()
         attr_data_type = quantity_metadata["data_type"]
         # the xmi, json and fgo files have data_format attributes indicating
@@ -205,13 +205,13 @@ class Model(object):
 
         for attribute in adjustable_attrs:
             if attribute == "last_update_time":
-                simulated_quantity.last_update_time = self.start_time
+                quantity.last_update_time = self.start_time
                 continue
             else:
-                if "quantity_simulation_type" in sim_quantity_meta_info:
-                    simulation_type = sim_quantity_meta_info["quantity_simulation_type"]
+                if "quantity_simulation_type" in quantity_meta_info:
+                    simulation_type = quantity_meta_info["quantity_simulation_type"]
                     if simulation_type == "ConstantQuality":
-                        initial_value = sim_quantity_meta_info.get("initial_value", None)
+                        initial_value = quantity_meta_info.get("initial_value", None)
                         if initial_value not in [None, ""]:
                             adjustable_val = initial_value
                         else:
@@ -223,19 +223,19 @@ class Model(object):
                             adjustable_val = val_type(adjustable_val)
                     else:
                         if attribute == "last_val":
-                            simulated_quantity.last_val = float(
-                                sim_quantity_meta_info["mean"]
+                            quantity.last_val = float(
+                                quantity_meta_info["mean"]
                             )
                             continue
                         else:
-                            adjustable_val = float(sim_quantity_meta_info[attribute])
+                            adjustable_val = float(quantity_meta_info[attribute])
                 else:
                     if any(key_val in expected_key_vals for key_val in key_vals):
 
-                        if "value" in sim_quantity_meta_info:
-                            adjustable_val = sim_quantity_meta_info["value"]
-                        elif "possiblevalues" in sim_quantity_meta_info:
-                            adjustable_val = sim_quantity_meta_info["possiblevalues"]
+                        if "value" in quantity_meta_info:
+                            adjustable_val = quantity_meta_info["value"]
+                        elif "possiblevalues" in quantity_meta_info:
+                            adjustable_val = quantity_meta_info["possiblevalues"]
 
                         if attr_data_format == "SCALAR":
                             adjustable_val = val_type(adjustable_val)
@@ -668,7 +668,7 @@ class PopulateModelActions(object):
         if actions is None:
             actions = []
 
-        def action_handler(model, data_input=None, tango_dev=None):
+        def action_handler(model, data_input=None):
             """Action handler taking command input arguments.
 
             Parameters
