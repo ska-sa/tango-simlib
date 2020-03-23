@@ -187,7 +187,7 @@ class Model(object):
 
     def _reset_quantity_adjustable_attributes_values(self, quantity):
         quantity_metadata = quantity.meta
-        key_vals = quantitiy_metadata.keys()
+        key_vals = quantity_metadata.keys()
         attr_data_type = quantity_metadata["data_type"]
         # the xmi, json and fgo files have data_format attributes indicating
         # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
@@ -198,7 +198,7 @@ class Model(object):
         except KeyError:
             attr_data_format = "SPECTRUM"
 
-        max_dim_x, max_dim_y = self._get_quantity_dimensions(quantitiy_metadata)
+        max_dim_x, max_dim_y = self._get_quantity_dimensions(quantity_metadata)
         val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
         expected_key_vals = ["value", "possiblevalues"]
         adjustable_attrs = quantity.adjustable_attributes
