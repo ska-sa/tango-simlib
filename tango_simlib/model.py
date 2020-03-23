@@ -210,7 +210,7 @@ class Model(object):
             else:
                 if "quantity_simulation_type" in quantity_metadata:
                     simulation_type = quantity_metadata["quantity_simulation_type"]
-                    if simulation_type == "ConstantQuality":
+                    if simulation_type == "ConstantQuantity":
                         initial_value = quantity_metadata.get("initial_value", None)
                         if initial_value not in [None, ""]:
                             adjustable_val = initial_value
@@ -257,7 +257,7 @@ class Model(object):
 
                 setattr(quantity, attribute, adjustable_val)
 
-    def _get_quantity_dimensions(quantity_metadata):
+    def _get_quantity_dimensions(self, quantity_metadata):
         key_vals = quantity_metadata.keys()
         expected_key_vals = ["max_dim_x", "max_dim_y", "maxX", "maxY"]
         # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
