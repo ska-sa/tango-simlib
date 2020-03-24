@@ -96,6 +96,105 @@ class TangoDeviceServerBase(Device):
             self.model.sim_quantities[name].set_val(data, self.model.time_func())
 
 
+def add_static_attribute(tango_device_class, attr_name, attr_meta):
+    """Add any TANGO attribute of to the device server before start-up.
+
+    Parameters
+    ----------
+    cls: class
+        class object that the device server will inherit from
+    attr_name: str
+        Tango attribute name
+    attr_meta: dict
+        Meta data that enables the creation of a well configured attribute
+
+
+    Note
+    ====
+    This is needed for DevEnum and spectrum type attributes
+
+    """
+    enum_labels = attr_meta.get("enum_labels", "")
+    attr = attribute(
+        label=attr_meta["label"],
+        dtype=attr_meta["data_type"],
+        enum_labels=enum_labels,
+        doc=attr_meta["description"],
+        dformat=attr_meta["data_format"],
+        max_dim_x=attr_meta["max_dim_x"],
+        max_dim_y=attr_meta["max_dim_y"],
+        access=getattr(AttrWriteType, attr_meta["writable"]),
+    )
+    attr.__name__ = attr_name
+
+    # Attribute read method
+    def read_meth(tango_device_instance, attr):
+        name = attr.get_name()
+        value, update_time = tango_device_instance.model.quantity_state[name]
+        quality = AttrQuality.ATTR_VALID
+        # For attributes that have a SPECTRUM data format, there is no need to
+        # type cast them to an integer data type. we need assign the list of values
+        # to the attribute value parameter.
+        if type(value) in (list, np.ndarray):
+            attr.set_value_date_quality(value, update_time, quality)
+        else:
+            attr.set_value_date_quality(int(value), update_time, quality)
+
+    # Attribute write method for writable attributes
+    if str(attr_meta["writable"]) in ("READ_WRITE", "WRITE"):
+
+        @attr.write
+        def attr(tango_device_instance, new_val):
+            # When selecting a model quantity we use the enum labels list indexing
+            # to return the string value corresponding to the respective enum value
+            # since an integer value is returned by device server when
+            # attribute value is read
+            MODULE_LOGGER.info(
+                "Writing value {} to attribute '{}'.".format(new_val, attr_name)
+            )
+            _sim_quantities = tango_device_instance.model.sim_quantities
+            tango_device_instance.model_quantity = _sim_quantities[attr_name]
+            tango_device_instance.model_quantity.set_val(
+                new_val, tango_device_instance.model.time_func()
+            )
+
+    read_meth.__name__ = "read_{}".format(attr_name)
+    # Add the read method and the attribute to the class object
+    setattr(tango_device_class, read_meth.__name__, read_meth)
+    setattr(tango_device_class, attr.__name__, attr)
+    MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
+
+
+def _create_sim_test_interface_atttribute(models, class_instance):
+    # Pick the first model instance in the dict.
+    controllable_attribute_names = list(itervalues(models))[0].sim_quantities.keys()
+    attr_control_meta = {}
+    attr_control_meta["enum_labels"] = sorted(controllable_attribute_names)
+    attr_control_meta["data_format"] = AttrDataFormat.SCALAR
+    attr_control_meta["data_type"] = CmdArgType.DevEnum
+    attr_control_meta["label"] = "Attribute name"
+    attr_control_meta["description"] = "Attribute name to control"
+    attr_control_meta["max_dim_x"] = 1
+    attr_control_meta["max_dim_y"] = 0
+    attr_control_meta["writable"] = "READ_WRITE"
+
+    enum_labels = attr_control_meta.get("enum_labels", "")
+    attr = attribute(
+        label=attr_control_meta["label"],
+        dtype=attr_control_meta["data_type"],
+        enum_labels=enum_labels,
+        doc=attr_control_meta["description"],
+        dformat=attr_control_meta["data_format"],
+        max_dim_x=attr_control_meta["max_dim_x"],
+        max_dim_y=attr_control_meta["max_dim_y"],
+        access=getattr(AttrWriteType, attr_control_meta["writable"]),
+        fget=class_instance.read_fn,
+        fset=class_instance.write_fn,
+    )
+
+    return attr
+
+
 def get_tango_device_server(models, sim_data_files):
     """Declares a tango device class that inherits the Device class and then
     adds tango attributes (DevEnum and Spectrum type).
@@ -131,101 +230,10 @@ def get_tango_device_server(models, sim_data_files):
             sorted(tango_device_instance.model.sim_quantities.keys())[val]
         ]
 
-    def add_static_attribute(tango_device_class, attr_name, attr_meta):
-        """Add any TANGO attribute of to the device server before start-up.
-
-        Parameters
-        ----------
-        cls: class
-            class object that the device server will inherit from
-        attr_name: str
-            Tango attribute name
-        attr_meta: dict
-            Meta data that enables the creation of a well configured attribute
-
-
-        Note
-        ====
-        This is needed for DevEnum and spectrum type attributes
-
-        """
-        attr = attribute(
-            label=attr_meta["label"],
-            dtype=attr_meta["data_type"],
-            enum_labels=attr_meta["enum_labels"] if "enum_labels" in attr_meta else "",
-            doc=attr_meta["description"],
-            dformat=attr_meta["data_format"],
-            max_dim_x=attr_meta["max_dim_x"],
-            max_dim_y=attr_meta["max_dim_y"],
-            access=getattr(AttrWriteType, attr_meta["writable"]),
-        )
-        attr.__name__ = attr_name
-        # Attribute read method
-        def read_meth(tango_device_instance, attr):
-            name = attr.get_name()
-            value, update_time = tango_device_instance.model.quantity_state[name]
-            quality = AttrQuality.ATTR_VALID
-            # For attributes that have a SPECTRUM data format, there is no need to
-            # type cast them to an integer data type. we need assign the list of values
-            # to the attribute value parameter.
-            if type(value) in (list, np.ndarray):
-                attr.set_value_date_quality(value, update_time, quality)
-            else:
-                attr.set_value_date_quality(int(value), update_time, quality)
-
-        # Attribute write method for writable attributes
-        if str(attr_meta["writable"]) in ("READ_WRITE", "WRITE"):
-
-            @attr.write
-            def attr(tango_device_instance, new_val):
-                # When selecting a model quantity we use the enum labels list indexing
-                # to return the string value corresponding to the respective enum value
-                # since an integer value is returned by device server when
-                # attribute value is read
-                MODULE_LOGGER.info(
-                    "Writing value {} to attribute '{}'.".format(new_val, attr_name)
-                )
-                _sim_quantities = tango_device_instance.model.sim_quantities
-                tango_device_instance.model_quantity = _sim_quantities[attr_name]
-                tango_device_instance.model_quantity.set_val(
-                    new_val, tango_device_instance.model.time_func()
-                )
-
-        read_meth.__name__ = "read_{}".format(attr_name)
-        # Add the read method and the attribute to the class object
-        setattr(tango_device_class, read_meth.__name__, read_meth)
-        setattr(tango_device_class, attr.__name__, attr)
-        MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
-
     # Sim test interface static attribute `attribute_name` info
-    # Pick the first model instance in the dict.
-    controllable_attribute_names = list(itervalues(models))[0].sim_quantities.keys()
-    attr_control_meta = {}
-    attr_control_meta["enum_labels"] = sorted(controllable_attribute_names)
-    attr_control_meta["data_format"] = AttrDataFormat.SCALAR
-    attr_control_meta["data_type"] = CmdArgType.DevEnum
-    attr_control_meta["label"] = "Attribute name"
-    attr_control_meta["description"] = "Attribute name to control"
-    attr_control_meta["max_dim_x"] = 1
-    attr_control_meta["max_dim_y"] = 0
-    attr_control_meta["writable"] = "READ_WRITE"
-
     TangoTestDeviceServerStaticAttrs.read_fn = read_fn
     TangoTestDeviceServerStaticAttrs.write_fn = write_fn
-    attr = attribute(
-        label=attr_control_meta["label"],
-        dtype=attr_control_meta["data_type"],
-        enum_labels=attr_control_meta["enum_labels"]
-        if "enum_labels" in attr_control_meta
-        else "",
-        doc=attr_control_meta["description"],
-        dformat=attr_control_meta["data_format"],
-        max_dim_x=attr_control_meta["max_dim_x"],
-        max_dim_y=attr_control_meta["max_dim_y"],
-        access=getattr(AttrWriteType, attr_control_meta["writable"]),
-        fget=TangoTestDeviceServerStaticAttrs.read_fn,
-        fset=TangoTestDeviceServerStaticAttrs.write_fn,
-    )
+    attr = _create_sim_test_interface_atttribute(models, TangoTestDeviceServerStaticAttrs)
     attr.setter(TangoTestDeviceServerStaticAttrs.write_fn)
     TangoTestDeviceServerStaticAttrs.attribute_name = attr
     # We use the `add_static_attribute` method to add DevEnum and Spectrum type
@@ -236,7 +244,6 @@ def get_tango_device_server(models, sim_data_files):
     # Exchange community (AskTango) and also make follow ups on the next tango
     # releases.
     for quantity_name, quantity in list(itervalues(models))[0].sim_quantities.items():
-        d_type = quantity.meta["data_type"]
         d_type = str(quantity.meta["data_type"])
         d_format = str(quantity.meta["data_format"])
         if d_type == "DevEnum" or d_format == "SPECTRUM":
@@ -244,12 +251,7 @@ def get_tango_device_server(models, sim_data_files):
                 TangoDeviceServerStaticAttrs, quantity_name, quantity.meta
             )
 
-    class TangoDeviceServer(
-        with_metaclass(
-            DeviceMeta,
-            type("NewBase", (TangoDeviceServerBase, TangoDeviceServerStaticAttrs), {}),
-        )
-    ):
+    class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
         _models = models
 
         def init_device(self):
@@ -257,111 +259,8 @@ def get_tango_device_server(models, sim_data_files):
             self.model = self._models[self.get_name()]
             self._not_added_attributes = []
             write_device_properties_to_db(self.get_name(), self.model)
-            self._reset_to_default_state()
+            self.model.reset_model_state()
             self.initialize_dynamic_commands()
-
-        def _reset_to_default_state(self):
-            """Reset the model's quantities' adjustable attributes to their default
-            values.
-            """
-            simulated_quantities = self.model.sim_quantities.values()
-            model_time = self.model.start_time
-            for simulated_quantity in simulated_quantities:
-                sim_quantity_meta_info = simulated_quantity.meta
-                key_vals = sim_quantity_meta_info.keys()
-                attr_data_type = sim_quantity_meta_info["data_type"]
-                # the xmi, json and fgo files have data_format attributes indicating
-                # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
-                # key in its attribute list. It has a key labelled possible values which
-                # is a list. Hence, SPECTRUM is no data_format is found.
-                try:
-                    attr_data_format = str(sim_quantity_meta_info["data_format"])
-                except KeyError:
-                    attr_data_format = "SPECTRUM"
-                expected_key_vals = ["max_dim_x", "max_dim_y", "maxX", "maxY"]
-                # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
-                # (maxX, maxY) keys. If none of these keys are found in them or in the
-                # xml file, we use default values of 1 for x and 2 for y - same applies
-                # for files where the keys have empty values.
-                if any(key_val in expected_key_vals for key_val in key_vals):
-                    try:
-                        max_dim_x = sim_quantity_meta_info["max_dim_x"]
-                        max_dim_y = sim_quantity_meta_info["max_dim_y"]
-                    except KeyError:
-                        max_dim_x = sim_quantity_meta_info.get("maxX", 1)
-                        max_dim_y = sim_quantity_meta_info.get("maxY", 2)
-                    # just in case the keys exist but have no values
-                    if not max_dim_x:
-                        max_dim_x = 1
-                    if not max_dim_y:
-                        max_dim_y = 2
-
-                val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
-                expected_key_vals = ["value", "possiblevalues"]
-                adjustable_attrs = simulated_quantity.adjustable_attributes
-                for attr in adjustable_attrs:
-                    if attr == "last_update_time":
-                        simulated_quantity.last_update_time = model_time
-                        continue
-                    else:
-                        try:
-                            sim_quantity_meta_info["quantity_simulation_type"]
-                        except KeyError:
-                            if any(key_val in expected_key_vals for key_val in key_vals):
-                                try:
-                                    adjustable_val = sim_quantity_meta_info["value"]
-                                except KeyError:
-                                    adjustable_val = sim_quantity_meta_info[
-                                        "possiblevalues"
-                                    ]
-                                if attr_data_format == "SCALAR":
-                                    adjustable_val = val_type(adjustable_val)
-                                elif attr_data_format == "SPECTRUM":
-                                    adjustable_val = list(map(val_type, adjustable_val))
-                                else:
-                                    adjustable_val = [
-                                        [val_type(curr_val) for curr_val in sublist]
-                                        for sublist in adjustable_val
-                                    ]
-                            else:
-                                if attr_data_format == "SCALAR":
-                                    adjustable_val = val
-                                elif attr_data_format == "SPECTRUM":
-                                    adjustable_val = [val] * max_dim_x
-                                else:
-                                    adjustable_val = [
-                                        [val] * max_dim_x for i in range(max_dim_y)
-                                    ]
-                        else:
-                            if (
-                                sim_quantity_meta_info["quantity_simulation_type"]
-                                == "ConstantQuantity"
-                            ):
-                                try:
-                                    initial_value = sim_quantity_meta_info[
-                                        "initial_value"
-                                    ]
-                                except KeyError:
-                                    initial_value = None
-                                adjustable_val = (
-                                    initial_value
-                                    if initial_value not in [None, ""]
-                                    else val
-                                )
-                                if val_type is None:
-                                    adjustable_val = None
-                                else:
-                                    adjustable_val = val_type(adjustable_val)
-                            else:
-                                if attr == "last_val":
-                                    simulated_quantity.last_val = float(
-                                        sim_quantity_meta_info["mean"]
-                                    )
-                                    continue
-                                else:
-                                    adjustable_val = float(sim_quantity_meta_info[attr])
-
-                        setattr(simulated_quantity, attr, adjustable_val)
 
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():
@@ -413,9 +312,7 @@ def get_tango_device_server(models, sim_data_files):
                         attr_prop_setter = getattr(attr_props, "set_" + prop, None)
                         # CAVEAT (MTO): breaks silently; take note when debugging
                         if attr_prop_setter:
-                            attr_prop_setter(
-                                meta_data[prop]
-                            )
+                            attr_prop_setter(meta_data[prop])
                         else:
                             MODULE_LOGGER.info(
                                 "No setter function for " + prop + " property"
@@ -451,16 +348,7 @@ def get_tango_device_server(models, sim_data_files):
         def NumAttributesNotAdded(self):
             return len(self._not_added_attributes)
 
-    class SimControl(
-        with_metaclass(
-            DeviceMeta,
-            type(
-                "NewBase",
-                (TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs),
-                {},
-            ),
-        )
-    ):
+    class SimControl(TangoTestDeviceServerBase, TangoTestDeviceServerStaticAttrs):
         instances = weakref.WeakValueDictionary()
 
         def init_device(self):
