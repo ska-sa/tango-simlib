@@ -69,8 +69,9 @@ Installation
 - Installation requires the TANGOBINARY_ prerequisites to be installed.
 
 
-:: bash
-    sudo apt-get install -y --no-install-recommends $(grep -vE "^\s*#" apt-build-requirements.txt | tr "\n" " ")
+.. code-block:: bash
+
+    $ sudo apt-get install -y --no-install-recommends $(grep -vE "^\s*#" apt-build-requirements.txt | tr "\n" " ")
 
 
 If you cannot install the PyTango_ package you will not be able to
