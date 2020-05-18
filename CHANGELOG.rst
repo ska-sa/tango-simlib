@@ -11,7 +11,7 @@
 
 0.5.0
 -----
-- added Missing Weather.xmi to MANIFEST.in 117_
+- added Weather.xmi to MANIFEST.in 117_
 - Refactor the code base 116_
 - Update compat function docstrings 115_
 
