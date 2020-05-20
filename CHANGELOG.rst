@@ -5,6 +5,15 @@
 .. _black: https://github.com/psf/black
 .. _110: https://github.com/ska-sa/tango-simlib/pull/110
 .. _101: https://github.com/ska-sa/tango-simlib/pull/101
+.. _115: https://github.com/ska-sa/tango-simlib/pull/115
+.. _116: https://github.com/ska-sa/tango-simlib/pull/116
+.. _117: https://github.com/ska-sa/tango-simlib/pull/117
+
+0.5.0
+-----
+- Added Weather.xmi to MANIFEST.in 117_
+- Refactor the code base 116_
+- Update compat function docstrings 115_
 
 0.4.0
 -----
