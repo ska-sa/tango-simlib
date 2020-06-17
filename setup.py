@@ -53,6 +53,8 @@ setup(
         "jsonschema",
         "numpy",
         "PyTango>=9.2.2",
+        "pathlib",
+        "pyyaml"
     ],
     tests_require=["katcp", "numpy", "mock", "nose-xunitmp", "coverage", "nose"],
     extras_require={"docs": ["sphinx-pypi-upload", "numpydoc", "Sphinx", "mock"]},
@@ -70,6 +72,7 @@ setup(
         "console_scripts": [
             "tango-simlib-generator" "= tango_simlib.tango_sim_generator:main",
             "tango-simlib-launcher = tango_simlib.tango_launcher:main",
+            "tango-yaml = tango_simlib.tango_yaml_tools.main:main",
         ]
     },
 )
