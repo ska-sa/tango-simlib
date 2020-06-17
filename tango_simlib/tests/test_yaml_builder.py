@@ -68,7 +68,6 @@ def test_file_builders_xmi():
             assert comm["dtype_in"] == "DevVoid"
 
     assert {"name": "SkaLevel"} in parsed_yaml[0]["meta"]["properties"]
-    assert {"name": "SkaLevel2"} in parsed_yaml[0]["meta"]["properties"]
 
 
 def test_file_builders_fandango():
