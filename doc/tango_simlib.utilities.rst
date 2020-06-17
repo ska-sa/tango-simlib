@@ -49,6 +49,14 @@ tango\_simlib\.utilities\.simdd\_json\_parser module
     :undoc-members:
     :show-inheritance:
 
+tango\_simlib\.utilities\.tango\_device\_parser module
+----------------------------------------------------
+
+.. automodule:: tango_simlib.utilities.tango_device_parser
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 tango\_simlib\.utilities\.testutils module
 ------------------------------------------
 

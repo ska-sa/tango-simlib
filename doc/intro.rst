@@ -94,13 +94,13 @@ install ``tango-simlib``.
 Installation from source_, working directory where source is checked out
 
 .. code-block:: bash
-  
+
     $ pip install .
 
 This package is available on *PYPI*, allowing
 
 .. code-block:: bash
-  
+
     $ pip install tango-simlib
 
 =================
@@ -121,7 +121,7 @@ Give it a path to the description files (XMI or SimDD or both).
 
 This will generate a python executable file in your current working directory named ``weather-DS``.
 
-In order to run this generated device simulator code, you can execute the ``tango-launcher`` script, 
+In order to run this generated device simulator code, you can execute the ``tango-launcher`` script,
 a helper script which will register the *TANGO* device server, setup any required device properties and
 in turn start up the device server process, all in one go.
 
@@ -156,7 +156,7 @@ An example of starting the ``Weather`` simulator generated from the ``Weather_Si
 file with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 
 .. code-block:: bash
- 
+
     $ tango-simlib-launcher --name mkat_sim/weather/2 --class Weather\
                             --name mkat_simcontrol/weather/2\
                             --class WeatherSimControl\
@@ -194,7 +194,7 @@ This is what you would have in the *TANGO* DB once the device server has been re
     :figclass: align-center
 
     Figure 1. A snapshot of the *TANGO* DB viewed using *JIVE* - the *TANGO*-DB browser.
-    
+
 
 In this instance, we have the simulated device in an alarm state after executing the *SetOffRainStorm* command on the test device interface, or what we call the simulator controller.
 
@@ -206,4 +206,167 @@ In this instance, we have the simulated device in an alarm state after executing
 
        Figure 2. A view of the sim device and its associated sim control interface using the *TANGO Application ToolKit* (ATK) client framework.
 
+
+==========================================================================
+Translating a Tango device specification or a running Tango device to YAML
+==========================================================================
+
+After installing tango_simlib, the ``tango-yaml`` script will be available to use
+
+.. code-block:: bash
+
+    $ tango-yaml -h
+
+    usage: tango_yaml [-h] {xmi,fandango,tango_device} ...
+
+    This program translates various file formats that describe Tango devices to
+    YAML
+
+    positional arguments:
+    {xmi,fandango,tango_device}
+                            sub command help
+        xmi                 Build YAML from a XMI file
+        fandango            Build YAML from a fandango file
+        tango_device        Build YAML from a running Tango device
+
+    optional arguments:
+    -h, --help            show this help message and exit
+
+XMI
+---
+
+.. code-block:: bash
+
+    $ tango-yaml xmi -h
+
+    usage: tango_yaml xmi [-h] xmi_file
+
+    positional arguments:
+    xmi_file    Path to the XMI file
+
+    optional arguments:
+    -h, --help  show this help message and exit
+
+Example
+
+.. code-block:: bash
+
+    $ tango-yaml  xmi ./tango_simlib/tests/config_files/DishElementMaster.xmi
+
+    - class: DishElementMaster
+      meta:
+        attributes:
+        - data_type: DevEnum
+          name: elementLogLevel
+        - data_type: DevEnum
+          name: adminMode
+        - data_type: DevEnum
+          name: obsMode
+          ...
+        - data_type: DevDouble
+          name: pointModelPars
+        commands:
+        - dtype_in: DevString
+          dtype_out: DevVoid
+          name: Capture
+          ...
+        - dtype_in: DevVoid
+          dtype_out: DevVoid
+          name: SetMaintenanceMode
+        properties:
+        - name: SkaLevel
+
+Fandango
+--------
+
+.. code-block:: bash
+
+    $ tango-yaml fandango -h
+
+    usage: tango_yaml fandango [-h] fandango_file
+
+    positional arguments:
+    fandango_file  Path to the fandango file
+
+    optional arguments:
+        -h, --help     show this help message and exit
+
+Example
+
+.. code-block:: bash
+
+    $ tango-yaml fandango ./tango_simlib/tests/config_files/database2.fgo
+
+    - class: DataBase
+      meta:
+        attributes:
+        - data_type: DevString
+          name: Status
+        - data_type: DevDouble
+          name: Timing_maximum
+        - data_type: DevDouble
+          name: Timing_average
+        ...
+        - data_type: DevDouble
+          name: Timing_minimum
+        commands:
+        - dtype_in: DevVarStringArray
+          dtype_out: DevVoid
+          name: DbPutDeviceAttributeProperty2
+        - dtype_in: DevString
+          dtype_out: DevVarStringArray
+          name: DbGetExportdDeviceListForClass
+        ...
+        - dtype_in: DevVarStringArray
+          dtype_out: DevVarStringArray
+          name: DbGetDeviceList
+        properties: []
+
+Tango device
+------------
+
+.. code-block:: bash
+
+    $ tango-yaml tango_device_name -h
+
+    usage: tango_yaml tango_device [-h] tango_device_name
+
+    positional arguments:
+    tango_device_name  Tango device name in the format domain/family/member.
+                        TANGO_HOST env variable has to be set
+
+    optional arguments:
+    -h, --help         show this help message and exit
+
+Example
+
+.. code-block:: bash
+
+    $ tango-yaml tango_device ska_mid/tm_subarray_node/1
+
+        - class: SubarrayNode
+          meta:
+            attributes:
+            - data_type: SCALAR
+              name: buildState
+            - data_type: SCALAR
+              name: versionId
+            ...
+            - data_type: SCALAR
+              name: Status
+            commands:
+            - dtype_in: DevVoid
+              dtype_out: DevVoid
+              name: Abort
+            - dtype_in: DevString
+              dtype_out: DevVarStringArray
+              name: AssignResources
+              ...
+            - dtype_in: DevString
+              dtype_out: DevVoid
+              name: Track
+            properties:
+            - name: CspSubarrayFQDN
+            ...
+            - name: CspSubarrayLNFQDN
 

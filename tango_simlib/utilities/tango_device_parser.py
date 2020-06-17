@@ -55,17 +55,56 @@ class TangoDeviceParser(Parser):
             self.data_dict["meta"]["properties"][prop] = {"name": prop}
 
     def get_device_attribute_metadata(self):
-        """Get the device attributes"""
+        """Returns the attributes.
+
+        Returns
+        -------
+        dict
+            E.g.
+                {
+                    '<attribute-name>': {
+                        'data_type': tango._tango.CmdArgType,
+                        'name': '<attribute-name>',
+                    }
+                ...
+                }
+        """
         assert self.device_proxy, "`parse` needs to be called first"
         return self.data_dict["meta"]["attributes"]
 
     def get_device_command_metadata(self):
-        """Get the device commands"""
+        """Returns the commands.
+
+        Returns
+        -------
+        dict
+            E.g.
+                {
+                    '<command-name>': {
+                        'name': '<command-name>',
+                        'dtype_out': tango._tango.CmdArgType
+                        'dtype_in': tango._tango.CmdArgType
+                    }
+                ...
+                }
+        """
         assert self.device_proxy, "`parse` needs to be called first"
         return self.data_dict["meta"]["commands"]
 
     def get_device_properties_metadata(self, _):
-        """Get the device properties"""
+        """Get the device properties
+
+        Returns
+        -------
+        dict
+            E.g.
+                {
+                    '<property-name>': {
+                        'name': '<property-name>'
+                    }
+                ...
+                }
+        """
         assert self.device_proxy, "`parse` needs to be called first"
         return self.data_dict["meta"]["properties"]
 
