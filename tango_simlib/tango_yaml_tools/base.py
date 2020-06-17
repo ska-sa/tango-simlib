@@ -3,15 +3,16 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-"""Base module that parses Tango device file representation with passed in Parser or from
- a running Tango"""
+"""Module that contains the TangoToYAML class that parses a Tango device specification
+   file (xmi, fgo) or a running Tango device into YAML"""
 from pathlib import Path
 
 import yaml
 
 
 class TangoToYAML:
-    """Generic class that translates Tango specification files or devices to YAML."""
+    """Class that translates a Tango specification file or a running Tango device to
+       YAML."""
 
     def __init__(self, parser_class):
         """Initialise TangoToYAML with a parser class
@@ -28,7 +29,7 @@ class TangoToYAML:
         """
         self.parser = parser_class()
 
-    def build_yaml(self):
+    def _build_yaml(self):
         """Build YAML from the parser
         """
         data_dict = [
@@ -38,27 +39,27 @@ class TangoToYAML:
             }
         ]
 
-        for meta_data in self.parser.get_device_command_metadata().values():
+        for command in self.parser.get_device_command_metadata().values():
             data_dict[0]["meta"]["commands"].append(
                 {
-                    "name": meta_data["name"],
-                    "dtype_in": meta_data["dtype_in"].name,
-                    "dtype_out": meta_data["dtype_out"].name,
+                    "name": command["name"],
+                    "dtype_in": command["dtype_in"].name,
+                    "dtype_out": command["dtype_out"].name,
                 }
             )
-        for meta_data in self.parser.get_device_attribute_metadata().values():
+        for attr in self.parser.get_device_attribute_metadata().values():
             data_dict[0]["meta"]["attributes"].append(
-                {"name": meta_data["name"],
-                 "data_type": meta_data["data_type"].name}
+                {"name": attr["name"],
+                 "data_type": attr["data_type"].name}
             )
-        for meta_data in self.parser.get_device_properties_metadata(
+        for prop in self.parser.get_device_properties_metadata(
                 "deviceProperties"
         ).values():
-            data_dict[0]["meta"]["properties"].append({"name": meta_data["name"]})
+            data_dict[0]["meta"]["properties"].append({"name": prop["name"]})
         return yaml.dump(data_dict)
 
     def build_yaml_from_file(self, file_loc):
-        """Builds YAML from a Tango Specification file
+        """Builds YAML from a Tango specification file
 
         Parameters
         ----------
@@ -73,7 +74,7 @@ class TangoToYAML:
         file_path = Path(file_loc)
         assert file_path.is_file(), "{} is not a file".format(file_loc)
         self.parser.parse(file_loc)
-        return self.build_yaml()
+        return self._build_yaml()
 
     def build_yaml_from_device(self, device_name):
         """Interrogates a running Tango device and builds the YAML from its attributes,
@@ -85,4 +86,4 @@ class TangoToYAML:
             Tango device name in the domain/family/member format
         """
         self.parser.parse(device_name)
-        return self.build_yaml()
+        return self._build_yaml()

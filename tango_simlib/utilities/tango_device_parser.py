@@ -4,7 +4,7 @@
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
 # pylint: disable=W0221
-"""This module performs the parsing of running Tango device.
+"""This module performs the parsing of a running Tango device.
 """
 from __future__ import absolute_import, division, print_function
 import os
@@ -15,7 +15,7 @@ from tango_simlib.utilities.base_parser import Parser
 
 
 class TangoDeviceParser(Parser):
-    """Parses a running TANGO deviceto YAML.
+    """Parses a running TANGO device to YAML.
     """
 
     def __init__(self):

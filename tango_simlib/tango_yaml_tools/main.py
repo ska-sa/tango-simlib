@@ -3,7 +3,8 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-"""Entrypoint for scripts to parse Tango file representations into YAML"""
+"""Entrypoint for the script to parse a Tango file representation or a running device into
+   YAML"""
 from __future__ import absolute_import, division, print_function
 
 import argparse
@@ -14,8 +15,8 @@ from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.tango_device_parser import TangoDeviceParser
 
 
-def build_yaml(args):
-    """Build the YAML depending onf the file type
+def _build_yaml(args):
+    """Build the YAML depending on the file type or device name
 
     Parameters
     ----------
@@ -75,7 +76,7 @@ def main():
     )
 
     args = parser.parse_args()
-    result = build_yaml(args)
+    result = _build_yaml(args)
     if result:
         print(result)
     else:

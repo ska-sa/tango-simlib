@@ -14,7 +14,7 @@ from pathlib import Path
 import yaml
 import tango
 
-from tango_simlib.tango_yaml_tools.main import build_yaml
+from tango_simlib.tango_yaml_tools.main import _build_yaml
 
 CONF_FILE_PATH = Path.joinpath(Path(__file__).parent, "config_files")
 
@@ -30,14 +30,14 @@ def validate_basic_structure(yaml_dict):
 
 
 def test_file_builders_xmi():
-    """test XMI parsing with some spot checks"""
+    """Test XMI parsing with some spot checks"""
 
     xmi_args = Namespace(
         xmi_file=Namespace(
             name=str(Path.joinpath(CONF_FILE_PATH, "DishElementMaster.xmi"))
         )
     )
-    xmi_yaml = build_yaml(xmi_args)
+    xmi_yaml = _build_yaml(xmi_args)
     parsed_yaml = yaml.load(xmi_yaml, Loader=yaml.FullLoader)
     validate_basic_structure(parsed_yaml)
 
@@ -71,12 +71,12 @@ def test_file_builders_xmi():
 
 
 def test_file_builders_fandango():
-    """test fandango parsing with some spot checks"""
+    """Test fandango parsing with some spot checks"""
 
     fgo_args = Namespace(
         fandango_file=Namespace(name=str(Path.joinpath(CONF_FILE_PATH, "database2.fgo")))
     )
-    fgo_yaml = build_yaml(fgo_args)
+    fgo_yaml = _build_yaml(fgo_args)
     parsed_yaml = yaml.load(fgo_yaml, Loader=yaml.FullLoader)
     validate_basic_structure(parsed_yaml)
 
@@ -129,7 +129,7 @@ def test_tango_device_builder():
         mocked_device_proxy.get_property_list.return_value = ["PropA", "PropB"]
 
         tango_args = Namespace(tango_device_name="a/b/c")
-        tango_yaml = build_yaml(tango_args)
+        tango_yaml = _build_yaml(tango_args)
         parsed_yaml = yaml.load(tango_yaml, Loader=yaml.FullLoader)
 
         mocked_tango.DeviceProxy.assert_called_once_with("a/b/c")
