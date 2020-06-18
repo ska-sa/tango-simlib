@@ -39,16 +39,36 @@ class TangoDeviceParser(Parser):
         self.device_class_name = self.device_proxy.info().dev_class
 
         for attribute in self.device_proxy.attribute_list_query():
-            self.data_dict["meta"]["attributes"][attribute.name] = {
+            attr_data = {
                 "name": attribute.name,
-                "data_type": attribute.data_format,
+                "data_type": tango.CmdArgType.values[attribute.data_type],
+                "data_format": attribute.data_format,
+                "description": attribute.description,
+                "disp_level": attribute.disp_level,
+                "display_unit": attribute.display_unit,
+                "format": attribute.format,
+                "label": attribute.label,
+                "max_alarm": attribute.max_alarm,
+                "max_dim_x": attribute.max_dim_x,
+                "max_dim_y": attribute.max_dim_y,
+                "max_value": attribute.max_value,
+                "min_alarm": attribute.min_alarm,
+                "min_value": attribute.min_value,
+                "standard_unit": attribute.standard_unit,
+                "unit": attribute.unit,
+                "writable": str(attribute.writable),
+                "writable_attr_name": attribute.writable_attr_name
             }
+            self.data_dict["meta"]["attributes"][attribute.name] = attr_data
 
         for command in self.device_proxy.get_command_config():
             self.data_dict["meta"]["commands"][command.cmd_name] = {
                 "name": command.cmd_name,
                 "dtype_in": command.in_type,
                 "dtype_out": command.out_type,
+                "doc_out": command.out_type_desc,
+                "doc_in": command.in_type_desc,
+                "disp_level": command.disp_level.name,
             }
 
         for prop in self.device_proxy.get_property_list("*"):

@@ -108,6 +108,8 @@ def test_file_builders_fandango():
 def test_tango_device_builder():
     """Test a Tango device to YAML by mocking a running Tango device"""
     with mock.patch("tango_simlib.utilities.tango_device_parser.tango") as mocked_tango:
+        mocked_tango.CmdArgType = tango.CmdArgType
+        mocked_tango.AttrWriteType = tango.AttrWriteType
         mocked_device_proxy = mock.Mock()
         mocked_tango.DeviceProxy.return_value = mocked_device_proxy
 
@@ -119,10 +121,29 @@ def test_tango_device_builder():
         mocked_command.cmd_name = "CommandName"
         mocked_command.in_type = tango.CmdArgType.DevVoid
         mocked_command.out_type = tango.CmdArgType.DevVoid
+        mocked_command.disp_level = tango.DispLevel.OPERATOR
+        mocked_command.out_type_desc = "out_type_desc"
+        mocked_command.in_type_desc = "in_type_desc"
 
         attr = tango.AttributeInfo()
         attr.name = "AttrName"
         attr.data_format = tango.AttrDataFormat.SCALAR
+        attr.disp_level = tango.DispLevel.OPERATOR
+        attr.data_type = 8
+        attr.writable = tango.AttrWriteType.READ
+        attr.description = "description"
+        attr.display_unit = "display_unit"
+        attr.format = "format"
+        attr.label = "label"
+        attr.max_alarm = "max_alarm"
+        attr.max_dim_x = 0
+        attr.max_dim_y = 0
+        attr.max_value = "max_value"
+        attr.min_alarm = "min_alarm"
+        attr.min_value = "min_value"
+        attr.standard_unit = "standard_unit"
+        attr.unit = "unit"
+        attr.writable_attr_name = "writable_attr_name"
 
         mocked_device_proxy.get_command_config.return_value = [mocked_command]
         mocked_device_proxy.attribute_list_query.return_value = [attr]
@@ -130,17 +151,45 @@ def test_tango_device_builder():
 
         tango_args = Namespace(tango_device_name="a/b/c")
         tango_yaml = _build_yaml(tango_args)
+
         parsed_yaml = yaml.load(tango_yaml, Loader=yaml.FullLoader)
 
         mocked_tango.DeviceProxy.assert_called_once_with("a/b/c")
         mocked_device_proxy.get_command_config.assert_called()
         mocked_device_proxy.attribute_list_query.assert_called()
         mocked_device_proxy.get_property_list.assert_called()
+
         assert parsed_yaml[0]["meta"]["attributes"] == [
-            {"name": "AttrName", "data_type": "SCALAR"}
+            {
+                "data_format": "SCALAR",
+                "data_type": "DevString",
+                "description": "description",
+                "disp_level": "OPERATOR",
+                "display_unit": "display_unit",
+                "format": "format",
+                "label": "label",
+                "max_alarm": "max_alarm",
+                "max_dim_x": 0,
+                "max_dim_y": 0,
+                "max_value": "max_value",
+                "min_alarm": "min_alarm",
+                "min_value": "min_value",
+                "name": "AttrName",
+                "standard_unit": "standard_unit",
+                "unit": "unit",
+                "writable": "READ",
+                "writable_attr_name": "writable_attr_name",
+            }
         ]
         assert parsed_yaml[0]["meta"]["commands"] == [
-            {"dtype_out": "DevVoid", "name": "CommandName", "dtype_in": "DevVoid"}
+            {
+                "doc_out": "out_type_desc",
+                "disp_level": "OPERATOR",
+                "name": "CommandName",
+                "doc_in": "in_type_desc",
+                "dtype_out": "DevVoid",
+                "dtype_in": "DevVoid",
+            }
         ]
         assert parsed_yaml[0]["meta"]["properties"] == [
             {"name": "PropA"},

@@ -40,18 +40,51 @@ class TangoToYAML:
         ]
 
         for command in self.parser.get_device_command_metadata().values():
-            data_dict[0]["meta"]["commands"].append(
-                {
-                    "name": command["name"],
-                    "dtype_in": command["dtype_in"].name,
-                    "dtype_out": command["dtype_out"].name,
-                }
-            )
+            command_data = {
+                "name": command["name"],
+                "dtype_in": command["dtype_in"].name,
+                "dtype_out": command["dtype_out"].name,
+            }
+            for key in ["doc_out", "doc_in", "inherited", "disp_level"]:
+                if key in command:
+                    command_data[key] = command[key]
+            data_dict[0]["meta"]["commands"].append(command_data)
+
         for attr in self.parser.get_device_attribute_metadata().values():
-            data_dict[0]["meta"]["attributes"].append(
-                {"name": attr["name"],
-                 "data_type": attr["data_type"].name}
-            )
+            attr_data = {"name": attr["name"]}
+            if "data_type" in attr:
+                attr_data["data_type"] = attr["data_type"].name
+            if "data_format" in attr:
+                attr_data["data_format"] = attr["data_format"].name
+            if "disp_level" in attr:
+                attr_data["disp_level"] = attr["disp_level"].name
+            # pylint insists on this spacing
+            for key in [
+                    "delta_val",
+                    "period",
+                    "display_unit",
+                    "standard_unit",
+                    "unit",
+                    "max_dim_y",
+                    "max_dim_x",
+                    "label",
+                    "max_value",
+                    "min_alarm",
+                    "max_warning",
+                    "description",
+                    "format",
+                    "delta_t",
+                    "max_alarm",
+                    "min_value",
+                    "inherited",
+                    "min_warning",
+                    "writable",
+                    "writable_attr_name",
+            ]:
+                if key in attr:
+                    attr_data[key] = attr[key]
+            data_dict[0]["meta"]["attributes"].append(attr_data)
+
         for prop in self.parser.get_device_properties_metadata(
                 "deviceProperties"
         ).values():
