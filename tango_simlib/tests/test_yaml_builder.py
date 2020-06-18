@@ -50,10 +50,31 @@ def test_file_builders_xmi():
 
     # Order differs between Python 2 and 3
     for attr in parsed_yaml[0]["meta"]["attributes"]:
-        if attr["name"] == "desiredPointing":
-            assert attr["data_type"] == "DevDouble"
         if attr["name"] == "band4CapabilityState":
-            assert attr["data_type"] == "DevEnum"
+            assert attr == {
+                "data_format": "SCALAR",
+                "data_type": "DevEnum",
+                "delta_t": "",
+                "delta_val": "",
+                "description": "The band 4 capability state of the DSH Element.",
+                "display_unit": "",
+                "format": "",
+                "inherited": "false",
+                "label": "Band4 capability state",
+                "max_alarm": "",
+                "max_dim_x": 1,
+                "max_dim_y": 0,
+                "max_value": "2",
+                "max_warning": "",
+                "min_alarm": "",
+                "min_value": "0",
+                "min_warning": "",
+                "name": "band4CapabilityState",
+                "period": "0",
+                "standard_unit": "",
+                "unit": "",
+                "writable": "READ",
+            }
 
     comms = [i["name"] for i in parsed_yaml[0]["meta"]["commands"]]
     assert len(comms) == 22
@@ -61,11 +82,23 @@ def test_file_builders_xmi():
     assert "SetOperateMode" in comms
     for comm in parsed_yaml[0]["meta"]["commands"]:
         if comm["name"] == "Status":
-            assert comm["dtype_out"] == "DevString"
-            assert comm["dtype_in"] == "DevVoid"
+            assert comm == {
+                "doc_in": "none",
+                "doc_out": "Device status",
+                "dtype_in": "DevVoid",
+                "dtype_out": "DevString",
+                "inherited": "true",
+                "name": "Status",
+            }
         if comm["name"] == "SetOperateMode":
-            assert comm["dtype_out"] == "DevVoid"
-            assert comm["dtype_in"] == "DevVoid"
+            assert comm == {
+                "doc_in": "N/A",
+                "doc_out": "N/A",
+                "dtype_in": "DevVoid",
+                "dtype_out": "DevVoid",
+                "inherited": "false",
+                "name": "SetOperateMode",
+            }
 
     assert {"name": "SkaLevel"} in parsed_yaml[0]["meta"]["properties"]
 
@@ -87,10 +120,45 @@ def test_file_builders_fandango():
     assert "Timing_info" in attrs
     assert "Timing_minimum" in attrs
     for attr in parsed_yaml[0]["meta"]["attributes"]:
+
         if attr["name"] == "Timing_info":
-            assert attr["data_type"] == "DevString"
+            assert attr == {
+                "data_format": "SPECTRUM",
+                "data_type": "DevString",
+                "description": "",
+                "display_unit": "No display unit",
+                "format": "%s",
+                "label": "Timing_info",
+                "max_alarm": "Not specified",
+                "max_dim_x": 64,
+                "max_dim_y": 0,
+                "max_value": "Not specified",
+                "min_alarm": "Not specified",
+                "min_value": "Not specified",
+                "name": "Timing_info",
+                "standard_unit": "No standard unit",
+                "unit": "",
+                "writable": "READ",
+            }
         if attr["name"] == "Timing_minimum":
-            assert attr["data_type"] == "DevDouble"
+            assert attr == {
+                "data_format": "SPECTRUM",
+                "data_type": "DevDouble",
+                "description": "",
+                "display_unit": "No display unit",
+                "format": "%6.2f",
+                "label": "Timing_minimum",
+                "max_alarm": "Not specified",
+                "max_dim_x": 64,
+                "max_dim_y": 0,
+                "max_value": "Not specified",
+                "min_alarm": "Not specified",
+                "min_value": "Not specified",
+                "name": "Timing_minimum",
+                "standard_unit": "No standard unit",
+                "unit": "",
+                "writable": "READ",
+            }
 
     comms = [i["name"] for i in parsed_yaml[0]["meta"]["commands"]]
     assert len(comms) == 100
@@ -98,11 +166,24 @@ def test_file_builders_fandango():
     assert "DbGetDeviceAttributeList" in comms
     for comm in parsed_yaml[0]["meta"]["commands"]:
         if comm["name"] == "DbGetDataForServerCache":
-            assert comm["dtype_out"] == "DevVarStringArray"
-            assert comm["dtype_in"] == "DevVarStringArray"
+            assert comm == {
+                "doc_in": "Elt[0] = DS name (exec_name/inst_name), Elt[1] = Host name",
+                "doc_out": (
+                    "All the data needed by the device server during its startup"
+                    " sequence. Precise list depend on the device server"
+                ),
+                "dtype_in": "DevVarStringArray",
+                "dtype_out": "DevVarStringArray",
+                "name": "DbGetDataForServerCache",
+            }
         if comm["name"] == "DbGetDeviceAttributeList":
-            assert comm["dtype_out"] == "DevVarStringArray"
-            assert comm["dtype_in"] == "DevVarStringArray"
+            assert comm == {
+                "doc_in": "Str[0] = Device name\nStr[1] = Wildcard",
+                "doc_out": "attribute name list",
+                "dtype_in": "DevVarStringArray",
+                "dtype_out": "DevVarStringArray",
+                "name": "DbGetDeviceAttributeList",
+            }
 
 
 def test_tango_device_builder():

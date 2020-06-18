@@ -77,14 +77,30 @@ class TangoDeviceParser(Parser):
     def get_device_attribute_metadata(self):
         """Returns the attributes.
 
+
+
         Returns
         -------
         dict
             E.g.
                 {
                     '<attribute-name>': {
-                        'data_type': tango._tango.CmdArgType,
-                        'name': '<attribute-name>',
+                        "data_format": "SPECTRUM",
+                        "data_type": "DevString",
+                        "description": "",
+                        "display_unit": "No display unit",
+                        "format": "%s",
+                        "label": "Timing_info",
+                        "max_alarm": "Not specified",
+                        "max_dim_x": 64,
+                        "max_dim_y": 0,
+                        "max_value": "Not specified",
+                        "min_alarm": "Not specified",
+                        "min_value": "Not specified",
+                        "name": "<attribute-name>",
+                        "standard_unit": "No standard unit",
+                        "unit": "",
+                        "writable": "READ",
                     }
                 ...
                 }
@@ -101,9 +117,12 @@ class TangoDeviceParser(Parser):
             E.g.
                 {
                     '<command-name>': {
-                        'name': '<command-name>',
-                        'dtype_out': tango._tango.CmdArgType
-                        'dtype_in': tango._tango.CmdArgType
+                        "doc_out": "out_type_desc",
+                        "disp_level": "OPERATOR",
+                        "name": "<command-name>",
+                        "doc_in": "in_type_desc",
+                        "dtype_out": "DevVoid",
+                        "dtype_in": "DevVoid",
                     }
                 ...
                 }

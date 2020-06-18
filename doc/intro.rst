@@ -251,30 +251,44 @@ Example
 
 .. code-block:: bash
 
-    $ tango-yaml  xmi ./tango_simlib/tests/config_files/DishElementMaster.xmi
+    $ tango-yaml  xmi ./tango_simlib/tests/config_files/Weather.xmi
 
-    - class: DishElementMaster
-      meta:
-        attributes:
-        - data_type: DevEnum
-          name: elementLogLevel
-        - data_type: DevEnum
-          name: adminMode
-        - data_type: DevEnum
-          name: obsMode
+      - class: Weather
+        meta:
+          attributes:
+          - data_format: SCALAR
+            data_type: DevULong
+            delta_t: ''
+            delta_val: ''
+            description: ''
+            display_unit: ''
+            format: ''
+            inherited: 'false'
+            label: integer2
+            max_alarm: ''
+            max_dim_x: 1
+            max_dim_y: 0
+            max_value: ''
+            max_warning: ''
+            min_alarm: ''
+            min_value: ''
+            min_warning: ''
+            name: integer2
+            period: '1000'
+            standard_unit: ''
+            unit: ''
+            writable: READ
           ...
-        - data_type: DevDouble
-          name: pointModelPars
-        commands:
-        - dtype_in: DevString
-          dtype_out: DevVoid
-          name: Capture
+          commands:
+          - doc_in: none
+            doc_out: Device state
+            dtype_in: DevVoid
+            dtype_out: DevState
+            inherited: 'true'
+            name: State
           ...
-        - dtype_in: DevVoid
-          dtype_out: DevVoid
-          name: SetMaintenanceMode
-        properties:
-        - name: SkaLevel
+          properties:
+          - name: sim_xmi_description_file
 
 Fandango
 --------
@@ -297,30 +311,34 @@ Example
 
     $ tango-yaml fandango ./tango_simlib/tests/config_files/database2.fgo
 
-    - class: DataBase
-      meta:
-        attributes:
-        - data_type: DevString
-          name: Status
-        - data_type: DevDouble
-          name: Timing_maximum
-        - data_type: DevDouble
-          name: Timing_average
-        ...
-        - data_type: DevDouble
-          name: Timing_minimum
-        commands:
-        - dtype_in: DevVarStringArray
-          dtype_out: DevVoid
-          name: DbPutDeviceAttributeProperty2
-        - dtype_in: DevString
-          dtype_out: DevVarStringArray
-          name: DbGetExportdDeviceListForClass
-        ...
-        - dtype_in: DevVarStringArray
-          dtype_out: DevVarStringArray
-          name: DbGetDeviceList
-        properties: []
+      - class: DataBase
+        meta:
+          attributes:
+          - data_format: SCALAR
+            data_type: DevString
+            description: ''
+            display_unit: No display unit
+            format: '%s'
+            label: Status
+            max_alarm: Not specified
+            max_dim_x: 1
+            max_dim_y: 0
+            max_value: Not specified
+            min_alarm: Not specified
+            min_value: Not specified
+            name: Status
+            standard_unit: No standard unit
+            unit: ''
+            writable: READ
+          ...
+          commands:
+          - doc_in: Class name
+            doc_out: Device exported list
+            dtype_in: DevString
+            dtype_out: DevVarStringArray
+            name: DbGetExportdDeviceListForClass
+          ...
+          properties: []
 
 Tango device
 ------------
@@ -344,29 +362,40 @@ Example
 
     $ tango-yaml tango_device ska_mid/tm_subarray_node/1
 
-        - class: SubarrayNode
-          meta:
-            attributes:
-            - data_type: SCALAR
-              name: buildState
-            - data_type: SCALAR
-              name: versionId
-            ...
-            - data_type: SCALAR
-              name: Status
-            commands:
-            - dtype_in: DevVoid
-              dtype_out: DevVoid
-              name: Abort
-            - dtype_in: DevString
-              dtype_out: DevVarStringArray
-              name: AssignResources
-              ...
-            - dtype_in: DevString
-              dtype_out: DevVoid
-              name: Track
-            properties:
-            - name: CspSubarrayFQDN
-            ...
-            - name: CspSubarrayLNFQDN
-
+      - class: SubarrayNode
+        meta:
+          attributes:
+          - data_format: SCALAR
+            data_type: DevString
+            description: Build state of this device
+            disp_level: OPERATOR
+            display_unit: No display unit
+            format: '%s'
+            label: buildState
+            max_alarm: Not specified
+            max_dim_x: 1
+            max_dim_y: 0
+            max_value: Not specified
+            min_alarm: Not specified
+            min_value: Not specified
+            name: buildState
+            standard_unit: No standard unit
+            unit: ''
+            writable: READ
+            writable_attr_name: None
+          ...
+          commands:
+          - disp_level: OPERATOR
+            doc_in: Uninitialised
+            doc_out: Uninitialised
+            dtype_in: DevVoid
+            dtype_out: DevVoid
+            name: Abort
+          ...
+          properties:
+          - name: CspSubarrayFQDN
+          - name: CspSubarrayLNFQDN
+          - name: DishLeafNodePrefix
+          - name: LoggingLevelDefault
+          - name: LoggingTargetsDefault
+          ...
