@@ -77,8 +77,6 @@ class TangoDeviceParser(Parser):
     def get_device_attribute_metadata(self):
         """Returns the attributes.
 
-
-
         Returns
         -------
         dict

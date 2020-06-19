@@ -27,6 +27,7 @@ def validate_basic_structure(yaml_dict):
     assert "class" in yaml_dict[0]
     assert "properties" in yaml_dict[0]["meta"]
     assert "attributes" in yaml_dict[0]["meta"]
+    assert "commands" in yaml_dict[0]["meta"]
 
 
 def test_file_builders_xmi():
