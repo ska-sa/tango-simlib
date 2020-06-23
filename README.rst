@@ -89,6 +89,31 @@ This package is available on *PYPI*, allowing
 
     $ pip install tango-simlib
 
+Tango-YAML
+----------
+
+After installing tango_simlib, the ``tango-yaml`` script will be available to use
+
+.. code-block:: bash
+
+    $ tango-yaml -h
+
+    usage: tango_yaml [-h] {xmi,fandango,tango_device} ...
+
+    This program translates various file formats that describe Tango devices to
+    YAML
+
+    positional arguments:
+    {xmi,fandango,tango_device}
+                            sub command help
+        xmi                 Build YAML from a XMI file
+        fandango            Build YAML from a fandango file
+        tango_device        Build YAML from a running Tango device
+
+    optional arguments:
+    -h, --help            show this help message and exit
+
+
 Documentation
 -------------
 

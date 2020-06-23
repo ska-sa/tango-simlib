@@ -8,6 +8,15 @@
 .. _115: https://github.com/ska-sa/tango-simlib/pull/115
 .. _116: https://github.com/ska-sa/tango-simlib/pull/116
 .. _117: https://github.com/ska-sa/tango-simlib/pull/117
+.. _118: https://github.com/ska-sa/tango-simlib/pull/118
+.. _119: https://github.com/ska-sa/tango-simlib/pull/119
+
+0.6.0
+-----
+- Updated CHANGELOG in 118_
+- Added `tango-yaml` tool in 119_
+    - This tool translates fandango (fgo), XMI (xmi) or a running Tango device to YAML.
+    - Once installed, run `tango-yaml -h` for details.
 
 0.5.0
 -----
@@ -85,4 +94,4 @@
 -----
 - Handle DevEnum data type TANGO attributes
 - Handle Spectrum data format TANGO attributes
-  
+
