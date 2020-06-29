@@ -57,7 +57,7 @@ class TangoDeviceParser(Parser):
                 "standard_unit": attribute.standard_unit,
                 "unit": attribute.unit,
                 "writable": str(attribute.writable),
-                "writable_attr_name": attribute.writable_attr_name
+                "writable_attr_name": attribute.writable_attr_name,
             }
             self.data_dict["meta"]["attributes"][attribute.name] = attr_data
 
@@ -148,3 +148,12 @@ class TangoDeviceParser(Parser):
     def get_device_cmd_override_metadata(self):
         """This method is not implemented"""
         raise NotImplementedError("get_device_cmd_override_metadata not implemented")
+
+    def get_parsed_data(self):
+        """Returns all the parsed data
+
+        Returns
+        -------
+        dict
+        """
+        return self.data_dict
