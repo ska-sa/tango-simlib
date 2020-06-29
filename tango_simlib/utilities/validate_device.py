@@ -172,7 +172,7 @@ def check_data_differences(spec_data, dev_data, type_str):
     Returns
     -------
     list
-        A list of strings describing the issues, if any
+        A list of strings describing the issues, empty list for no issues
     """
     issues = []
     spec_data = sorted(spec_data, key=lambda i: i["name"])
@@ -184,13 +184,15 @@ def check_data_differences(spec_data, dev_data, type_str):
     if spec_data_names != dev_data_names:
         diff = spec_data_names.difference(dev_data_names)
         issues.append(
-            "{} discrepancy, {} specified but missing in device".format(type_str, diff)
+            "{} discrepancy, [{}] specified but missing in device".format(
+                type_str, ",".join(diff)
+            )
         )
 
         diff = dev_data_names.difference(spec_data_names)
         issues.append(
-            "{} discrepancy, {} present in device but not specified".format(
-                type_str, diff
+            "{} discrepancy, [{}] present in device but not specified".format(
+                type_str, ",".join(diff)
             )
         )
 

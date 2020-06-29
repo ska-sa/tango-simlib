@@ -194,11 +194,11 @@ def test_validate():
         in result
     )
     assert (
-        "Command discrepancy, {'ClearTaskHistory_A'} specified but missing in device"
+        "Command discrepancy, [ClearTaskHistory_A] specified but missing in device"
         in result
     )
     assert (
-        "Command discrepancy, {'ClearTaskHistory_B'} present in device but not specified"
+        "Command discrepancy, [ClearTaskHistory_B] present in device but not specified"
         in result
     )
     assert (
@@ -207,14 +207,15 @@ def test_validate():
     ) in result
 
     assert (
-        "Attribute discrepancy, {'loggingLevelElement_A'} specified but missing in device"
+        "Attribute discrepancy, [loggingLevelElement_A] specified but missing in device"
     ) in result
 
     assert (
-        ("Attribute discrepancy, {'loggingLevelElement_B'} present"
-         " in device but not specified")
+        (
+            "Attribute discrepancy, [loggingLevelElement_B] present"
+            " in device but not specified"
+        )
     ) in result
-
 
     spec_yaml = YAML_B
     dev_yaml = YAML_A
@@ -224,11 +225,11 @@ def test_validate():
         in result
     )
     assert (
-        "Command discrepancy, {'ClearTaskHistory_B'} specified but missing in device"
+        "Command discrepancy, [ClearTaskHistory_B] specified but missing in device"
         in result
     )
     assert (
-        "Command discrepancy, {'ClearTaskHistory_A'} present in device but not specified"
+        "Command discrepancy, [ClearTaskHistory_A] present in device but not specified"
         in result
     )
     assert (
@@ -237,12 +238,14 @@ def test_validate():
     ) in result
 
     assert (
-        "Attribute discrepancy, {'loggingLevelElement_B'} specified but missing in device"
+        "Attribute discrepancy, [loggingLevelElement_B] specified but missing in device"
     ) in result
 
     assert (
-        ("Attribute discrepancy, {'loggingLevelElement_A'} present"
-         " in device but not specified")
+        (
+            "Attribute discrepancy, [loggingLevelElement_A] present"
+            " in device but not specified"
+        )
     ) in result
 
     print(result)
