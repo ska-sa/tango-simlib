@@ -178,9 +178,9 @@ def check_data_differences(spec_data, dev_data, type_str):
     spec_data = sorted(spec_data, key=lambda i: i["name"])
     dev_data = sorted(dev_data, key=lambda i: i["name"])
 
+    # Check that the command/attribute names match
     spec_data_names = {i["name"] for i in spec_data}
     dev_data_names = {i["name"] for i in dev_data}
-
     if spec_data_names != dev_data_names:
         diff = spec_data_names.difference(dev_data_names)
         issues.append(
@@ -196,9 +196,11 @@ def check_data_differences(spec_data, dev_data, type_str):
             )
         )
 
-    mutual_command_names = spec_data_names.intersection(dev_data_names)
-    mutual_spec_data = filter(lambda x: x["name"] in mutual_command_names, spec_data)
-    mutual_dev_data = filter(lambda x: x["name"] in mutual_command_names, dev_data)
+    # Check that the commands/attributes that are in both the spec and device
+    # are the same
+    mutual_names = spec_data_names.intersection(dev_data_names)
+    mutual_spec_data = filter(lambda x: x["name"] in mutual_names, spec_data)
+    mutual_dev_data = filter(lambda x: x["name"] in mutual_names, dev_data)
 
     for spec, dev in zip(mutual_spec_data, mutual_dev_data):
         if spec != dev:

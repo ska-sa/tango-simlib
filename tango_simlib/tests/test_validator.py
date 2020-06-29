@@ -247,5 +247,3 @@ def test_validate():
             " in device but not specified"
         )
     ) in result
-
-    print(result)
