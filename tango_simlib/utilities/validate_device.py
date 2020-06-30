@@ -32,9 +32,8 @@ def validate_device_from_url(tango_device_name, url_to_yaml_file):
     """
     response = requests.get(url_to_yaml_file, allow_redirects=True)
     response.raise_for_status()
-    return compare_data(
-        yaml.load(response.content), get_device_specification(tango_device_name)
-    )
+    content = response.content.decode(response.encoding)
+    return compare_data(content, get_device_specification(tango_device_name))
 
 
 def validate_device_from_path(tango_device_name, path_to_yaml_file):
@@ -58,7 +57,7 @@ def validate_device_from_path(tango_device_name, path_to_yaml_file):
     file_data = ""
     with open(str(file_path), "r") as data_file:
         file_data = data_file.read()
-    return compare_data(yaml.load(file_data), get_device_specification(tango_device_name))
+    return compare_data(file_data, get_device_specification(tango_device_name))
 
 
 def get_device_specification(tango_device_name):
@@ -103,6 +102,7 @@ def compare_data(specification_yaml, tango_device_yaml):
 
     issues = []
 
+    # Class
     if tango_device_data["class"] != specification_data["class"]:
         issues.append(
             "\nClass differs, specified '{}', but device has '{}'".format(
@@ -110,8 +110,6 @@ def compare_data(specification_yaml, tango_device_yaml):
             )
         )
 
-    if issues:
-        issues.append("\n")
     # Commands
     issues.extend(
         check_list_dict_differences(
@@ -121,8 +119,6 @@ def compare_data(specification_yaml, tango_device_yaml):
         )
     )
 
-    if issues:
-        issues.append("\n")
     # Attributes
     issues.extend(
         check_list_dict_differences(
@@ -132,8 +128,6 @@ def compare_data(specification_yaml, tango_device_yaml):
         )
     )
 
-    if issues:
-        issues.append("\n")
     # Properties
     issues.extend(
         check_property_differences(
