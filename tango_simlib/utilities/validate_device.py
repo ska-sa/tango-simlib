@@ -134,11 +134,20 @@ def validate_device(specification_yaml, tango_device_yaml):
         )
     )
 
+    if issues:
+        issues.append("\n")
+    issues.extend(
+        check_property_differences(
+            specification_data["meta"]["properties"],
+            tango_device_data["meta"]["properties"],
+        )
+    )
+
     return "\n".join(issues)
 
 
 def check_data_differences(spec_data, dev_data, type_str):
-    """Compare Commands and Attributes in the YAML specification
+    """Compare Commands and Attributes in the parsed YAML
 
     Parameters
     ----------
@@ -155,7 +164,7 @@ def check_data_differences(spec_data, dev_data, type_str):
             ]
 
     dev_data : list
-        List of dictionaries with specification data
+        List of dictionaries with device data
         E.g [
                 {'disp_level': 'OPERATOR',
                  'doc_in': 'ON/OFF',
@@ -212,4 +221,55 @@ def check_data_differences(spec_data, dev_data, type_str):
                             key, spec[key], dev[key]
                         )
                     )
+    return issues
+
+
+def check_property_differences(spec_properties, dev_properties):
+    """Compare properties in the parsed YAML
+
+    Parameters
+    ----------
+    spec_data : list
+        List of dictionaries with specification data properties
+        E.g [{'name': 'AdminModeDefault'},
+             {'name': 'AsynchCmdReplyNRetries'},
+             {'name': 'AsynchCmdReplyTimeout'},
+             {'name': 'CentralLoggerEnabledDefault'},
+             {'name': 'ConfigureTaskTimeout'},
+             {'name': 'ControlModeDefault_B'}]
+
+    dev_data : list
+        List of dictionaries with device data properties
+        E.g [{'name': 'AdminModeDefault'},
+             {'name': 'AsynchCmdReplyNRetries'},
+             {'name': 'AsynchCmdReplyTimeout'},
+             {'name': 'CentralLoggerEnabledDefault'},
+             {'name': 'ConfigureTaskTimeout'},
+             {'name': 'ControlModeDefault_B'}]
+
+    Returns
+    -------
+    list
+        A list of strings describing the issues, empty list for no issues
+    """
+    issues = []
+
+    spec_props = {i["name"] for i in spec_properties}
+    dev_props = {i["name"] for i in dev_properties}
+
+    if spec_props != dev_props:
+        diff = spec_props.difference(dev_props)
+        issues.append(
+            "Property discrepancy, [{}] specified but missing in device".format(
+                ",".join(diff)
+            )
+        )
+
+        diff = dev_props.difference(spec_props)
+        issues.append(
+            "Property discrepancy, [{}] present in device but not specified".format(
+                ",".join(diff)
+            )
+        )
+
     return issues

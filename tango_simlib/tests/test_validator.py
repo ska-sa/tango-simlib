@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function
 
 from tango_simlib.utilities.validate_device import validate_device
 
-YAML_A = """
+DICT_A = """
 {
   "class": "DishMaster_A",
   "meta":
@@ -91,7 +91,7 @@ YAML_A = """
 }
 """
 
-YAML_B = """
+DICT_B = """
 {
   "class": "DishMaster_B",
   "meta":
@@ -184,11 +184,11 @@ def test_validate():
     """Test various combinations"""
 
     # If it's the same then no differences recorded
-    assert not validate_device(YAML_A, YAML_A)
+    assert not validate_device(DICT_A, DICT_A)
 
-    spec_yaml = YAML_A
-    dev_yaml = YAML_B
-    result = validate_device(spec_yaml, dev_yaml)
+    spec_dict = DICT_A
+    dev_dict = DICT_B
+    result = validate_device(spec_dict, dev_dict)
     assert (
         "Class discrepancy, specified 'DishMaster_A', but device has 'DishMaster_B'"
         in result
@@ -217,9 +217,21 @@ def test_validate():
         )
     ) in result
 
-    spec_yaml = YAML_B
-    dev_yaml = YAML_A
-    result = validate_device(spec_yaml, dev_yaml)
+    assert (
+        ("Property discrepancy, [ControlModeDefault_A] specified but missing in device")
+    ) in result
+
+    assert (
+        (
+            "Property discrepancy, [ControlModeDefault_B] present in device but "
+            "not specified"
+        )
+    ) in result
+
+    spec_dict = DICT_B
+    dev_dict = DICT_A
+    result = validate_device(spec_dict, dev_dict)
+
     assert (
         "Class discrepancy, specified 'DishMaster_B', but device has 'DishMaster_A'"
         in result
@@ -245,5 +257,16 @@ def test_validate():
         (
             "Attribute discrepancy, [loggingLevelElement_A] present"
             " in device but not specified"
+        )
+    ) in result
+
+    assert (
+        ("Property discrepancy, [ControlModeDefault_B] specified but missing in device")
+    ) in result
+
+    assert (
+        (
+            "Property discrepancy, [ControlModeDefault_A] present in device but "
+            "not specified"
         )
     ) in result
