@@ -1,7 +1,7 @@
 """Various tests for the validation logic"""
 from __future__ import absolute_import, division, print_function
 
-from tango_simlib.utilities.validate_device import validate_device
+from tango_simlib.utilities.validate_device import compare_data
 
 DICT_A = """
 {
@@ -184,11 +184,11 @@ def test_validate():
     """Test various combinations"""
 
     # If it's the same then no differences recorded
-    assert not validate_device(DICT_A, DICT_A)
+    assert not compare_data(DICT_A, DICT_A)
 
     spec_dict = DICT_A
     dev_dict = DICT_B
-    result = validate_device(spec_dict, dev_dict)
+    result = compare_data(spec_dict, dev_dict)
     assert (
         "Class discrepancy, specified 'DishMaster_A', but device has 'DishMaster_B'"
         in result
@@ -230,7 +230,7 @@ def test_validate():
 
     spec_dict = DICT_B
     dev_dict = DICT_A
-    result = validate_device(spec_dict, dev_dict)
+    result = compare_data(spec_dict, dev_dict)
 
     assert (
         "Class discrepancy, specified 'DishMaster_B', but device has 'DishMaster_A'"

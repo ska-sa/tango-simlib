@@ -32,7 +32,7 @@ def validate_device_from_url(tango_device_name, url_to_yaml_file):
     """
     response = requests.get(url_to_yaml_file, allow_redirects=True)
     response.raise_for_status()
-    return validate_device(
+    return compare_data(
         yaml.load(response.content), get_device_specification(tango_device_name)
     )
 
@@ -58,9 +58,7 @@ def validate_device_from_path(tango_device_name, path_to_yaml_file):
     file_data = ""
     with open(str(file_path), "r") as data_file:
         file_data = data_file.read()
-    return validate_device(
-        yaml.load(file_data), get_device_specification(tango_device_name)
-    )
+    return compare_data(yaml.load(file_data), get_device_specification(tango_device_name))
 
 
 def get_device_specification(tango_device_name):
@@ -80,8 +78,8 @@ def get_device_specification(tango_device_name):
     return parser.build_yaml_from_device(tango_device_name)
 
 
-def validate_device(specification_yaml, tango_device_yaml):
-    """Check specification conformance against the Tango device.
+def compare_data(specification_yaml, tango_device_yaml):
+    """Compare 2 sets of YAML built from the specification and from the device
 
     Parameters
     ----------
@@ -136,6 +134,7 @@ def validate_device(specification_yaml, tango_device_yaml):
 
     if issues:
         issues.append("\n")
+    # Properties
     issues.extend(
         check_property_differences(
             specification_data["meta"]["properties"],
