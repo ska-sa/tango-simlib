@@ -105,7 +105,7 @@ def compare_data(specification_yaml, tango_device_yaml):
 
     if tango_device_data["class"] != specification_data["class"]:
         issues.append(
-            "\nClass discrepancy, specified '{}', but device has '{}'".format(
+            "\nClass differs, specified '{}', but device has '{}'".format(
                 specification_data["class"], tango_device_data["class"]
             )
         )
@@ -114,7 +114,7 @@ def compare_data(specification_yaml, tango_device_yaml):
         issues.append("\n")
     # Commands
     issues.extend(
-        check_data_differences(
+        check_list_dict_differences(
             specification_data["meta"]["commands"],
             tango_device_data["meta"]["commands"],
             "Command",
@@ -125,7 +125,7 @@ def compare_data(specification_yaml, tango_device_yaml):
         issues.append("\n")
     # Attributes
     issues.extend(
-        check_data_differences(
+        check_list_dict_differences(
             specification_data["meta"]["attributes"],
             tango_device_data["meta"]["attributes"],
             "Attribute",
@@ -145,7 +145,7 @@ def compare_data(specification_yaml, tango_device_yaml):
     return "\n".join(issues)
 
 
-def check_data_differences(spec_data, dev_data, type_str):
+def check_list_dict_differences(spec_data, dev_data, type_str):
     """Compare Commands and Attributes in the parsed YAML
 
     Parameters
@@ -192,34 +192,94 @@ def check_data_differences(spec_data, dev_data, type_str):
     if spec_data_names != dev_data_names:
         diff = spec_data_names.difference(dev_data_names)
         issues.append(
-            "{} discrepancy, [{}] specified but missing in device".format(
+            "{} differs, [{}] specified but missing in device".format(
                 type_str, ",".join(diff)
             )
         )
 
         diff = dev_data_names.difference(spec_data_names)
         issues.append(
-            "{} discrepancy, [{}] present in device but not specified".format(
+            "{} differs, [{}] present in device but not specified".format(
                 type_str, ",".join(diff)
             )
         )
 
-    # Check that the commands/attributes that are in both the spec and device
+    # Check that the commands/attributes (by name) that are in both the spec and device
     # are the same
     mutual_names = spec_data_names.intersection(dev_data_names)
     mutual_spec_data = filter(lambda x: x["name"] in mutual_names, spec_data)
     mutual_dev_data = filter(lambda x: x["name"] in mutual_names, dev_data)
-
     for spec, dev in zip(mutual_spec_data, mutual_dev_data):
-        if spec != dev:
-            issues.append("{} details differ for {}:".format(type_str, spec["name"]))
-            for key in spec.keys():
-                if dev[key] != spec[key]:
-                    issues.append(
-                        "\t{}:\n\t\tspecification: {}, device: {}".format(
-                            key, spec[key], dev[key]
-                        )
+        issues.extend(check_single_dict_differences(spec, dev, type_str))
+
+    return issues
+
+
+def check_single_dict_differences(spec, dev, type_str):
+    """Compare a single atribute/property
+
+    Parameters
+    ----------
+    spec : dict
+        A single Attribute/Command dictionary form the specficication
+        E.g {'disp_level': 'OPERATOR',
+             'doc_in': 'ON/OFF',
+             'doc_out': 'Uninitialised',
+             'dtype_in': 'DevBoolean',
+             'dtype_out': 'DevVoid',
+             'name': 'Capture'}
+
+    dev : dict
+        A single Attribute/Command dictionary form the device
+        E.g {'disp_level': 'OPERATOR',
+             'doc_in': 'ON/OFF',
+             'doc_out': 'Uninitialised',
+             'dtype_in': 'DevBoolean',
+             'dtype_out': 'DevVoid',
+             'name': 'Capture'}
+
+    type_str : str
+        Either "Command" or "Attribute"
+
+    Returns
+    -------
+    list
+        A list of strings describing the issues, empty list for no issues
+    """
+    assert spec["name"] == dev["name"]
+    issues = []
+
+    if spec != dev:
+        spec_keys = set(spec.keys())
+        dev_keys = set(dev.keys())
+
+        keys_not_in_spec = spec_keys.difference(dev_keys)
+        keys_not_in_dev = dev_keys.difference(spec_keys)
+        mutual_keys = spec_keys.intersection(dev_keys)
+
+        if keys_not_in_spec:
+            issues.append(
+                "{} [{}] differs, specification has keys [{}] but it's not in device".format(
+                    type_str, spec["name"], ",".join(keys_not_in_spec)
+                )
+            )
+
+        if keys_not_in_dev:
+            issues.append(
+                "{} [{}] differs, device has keys [{}] but it's not in the specification".format(
+                    type_str, spec["name"], ",".join(keys_not_in_dev)
+                )
+            )
+
+        for key in mutual_keys:
+            if dev[key] != spec[key]:
+                issues.append("{} [{}] differs:".format(type_str, spec["name"]))
+                issues.append(
+                    "\t{}:\n\t\tspecification: {}, device: {}".format(
+                        key, spec[key], dev[key]
                     )
+                )
+
     return issues
 
 
@@ -259,14 +319,14 @@ def check_property_differences(spec_properties, dev_properties):
     if spec_props != dev_props:
         diff = spec_props.difference(dev_props)
         issues.append(
-            "Property discrepancy, [{}] specified but missing in device".format(
+            "Property [{}] differs, specified but missing in device".format(
                 ",".join(diff)
             )
         )
 
         diff = dev_props.difference(spec_props)
         issues.append(
-            "Property discrepancy, [{}] present in device but not specified".format(
+            "Property [{}] differs, present in device but not specified".format(
                 ",".join(diff)
             )
         )

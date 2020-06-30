@@ -63,7 +63,7 @@ DICT_A = """
           },
           {
             "disp_level": "EXPERT",
-            "doc_in": "Uninitialised",
+            "doc_in_A": "Uninitialised",
             "doc_out": "Uninitialised",
             "dtype_in": "DevVoid",
             "dtype_out": "DevVoid",
@@ -152,7 +152,7 @@ DICT_B = """
           {
             "disp_level": "EXPERT",
             "doc_in": "Uninitialised",
-            "doc_out": "Uninitialised",
+            "doc_out_B": "Uninitialised",
             "dtype_in": "DevVoid",
             "dtype_out": "DevVoid",
             "name": "ClearOldTasks",
@@ -190,40 +190,38 @@ def test_validate():
     dev_dict = DICT_B
     result = compare_data(spec_dict, dev_dict)
     assert (
-        "Class discrepancy, specified 'DishMaster_A', but device has 'DishMaster_B'"
+        "Class differs, specified 'DishMaster_A', but device has 'DishMaster_B'" in result
+    )
+    assert (
+        "Command differs, [ClearTaskHistory_A] specified but missing in device" in result
+    )
+    assert (
+        "Command differs, [ClearTaskHistory_B] present in device but not specified"
         in result
     )
     assert (
-        "Command discrepancy, [ClearTaskHistory_A] specified but missing in device"
-        in result
-    )
-    assert (
-        "Command discrepancy, [ClearTaskHistory_B] present in device but not specified"
-        in result
-    )
-    assert (
-        "Command details differ for Capture:\n\tdisp_level:"
+        "Command [Capture] differs:\n\tdisp_level:"
         "\n\t\tspecification: OPERATOR_A, device: OPERATOR_B"
     ) in result
 
     assert (
-        "Attribute discrepancy, [loggingLevelElement_A] specified but missing in device"
+        "Attribute differs, [loggingLevelElement_A] specified but missing in device"
     ) in result
 
     assert (
         (
-            "Attribute discrepancy, [loggingLevelElement_B] present"
+            "Attribute differs, [loggingLevelElement_B] present"
             " in device but not specified"
         )
     ) in result
 
     assert (
-        ("Property discrepancy, [ControlModeDefault_A] specified but missing in device")
+        ("Property [ControlModeDefault_A] differs, specified but missing in device")
     ) in result
 
     assert (
         (
-            "Property discrepancy, [ControlModeDefault_B] present in device but "
+            "Property [ControlModeDefault_B] differs, present in device but "
             "not specified"
         )
     ) in result
@@ -233,40 +231,38 @@ def test_validate():
     result = compare_data(spec_dict, dev_dict)
 
     assert (
-        "Class discrepancy, specified 'DishMaster_B', but device has 'DishMaster_A'"
+        "Class differs, specified 'DishMaster_B', but device has 'DishMaster_A'" in result
+    )
+    assert (
+        "Command differs, [ClearTaskHistory_B] specified but missing in device" in result
+    )
+    assert (
+        "Command differs, [ClearTaskHistory_A] present in device but not specified"
         in result
     )
     assert (
-        "Command discrepancy, [ClearTaskHistory_B] specified but missing in device"
-        in result
-    )
-    assert (
-        "Command discrepancy, [ClearTaskHistory_A] present in device but not specified"
-        in result
-    )
-    assert (
-        "Command details differ for Capture:\n\tdisp_level:"
+        "Command [Capture] differs:\n\tdisp_level:"
         "\n\t\tspecification: OPERATOR_B, device: OPERATOR_A"
     ) in result
 
     assert (
-        "Attribute discrepancy, [loggingLevelElement_B] specified but missing in device"
+        "Attribute differs, [loggingLevelElement_B] specified but missing in device"
     ) in result
 
     assert (
         (
-            "Attribute discrepancy, [loggingLevelElement_A] present"
+            "Attribute differs, [loggingLevelElement_A] present"
             " in device but not specified"
         )
     ) in result
 
     assert (
-        ("Property discrepancy, [ControlModeDefault_B] specified but missing in device")
+        ("Property [ControlModeDefault_B] differs, specified but missing in device")
     ) in result
 
     assert (
         (
-            "Property discrepancy, [ControlModeDefault_A] present in device but "
+            "Property [ControlModeDefault_A] differs, present in device but "
             "not specified"
         )
     ) in result
