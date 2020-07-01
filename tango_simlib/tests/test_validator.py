@@ -50,6 +50,26 @@ DICT_A = """
             "writable": "READ_WRITE",
             "writable_attr_name": "logginglevelelement",
           },
+          {
+            "data_format": "SCALAR",
+            "data_type": "DevLong",
+            "description": "Current  logging level to logging target for this device",
+            "disp_level": "OPERATOR",
+            "display_unit": "No display unit",
+            "format": "%d",
+            "label": "loggingLevel",
+            "max_alarm": "Not specified",
+            "max_dim_x": 1,
+            "max_dim_y": 0,
+            "max_value": "Not specified",
+            "min_alarm": "Not specified",
+            "min_value": "Not specified",
+            "name": "OtherAttribute",
+            "standard_unit": "No standard unit",
+            "unit": "",
+            "writable": "READ_WRITE",
+            "writable_attr_name": "logginglevel",
+          },
         ],
       "commands":
         [
@@ -76,6 +96,14 @@ DICT_A = """
             "dtype_in": "DevVoid",
             "dtype_out": "DevVoid",
             "name": "ClearTaskHistory_A",
+          },
+          {
+            "disp_level": "EXPERT",
+            "doc_in": "Uninitialised",
+            "doc_out": "Uninitialised",
+            "dtype_in": "DevVoid",
+            "dtype_out": "DevVoid",
+            "name": "OtherCommand",
           },
         ],
       "properties":
@@ -138,6 +166,26 @@ DICT_B = """
             "writable": "READ_WRITE",
             "writable_attr_name": "logginglevelelement",
           },
+          {
+            "data_format": "SCALAR",
+            "data_type": "DevLong",
+            "description": "Current  logging level to logging target for this device",
+            "disp_level": "OPERATOR",
+            "display_unit": "No display unit",
+            "format": "%d",
+            "label": "loggingLevel",
+            "max_alarm": "Not specified",
+            "max_dim_x": 1,
+            "max_dim_y": 0,
+            "max_value": "Not specified",
+            "min_alarm": "Not specified",
+            "min_value": "Not specified",
+            "name": "OtherAttribute",
+            "standard_unit": "No standard unit",
+            "unit": "",
+            "writable": "READ_WRITE",
+            "writable_attr_name": "logginglevel",
+          },
         ],
       "commands":
         [
@@ -164,6 +212,14 @@ DICT_B = """
             "dtype_in": "DevVoid",
             "dtype_out": "DevVoid",
             "name": "ClearTaskHistory_B",
+          },
+          {
+            "disp_level": "EXPERT",
+            "doc_in": "Uninitialised",
+            "doc_out": "Uninitialised",
+            "dtype_in": "DevVoid",
+            "dtype_out": "DevVoid",
+            "name": "OtherCommand",
           },
         ],
       "properties":
@@ -204,6 +260,9 @@ def test_validate():
         "\n\t\tspecification: OPERATOR_A, device: OPERATOR_B"
     ) in result
 
+    # Same in both
+    assert "OtherCommand" not in result
+
     assert (
         "Attribute differs, [loggingLevelElement_A] specified but missing in device"
     ) in result
@@ -215,6 +274,9 @@ def test_validate():
         )
     ) in result
 
+    # Same in both
+    assert "OtherAttribute" not in result
+
     assert (
         ("Property [ControlModeDefault_A] differs, specified but missing in device")
     ) in result
@@ -225,6 +287,9 @@ def test_validate():
             "not specified"
         )
     ) in result
+
+    # Same in both
+    assert "AdminModeDefault" not in result
 
     spec_dict = DICT_B
     dev_dict = DICT_A
@@ -245,6 +310,9 @@ def test_validate():
         "\n\t\tspecification: OPERATOR_B, device: OPERATOR_A"
     ) in result
 
+    # Same in both
+    assert "OtherCommand" not in result
+
     assert (
         "Attribute differs, [loggingLevelElement_B] specified but missing in device"
     ) in result
@@ -256,6 +324,8 @@ def test_validate():
         )
     ) in result
 
+    assert "OtherAttribute" not in result
+
     assert (
         ("Property [ControlModeDefault_B] differs, specified but missing in device")
     ) in result
@@ -266,3 +336,6 @@ def test_validate():
             "not specified"
         )
     ) in result
+
+    # Same in both
+    assert "AdminModeDefault" not in result
