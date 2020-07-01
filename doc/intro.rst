@@ -399,3 +399,63 @@ Example
           - name: LoggingLevelDefault
           - name: LoggingTargetsDefault
           ...
+
+
+Validation
+----------
+
+The conformance to a specification can be checked against a Tango device.
+When the optional `-bidirectional` flag is added the differences that are on the device
+and not in the specification are also listed.
+
+.. code-block:: bash
+
+    $ tango-yaml validate -h
+
+      usage: tango_yaml validate [-h] (-url URL | -path PATH) [-bidirectional]
+                                tango_device_name
+
+      positional arguments:
+        tango_device_name  Tango device name in the format domain/family/member.
+                          TANGO_HOST env variable has to be set
+
+      optional arguments:
+        -h, --help         show this help message and exit
+        -url URL           The URL to a YAML specification file
+        -path PATH         The file path to a YAML specification file
+        -bidirectional     When bidirectional is included, any details on the device
+                          that is not in the spec is also listed.
+
+Example
+
+.. code-block:: bash
+
+    $ tango-yaml validate -path ./DishMaster.yaml  mid_d0001/elt/master
+
+      Command differs, [SetDSStandbyFPModeTask] specified but missing in device
+      Command [GetVersionInfo] differs:
+              doc_out:
+                      specification: Uninitialised
+                      device: Version strings
+      Command [GetVersionInfo] differs:
+              dtype_out:
+                      specification: DevString
+                      device: DevVarStringArray
+      Command [Scan] differs:
+              doc_in:
+                      specification: [timestamp]
+                      device: The timestamp indicates the time, in UTC
+      Attribute differs, [loggingLevelElement] specified but missing in device
+      Attribute [adminMode] differs:
+              description:
+                      specification: No description
+                      device: The admin mode reported for this device.
+      Attribute [controlMode] differs:
+              description:
+                      specification: No description
+                      device: The control mode of the device. REMOTE, LOCAL
+      Attribute [versionId] differs:
+              description:
+                      specification: LMC version id (from git tag)
+                      device: Version Id of this device
+      Property [LoggerInitPollPeriod] differs, specified but missing in device
