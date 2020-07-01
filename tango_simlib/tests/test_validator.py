@@ -246,30 +246,36 @@ def test_validate():
     dev_dict = DICT_B
     bi_directional_result = compare_data(spec_dict, dev_dict, 1)
     single_direction_result = compare_data(spec_dict, dev_dict, 0)
-    assert ("Class differs, specified 'DishMaster_A', "
-            "but device has 'DishMaster_B'") in bi_directional_result
+    assert (
+        "Class differs, specified 'DishMaster_A', but device has 'DishMaster_B'"
+    ) in bi_directional_result
 
-    assert ("Command differs, [ClearTaskHistory_A] specified "
-            "but missing in device") in bi_directional_result
+    assert (
+        "Command differs, [ClearTaskHistory_A] specified but missing in device"
+    ) in bi_directional_result
 
-    command_result = ("Command differs, [ClearTaskHistory_B] present in device but not"
-                      " specified")
+    command_result = (
+        "Command differs, [ClearTaskHistory_B] present in device but not specified"
+    )
     assert command_result in bi_directional_result
     assert command_result not in single_direction_result
 
     assert (
         "Command [Capture] differs:\n\tdisp_level:"
-        "\n\t\tspecification: OPERATOR_A, device: OPERATOR_B"
+        "\n\t\tspecification: OPERATOR_A\n\t\tdevice: OPERATOR_B"
     ) in bi_directional_result
 
     # Same in both
     assert "OtherCommand" not in bi_directional_result
 
-    assert ("Attribute differs, [loggingLevelElement_A] specified but"
-            " missing in device") in bi_directional_result
+    assert (
+        "Attribute differs, [loggingLevelElement_A] specified but missing in device"
+    ) in bi_directional_result
 
-    attr_result = ("Attribute differs, [loggingLevelElement_B] present"
-                   " in device but not specified")
+    attr_result = (
+        "Attribute differs, [loggingLevelElement_B] present"
+        " in device but not specified"
+    )
 
     assert attr_result in bi_directional_result
     assert attr_result not in single_direction_result
@@ -281,8 +287,9 @@ def test_validate():
         "Property [ControlModeDefault_A] differs, specified but missing in device"
     ) in bi_directional_result
 
-    prop_res = ("Property [ControlModeDefault_B] differs, present in device but "
-                "not specified")
+    prop_res = (
+        "Property [ControlModeDefault_B] differs, present in device but not specified"
+    )
     assert prop_res in bi_directional_result
     assert prop_res not in single_direction_result
 
@@ -307,7 +314,7 @@ def test_validate():
     )
     assert (
         "Command [Capture] differs:\n\tdisp_level:"
-        "\n\t\tspecification: OPERATOR_B, device: OPERATOR_A"
+        "\n\t\tspecification: OPERATOR_B\n\t\tdevice: OPERATOR_A"
     ) in bi_directional_result
 
     # Same in both

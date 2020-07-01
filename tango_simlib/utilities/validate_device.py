@@ -35,8 +35,9 @@ def validate_device_from_url(tango_device_name, url_to_yaml_file, bidirectional)
     """
     response = requests.get(url_to_yaml_file, allow_redirects=True)
     response.raise_for_status()
-    return compare_data(response.text, get_device_specification(tango_device_name),
-                        bidirectional)
+    return compare_data(
+        response.text, get_device_specification(tango_device_name), bidirectional
+    )
 
 
 def validate_device_from_path(tango_device_name, path_to_yaml_file, bidirectional):
@@ -63,8 +64,9 @@ def validate_device_from_path(tango_device_name, path_to_yaml_file, bidirectiona
     file_data = ""
     with open(str(file_path), "r") as data_file:
         file_data = data_file.read()
-    return compare_data(file_data, get_device_specification(tango_device_name),
-                        bidirectional)
+    return compare_data(
+        file_data, get_device_specification(tango_device_name), bidirectional
+    )
 
 
 def get_device_specification(tango_device_name):
@@ -126,7 +128,7 @@ def compare_data(specification_yaml, tango_device_yaml, bidirectional):
             specification_data["meta"]["commands"],
             tango_device_data["meta"]["commands"],
             "Command",
-            bidirectional
+            bidirectional,
         )
     )
 
@@ -136,7 +138,7 @@ def compare_data(specification_yaml, tango_device_yaml, bidirectional):
             specification_data["meta"]["attributes"],
             tango_device_data["meta"]["attributes"],
             "Attribute",
-            bidirectional
+            bidirectional,
         )
     )
 
@@ -145,7 +147,7 @@ def compare_data(specification_yaml, tango_device_yaml, bidirectional):
         check_property_differences(
             specification_data["meta"]["properties"],
             tango_device_data["meta"]["properties"],
-            bidirectional
+            bidirectional,
         )
     )
 
@@ -271,9 +273,7 @@ def check_single_dict_differences(spec, dev, type_str, bidirectional):
         if keys_not_in_spec:
             issues.append(
                 "{} [{}] differs, specification has keys [{}] but it's "
-                "not in device".format(
-                    type_str, spec["name"], ",".join(keys_not_in_spec)
-                )
+                "not in device".format(type_str, spec["name"], ",".join(keys_not_in_spec))
             )
 
         if keys_not_in_dev and bidirectional:
@@ -288,7 +288,7 @@ def check_single_dict_differences(spec, dev, type_str, bidirectional):
             if dev[key] != spec[key]:
                 issues.append("{} [{}] differs:".format(type_str, spec["name"]))
                 issues.append(
-                    "\t{}:\n\t\tspecification: {}, device: {}".format(
+                    "\t{}:\n\t\tspecification: {}\n\t\tdevice: {}".format(
                         key, spec[key], dev[key]
                     )
                 )
