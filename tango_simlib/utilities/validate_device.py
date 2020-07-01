@@ -32,8 +32,7 @@ def validate_device_from_url(tango_device_name, url_to_yaml_file):
     """
     response = requests.get(url_to_yaml_file, allow_redirects=True)
     response.raise_for_status()
-    content = response.content.decode(response.encoding)
-    return compare_data(content, get_device_specification(tango_device_name))
+    return compare_data(response.text, get_device_specification(tango_device_name))
 
 
 def validate_device_from_path(tango_device_name, path_to_yaml_file):
@@ -210,7 +209,7 @@ def check_list_dict_differences(spec_data, dev_data, type_str):
 
 
 def check_single_dict_differences(spec, dev, type_str):
-    """Compare a single atribute/property
+    """Compare a single attribute/property
 
     Parameters
     ----------

@@ -30,7 +30,7 @@ def _validate_device(args):
     Returns
     -------
     str
-        A string describing the differences or an empty string if it conforms
+        A string indicating whether there are differences or not
     """
     result = ""
     if args.url:
@@ -109,7 +109,7 @@ def main():
 
     validate_parser = subparsers.add_parser(
         "validate",
-        help="Check conformance of a Tango device to specification in YAML format",
+        help="Check conformance of a Tango device against a specification in YAML format",
     )
     validate_parser.add_argument(
         "tango_device_name",
