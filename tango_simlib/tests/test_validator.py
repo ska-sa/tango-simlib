@@ -13,7 +13,7 @@ DICT_A = """
           {
             "data_format": "SCALAR_A",
             "data_type": "DevLong_A",
-            "description": "Current  logging level to Central logging target for this device",
+            "description": "Current  logging level to Central logging target",
             "disp_level": "OPERATOR",
             "display_unit": "No display unit",
             "format": "%d",
@@ -33,7 +33,7 @@ DICT_A = """
           {
             "data_format": "SCALAR",
             "data_type": "DevLong",
-            "description": "Current  logging level to Element logging target for this device",
+            "description": "Current  logging level to Element logging target",
             "disp_level": "OPERATOR",
             "display_unit": "No display unit",
             "format": "%d",
@@ -53,7 +53,7 @@ DICT_A = """
           {
             "data_format": "SCALAR",
             "data_type": "DevLong",
-            "description": "Current  logging level to logging target for this device",
+            "description": "Current  logging level to logging target",
             "disp_level": "OPERATOR",
             "display_unit": "No display unit",
             "format": "%d",
@@ -129,7 +129,7 @@ DICT_B = """
           {
             "data_format": "SCALAR_B",
             "data_type": "DevLong_B",
-            "description": "Current  logging level to Central logging target for this device",
+            "description": "Current  logging level to Central logging target",
             "disp_level": "OPERATOR",
             "display_unit": "No display unit",
             "format": "%d",
@@ -149,7 +149,7 @@ DICT_B = """
           {
             "data_format": "SCALAR",
             "data_type": "DevLong",
-            "description": "Current  logging level to Element logging target for this device",
+            "description": "Current  logging level to Element logging target",
             "disp_level": "OPERATOR",
             "display_unit": "No display unit",
             "format": "%d",
@@ -169,7 +169,7 @@ DICT_B = """
           {
             "data_format": "SCALAR",
             "data_type": "DevLong",
-            "description": "Current  logging level to logging target for this device",
+            "description": "Current  logging level to logging target",
             "disp_level": "OPERATOR",
             "display_unit": "No display unit",
             "format": "%d",
@@ -240,102 +240,102 @@ def test_validate():
     """Test various combinations"""
 
     # If it's the same then no differences recorded
-    assert not compare_data(DICT_A, DICT_A)
+    assert not compare_data(DICT_A, DICT_A, 1)
 
     spec_dict = DICT_A
     dev_dict = DICT_B
-    result = compare_data(spec_dict, dev_dict)
-    assert (
-        "Class differs, specified 'DishMaster_A', but device has 'DishMaster_B'" in result
-    )
-    assert (
-        "Command differs, [ClearTaskHistory_A] specified but missing in device" in result
-    )
-    assert (
-        "Command differs, [ClearTaskHistory_B] present in device but not specified"
-        in result
-    )
+    bi_directional_result = compare_data(spec_dict, dev_dict, 1)
+    single_direction_result = compare_data(spec_dict, dev_dict, 0)
+    assert ("Class differs, specified 'DishMaster_A', "
+            "but device has 'DishMaster_B'") in bi_directional_result
+
+    assert ("Command differs, [ClearTaskHistory_A] specified "
+            "but missing in device") in bi_directional_result
+
+    command_result = ("Command differs, [ClearTaskHistory_B] present in device but not"
+                      " specified")
+    assert command_result in bi_directional_result
+    assert command_result not in single_direction_result
+
     assert (
         "Command [Capture] differs:\n\tdisp_level:"
         "\n\t\tspecification: OPERATOR_A, device: OPERATOR_B"
-    ) in result
+    ) in bi_directional_result
 
     # Same in both
-    assert "OtherCommand" not in result
+    assert "OtherCommand" not in bi_directional_result
 
-    assert (
-        "Attribute differs, [loggingLevelElement_A] specified but missing in device"
-    ) in result
+    assert ("Attribute differs, [loggingLevelElement_A] specified but"
+            " missing in device") in bi_directional_result
 
-    assert (
-        (
-            "Attribute differs, [loggingLevelElement_B] present"
-            " in device but not specified"
-        )
-    ) in result
+    attr_result = ("Attribute differs, [loggingLevelElement_B] present"
+                   " in device but not specified")
+
+    assert attr_result in bi_directional_result
+    assert attr_result not in single_direction_result
 
     # Same in both
-    assert "OtherAttribute" not in result
+    assert "OtherAttribute" not in bi_directional_result
 
     assert (
-        ("Property [ControlModeDefault_A] differs, specified but missing in device")
-    ) in result
+        "Property [ControlModeDefault_A] differs, specified but missing in device"
+    ) in bi_directional_result
 
-    assert (
-        (
-            "Property [ControlModeDefault_B] differs, present in device but "
-            "not specified"
-        )
-    ) in result
+    prop_res = ("Property [ControlModeDefault_B] differs, present in device but "
+                "not specified")
+    assert prop_res in bi_directional_result
+    assert prop_res not in single_direction_result
 
     # Same in both
-    assert "AdminModeDefault" not in result
+    assert "AdminModeDefault" not in bi_directional_result
 
     spec_dict = DICT_B
     dev_dict = DICT_A
-    result = compare_data(spec_dict, dev_dict)
+    bi_directional_result = compare_data(spec_dict, dev_dict, 1)
 
     assert (
-        "Class differs, specified 'DishMaster_B', but device has 'DishMaster_A'" in result
+        "lass differs, specified 'DishMaster_B', but device has 'DishMaster_A'"
+        in bi_directional_result
     )
     assert (
-        "Command differs, [ClearTaskHistory_B] specified but missing in device" in result
+        "Command differs, [ClearTaskHistory_B] specified but missing in device"
+        in bi_directional_result
     )
     assert (
         "Command differs, [ClearTaskHistory_A] present in device but not specified"
-        in result
+        in bi_directional_result
     )
     assert (
         "Command [Capture] differs:\n\tdisp_level:"
         "\n\t\tspecification: OPERATOR_B, device: OPERATOR_A"
-    ) in result
+    ) in bi_directional_result
 
     # Same in both
-    assert "OtherCommand" not in result
+    assert "OtherCommand" not in bi_directional_result
 
     assert (
         "Attribute differs, [loggingLevelElement_B] specified but missing in device"
-    ) in result
+    ) in bi_directional_result
 
     assert (
         (
             "Attribute differs, [loggingLevelElement_A] present"
             " in device but not specified"
         )
-    ) in result
+    ) in bi_directional_result
 
-    assert "OtherAttribute" not in result
+    assert "OtherAttribute" not in bi_directional_result
 
     assert (
         ("Property [ControlModeDefault_B] differs, specified but missing in device")
-    ) in result
+    ) in bi_directional_result
 
     assert (
         (
             "Property [ControlModeDefault_A] differs, present in device but "
             "not specified"
         )
-    ) in result
+    ) in bi_directional_result
 
     # Same in both
-    assert "AdminModeDefault" not in result
+    assert "AdminModeDefault" not in bi_directional_result

@@ -14,7 +14,7 @@ from tango_simlib.utilities.tango_device_parser import TangoDeviceParser
 from tango_simlib.tango_yaml_tools.base import TangoToYAML
 
 
-def validate_device_from_url(tango_device_name, url_to_yaml_file):
+def validate_device_from_url(tango_device_name, url_to_yaml_file, bidirectional):
     """Retrieves the YAML from the URL and checks conformance against the Tango device.
 
     Parameters
@@ -25,6 +25,9 @@ def validate_device_from_url(tango_device_name, url_to_yaml_file):
     tango_device_name : str
         Tango device name in the domain/family/member format
 
+    bidirectional: bool
+        Whether to include details on the device that is not in the specification
+
     Returns
     -------
     str
@@ -32,10 +35,11 @@ def validate_device_from_url(tango_device_name, url_to_yaml_file):
     """
     response = requests.get(url_to_yaml_file, allow_redirects=True)
     response.raise_for_status()
-    return compare_data(response.text, get_device_specification(tango_device_name))
+    return compare_data(response.text, get_device_specification(tango_device_name),
+                        bidirectional)
 
 
-def validate_device_from_path(tango_device_name, path_to_yaml_file):
+def validate_device_from_path(tango_device_name, path_to_yaml_file, bidirectional):
     """Retrieves the YAML from the file and checks conformance against the Tango device.
 
     Parameters
@@ -45,6 +49,9 @@ def validate_device_from_path(tango_device_name, path_to_yaml_file):
 
     tango_device_name : str
         Tango device name in the domain/family/member format
+
+    bidirectional: bool
+        Whether to include details on the device that is not in the specification
 
     Returns
     -------
@@ -56,7 +63,8 @@ def validate_device_from_path(tango_device_name, path_to_yaml_file):
     file_data = ""
     with open(str(file_path), "r") as data_file:
         file_data = data_file.read()
-    return compare_data(file_data, get_device_specification(tango_device_name))
+    return compare_data(file_data, get_device_specification(tango_device_name),
+                        bidirectional)
 
 
 def get_device_specification(tango_device_name):
@@ -76,7 +84,7 @@ def get_device_specification(tango_device_name):
     return parser.build_yaml_from_device(tango_device_name)
 
 
-def compare_data(specification_yaml, tango_device_yaml):
+def compare_data(specification_yaml, tango_device_yaml, bidirectional):
     """Compare 2 sets of YAML built from the specification and from the device
 
     Parameters
@@ -86,6 +94,9 @@ def compare_data(specification_yaml, tango_device_yaml):
 
     tango_device_yaml : str
         The Tango device in YAML format
+
+    bidirectional: bool
+        Whether to include details on the device that is not in the specification
 
     Returns
     -------
@@ -115,6 +126,7 @@ def compare_data(specification_yaml, tango_device_yaml):
             specification_data["meta"]["commands"],
             tango_device_data["meta"]["commands"],
             "Command",
+            bidirectional
         )
     )
 
@@ -124,6 +136,7 @@ def compare_data(specification_yaml, tango_device_yaml):
             specification_data["meta"]["attributes"],
             tango_device_data["meta"]["attributes"],
             "Attribute",
+            bidirectional
         )
     )
 
@@ -132,13 +145,14 @@ def compare_data(specification_yaml, tango_device_yaml):
         check_property_differences(
             specification_data["meta"]["properties"],
             tango_device_data["meta"]["properties"],
+            bidirectional
         )
     )
 
     return "\n".join(issues)
 
 
-def check_list_dict_differences(spec_data, dev_data, type_str):
+def check_list_dict_differences(spec_data, dev_data, type_str, bidirectional):
     """Compare Commands and Attributes in the parsed YAML
 
     Parameters
@@ -170,6 +184,9 @@ def check_list_dict_differences(spec_data, dev_data, type_str):
     type_str : str
         Either "Command" or "Attribute"
 
+    bidirectional: bool
+        Whether to include details on the device that is not in the specification
+
     Returns
     -------
     list
@@ -190,12 +207,13 @@ def check_list_dict_differences(spec_data, dev_data, type_str):
             )
         )
 
-        diff = dev_data_names.difference(spec_data_names)
-        issues.append(
-            "{} differs, [{}] present in device but not specified".format(
-                type_str, ",".join(diff)
+        if bidirectional:
+            diff = dev_data_names.difference(spec_data_names)
+            issues.append(
+                "{} differs, [{}] present in device but not specified".format(
+                    type_str, ",".join(diff)
+                )
             )
-        )
 
     # Check that the commands/attributes (by name) that are in both the spec and device
     # are the same
@@ -203,12 +221,12 @@ def check_list_dict_differences(spec_data, dev_data, type_str):
     mutual_spec_data = filter(lambda x: x["name"] in mutual_names, spec_data)
     mutual_dev_data = filter(lambda x: x["name"] in mutual_names, dev_data)
     for spec, dev in zip(mutual_spec_data, mutual_dev_data):
-        issues.extend(check_single_dict_differences(spec, dev, type_str))
+        issues.extend(check_single_dict_differences(spec, dev, type_str, bidirectional))
 
     return issues
 
 
-def check_single_dict_differences(spec, dev, type_str):
+def check_single_dict_differences(spec, dev, type_str, bidirectional):
     """Compare a single attribute/property
 
     Parameters
@@ -252,14 +270,16 @@ def check_single_dict_differences(spec, dev, type_str):
 
         if keys_not_in_spec:
             issues.append(
-                "{} [{}] differs, specification has keys [{}] but it's not in device".format(
+                "{} [{}] differs, specification has keys [{}] but it's "
+                "not in device".format(
                     type_str, spec["name"], ",".join(keys_not_in_spec)
                 )
             )
 
-        if keys_not_in_dev:
+        if keys_not_in_dev and bidirectional:
             issues.append(
-                "{} [{}] differs, device has keys [{}] but it's not in the specification".format(
+                "{} [{}] differs, device has keys [{}] but it's "
+                "not in the specification".format(
                     type_str, spec["name"], ",".join(keys_not_in_dev)
                 )
             )
@@ -276,7 +296,7 @@ def check_single_dict_differences(spec, dev, type_str):
     return issues
 
 
-def check_property_differences(spec_properties, dev_properties):
+def check_property_differences(spec_properties, dev_properties, bidirectional):
     """Compare properties in the parsed YAML
 
     Parameters
@@ -317,11 +337,12 @@ def check_property_differences(spec_properties, dev_properties):
             )
         )
 
-        diff = dev_props.difference(spec_props)
-        issues.append(
-            "Property [{}] differs, present in device but not specified".format(
-                ",".join(diff)
+        if bidirectional:
+            diff = dev_props.difference(spec_props)
+            issues.append(
+                "Property [{}] differs, present in device but not specified".format(
+                    ",".join(diff)
+                )
             )
-        )
 
     return issues

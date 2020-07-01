@@ -3,8 +3,8 @@
 #                                                                                       #
 # BSD license - see LICENSE.txt for details                                             #
 #########################################################################################
-"""Entrypoint for the script to parse a Tango file representation or a running device into
-   YAML"""
+"""Entrypoint for the script to parse a Tango file representation or a running device
+   into YAML"""
 from __future__ import absolute_import, division, print_function
 
 import argparse
@@ -34,9 +34,13 @@ def _validate_device(args):
     """
     result = ""
     if args.url:
-        result = validate_device_from_url(args.tango_device_name, args.url)
+        result = validate_device_from_url(
+            args.tango_device_name, args.url, args.bidirectional
+        )
     else:
-        result = validate_device_from_path(args.tango_device_name, args.path)
+        result = validate_device_from_path(
+            args.tango_device_name, args.path, args.bidirectional
+        )
 
     if not result:
         source = args.path if args.path else args.url
@@ -77,8 +81,8 @@ def main():
         prog="tango_yaml",
         description=(
             "This program translates various file formats that "
-            "describe Tango devices to YAML. Or validates the conformance of a device "
-            "against a specification."
+            "describe Tango devices to YAML. Or validates the conformance of a device"
+            " against a specification."
         ),
     )
     subparsers = parser.add_subparsers(help="sub command help")
@@ -109,7 +113,10 @@ def main():
 
     validate_parser = subparsers.add_parser(
         "validate",
-        help="Check conformance of a Tango device against a specification in YAML format",
+        help=(
+            "Check conformance of a Tango device against a specification"
+            " in YAML format"
+        ),
     )
     validate_parser.add_argument(
         "tango_device_name",
@@ -125,6 +132,15 @@ def main():
     )
     source_group.add_argument(
         "-path", type=str, help="The file path to a YAML specification file",
+    )
+
+    validate_parser.add_argument(
+        "-bidirectional",
+        action="store_true",
+        help=(
+            "When bidirectional is included, any details on the "
+            "device that is not in the spec is also listed."
+        ),
     )
 
     args = parser.parse_args()
