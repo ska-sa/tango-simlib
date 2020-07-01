@@ -41,7 +41,7 @@ def _validate_device(args):
     if not result:
         source = args.path if args.path else args.url
         result = "No differences between device {} and specification {}".format(
-            args.tango_device, source
+            args.tango_device_name, source
         )
     return result
 
