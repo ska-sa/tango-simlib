@@ -23,7 +23,8 @@ def validate_device_from_url(tango_device_name, url_to_yaml_file, bidirectional)
         The URL to the specification file
 
     tango_device_name : str
-        Tango device name in the domain/family/member format
+        Tango device name in the domain/family/member format or the
+        FQDN tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
 
     bidirectional: bool
         Whether to include details on the device that is not in the specification
@@ -49,7 +50,8 @@ def validate_device_from_path(tango_device_name, path_to_yaml_file, bidirectiona
         The path to the specification file
 
     tango_device_name : str
-        Tango device name in the domain/family/member format
+        Tango device name in the domain/family/member format or the
+        FQDN tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
 
     bidirectional: bool
         Whether to include details on the device that is not in the specification
@@ -75,7 +77,8 @@ def get_device_specification(tango_device_name):
     Parameters
     ----------
     tango_device_name : str
-        Tango device name in the domain/family/member format
+        Tango device name in the domain/family/member format or the
+        FQDN tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
 
     Returns
     -------
@@ -254,6 +257,9 @@ def check_single_dict_differences(spec, dev, type_str, bidirectional):
     type_str : str
         Either "Command" or "Attribute"
 
+    bidirectional: bool
+        Whether to include details on the device that is not in the specification
+
     Returns
     -------
     list
@@ -318,6 +324,9 @@ def check_property_differences(spec_properties, dev_properties, bidirectional):
              {'name': 'CentralLoggerEnabledDefault'},
              {'name': 'ConfigureTaskTimeout'},
              {'name': 'ControlModeDefault_B'}]
+
+    bidirectional: bool
+        Whether to include details on the device that is not in the specification
 
     Returns
     -------

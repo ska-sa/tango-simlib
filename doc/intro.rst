@@ -345,16 +345,17 @@ Tango device
 
 .. code-block:: bash
 
-    $ tango-yaml tango_device_name -h
+    $ tango-yaml tango_device -h
 
-    usage: tango_yaml tango_device [-h] tango_device_name
+      usage: tango_yaml tango_device [-h] tango_device_name
 
-    positional arguments:
-    tango_device_name  Tango device name in the format domain/family/member.
-                        TANGO_HOST env variable has to be set
+      positional arguments:
+        tango_device_name  Tango device name in the domain/family/member format or
+                          the FQDN
+                          tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
 
-    optional arguments:
-    -h, --help         show this help message and exit
+      optional arguments:
+        -h, --help         show this help message and exit
 
 Example
 
@@ -412,25 +413,26 @@ and not in the specification are also listed.
 
     $ tango-yaml validate -h
 
-      usage: tango_yaml validate [-h] (-url URL | -path PATH) [-bidirectional]
+      usage: tango_yaml validate [-h] (--url URL | --path PATH) [--bidirectional]
                                 tango_device_name
 
       positional arguments:
-        tango_device_name  Tango device name in the format domain/family/member.
-                          TANGO_HOST env variable has to be set
+        tango_device_name  Tango device name in the domain/family/member format or
+                          the FQDN
+                          tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
 
       optional arguments:
         -h, --help         show this help message and exit
-        -url URL           The URL to a YAML specification file
-        -path PATH         The file path to a YAML specification file
-        -bidirectional     When bidirectional is included, any details on the device
+        --url URL          The URL to a YAML specification file
+        --path PATH        The file path to a YAML specification file
+        --bidirectional    When bidirectional is included, any details on the device
                           that is not in the spec is also listed.
 
 Example
 
 .. code-block:: bash
 
-    $ tango-yaml validate -path ./DishMaster.yaml  mid_d0001/elt/master
+    $ tango-yaml validate --path ./DishMaster.yaml  mid_d0001/elt/master
 
       Command differs, [SetDSStandbyFPModeTask] specified but missing in device
       Command [GetVersionInfo] differs:

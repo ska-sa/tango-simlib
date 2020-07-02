@@ -8,6 +8,7 @@
 from __future__ import absolute_import, division, print_function
 
 import argparse
+import sys
 
 from tango_simlib.tango_yaml_tools.base import TangoToYAML
 from tango_simlib.utilities.fandango_json_parser import FandangoExportDeviceParser as FP
@@ -22,15 +23,12 @@ from tango_simlib.utilities.validate_device import (
 def _validate_device(args):
     """Validate the conformance of a Tango device against a YAML specification
 
+    Exits with code 0 or 1 if it passes or fails respectively.
+
     Parameters
     ----------
     args : argparse.Namespace
         The parsed arguments
-
-    Returns
-    -------
-    str
-        A string indicating whether there are differences or not
     """
     result = ""
     if args.url:
@@ -42,12 +40,16 @@ def _validate_device(args):
             args.tango_device_name, args.path, args.bidirectional
         )
 
-    if not result:
+    if result:
+        print(result)
+        sys.exit(1)
+    else:
         source = args.path if args.path else args.url
         result = "No differences between device {} and specification {}".format(
             args.tango_device_name, source
         )
-    return result
+        print(result)
+        sys.exit(0)
 
 
 def _build_yaml(args):
@@ -106,8 +108,8 @@ def main():
         "tango_device_name",
         type=str,
         help=(
-            "Tango device name in the format domain/family/member. "
-            "TANGO_HOST env variable has to be set"
+            "Tango device name in the domain/family/member format or the "
+            "FQDN tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member"
         ),
     )
 
@@ -122,20 +124,20 @@ def main():
         "tango_device_name",
         type=str,
         help=(
-            "Tango device name in the format domain/family/member. "
-            "TANGO_HOST env variable has to be set"
+            "Tango device name in the domain/family/member format or the "
+            "FQDN tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member"
         ),
     )
     source_group = validate_parser.add_mutually_exclusive_group(required=True)
     source_group.add_argument(
-        "-url", type=str, help="The URL to a YAML specification file",
+        "--url", type=str, help="The URL to a YAML specification file",
     )
     source_group.add_argument(
-        "-path", type=str, help="The file path to a YAML specification file",
+        "--path", type=str, help="The file path to a YAML specification file",
     )
 
     validate_parser.add_argument(
-        "-bidirectional",
+        "--bidirectional",
         action="store_true",
         help=(
             "When bidirectional is included, any details on the "
@@ -145,11 +147,10 @@ def main():
 
     args = parser.parse_args()
 
-    result = ""
     if "url" in args:
-        result = _validate_device(args)
-    else:
-        result = _build_yaml(args)
+        _validate_device(args)  # Exits with code 0 or 1
+
+    result = _build_yaml(args)
     if result:
         print(result)
     else:

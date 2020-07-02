@@ -32,9 +32,9 @@ class TangoDeviceParser(Parser):
         Parameters
         ----------
         tango_device_name: str
-            Tango device name in the domain/family/member format
+            Tango device name in the domain/family/member format or the
+            FQDN tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
         """
-        assert "TANGO_HOST" in os.environ, "TANGO_HOST env variable is not set"
         self.device_proxy = tango.DeviceProxy(tango_device_name)
         self.device_class_name = self.device_proxy.info().dev_class
 
