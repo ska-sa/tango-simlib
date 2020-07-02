@@ -3,236 +3,188 @@ from __future__ import absolute_import, division, print_function
 
 from tango_simlib.utilities.validate_device import compare_data
 
-DICT_A = """
-{
-  "class": "DishMaster_A",
-  "meta":
-    {
-      "attributes":
-        [
-          {
-            "data_format": "SCALAR_A",
-            "data_type": "DevLong_A",
-            "description": "Current  logging level to Central logging target",
-            "disp_level": "OPERATOR",
-            "display_unit": "No display unit",
-            "format": "%d",
-            "label": "loggingLevelCentral",
-            "max_alarm": "Not specified",
-            "max_dim_x": 1,
-            "max_dim_y": 0,
-            "max_value": "Not specified",
-            "min_alarm": "Not specified",
-            "min_value": "Not specified",
-            "name": "loggingLevelCentral",
-            "standard_unit": "No standard unit",
-            "unit": "",
-            "writable": "READ_WRITE",
-            "writable_attr_name": "logginglevelcentral",
-          },
-          {
-            "data_format": "SCALAR",
-            "data_type": "DevLong",
-            "description": "Current  logging level to Element logging target",
-            "disp_level": "OPERATOR",
-            "display_unit": "No display unit",
-            "format": "%d",
-            "label": "loggingLevelElement",
-            "max_alarm": "Not specified",
-            "max_dim_x": 1,
-            "max_dim_y": 0,
-            "max_value": "Not specified",
-            "min_alarm": "Not specified",
-            "min_value": "Not specified",
-            "name": "loggingLevelElement_A",
-            "standard_unit": "No standard unit",
-            "unit": "",
-            "writable": "READ_WRITE",
-            "writable_attr_name": "logginglevelelement",
-          },
-          {
-            "data_format": "SCALAR",
-            "data_type": "DevLong",
-            "description": "Current  logging level to logging target",
-            "disp_level": "OPERATOR",
-            "display_unit": "No display unit",
-            "format": "%d",
-            "label": "loggingLevel",
-            "max_alarm": "Not specified",
-            "max_dim_x": 1,
-            "max_dim_y": 0,
-            "max_value": "Not specified",
-            "min_alarm": "Not specified",
-            "min_value": "Not specified",
-            "name": "OtherAttribute",
-            "standard_unit": "No standard unit",
-            "unit": "",
-            "writable": "READ_WRITE",
-            "writable_attr_name": "logginglevel",
-          },
-        ],
-      "commands":
-        [
-          {
-            "disp_level": "OPERATOR_A",
-            "doc_in": "ON/OFF_A",
-            "doc_out": "Uninitialised",
-            "dtype_in": "DevBoolean",
-            "dtype_out": "DevVoid",
-            "name": "Capture",
-          },
-          {
-            "disp_level": "EXPERT",
-            "doc_in_A": "Uninitialised",
-            "doc_out": "Uninitialised",
-            "dtype_in": "DevVoid",
-            "dtype_out": "DevVoid",
-            "name": "ClearOldTasks",
-          },
-          {
-            "disp_level": "EXPERT",
-            "doc_in": "Uninitialised",
-            "doc_out": "Uninitialised",
-            "dtype_in": "DevVoid",
-            "dtype_out": "DevVoid",
-            "name": "ClearTaskHistory_A",
-          },
-          {
-            "disp_level": "EXPERT",
-            "doc_in": "Uninitialised",
-            "doc_out": "Uninitialised",
-            "dtype_in": "DevVoid",
-            "dtype_out": "DevVoid",
-            "name": "OtherCommand",
-          },
-        ],
-      "properties":
-        [
-          { "name": "AdminModeDefault" },
-          { "name": "AsynchCmdReplyNRetries" },
-          { "name": "AsynchCmdReplyTimeout" },
-          { "name": "CentralLoggerEnabledDefault" },
-          { "name": "ConfigureTaskTimeout" },
-          { "name": "ControlModeDefault_A" },
-        ],
-    },
-}
+YAML_A = """
+class: DishMaster_A
+meta:
+  attributes:
+  - data_format: SCALAR_A
+    data_type: DevLong_A
+    description: Current  logging level to Central logging target
+    disp_level: OPERATOR
+    display_unit: No display unit
+    format: '%d'
+    label: loggingLevelCentral
+    max_alarm: Not specified
+    max_dim_x: 1
+    max_dim_y: 0
+    max_value: Not specified
+    min_alarm: Not specified
+    min_value: Not specified
+    name: loggingLevelCentral
+    standard_unit: No standard unit
+    unit: ''
+    writable: READ_WRITE
+    writable_attr_name: logginglevelcentral
+  - data_format: SCALAR
+    data_type: DevLong
+    description: Current  logging level to Element logging target
+    disp_level: OPERATOR
+    display_unit: No display unit
+    format: '%d'
+    label: loggingLevelElement
+    max_alarm: Not specified
+    max_dim_x: 1
+    max_dim_y: 0
+    max_value: Not specified
+    min_alarm: Not specified
+    min_value: Not specified
+    name: loggingLevelElement_A
+    standard_unit: No standard unit
+    unit: ''
+    writable: READ_WRITE
+    writable_attr_name: logginglevelelement
+  - data_format: SCALAR
+    data_type: DevLong
+    description: Current  logging level to logging target
+    disp_level: OPERATOR
+    display_unit: No display unit
+    format: '%d'
+    label: loggingLevel
+    max_alarm: Not specified
+    max_dim_x: 1
+    max_dim_y: 0
+    max_value: Not specified
+    min_alarm: Not specified
+    min_value: Not specified
+    name: OtherAttribute
+    standard_unit: No standard unit
+    unit: ''
+    writable: READ_WRITE
+    writable_attr_name: logginglevel
+  commands:
+  - disp_level: OPERATOR_A
+    doc_in: ON/OFF_A
+    doc_out: Uninitialised
+    dtype_in: DevBoolean
+    dtype_out: DevVoid
+    name: Capture
+  - disp_level: EXPERT
+    doc_in_A: Uninitialised
+    doc_out: Uninitialised
+    dtype_in: DevVoid
+    dtype_out: DevVoid
+    name: ClearOldTasks
+  - disp_level: EXPERT
+    doc_in: Uninitialised
+    doc_out: Uninitialised
+    dtype_in: DevVoid
+    dtype_out: DevVoid
+    name: ClearTaskHistory_A
+  - disp_level: EXPERT
+    doc_in: Uninitialised
+    doc_out: Uninitialised
+    dtype_in: DevVoid
+    dtype_out: DevVoid
+    name: OtherCommand
+  properties:
+  - name: AdminModeDefault
+  - name: AsynchCmdReplyNRetries
+  - name: AsynchCmdReplyTimeout
+  - name: CentralLoggerEnabledDefault
+  - name: ConfigureTaskTimeout
+  - name: ControlModeDefault_A
 """
 
-DICT_B = """
-{
-  "class": "DishMaster_B",
-  "meta":
-    {
-      "attributes":
-        [
-          {
-            "data_format": "SCALAR_B",
-            "data_type": "DevLong_B",
-            "description": "Current  logging level to Central logging target",
-            "disp_level": "OPERATOR",
-            "display_unit": "No display unit",
-            "format": "%d",
-            "label": "loggingLevelCentral",
-            "max_alarm": "Not specified",
-            "max_dim_x": 1,
-            "max_dim_y": 0,
-            "max_value": "Not specified",
-            "min_alarm": "Not specified",
-            "min_value": "Not specified",
-            "name": "loggingLevelCentral",
-            "standard_unit": "No standard unit",
-            "unit": "",
-            "writable": "READ_WRITE",
-            "writable_attr_name": "logginglevelcentral",
-          },
-          {
-            "data_format": "SCALAR",
-            "data_type": "DevLong",
-            "description": "Current  logging level to Element logging target",
-            "disp_level": "OPERATOR",
-            "display_unit": "No display unit",
-            "format": "%d",
-            "label": "loggingLevelElement",
-            "max_alarm": "Not specified",
-            "max_dim_x": 1,
-            "max_dim_y": 0,
-            "max_value": "Not specified",
-            "min_alarm": "Not specified",
-            "min_value": "Not specified",
-            "name": "loggingLevelElement_B",
-            "standard_unit": "No standard unit",
-            "unit": "",
-            "writable": "READ_WRITE",
-            "writable_attr_name": "logginglevelelement",
-          },
-          {
-            "data_format": "SCALAR",
-            "data_type": "DevLong",
-            "description": "Current  logging level to logging target",
-            "disp_level": "OPERATOR",
-            "display_unit": "No display unit",
-            "format": "%d",
-            "label": "loggingLevel",
-            "max_alarm": "Not specified",
-            "max_dim_x": 1,
-            "max_dim_y": 0,
-            "max_value": "Not specified",
-            "min_alarm": "Not specified",
-            "min_value": "Not specified",
-            "name": "OtherAttribute",
-            "standard_unit": "No standard unit",
-            "unit": "",
-            "writable": "READ_WRITE",
-            "writable_attr_name": "logginglevel",
-          },
-        ],
-      "commands":
-        [
-          {
-            "disp_level": "OPERATOR_B",
-            "doc_in": "ON/OFF_B",
-            "doc_out": "Uninitialised",
-            "dtype_in": "DevBoolean",
-            "dtype_out": "DevVoid",
-            "name": "Capture",
-          },
-          {
-            "disp_level": "EXPERT",
-            "doc_in": "Uninitialised",
-            "doc_out_B": "Uninitialised",
-            "dtype_in": "DevVoid",
-            "dtype_out": "DevVoid",
-            "name": "ClearOldTasks",
-          },
-          {
-            "disp_level": "EXPERT",
-            "doc_in": "Uninitialised",
-            "doc_out": "Uninitialised",
-            "dtype_in": "DevVoid",
-            "dtype_out": "DevVoid",
-            "name": "ClearTaskHistory_B",
-          },
-          {
-            "disp_level": "EXPERT",
-            "doc_in": "Uninitialised",
-            "doc_out": "Uninitialised",
-            "dtype_in": "DevVoid",
-            "dtype_out": "DevVoid",
-            "name": "OtherCommand",
-          },
-        ],
-      "properties":
-        [
-          { "name": "AdminModeDefault" },
-          { "name": "AsynchCmdReplyNRetries" },
-          { "name": "AsynchCmdReplyTimeout" },
-          { "name": "CentralLoggerEnabledDefault" },
-          { "name": "ConfigureTaskTimeout" },
-          { "name": "ControlModeDefault_B" },
-        ],
-    },
-}
+YAML_B = """
+class: DishMaster_B
+meta:
+  attributes:
+  - data_format: SCALAR_B
+    data_type: DevLong_B
+    description: Current  logging level to Central logging target
+    disp_level: OPERATOR
+    display_unit: No display unit
+    format: '%d'
+    label: loggingLevelCentral
+    max_alarm: Not specified
+    max_dim_x: 1
+    max_dim_y: 0
+    max_value: Not specified
+    min_alarm: Not specified
+    min_value: Not specified
+    name: loggingLevelCentral
+    standard_unit: No standard unit
+    unit: ''
+    writable: READ_WRITE
+    writable_attr_name: logginglevelcentral
+  - data_format: SCALAR
+    data_type: DevLong
+    description: Current  logging level to Element logging target
+    disp_level: OPERATOR
+    display_unit: No display unit
+    format: '%d'
+    label: loggingLevelElement
+    max_alarm: Not specified
+    max_dim_x: 1
+    max_dim_y: 0
+    max_value: Not specified
+    min_alarm: Not specified
+    min_value: Not specified
+    name: loggingLevelElement_B
+    standard_unit: No standard unit
+    unit: ''
+    writable: READ_WRITE
+    writable_attr_name: logginglevelelement
+  - data_format: SCALAR
+    data_type: DevLong
+    description: Current  logging level to logging target
+    disp_level: OPERATOR
+    display_unit: No display unit
+    format: '%d'
+    label: loggingLevel
+    max_alarm: Not specified
+    max_dim_x: 1
+    max_dim_y: 0
+    max_value: Not specified
+    min_alarm: Not specified
+    min_value: Not specified
+    name: OtherAttribute
+    standard_unit: No standard unit
+    unit: ''
+    writable: READ_WRITE
+    writable_attr_name: logginglevel
+  commands:
+  - disp_level: OPERATOR_B
+    doc_in: ON/OFF_B
+    doc_out: Uninitialised
+    dtype_in: DevBoolean
+    dtype_out: DevVoid
+    name: Capture
+  - disp_level: EXPERT
+    doc_in: Uninitialised
+    doc_out_B: Uninitialised
+    dtype_in: DevVoid
+    dtype_out: DevVoid
+    name: ClearOldTasks
+  - disp_level: EXPERT
+    doc_in: Uninitialised
+    doc_out: Uninitialised
+    dtype_in: DevVoid
+    dtype_out: DevVoid
+    name: ClearTaskHistory_B
+  - disp_level: EXPERT
+    doc_in: Uninitialised
+    doc_out: Uninitialised
+    dtype_in: DevVoid
+    dtype_out: DevVoid
+    name: OtherCommand
+  properties:
+  - name: AdminModeDefault
+  - name: AsynchCmdReplyNRetries
+  - name: AsynchCmdReplyTimeout
+  - name: CentralLoggerEnabledDefault
+  - name: ConfigureTaskTimeout
+  - name: ControlModeDefault_B
 """
 
 
@@ -240,12 +192,12 @@ def test_validate():
     """Test various combinations"""
 
     # If it's the same then no differences recorded
-    assert not compare_data(DICT_A, DICT_A, 1)
+    assert not compare_data(YAML_A, YAML_A, 1)
 
-    spec_dict = DICT_A
-    dev_dict = DICT_B
-    bi_directional_result = compare_data(spec_dict, dev_dict, 1)
-    single_direction_result = compare_data(spec_dict, dev_dict, 0)
+    spec_yaml = YAML_A
+    dev_yaml = YAML_B
+    bi_directional_result = compare_data(spec_yaml, dev_yaml, 1)
+    single_direction_result = compare_data(spec_yaml, dev_yaml, 0)
     command_result = (
         "Class differs, specified 'DishMaster_A', but device has 'DishMaster_B'"
     )
@@ -306,9 +258,9 @@ def test_validate():
     assert "AdminModeDefault" not in bi_directional_result
     assert "AdminModeDefault" not in single_direction_result
 
-    spec_dict = DICT_B
-    dev_dict = DICT_A
-    bi_directional_result = compare_data(spec_dict, dev_dict, 1)
+    spec_yaml = YAML_B
+    dev_yaml = YAML_A
+    bi_directional_result = compare_data(spec_yaml, dev_yaml, 1)
 
     assert (
         "lass differs, specified 'DishMaster_B', but device has 'DishMaster_A'"
