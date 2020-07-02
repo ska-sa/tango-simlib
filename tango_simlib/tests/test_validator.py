@@ -348,7 +348,7 @@ def test_invalid_spec():
     """Make sure that the minimal spec format is checked"""
     try:
         compare_data("class:", YAML_A, 0)
-    except AssertionError as e:
-        assert "Minimal structure not adhered to" in str(e)
+    except AssertionError as err:
+        assert "Minimal structure not adhered to" in str(err)
     else:
         assert 0, "AssertionError not raised for invalid spec format"
