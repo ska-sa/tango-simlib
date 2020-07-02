@@ -108,22 +108,28 @@ def compare_data(specification_yaml, tango_device_yaml, bidirectional):
     str
         The validation result
     """
+    validate_spec_structure(specification_yaml)
     specification_data = yaml.load(specification_yaml, Loader=yaml.FullLoader)
     tango_device_data = yaml.load(tango_device_yaml, Loader=yaml.FullLoader)
     if isinstance(specification_data, list):
         specification_data = specification_data[0]
-    if isinstance(tango_device_data, list):
-        tango_device_data = tango_device_data[0]
 
     issues = []
+    if not specification_data["meta"]["commands"]:
+        specification_data["meta"]["commands"] = []
+    if not specification_data["meta"]["attributes"]:
+        specification_data["meta"]["attributes"] = []
+    if not specification_data["meta"]["properties"]:
+        specification_data["meta"]["properties"] = []
 
     # Class
-    if tango_device_data["class"] != specification_data["class"]:
-        issues.append(
-            "\nClass differs, specified '{}', but device has '{}'".format(
-                specification_data["class"], tango_device_data["class"]
+    if specification_data["class"]:
+        if tango_device_data["class"] != specification_data["class"]:
+            issues.append(
+                "\nClass differs, specified '{}', but device has '{}'".format(
+                    specification_data["class"], tango_device_data["class"]
+                )
             )
-        )
 
     # Commands
     issues.extend(
@@ -206,19 +212,23 @@ def check_list_dict_differences(spec_data, dev_data, type_str, bidirectional):
     dev_data_names = {i["name"] for i in dev_data}
     if spec_data_names != dev_data_names:
         diff = spec_data_names.difference(dev_data_names)
-        issues.append(
-            "{} differs, [{}] specified but missing in device".format(
-                type_str, ",".join(diff)
-            )
-        )
-
-        if bidirectional:
-            diff = dev_data_names.difference(spec_data_names)
+        if diff:
+            diff = sorted(list(diff))
             issues.append(
-                "{} differs, [{}] present in device but not specified".format(
+                "{} differs, [{}] specified but missing in device".format(
                     type_str, ",".join(diff)
                 )
             )
+
+        if bidirectional:
+            diff = dev_data_names.difference(spec_data_names)
+            if diff:
+                diff = sorted(list(diff))
+                issues.append(
+                    "{} differs, [{}] present in device but not specified".format(
+                        type_str, ",".join(diff)
+                    )
+                )
 
     # Check that the commands/attributes (by name) that are in both the spec and device
     # are the same
@@ -277,12 +287,14 @@ def check_single_dict_differences(spec, dev, type_str, bidirectional):
         mutual_keys = spec_keys.intersection(dev_keys)
 
         if keys_not_in_spec:
+            keys_not_in_spec = sorted(list(keys_not_in_spec))
             issues.append(
                 "{} [{}] differs, specification has keys [{}] but it's "
                 "not in device".format(type_str, spec["name"], ",".join(keys_not_in_spec))
             )
 
         if keys_not_in_dev and bidirectional:
+            keys_not_in_dev = sorted(list(keys_not_in_dev))
             issues.append(
                 "{} [{}] differs, device has keys [{}] but it's "
                 "not in the specification".format(
@@ -340,18 +352,61 @@ def check_property_differences(spec_properties, dev_properties, bidirectional):
 
     if spec_props != dev_props:
         diff = spec_props.difference(dev_props)
-        issues.append(
-            "Property [{}] differs, specified but missing in device".format(
-                ",".join(diff)
-            )
-        )
-
-        if bidirectional:
-            diff = dev_props.difference(spec_props)
+        if diff:
+            diff = sorted(list(diff))
             issues.append(
-                "Property [{}] differs, present in device but not specified".format(
+                "Property [{}] differs, specified but missing in device".format(
                     ",".join(diff)
                 )
             )
 
+        if bidirectional:
+            diff = dev_props.difference(spec_props)
+            if diff:
+                diff = sorted(list(diff))
+                issues.append(
+                    "Property [{}] differs, present in device but not specified".format(
+                        ",".join(diff)
+                    )
+                )
+
     return issues
+
+
+def validate_spec_structure(specification_yaml):
+    """Make sure that the minimal specification structure is adhered to.
+
+    Minimal YAML format:
+
+        class:
+        meta:
+            attributes:
+            commands:
+            properties:
+
+    Parameters
+    ----------
+    specification_yaml : str
+        The specification in YAML format
+    """
+    specification_data = yaml.load(specification_yaml, Loader=yaml.FullLoader)
+
+    passes = True
+    if "class" not in specification_data:
+        passes = False
+    if "meta" not in specification_data:
+        passes = False
+    else:
+        for name in ["commands", "attributes", "properties"]:
+            if name not in specification_data["meta"]:
+                passes = False
+
+    if not passes:
+        minimal_format = """
+        class:
+        meta:
+            attributes:
+            commands:
+            properties:
+        """
+        assert 0, "Minimal structure not adhered to:\n{}".format(minimal_format)

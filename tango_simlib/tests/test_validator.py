@@ -187,6 +187,14 @@ meta:
   - name: ControlModeDefault_B
 """
 
+YAML_EMPTY = """
+class:
+meta:
+  attributes:
+  commands:
+  properties:
+"""
+
 
 def test_validate():
     """Test various combinations"""
@@ -308,3 +316,39 @@ def test_validate():
 
     # Same in both
     assert "AdminModeDefault" not in bi_directional_result
+
+
+def test_empty_validation():
+    """Check that a empty spec is still works"""
+    single_direction_result = compare_data(YAML_EMPTY, YAML_A, 0)
+    assert not single_direction_result
+
+    bi_direction_result = compare_data(YAML_EMPTY, YAML_A, 1)
+    command_res = (
+        "Command differs, [Capture,ClearOldTasks,ClearTaskHistory_A,OtherCommand]"
+        " present in device but not specified"
+    )
+    assert command_res in bi_direction_result
+
+    attr_res = (
+        "Attribute differs, [OtherAttribute,loggingLevelCentral,loggingLevelElement_A]"
+        " present in device but not specified"
+    )
+    assert attr_res in bi_direction_result
+
+    prop_res = (
+        "Property [AdminModeDefault,AsynchCmdReplyNRetries,AsynchCmdReplyTimeout,"
+        "CentralLoggerEnabledDefault,ConfigureTaskTimeout,ControlModeDefault_A] differs,"
+        " present in device but not specified"
+    )
+    assert prop_res in bi_direction_result
+
+
+def test_invalid_spec():
+    """Make sure that the minimal spec format is checked"""
+    try:
+        compare_data("class:", YAML_A, 0)
+    except AssertionError as e:
+        assert "Minimal structure not adhered to" in str(e)
+    else:
+        assert 0, "AssertionError not raised for invalid spec format"
