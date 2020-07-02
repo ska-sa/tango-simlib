@@ -217,20 +217,22 @@ After installing tango_simlib, the ``tango-yaml`` script will be available to us
 
     $ tango-yaml -h
 
-    usage: tango_yaml [-h] {xmi,fandango,tango_device} ...
+      usage: tango_yaml [-h] {xmi,fandango,tango_device,validate} ...
 
-    This program translates various file formats that describe Tango devices to
-    YAML
+      This program translates various file formats that describe Tango devices to
+      YAML. Or validates the conformance of a device against a specification.
 
-    positional arguments:
-    {xmi,fandango,tango_device}
-                            sub command help
-        xmi                 Build YAML from a XMI file
-        fandango            Build YAML from a fandango file
-        tango_device        Build YAML from a running Tango device
+      positional arguments:
+        {xmi,fandango,tango_device,validate}
+                              sub command help
+          xmi                 Build YAML from a XMI file
+          fandango            Build YAML from a fandango file
+          tango_device        Build YAML from a running Tango device
+          validate            Check conformance of a Tango device against a
+                              specification in YAML format
 
-    optional arguments:
-    -h, --help            show this help message and exit
+      optional arguments:
+        -h, --help            show this help message and exit
 
 XMI
 ---

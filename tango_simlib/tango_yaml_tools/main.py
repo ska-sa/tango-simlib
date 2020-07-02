@@ -29,6 +29,11 @@ def _validate_device(args):
     ----------
     args : argparse.Namespace
         The parsed arguments
+
+    Returns
+    -------
+    tuple
+        (The result string, the exit code)
     """
     result = ""
     if args.url:
@@ -41,15 +46,13 @@ def _validate_device(args):
         )
 
     if result:
-        print(result)
-        sys.exit(1)
-    else:
-        source = args.path if args.path else args.url
-        result = "No differences between device {} and specification {}".format(
-            args.tango_device_name, source
-        )
-        print(result)
-        sys.exit(0)
+        return (result, 1)
+
+    source = args.path if args.path else args.url
+    result = "No differences between device {} and specification {}".format(
+        args.tango_device_name, source
+    )
+    return (result, 0)
 
 
 def _build_yaml(args):
@@ -90,6 +93,7 @@ def main():
     subparsers = parser.add_subparsers(help="sub command help")
 
     xmi_parser = subparsers.add_parser("xmi", help="Build YAML from a XMI file")
+    xmi_parser.set_defaults(choice="xmi")
     xmi_parser.add_argument(
         "xmi_file", type=argparse.FileType("r"), help="Path to the XMI file"
     )
@@ -97,6 +101,7 @@ def main():
     fandango_parser = subparsers.add_parser(
         "fandango", help="Build YAML from a fandango file"
     )
+    fandango_parser.set_defaults(choice="fandango")
     fandango_parser.add_argument(
         "fandango_file", type=argparse.FileType("r"), help="Path to the fandango file"
     )
@@ -104,6 +109,7 @@ def main():
     tango_device_parser = subparsers.add_parser(
         "tango_device", help="Build YAML from a running Tango device"
     )
+    tango_device_parser.set_defaults(choice="tango_device")
     tango_device_parser.add_argument(
         "tango_device_name",
         type=str,
@@ -120,6 +126,7 @@ def main():
             " in YAML format"
         ),
     )
+    validate_parser.set_defaults(choice="validate")
     validate_parser.add_argument(
         "tango_device_name",
         type=str,
@@ -147,8 +154,10 @@ def main():
 
     args = parser.parse_args()
 
-    if "url" in args:
-        _validate_device(args)  # Exits with code 0 or 1
+    if args.choice == "validate":
+        result, exit_code = _validate_device(args)
+        print(result)
+        sys.exit(exit_code)
 
     result = _build_yaml(args)
     if result:
