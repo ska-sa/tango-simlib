@@ -13,6 +13,14 @@ import yaml
 from tango_simlib.utilities.tango_device_parser import TangoDeviceParser
 from tango_simlib.tango_yaml_tools.base import TangoToYAML
 
+MINIMAL_SPEC_FORMAT = """
+class:
+meta:
+    attributes:
+    commands:
+    properties:
+"""
+
 
 def validate_device_from_url(tango_device_name, url_to_yaml_file, bidirectional):
     """Retrieves the YAML from the URL and checks conformance against the Tango device.
@@ -376,14 +384,6 @@ def check_property_differences(spec_properties, dev_properties, bidirectional):
 def validate_spec_structure(specification_yaml):
     """Make sure that the minimal specification structure is adhered to.
 
-    Minimal YAML format:
-
-        class:
-        meta:
-            attributes:
-            commands:
-            properties:
-
     Parameters
     ----------
     specification_yaml : str
@@ -402,11 +402,11 @@ def validate_spec_structure(specification_yaml):
                 passes = False
 
     if not passes:
-        minimal_format = """
-        class:
-        meta:
-            attributes:
-            commands:
-            properties:
-        """
-        assert 0, "Minimal structure not adhered to:\n{}".format(minimal_format)
+        assert 0, "Minimal structure not adhered to:\n{}".format(MINIMAL_SPEC_FORMAT)
+
+    for type_str in ["commands", "attributes", "properties"]:
+        if specification_data["meta"][type_str]:
+            for type_dict in specification_data["meta"][type_str]:
+                assert "name" in type_dict, "`name` field is required for all {}".format(
+                    type_str
+                )

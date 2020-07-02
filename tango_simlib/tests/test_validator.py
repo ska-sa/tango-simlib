@@ -1,7 +1,9 @@
 """Various tests for the validation logic"""
 from __future__ import absolute_import, division, print_function
 
-from tango_simlib.utilities.validate_device import compare_data
+import yaml
+
+from tango_simlib.utilities.validate_device import compare_data, MINIMAL_SPEC_FORMAT
 
 YAML_A = """
 class: DishMaster_A
@@ -187,14 +189,6 @@ meta:
   - name: ControlModeDefault_B
 """
 
-YAML_EMPTY = """
-class:
-meta:
-  attributes:
-  commands:
-  properties:
-"""
-
 
 def test_validate():
     """Test various combinations"""
@@ -320,10 +314,10 @@ def test_validate():
 
 def test_empty_validation():
     """Check that a empty spec is still works"""
-    single_direction_result = compare_data(YAML_EMPTY, YAML_A, 0)
+    single_direction_result = compare_data(MINIMAL_SPEC_FORMAT, YAML_A, 0)
     assert not single_direction_result
 
-    bi_direction_result = compare_data(YAML_EMPTY, YAML_A, 1)
+    bi_direction_result = compare_data(MINIMAL_SPEC_FORMAT, YAML_A, 1)
     command_res = (
         "Command differs, [Capture,ClearOldTasks,ClearTaskHistory_A,OtherCommand]"
         " present in device but not specified"
@@ -352,3 +346,13 @@ def test_invalid_spec():
         assert "Minimal structure not adhered to" in str(err)
     else:
         assert 0, "AssertionError not raised for invalid spec format"
+
+    for key in ["attributes", "properties", "commands"]:
+        try:
+            minimal_format = yaml.load(MINIMAL_SPEC_FORMAT, Loader=yaml.FullLoader)
+            minimal_format["meta"][key] = [{"A": "B"}]
+            compare_data(yaml.dump(minimal_format), YAML_A, 0)
+        except AssertionError as err:
+            assert str(err) == "`name` field is required for all {}".format(key)
+        else:
+            assert 0, "AssertionError not raised for invalid spec format"
