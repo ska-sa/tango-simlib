@@ -200,11 +200,11 @@ def test_validate():
     dev_yaml = YAML_B
     bi_directional_result = compare_data(spec_yaml, dev_yaml, 1)
     single_direction_result = compare_data(spec_yaml, dev_yaml, 0)
-    command_result = (
+    class_result = (
         "Class differs, specified 'DishMaster_A', but device has 'DishMaster_B'"
     )
-    assert command_result in bi_directional_result
-    assert command_result in single_direction_result
+    assert class_result in bi_directional_result
+    assert class_result in single_direction_result
 
     command_result = (
         "Command differs, [ClearTaskHistory_A] specified but missing in device"
