@@ -407,9 +407,10 @@ Example
 Validation
 ----------
 
-The conformance to a specification can be checked against a Tango device.
-When the optional `-bidirectional` flag is added the differences that are on the device
-and not in the specification are also listed.
+A Tango device's conformance to an interface specification can be checked.
+By default check that the device provides a superset of the specification.
+When the optional `-bidirectional` flag is specified, the check is stricter -
+items on the device interface and not in the specification are also reported.
 
 .. code-block:: bash
 
