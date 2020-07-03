@@ -17,7 +17,7 @@ from tango_simlib import model
 from tango_simlib.utilities.helper_module import generate_cmd_handler
 
 
-class TangoTestDeviceServerBase(with_metaclass(DeviceMeta, Device)):
+class TangoTestDeviceServerBase(Device):
     instances = weakref.WeakValueDictionary()
 
     model_key = device_property(

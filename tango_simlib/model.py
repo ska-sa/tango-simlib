@@ -177,6 +177,108 @@ class Model(object):
     def set_sim_property(self, device_prop):
         self.sim_properties.update(device_prop)
 
+    def reset_model_state(self):
+        """Reset the model's quantities' adjustable attributes to their default
+        values.
+        """
+        quantities = self.sim_quantities.values()
+        for quantity in quantities:
+            self._reset_quantity_adjustable_attributes_values(quantity)
+
+    def _reset_quantity_adjustable_attributes_values(self, quantity):
+        quantity_metadata = quantity.meta
+        key_vals = quantity_metadata.keys()
+        attr_data_type = quantity_metadata["data_type"]
+        # the xmi, json and fgo files have data_format attributes indicating
+        # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
+        # key in its attribute list. It has a key labelled possible values which
+        # is a list. Hence, SPECTRUM is no data_format is found.
+        try:
+            attr_data_format = str(quantity_metadata["data_format"])
+        except KeyError:
+            attr_data_format = "SPECTRUM"
+
+        max_dim_x, max_dim_y = self._get_quantity_dimensions(quantity_metadata)
+        val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
+        expected_key_vals = ["value", "possiblevalues"]
+        adjustable_attrs = quantity.adjustable_attributes
+
+        for attribute in adjustable_attrs:
+            if attribute == "last_update_time":
+                quantity.last_update_time = self.start_time
+                continue
+            else:
+                if "quantity_simulation_type" in quantity_metadata:
+                    simulation_type = quantity_metadata["quantity_simulation_type"]
+                    if simulation_type == "ConstantQuantity":
+                        initial_value = quantity_metadata.get("initial_value", None)
+                        if initial_value not in [None, ""]:
+                            adjustable_val = initial_value
+                        else:
+                            adjustable_val = val
+
+                        if val_type is None:
+                            adjustable_val = None
+                        else:
+                            adjustable_val = val_type(adjustable_val)
+                    else:
+                        if attribute == "last_val":
+                            quantity.last_val = float(
+                                quantity_metadata["mean"]
+                            )
+                            continue
+                        else:
+                            adjustable_val = float(quantity_metadata[attribute])
+                else:
+                    if any(key_val in expected_key_vals for key_val in key_vals):
+
+                        if "value" in quantity_metadata:
+                            adjustable_val = quantity_metadata["value"]
+                        elif "possiblevalues" in quantity_metadata:
+                            adjustable_val = quantity_metadata["possiblevalues"]
+
+                        if attr_data_format == "SCALAR":
+                            adjustable_val = val_type(adjustable_val)
+                        elif attr_data_format == "SPECTRUM":
+                            adjustable_val = list(map(val_type, adjustable_val))
+                        else:
+                            adjustable_val = [
+                                [val_type(curr_val) for curr_val in sublist]
+                                for sublist in adjustable_val
+                            ]
+
+                    else:
+                        if attr_data_format == "SCALAR":
+                            adjustable_val = val
+                        elif attr_data_format == "SPECTRUM":
+                            adjustable_val = [val] * max_dim_x
+                        else:
+                            adjustable_val = [[val] * max_dim_x for i in range(max_dim_y)]
+
+                setattr(quantity, attribute, adjustable_val)
+
+    def _get_quantity_dimensions(self, quantity_metadata):
+        key_vals = quantity_metadata.keys()
+        expected_key_vals = ["max_dim_x", "max_dim_y", "maxX", "maxY"]
+        # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
+        # (maxX, maxY) keys. If none of these keys are found in them or in the
+        # xml file, we use default values of 1 for x and 2 for y - same applies
+        # for files where the keys have empty values.
+        if any(key_val in expected_key_vals for key_val in key_vals):
+            try:
+                max_dim_x = quantity_metadata["max_dim_x"]
+                max_dim_y = quantity_metadata["max_dim_y"]
+            except KeyError:
+                max_dim_x = quantity_metadata.get("maxX", 1)
+                max_dim_y = quantity_metadata.get("maxY", 2)
+            # just in case the keys exist but have no values
+            if not max_dim_x:
+                max_dim_x = 1
+            if not max_dim_y:
+                max_dim_y = 2
+
+        return max_dim_x, max_dim_y
+
 
 class PopulateModelQuantities(object):
     """Used to populate/update model quantities.

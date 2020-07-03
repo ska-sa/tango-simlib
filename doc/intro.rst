@@ -94,13 +94,13 @@ install ``tango-simlib``.
 Installation from source_, working directory where source is checked out
 
 .. code-block:: bash
-  
+
     $ pip install .
 
 This package is available on *PYPI*, allowing
 
 .. code-block:: bash
-  
+
     $ pip install tango-simlib
 
 =================
@@ -121,7 +121,7 @@ Give it a path to the description files (XMI or SimDD or both).
 
 This will generate a python executable file in your current working directory named ``weather-DS``.
 
-In order to run this generated device simulator code, you can execute the ``tango-launcher`` script, 
+In order to run this generated device simulator code, you can execute the ``tango-launcher`` script,
 a helper script which will register the *TANGO* device server, setup any required device properties and
 in turn start up the device server process, all in one go.
 
@@ -156,7 +156,7 @@ An example of starting the ``Weather`` simulator generated from the ``Weather_Si
 file with a ``SimControl`` instance using the ``tango_launcher.py`` script.
 
 .. code-block:: bash
- 
+
     $ tango-simlib-launcher --name mkat_sim/weather/2 --class Weather\
                             --name mkat_simcontrol/weather/2\
                             --class WeatherSimControl\
@@ -194,7 +194,7 @@ This is what you would have in the *TANGO* DB once the device server has been re
     :figclass: align-center
 
     Figure 1. A snapshot of the *TANGO* DB viewed using *JIVE* - the *TANGO*-DB browser.
-    
+
 
 In this instance, we have the simulated device in an alarm state after executing the *SetOffRainStorm* command on the test device interface, or what we call the simulator controller.
 
@@ -207,3 +207,195 @@ In this instance, we have the simulated device in an alarm state after executing
        Figure 2. A view of the sim device and its associated sim control interface using the *TANGO Application ToolKit* (ATK) client framework.
 
 
+==========================================================================
+Translating a Tango device specification or a running Tango device to YAML
+==========================================================================
+
+After installing tango_simlib, the ``tango-yaml`` script will be available to use
+
+.. code-block:: bash
+
+    $ tango-yaml -h
+
+    usage: tango_yaml [-h] {xmi,fandango,tango_device} ...
+
+    This program translates various file formats that describe Tango devices to
+    YAML
+
+    positional arguments:
+    {xmi,fandango,tango_device}
+                            sub command help
+        xmi                 Build YAML from a XMI file
+        fandango            Build YAML from a fandango file
+        tango_device        Build YAML from a running Tango device
+
+    optional arguments:
+    -h, --help            show this help message and exit
+
+XMI
+---
+
+.. code-block:: bash
+
+    $ tango-yaml xmi -h
+
+    usage: tango_yaml xmi [-h] xmi_file
+
+    positional arguments:
+    xmi_file    Path to the XMI file
+
+    optional arguments:
+    -h, --help  show this help message and exit
+
+Example
+
+.. code-block:: bash
+
+    $ tango-yaml  xmi ./tango_simlib/tests/config_files/Weather.xmi
+
+      - class: Weather
+        meta:
+          attributes:
+          - data_format: SCALAR
+            data_type: DevULong
+            delta_t: ''
+            delta_val: ''
+            description: ''
+            display_unit: ''
+            format: ''
+            inherited: 'false'
+            label: integer2
+            max_alarm: ''
+            max_dim_x: 1
+            max_dim_y: 0
+            max_value: ''
+            max_warning: ''
+            min_alarm: ''
+            min_value: ''
+            min_warning: ''
+            name: integer2
+            period: '1000'
+            standard_unit: ''
+            unit: ''
+            writable: READ
+          ...
+          commands:
+          - doc_in: none
+            doc_out: Device state
+            dtype_in: DevVoid
+            dtype_out: DevState
+            inherited: 'true'
+            name: State
+          ...
+          properties:
+          - name: sim_xmi_description_file
+
+Fandango
+--------
+
+.. code-block:: bash
+
+    $ tango-yaml fandango -h
+
+    usage: tango_yaml fandango [-h] fandango_file
+
+    positional arguments:
+    fandango_file  Path to the fandango file
+
+    optional arguments:
+        -h, --help     show this help message and exit
+
+Example
+
+.. code-block:: bash
+
+    $ tango-yaml fandango ./tango_simlib/tests/config_files/database2.fgo
+
+      - class: DataBase
+        meta:
+          attributes:
+          - data_format: SCALAR
+            data_type: DevString
+            description: ''
+            display_unit: No display unit
+            format: '%s'
+            label: Status
+            max_alarm: Not specified
+            max_dim_x: 1
+            max_dim_y: 0
+            max_value: Not specified
+            min_alarm: Not specified
+            min_value: Not specified
+            name: Status
+            standard_unit: No standard unit
+            unit: ''
+            writable: READ
+          ...
+          commands:
+          - doc_in: Class name
+            doc_out: Device exported list
+            dtype_in: DevString
+            dtype_out: DevVarStringArray
+            name: DbGetExportdDeviceListForClass
+          ...
+          properties: []
+
+Tango device
+------------
+
+.. code-block:: bash
+
+    $ tango-yaml tango_device_name -h
+
+    usage: tango_yaml tango_device [-h] tango_device_name
+
+    positional arguments:
+    tango_device_name  Tango device name in the format domain/family/member.
+                        TANGO_HOST env variable has to be set
+
+    optional arguments:
+    -h, --help         show this help message and exit
+
+Example
+
+.. code-block:: bash
+
+    $ tango-yaml tango_device ska_mid/tm_subarray_node/1
+
+      - class: SubarrayNode
+        meta:
+          attributes:
+          - data_format: SCALAR
+            data_type: DevString
+            description: Build state of this device
+            disp_level: OPERATOR
+            display_unit: No display unit
+            format: '%s'
+            label: buildState
+            max_alarm: Not specified
+            max_dim_x: 1
+            max_dim_y: 0
+            max_value: Not specified
+            min_alarm: Not specified
+            min_value: Not specified
+            name: buildState
+            standard_unit: No standard unit
+            unit: ''
+            writable: READ
+            writable_attr_name: None
+          ...
+          commands:
+          - disp_level: OPERATOR
+            doc_in: Uninitialised
+            doc_out: Uninitialised
+            dtype_in: DevVoid
+            dtype_out: DevVoid
+            name: Abort
+          ...
+          properties:
+          - name: CspSubarrayFQDN
+          - name: CspSubarrayLNFQDN
+          - name: DishLeafNodePrefix
+          - name: LoggingLevelDefault
+          - name: LoggingTargetsDefault
+          ...

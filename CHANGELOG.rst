@@ -5,6 +5,24 @@
 .. _black: https://github.com/psf/black
 .. _110: https://github.com/ska-sa/tango-simlib/pull/110
 .. _101: https://github.com/ska-sa/tango-simlib/pull/101
+.. _115: https://github.com/ska-sa/tango-simlib/pull/115
+.. _116: https://github.com/ska-sa/tango-simlib/pull/116
+.. _117: https://github.com/ska-sa/tango-simlib/pull/117
+.. _118: https://github.com/ska-sa/tango-simlib/pull/118
+.. _119: https://github.com/ska-sa/tango-simlib/pull/119
+
+0.6.0
+-----
+- Updated CHANGELOG in 118_
+- Added `tango-yaml` tool in 119_
+    - This tool translates fandango (fgo), XMI (xmi) or a running Tango device to YAML.
+    - Once installed, run `tango-yaml -h` for details.
+
+0.5.0
+-----
+- Added Weather.xmi to MANIFEST.in 117_
+- Refactor the code base 116_
+- Update compat function docstrings 115_
 
 0.4.0
 -----
@@ -76,4 +94,4 @@
 -----
 - Handle DevEnum data type TANGO attributes
 - Handle Spectrum data format TANGO attributes
-  
+
