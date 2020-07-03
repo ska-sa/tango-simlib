@@ -209,7 +209,7 @@ def check_list_dict_differences(spec_data, dev_data, type_str, bidirectional):
 
     Returns
     -------
-    list
+    issues : list
         A list of strings describing the issues, empty list for no issues
     """
     issues = []
@@ -251,7 +251,7 @@ def check_list_dict_differences(spec_data, dev_data, type_str, bidirectional):
 
 
 def check_single_dict_differences(spec, dev, type_str, bidirectional):
-    """Compare a single attribute/property
+    """Compare a single attribute/command
 
     Parameters
     ----------
@@ -281,7 +281,7 @@ def check_single_dict_differences(spec, dev, type_str, bidirectional):
 
     Returns
     -------
-    list
+    issues : list
         A list of strings describing the issues, empty list for no issues
     """
     assert spec["name"] == dev["name"]
@@ -351,7 +351,7 @@ def check_property_differences(spec_properties, dev_properties, bidirectional):
 
     Returns
     -------
-    list
+    issues : list
         A list of strings describing the issues, empty list for no issues
     """
     issues = []
