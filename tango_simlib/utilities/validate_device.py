@@ -7,11 +7,10 @@
 from pathlib import Path
 
 import requests
-
 import yaml
 
-from tango_simlib.utilities.tango_device_parser import TangoDeviceParser
 from tango_simlib.tango_yaml_tools.base import TangoToYAML
+from tango_simlib.utilities.tango_device_parser import TangoDeviceParser
 
 MINIMAL_SPEC_FORMAT = """
 class:
@@ -221,7 +220,7 @@ def check_list_dict_differences(spec_data, dev_data, type_str, bidirectional):
     if spec_data_names != dev_data_names:
         diff = spec_data_names.difference(dev_data_names)
         if diff:
-            diff = sorted(list(diff))
+            diff = sorted(diff)
             issues.append(
                 "{} differs, [{}] specified but missing in device".format(
                     type_str, ",".join(diff)
@@ -231,7 +230,7 @@ def check_list_dict_differences(spec_data, dev_data, type_str, bidirectional):
         if bidirectional:
             diff = dev_data_names.difference(spec_data_names)
             if diff:
-                diff = sorted(list(diff))
+                diff = sorted(diff)
                 issues.append(
                     "{} differs, [{}] present in device but not specified".format(
                         type_str, ",".join(diff)
@@ -295,14 +294,14 @@ def check_single_dict_differences(spec, dev, type_str, bidirectional):
         mutual_keys = spec_keys.intersection(dev_keys)
 
         if keys_not_in_spec:
-            keys_not_in_spec = sorted(list(keys_not_in_spec))
+            keys_not_in_spec = sorted(keys_not_in_spec)
             issues.append(
                 "{} [{}] differs, specification has keys [{}] but it's "
                 "not in device".format(type_str, spec["name"], ",".join(keys_not_in_spec))
             )
 
         if keys_not_in_dev and bidirectional:
-            keys_not_in_dev = sorted(list(keys_not_in_dev))
+            keys_not_in_dev = sorted(keys_not_in_dev)
             issues.append(
                 "{} [{}] differs, device has keys [{}] but it's "
                 "not in the specification".format(
@@ -361,7 +360,7 @@ def check_property_differences(spec_properties, dev_properties, bidirectional):
     if spec_props != dev_props:
         diff = spec_props.difference(dev_props)
         if diff:
-            diff = sorted(list(diff))
+            diff = sorted(diff)
             issues.append(
                 "Property [{}] differs, specified but missing in device".format(
                     ",".join(diff)
@@ -371,7 +370,7 @@ def check_property_differences(spec_properties, dev_properties, bidirectional):
         if bidirectional:
             diff = dev_props.difference(spec_props)
             if diff:
-                diff = sorted(list(diff))
+                diff = sorted(diff)
                 issues.append(
                     "Property [{}] differs, present in device but not specified".format(
                         ",".join(diff)

@@ -15,8 +15,8 @@ from tango_simlib.utilities.fandango_json_parser import FandangoExportDevicePars
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.tango_device_parser import TangoDeviceParser
 from tango_simlib.utilities.validate_device import (
-    validate_device_from_url,
     validate_device_from_path,
+    validate_device_from_url,
 )
 
 
