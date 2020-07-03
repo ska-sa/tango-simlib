@@ -120,6 +120,8 @@ def compare_data(specification_yaml, tango_device_yaml, bidirectional):
     tango_device_data = yaml.load(tango_device_yaml, Loader=yaml.FullLoader)
     if isinstance(specification_data, list):
         specification_data = specification_data[0]
+    if isinstance(tango_device_data, list):
+        tango_device_data = tango_device_data[0]
 
     issues = []
     if not specification_data["meta"]["commands"]:
@@ -389,6 +391,8 @@ def validate_spec_structure(specification_yaml):
         The specification in YAML format
     """
     specification_data = yaml.load(specification_yaml, Loader=yaml.FullLoader)
+    if isinstance(specification_data, list):
+        specification_data = specification_data[0]
 
     passes = True
     if "class" not in specification_data:
