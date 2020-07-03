@@ -23,8 +23,6 @@ from tango_simlib.utilities.validate_device import (
 def _validate_device(args):
     """Validate the conformance of a Tango device against a YAML specification
 
-    Exits with code 0 or 1 if it passes or fails respectively.
-
     Parameters
     ----------
     args : argparse.Namespace
