@@ -265,7 +265,7 @@ def test_validate():
     bi_directional_result = compare_data(spec_yaml, dev_yaml, 1)
 
     assert (
-        "lass differs, specified 'DishMaster_B', but device has 'DishMaster_A'"
+        "Class differs, specified 'DishMaster_B', but device has 'DishMaster_A'"
         in bi_directional_result
     )
     assert (
