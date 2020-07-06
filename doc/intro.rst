@@ -217,20 +217,22 @@ After installing tango_simlib, the ``tango-yaml`` script will be available to us
 
     $ tango-yaml -h
 
-    usage: tango_yaml [-h] {xmi,fandango,tango_device} ...
+      usage: tango_yaml [-h] {xmi,fandango,tango_device,validate} ...
 
-    This program translates various file formats that describe Tango devices to
-    YAML
+      This program translates various file formats that describe Tango devices to
+      YAML. Or validates the conformance of a device against a specification.
 
-    positional arguments:
-    {xmi,fandango,tango_device}
-                            sub command help
-        xmi                 Build YAML from a XMI file
-        fandango            Build YAML from a fandango file
-        tango_device        Build YAML from a running Tango device
+      positional arguments:
+        {xmi,fandango,tango_device,validate}
+                              sub command help
+          xmi                 Build YAML from a XMI file
+          fandango            Build YAML from a fandango file
+          tango_device        Build YAML from a running Tango device
+          validate            Check conformance of a Tango device against a
+                              specification in YAML format
 
-    optional arguments:
-    -h, --help            show this help message and exit
+      optional arguments:
+        -h, --help            show this help message and exit
 
 XMI
 ---
@@ -345,16 +347,17 @@ Tango device
 
 .. code-block:: bash
 
-    $ tango-yaml tango_device_name -h
+    $ tango-yaml tango_device -h
 
-    usage: tango_yaml tango_device [-h] tango_device_name
+      usage: tango_yaml tango_device [-h] tango_device_name
 
-    positional arguments:
-    tango_device_name  Tango device name in the format domain/family/member.
-                        TANGO_HOST env variable has to be set
+      positional arguments:
+        tango_device_name  Tango device name in the domain/family/member format or
+                          the FQDN
+                          tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
 
-    optional arguments:
-    -h, --help         show this help message and exit
+      optional arguments:
+        -h, --help         show this help message and exit
 
 Example
 
@@ -399,3 +402,65 @@ Example
           - name: LoggingLevelDefault
           - name: LoggingTargetsDefault
           ...
+
+
+Validation
+----------
+
+A Tango device's conformance to an interface specification can be checked.
+By default check that the device provides a superset of the specification.
+When the optional `-bidirectional` flag is specified, the check is stricter -
+items on the device interface and not in the specification are also reported.
+
+.. code-block:: bash
+
+    $ tango-yaml validate -h
+
+      usage: tango_yaml validate [-h] (--url URL | --path PATH) [--bidirectional]
+                                tango_device_name
+
+      positional arguments:
+        tango_device_name  Tango device name in the domain/family/member format or
+                          the FQDN
+                          tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
+
+      optional arguments:
+        -h, --help         show this help message and exit
+        --url URL          The URL to a YAML specification file
+        --path PATH        The file path to a YAML specification file
+        --bidirectional    When bidirectional is included, any details on the device
+                          that is not in the spec is also listed.
+
+Example
+
+.. code-block:: bash
+
+    $ tango-yaml validate --path ./DishMaster.yaml  mid_d0001/elt/master
+
+      Command differs, [SetDSStandbyFPModeTask] specified but missing in device
+      Command [GetVersionInfo] differs:
+              doc_out:
+                      specification: Uninitialised
+                      device: Version strings
+      Command [GetVersionInfo] differs:
+              dtype_out:
+                      specification: DevString
+                      device: DevVarStringArray
+      Command [Scan] differs:
+              doc_in:
+                      specification: [timestamp]
+                      device: The timestamp indicates the time, in UTC
+      Attribute differs, [loggingLevelElement] specified but missing in device
+      Attribute [adminMode] differs:
+              description:
+                      specification: No description
+                      device: The admin mode reported for this device.
+      Attribute [controlMode] differs:
+              description:
+                      specification: No description
+                      device: The control mode of the device. REMOTE, LOCAL
+      Attribute [versionId] differs:
+              description:
+                      specification: LMC version id (from git tag)
+                      device: Version Id of this device
+      Property [LoggerInitPollPeriod] differs, specified but missing in device

@@ -116,7 +116,8 @@ class TangoToYAML:
         Parameters
         ----------
         device_name : str
-            Tango device name in the domain/family/member format
+            Tango device name in the domain/family/member format or the
+            FQDN tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
         """
         self.parser.parse(device_name)
         return self._build_yaml()

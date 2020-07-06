@@ -32,9 +32,9 @@ class TangoDeviceParser(Parser):
         Parameters
         ----------
         tango_device_name: str
-            Tango device name in the domain/family/member format
+            Tango device name in the domain/family/member format or the
+            FQDN tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
         """
-        assert "TANGO_HOST" in os.environ, "TANGO_HOST env variable is not set"
         self.device_proxy = tango.DeviceProxy(tango_device_name)
         self.device_class_name = self.device_proxy.info().dev_class
 
@@ -57,7 +57,7 @@ class TangoDeviceParser(Parser):
                 "standard_unit": attribute.standard_unit,
                 "unit": attribute.unit,
                 "writable": str(attribute.writable),
-                "writable_attr_name": attribute.writable_attr_name
+                "writable_attr_name": attribute.writable_attr_name,
             }
             self.data_dict["meta"]["attributes"][attribute.name] = attr_data
 
@@ -148,3 +148,12 @@ class TangoDeviceParser(Parser):
     def get_device_cmd_override_metadata(self):
         """This method is not implemented"""
         raise NotImplementedError("get_device_cmd_override_metadata not implemented")
+
+    def get_parsed_data(self):
+        """Returns all the parsed data
+
+        Returns
+        -------
+        dict
+        """
+        return self.data_dict
