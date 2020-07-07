@@ -10,6 +10,15 @@
 .. _117: https://github.com/ska-sa/tango-simlib/pull/117
 .. _118: https://github.com/ska-sa/tango-simlib/pull/118
 .. _119: https://github.com/ska-sa/tango-simlib/pull/119
+.. _121: https://github.com/ska-sa/tango-simlib/pull/121
+.. _122: https://github.com/ska-sa/tango-simlib/pull/122
+
+0.7.0
+-----
+- Updated CHANGELOG in 122_
+- Added `validate` option to `tango-yaml` tool in 121_
+    - This sub command enables conformance verification of a running Tango
+      device against a specification file.
 
 0.6.0
 -----
