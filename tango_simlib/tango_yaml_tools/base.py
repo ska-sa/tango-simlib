@@ -60,6 +60,7 @@ class TangoToYAML:
                 attr_data["disp_level"] = attr["disp_level"].name
             # pylint insists on this spacing
             for key in [
+                    "enum_labels",
                     "delta_val",
                     "period",
                     "display_unit",

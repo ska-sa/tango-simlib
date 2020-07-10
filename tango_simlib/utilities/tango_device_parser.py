@@ -46,6 +46,7 @@ class TangoDeviceParser(Parser):
                 "description": attribute.description,
                 "disp_level": attribute.disp_level,
                 "display_unit": attribute.display_unit,
+                "enum_labels": attribute.enum_labels,
                 "format": attribute.format,
                 "label": attribute.label,
                 "max_alarm": attribute.max_alarm,
@@ -87,6 +88,7 @@ class TangoDeviceParser(Parser):
                         "data_type": "DevString",
                         "description": "",
                         "display_unit": "No display unit",
+                        "enum_labels": []
                         "format": "%s",
                         "label": "Timing_info",
                         "max_alarm": "Not specified",
