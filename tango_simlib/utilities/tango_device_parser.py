@@ -38,7 +38,7 @@ class TangoDeviceParser(Parser):
         self.device_proxy = tango.DeviceProxy(tango_device_name)
         self.device_class_name = self.device_proxy.info().dev_class
 
-        for attribute in self.device_proxy.attribute_list_query():
+        for attribute in self.device_proxy.attribute_list_query_ex():
             attr_data = {
                 "name": attribute.name,
                 "data_type": tango.CmdArgType.values[attribute.data_type],
