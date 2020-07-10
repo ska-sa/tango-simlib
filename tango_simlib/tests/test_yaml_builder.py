@@ -217,7 +217,6 @@ def test_tango_device_builder():
         attr.writable = tango.AttrWriteType.READ
         attr.description = "description"
         attr.display_unit = "display_unit"
-        attr.enum_labels = []
         attr.format = "format"
         attr.label = "label"
         attr.max_alarm = "max_alarm"
