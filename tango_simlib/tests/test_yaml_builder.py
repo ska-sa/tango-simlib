@@ -59,6 +59,7 @@ def test_file_builders_xmi():
                 "delta_val": "",
                 "description": "The band 4 capability state of the DSH Element.",
                 "display_unit": "",
+                "enum_labels": ["INIT", "ON", "OFF"],
                 "format": "",
                 "inherited": "false",
                 "label": "Band4 capability state",
@@ -128,6 +129,7 @@ def test_file_builders_fandango():
                 "data_type": "DevString",
                 "description": "",
                 "display_unit": "No display unit",
+                "enum_labels": [],
                 "format": "%s",
                 "label": "Timing_info",
                 "max_alarm": "Not specified",
@@ -228,7 +230,7 @@ def test_tango_device_builder():
         attr.writable_attr_name = "writable_attr_name"
 
         mocked_device_proxy.get_command_config.return_value = [mocked_command]
-        mocked_device_proxy.attribute_list_query.return_value = [attr]
+        mocked_device_proxy.attribute_list_query_ex.return_value = [attr]
         mocked_device_proxy.get_property_list.return_value = ["PropA", "PropB"]
 
         tango_args = Namespace(tango_device_name="a/b/c")
@@ -238,7 +240,7 @@ def test_tango_device_builder():
 
         mocked_tango.DeviceProxy.assert_called_once_with("a/b/c")
         mocked_device_proxy.get_command_config.assert_called()
-        mocked_device_proxy.attribute_list_query.assert_called()
+        mocked_device_proxy.attribute_list_query_ex.assert_called()
         mocked_device_proxy.get_property_list.assert_called()
 
         assert parsed_yaml[0]["meta"]["attributes"] == [
@@ -248,6 +250,7 @@ def test_tango_device_builder():
                 "description": "description",
                 "disp_level": "OPERATOR",
                 "display_unit": "display_unit",
+                "enum_labels": [],
                 "format": "format",
                 "label": "label",
                 "max_alarm": "max_alarm",
