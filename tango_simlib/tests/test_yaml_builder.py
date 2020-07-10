@@ -59,7 +59,7 @@ def test_file_builders_xmi():
                 "delta_val": "",
                 "description": "The band 4 capability state of the DSH Element.",
                 "display_unit": "",
-                "enum_labels": ["INIT", "ON", "\'OFF\'"],
+                "enum_labels": ["INIT", "OFF", "ON"],
                 "format": "",
                 "inherited": "false",
                 "label": "Band4 capability state",
