@@ -149,6 +149,7 @@ def test_file_builders_fandango():
                 "data_type": "DevDouble",
                 "description": "",
                 "display_unit": "No display unit",
+                "enum_labels": [],
                 "format": "%6.2f",
                 "label": "Timing_minimum",
                 "max_alarm": "Not specified",
