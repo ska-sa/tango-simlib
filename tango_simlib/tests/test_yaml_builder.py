@@ -52,7 +52,6 @@ def test_file_builders_xmi():
     # Order differs between Python 2 and 3
     for attr in parsed_yaml[0]["meta"]["attributes"]:
         if attr["name"] == "band4CapabilityState":
-            print(attr)
             assert attr == {
                 "data_format": "SCALAR",
                 "data_type": "DevEnum",
