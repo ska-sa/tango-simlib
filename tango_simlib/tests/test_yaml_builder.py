@@ -209,7 +209,7 @@ def test_tango_device_builder():
         mocked_command.out_type_desc = "out_type_desc"
         mocked_command.in_type_desc = "in_type_desc"
 
-        attr = tango.AttributeInfo()
+        attr = tango.AttributeInfoEx()
         attr.name = "AttrName"
         attr.data_format = tango.AttrDataFormat.SCALAR
         attr.disp_level = tango.DispLevel.OPERATOR
@@ -217,6 +217,7 @@ def test_tango_device_builder():
         attr.writable = tango.AttrWriteType.READ
         attr.description = "description"
         attr.display_unit = "display_unit"
+        attr.enum_labels = []
         attr.format = "format"
         attr.label = "label"
         attr.max_alarm = "max_alarm"
