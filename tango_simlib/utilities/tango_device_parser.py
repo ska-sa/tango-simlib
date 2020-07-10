@@ -46,7 +46,7 @@ class TangoDeviceParser(Parser):
                 "description": attribute.description,
                 "disp_level": attribute.disp_level,
                 "display_unit": attribute.display_unit,
-                "enum_labels": attribute.enum_labels,
+                "enum_labels": list(attribute.enum_labels),
                 "format": attribute.format,
                 "label": attribute.label,
                 "max_alarm": attribute.max_alarm,
