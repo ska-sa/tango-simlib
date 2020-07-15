@@ -28,23 +28,27 @@ meta:
     writable: READ_WRITE
     writable_attr_name: logginglevelcentral
   - data_format: SCALAR
-    data_type: DevLong
-    description: Current  logging level to Element logging target
+    data_type: DevEnum
+    description: The band 4 capability health status of the DSH Element.
     disp_level: OPERATOR
     display_unit: No display unit
-    format: '%d'
-    label: loggingLevelElement
+    enum_labels:
+      - INIT
+      - OFF
+      - ON
+    format: '%s'
+    label: band4CapabilityState
     max_alarm: Not specified
     max_dim_x: 1
     max_dim_y: 0
     max_value: Not specified
     min_alarm: Not specified
     min_value: Not specified
-    name: loggingLevelElement_A
+    name: band4CapabilityState_A
     standard_unit: No standard unit
     unit: ''
     writable: READ_WRITE
-    writable_attr_name: logginglevelelement
+    writable_attr_name: band4capabilitystate
   - data_format: SCALAR
     data_type: DevLong
     description: Current  logging level to logging target
@@ -120,23 +124,27 @@ meta:
     writable: READ_WRITE
     writable_attr_name: logginglevelcentral
   - data_format: SCALAR
-    data_type: DevLong
-    description: Current  logging level to Element logging target
+    data_type: DevEnum
+    description: The band 4 capability health status of the DSH Element.
     disp_level: OPERATOR
     display_unit: No display unit
-    format: '%d'
-    label: loggingLevelElement
+    enum_labels:
+      - INIT
+      - OFF
+      - ON
+    format: '%s'
+    label: band4CapabilityState
     max_alarm: Not specified
     max_dim_x: 1
     max_dim_y: 0
     max_value: Not specified
     min_alarm: Not specified
     min_value: Not specified
-    name: loggingLevelElement_B
+    name: band4CapabilityState_B
     standard_unit: No standard unit
     unit: ''
     writable: READ_WRITE
-    writable_attr_name: logginglevelelement
+    writable_attr_name: band4capabilitystate
   - data_format: SCALAR
     data_type: DevLong
     description: Current  logging level to logging target
@@ -230,13 +238,13 @@ def test_validate():
     assert "OtherCommand" not in single_direction_result
 
     attr_result = (
-        "Attribute differs, [loggingLevelElement_A] specified but missing in device"
+        "Attribute differs, [band4CapabilityState_A] specified but missing in device"
     )
     assert attr_result in bi_directional_result
     assert attr_result in single_direction_result
 
     attr_result = (
-        "Attribute differs, [loggingLevelElement_B] present"
+        "Attribute differs, [band4CapabilityState_B] present"
         " in device but not specified"
     )
     assert attr_result in bi_directional_result
@@ -285,12 +293,12 @@ def test_validate():
     assert "OtherCommand" not in bi_directional_result
 
     assert (
-        "Attribute differs, [loggingLevelElement_B] specified but missing in device"
+        "Attribute differs, [band4CapabilityState_B] specified but missing in device"
     ) in bi_directional_result
 
     assert (
         (
-            "Attribute differs, [loggingLevelElement_A] present"
+            "Attribute differs, [band4CapabilityState_A] present"
             " in device but not specified"
         )
     ) in bi_directional_result
@@ -325,7 +333,7 @@ def test_empty_validation():
     assert command_res in bi_direction_result
 
     attr_res = (
-        "Attribute differs, [OtherAttribute,loggingLevelCentral,loggingLevelElement_A]"
+        "Attribute differs, [OtherAttribute,loggingLevelCentral,band4CapabilityState_A]"
         " present in device but not specified"
     )
     assert attr_res in bi_direction_result
