@@ -16,8 +16,30 @@ meta:
     display_unit: No display unit
     enum_labels:
       - INIT
-      - OFF
-      - ON
+      - 'OFF'
+      - 'ON'
+    format: '%s'
+    label: band1CapabilityState
+    max_alarm: Not specified
+    max_dim_x: 1
+    max_dim_y: 0
+    max_value: Not specified
+    min_alarm: Not specified
+    min_value: Not specified
+    name: band1CapabilityState
+    standard_unit: No standard unit
+    unit: ''
+    writable: READ_WRITE
+    writable_attr_name: band1capabilitystate
+  - data_format: SCALAR
+    data_type: DevEnum
+    description: The band 4 capability health status of the DSH Element.
+    disp_level: OPERATOR
+    display_unit: No display unit
+    enum_labels:
+      - INIT
+      - 'OFF'
+      - 'ON'
     format: '%s'
     label: band4CapabilityState
     max_alarm: Not specified
@@ -112,8 +134,30 @@ meta:
     display_unit: No display unit
     enum_labels:
       - INIT
-      - OFF
-      - ON
+      - 'OFF'
+      - NONE
+    format: '%s'
+    label: band1CapabilityState
+    max_alarm: Not specified
+    max_dim_x: 1
+    max_dim_y: 0
+    max_value: Not specified
+    min_alarm: Not specified
+    min_value: Not specified
+    name: band1CapabilityState
+    standard_unit: No standard unit
+    unit: ''
+    writable: READ_WRITE
+    writable_attr_name: band1capabilitystate
+  - data_format: SCALAR
+    data_type: DevEnum
+    description: The band 4 capability health status of the DSH Element.
+    disp_level: OPERATOR
+    display_unit: No display unit
+    enum_labels:
+      - INIT
+      - 'OFF'
+      - 'ON'
     format: '%s'
     label: band4CapabilityState
     max_alarm: Not specified
@@ -250,6 +294,16 @@ def test_validate():
     assert attr_result in bi_directional_result
     assert attr_result not in single_direction_result
 
+    assert (
+        "Attribute [band1CapabilityState] differs:\n\tenum_labels:"
+        "\n\t\tspecification: ['INIT', 'OFF', 'ON']\n\t\tdevice: ['INIT', 'OFF', 'NONE']"
+    ) in single_direction_result
+
+    assert (
+        "Attribute [band1CapabilityState] differs:\n\tenum_labels:"
+        "\n\t\tspecification: ['INIT', 'OFF', 'ON']\n\t\tdevice: ['INIT', 'OFF', 'NONE']"
+    ) in bi_directional_result
+
     # Same in both
     assert "OtherAttribute" not in bi_directional_result
     assert "OtherAttribute" not in single_direction_result
@@ -303,6 +357,11 @@ def test_validate():
         )
     ) in bi_directional_result
 
+    assert (
+        "Attribute [band1CapabilityState] differs:\n\tenum_labels:"
+        "\n\t\tspecification: ['INIT', 'OFF', 'NONE']\n\t\tdevice: ['INIT', 'OFF', 'ON']"
+    ) in bi_directional_result
+
     assert "OtherAttribute" not in bi_directional_result
 
     assert (
@@ -333,7 +392,8 @@ def test_empty_validation():
     assert command_res in bi_direction_result
 
     attr_res = (
-        "Attribute differs, [OtherAttribute,band4CapabilityState_A,loggingLevelCentral]"
+        "Attribute differs, "
+        "[OtherAttribute,band1CapabilityState,band4CapabilityState_A,loggingLevelCentral]"
         " present in device but not specified"
     )
     assert attr_res in bi_direction_result
