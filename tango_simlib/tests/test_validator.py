@@ -9,24 +9,6 @@ YAML_A = """
 class: DishMaster_A
 meta:
   attributes:
-  - data_format: SCALAR_A
-    data_type: DevLong_A
-    description: Current  logging level to Central logging target
-    disp_level: OPERATOR
-    display_unit: No display unit
-    format: '%d'
-    label: loggingLevelCentral
-    max_alarm: Not specified
-    max_dim_x: 1
-    max_dim_y: 0
-    max_value: Not specified
-    min_alarm: Not specified
-    min_value: Not specified
-    name: loggingLevelCentral
-    standard_unit: No standard unit
-    unit: ''
-    writable: READ_WRITE
-    writable_attr_name: logginglevelcentral
   - data_format: SCALAR
     data_type: DevEnum
     description: The band 4 capability health status of the DSH Element.
@@ -49,6 +31,24 @@ meta:
     unit: ''
     writable: READ_WRITE
     writable_attr_name: band4capabilitystate
+  - data_format: SCALAR_A
+    data_type: DevLong_A
+    description: Current  logging level to Central logging target
+    disp_level: OPERATOR
+    display_unit: No display unit
+    format: '%d'
+    label: loggingLevelCentral
+    max_alarm: Not specified
+    max_dim_x: 1
+    max_dim_y: 0
+    max_value: Not specified
+    min_alarm: Not specified
+    min_value: Not specified
+    name: loggingLevelCentral
+    standard_unit: No standard unit
+    unit: ''
+    writable: READ_WRITE
+    writable_attr_name: logginglevelcentral
   - data_format: SCALAR
     data_type: DevLong
     description: Current  logging level to logging target
@@ -105,24 +105,6 @@ YAML_B = """
 class: DishMaster_B
 meta:
   attributes:
-  - data_format: SCALAR_B
-    data_type: DevLong_B
-    description: Current  logging level to Central logging target
-    disp_level: OPERATOR
-    display_unit: No display unit
-    format: '%d'
-    label: loggingLevelCentral
-    max_alarm: Not specified
-    max_dim_x: 1
-    max_dim_y: 0
-    max_value: Not specified
-    min_alarm: Not specified
-    min_value: Not specified
-    name: loggingLevelCentral
-    standard_unit: No standard unit
-    unit: ''
-    writable: READ_WRITE
-    writable_attr_name: logginglevelcentral
   - data_format: SCALAR
     data_type: DevEnum
     description: The band 4 capability health status of the DSH Element.
@@ -145,6 +127,24 @@ meta:
     unit: ''
     writable: READ_WRITE
     writable_attr_name: band4capabilitystate
+  - data_format: SCALAR_B
+    data_type: DevLong_B
+    description: Current  logging level to Central logging target
+    disp_level: OPERATOR
+    display_unit: No display unit
+    format: '%d'
+    label: loggingLevelCentral
+    max_alarm: Not specified
+    max_dim_x: 1
+    max_dim_y: 0
+    max_value: Not specified
+    min_alarm: Not specified
+    min_value: Not specified
+    name: loggingLevelCentral
+    standard_unit: No standard unit
+    unit: ''
+    writable: READ_WRITE
+    writable_attr_name: logginglevelcentral
   - data_format: SCALAR
     data_type: DevLong
     description: Current  logging level to logging target
@@ -333,7 +333,7 @@ def test_empty_validation():
     assert command_res in bi_direction_result
 
     attr_res = (
-        "Attribute differs, [band4CapabilityState_A,OtherAttribute,loggingLevelCentral]"
+        "Attribute differs, [OtherAttribute,band4CapabilityState_A,loggingLevelCentral]"
         " present in device but not specified"
     )
     assert attr_res in bi_direction_result
