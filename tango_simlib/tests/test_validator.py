@@ -333,7 +333,7 @@ def test_empty_validation():
     assert command_res in bi_direction_result
 
     attr_res = (
-        "Attribute differs, [OtherAttribute,loggingLevelCentral,band4CapabilityState_A]"
+        "Attribute differs, [band4CapabilityState_A,OtherAttribute,loggingLevelCentral]"
         " present in device but not specified"
     )
     assert attr_res in bi_direction_result
