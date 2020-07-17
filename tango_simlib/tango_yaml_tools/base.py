@@ -64,6 +64,7 @@ class TangoToYAML:
                 elif key in [
                         "name",
                         "delta_val",
+                        "enum_labels",
                         "period",
                         "display_unit",
                         "standard_unit",
@@ -84,7 +85,8 @@ class TangoToYAML:
                         "writable",
                         "writable_attr_name",
                 ]:
-                    attr_data[key] = attr[key]
+                    if attr[key]:
+                        attr_data[key] = attr[key]
             data_dict[0]["meta"]["attributes"].append(attr_data)
 
         prop_values = self.parser.get_device_properties_metadata(
