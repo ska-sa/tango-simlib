@@ -42,43 +42,50 @@ class TangoToYAML:
         for command in self.parser.get_device_command_metadata().values():
             command_data = {
                 "name": command["name"],
-                "dtype_in": command["dtype_in"].name,
-                "dtype_out": command["dtype_out"].name,
             }
-            for key in ["doc_out", "doc_in", "inherited", "disp_level"]:
+            # Order the rest alphabetically
+            for key in ["disp_level", "doc_in", "doc_out"]:
                 if key in command:
                     command_data[key] = command[key]
+            for key in ["dtype_in", "dtype_out"]:
+                if key in command:
+                    command_data[key] = command[key].name
+            if "inherited" in command:
+                command_data["inherited"] = command["inherited"]
+
             data_dict[0]["meta"]["commands"].append(command_data)
 
         for attr in self.parser.get_device_attribute_metadata().values():
             attr_data = {"name": attr["name"]}
-            if "data_type" in attr:
-                attr_data["data_type"] = attr["data_type"].name
+            # Order the rest alphabetically
             if "data_format" in attr:
                 attr_data["data_format"] = attr["data_format"].name
+            if "data_type" in attr:
+                attr_data["data_type"] = attr["data_type"].name
+            for key in ["delta_t", "delta_val", "description"]:
+                if key in attr:
+                    if attr[key]:
+                        attr_data[key] = attr[key]
             if "disp_level" in attr:
                 attr_data["disp_level"] = attr["disp_level"].name
             # pylint insists on this spacing
             for key in [
-                    "enum_labels",
-                    "delta_val",
-                    "period",
                     "display_unit",
+                    "enum_labels",
+                    "format",
+                    "inherited",
+                    "label",
+                    "max_alarm",
+                    "max_dim_x",
+                    "max_dim_y",
+                    "max_value",
+                    "max_warning",
+                    "min_alarm",
+                    "min_value",
+                    "min_warning",
+                    "period",
                     "standard_unit",
                     "unit",
-                    "max_dim_y",
-                    "max_dim_x",
-                    "label",
-                    "max_value",
-                    "min_alarm",
-                    "max_warning",
-                    "description",
-                    "format",
-                    "delta_t",
-                    "max_alarm",
-                    "min_value",
-                    "inherited",
-                    "min_warning",
                     "writable",
                     "writable_attr_name",
             ]:
