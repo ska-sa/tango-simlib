@@ -83,7 +83,8 @@ class TangoToYAML:
                     "writable_attr_name",
             ]:
                 if key in attr:
-                    attr_data[key] = attr[key]
+                    if attr[key]:
+                        attr_data[key] = attr[key]
             data_dict[0]["meta"]["attributes"].append(attr_data)
 
         for prop in self.parser.get_device_properties_metadata(
