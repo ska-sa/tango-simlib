@@ -63,16 +63,26 @@ class TangoToYAML:
                     attr_data[key] = attr[key].name
                 elif key in [
                         "name",
+                        "delta_val",
+                        "period",
                         "display_unit",
                         "standard_unit",
+                        "unit",
+                        "max_dim_y",
                         "max_dim_x",
                         "label",
                         "max_value",
                         "min_alarm",
+                        "max_warning",
+                        "description",
                         "format",
+                        "delta_t",
                         "max_alarm",
                         "min_value",
+                        "inherited",
+                        "min_warning",
                         "writable",
+                        "writable_attr_name",
                 ]:
                     attr_data[key] = attr[key]
             data_dict[0]["meta"]["attributes"].append(attr_data)
