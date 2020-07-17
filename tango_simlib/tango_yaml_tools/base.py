@@ -90,7 +90,7 @@ class TangoToYAML:
                 "deviceProperties"
         ).values():
             data_dict[0]["meta"]["properties"].append({"name": prop["name"]})
-        return yaml.dump(data_dict)
+        return yaml.dump(data_dict, sort_keys=False)
 
     def build_yaml_from_file(self, file_loc):
         """Builds YAML from a Tango specification file
