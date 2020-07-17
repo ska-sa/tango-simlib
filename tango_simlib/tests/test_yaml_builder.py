@@ -54,16 +54,17 @@ def test_file_builders_xmi():
         if attr["name"] == "band4CapabilityState":
             assert attr == {
                 "name": "band4CapabilityState",
-                "data_type": "DevEnum",
                 "data_format": "SCALAR",
-                "enum_labels": ["INIT", "OFF", "ON"],
-                "period": "0",
-                "max_dim_x": 1,
+                "data_type": "DevEnum",
+                "display_unit": "",
+                "format": "",
                 "label": "Band4 capability state",
+                "max_alarm": "",
+                "max_dim_x": 1,
                 "max_value": "2",
-                "description": "The band 4 capability state of the DSH Element.",
+                "min_alarm": "",
                 "min_value": "0",
-                "inherited": "false",
+                "standard_unit": "",
                 "writable": "READ",
             }
 
@@ -228,21 +229,19 @@ def test_tango_device_builder():
         assert parsed_yaml[0]["meta"]["attributes"] == [
             {
                 "name": "AttrName",
-                "data_type": "DevString",
                 "data_format": "SCALAR",
+                "data_type": "DevString",
                 "disp_level": "OPERATOR",
                 "display_unit": "display_unit",
-                "standard_unit": "standard_unit",
-                "unit": "unit",
+                "format": "format",
                 "label": "label",
+                "max_alarm": "max_alarm",
+                "max_dim_x": 0,
                 "max_value": "max_value",
                 "min_alarm": "min_alarm",
-                "description": "description",
-                "format": "format",
-                "max_alarm": "max_alarm",
                 "min_value": "min_value",
+                "standard_unit": "standard_unit",
                 "writable": "READ",
-                "writable_attr_name": "writable_attr_name",
             }
         ]
         assert parsed_yaml[0]["meta"]["commands"] == [
