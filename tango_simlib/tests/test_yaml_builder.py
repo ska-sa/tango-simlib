@@ -53,28 +53,18 @@ def test_file_builders_xmi():
     for attr in parsed_yaml[0]["meta"]["attributes"]:
         if attr["name"] == "band4CapabilityState":
             assert attr == {
-                "data_format": "SCALAR",
-                "data_type": "DevEnum",
-                "delta_t": "",
-                "delta_val": "",
+                "enum_labels": ["INIT", "OFF", "ON"],
                 "description": "The band 4 capability state of the DSH Element.",
-                "display_unit": "",
-                "format": "",
-                "inherited": "false",
-                "label": "Band4 capability state",
-                "max_alarm": "",
-                "max_dim_x": 1,
-                "max_dim_y": 0,
+                "data_type": "DevEnum",
                 "max_value": "2",
-                "max_warning": "",
-                "min_alarm": "",
                 "min_value": "0",
-                "min_warning": "",
-                "name": "band4CapabilityState",
-                "period": "0",
-                "standard_unit": "",
-                "unit": "",
+                "data_format": "SCALAR",
+                "label": "Band4 capability state",
                 "writable": "READ",
+                "max_dim_x": 1,
+                "period": "0",
+                "inherited": "false",
+                "name": "band4CapabilityState",
             }
 
     comms = [i["name"] for i in parsed_yaml[0]["meta"]["commands"]]
@@ -124,41 +114,35 @@ def test_file_builders_fandango():
 
         if attr["name"] == "Timing_info":
             assert attr == {
-                "data_format": "SPECTRUM",
-                "data_type": "DevString",
-                "description": "",
-                "display_unit": "No display unit",
-                "format": "%s",
-                "label": "Timing_info",
-                "max_alarm": "Not specified",
-                "max_dim_x": 64,
-                "max_dim_y": 0,
-                "max_value": "Not specified",
                 "min_alarm": "Not specified",
-                "min_value": "Not specified",
                 "name": "Timing_info",
-                "standard_unit": "No standard unit",
-                "unit": "",
+                "data_type": "DevString",
+                "format": "%s",
+                "max_alarm": "Not specified",
+                "min_value": "Not specified",
+                "data_format": "SPECTRUM",
+                "display_unit": "No display unit",
                 "writable": "READ",
+                "max_dim_x": 64,
+                "standard_unit": "No standard unit",
+                "max_value": "Not specified",
+                "label": "Timing_info",
             }
         if attr["name"] == "Timing_minimum":
             assert attr == {
-                "data_format": "SPECTRUM",
-                "data_type": "DevDouble",
-                "description": "",
-                "display_unit": "No display unit",
-                "format": "%6.2f",
-                "label": "Timing_minimum",
-                "max_alarm": "Not specified",
-                "max_dim_x": 64,
-                "max_dim_y": 0,
-                "max_value": "Not specified",
                 "min_alarm": "Not specified",
-                "min_value": "Not specified",
                 "name": "Timing_minimum",
-                "standard_unit": "No standard unit",
-                "unit": "",
+                "data_type": "DevDouble",
+                "format": "%6.2f",
+                "max_alarm": "Not specified",
+                "min_value": "Not specified",
+                "data_format": "SPECTRUM",
+                "display_unit": "No display unit",
                 "writable": "READ",
+                "max_dim_x": 64,
+                "standard_unit": "No standard unit",
+                "max_value": "Not specified",
+                "label": "Timing_minimum",
             }
 
     comms = [i["name"] for i in parsed_yaml[0]["meta"]["commands"]]
@@ -207,7 +191,7 @@ def test_tango_device_builder():
         mocked_command.out_type_desc = "out_type_desc"
         mocked_command.in_type_desc = "in_type_desc"
 
-        attr = tango.AttributeInfo()
+        attr = tango.AttributeInfoEx()
         attr.name = "AttrName"
         attr.data_format = tango.AttrDataFormat.SCALAR
         attr.disp_level = tango.DispLevel.OPERATOR
@@ -228,7 +212,7 @@ def test_tango_device_builder():
         attr.writable_attr_name = "writable_attr_name"
 
         mocked_device_proxy.get_command_config.return_value = [mocked_command]
-        mocked_device_proxy.attribute_list_query.return_value = [attr]
+        mocked_device_proxy.attribute_list_query_ex.return_value = [attr]
         mocked_device_proxy.get_property_list.return_value = ["PropA", "PropB"]
 
         tango_args = Namespace(tango_device_name="a/b/c")
@@ -238,28 +222,26 @@ def test_tango_device_builder():
 
         mocked_tango.DeviceProxy.assert_called_once_with("a/b/c")
         mocked_device_proxy.get_command_config.assert_called()
-        mocked_device_proxy.attribute_list_query.assert_called()
+        mocked_device_proxy.attribute_list_query_ex.assert_called()
         mocked_device_proxy.get_property_list.assert_called()
 
         assert parsed_yaml[0]["meta"]["attributes"] == [
             {
-                "data_format": "SCALAR",
-                "data_type": "DevString",
-                "description": "description",
                 "disp_level": "OPERATOR",
-                "display_unit": "display_unit",
+                "description": "description",
+                "data_type": "DevString",
                 "format": "format",
-                "label": "label",
                 "max_alarm": "max_alarm",
-                "max_dim_x": 0,
-                "max_dim_y": 0,
-                "max_value": "max_value",
-                "min_alarm": "min_alarm",
                 "min_value": "min_value",
-                "name": "AttrName",
+                "display_unit": "display_unit",
+                "writable": "READ",
                 "standard_unit": "standard_unit",
                 "unit": "unit",
-                "writable": "READ",
+                "name": "AttrName",
+                "data_format": "SCALAR",
+                "label": "label",
+                "max_value": "max_value",
+                "min_alarm": "min_alarm",
                 "writable_attr_name": "writable_attr_name",
             }
         ]
