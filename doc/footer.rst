@@ -19,4 +19,4 @@ Contact us
 
 | SKA South Africa
 | cam@ska.ac.za
-| https://www.ska.ac.za/
+| https://www.sarao.ac.za/

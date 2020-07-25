@@ -1,4 +1,4 @@
-tango\_simlib\.tango_yaml_tools modules
+tango\_simlib\.tango\_yaml\_tools modules
 =======================================
 
 tango\_simlib\.tango_yaml_tools\.base module
@@ -9,7 +9,7 @@ tango\_simlib\.tango_yaml_tools\.base module
     :undoc-members:
     :show-inheritance:
 
-tango\_simlib\.tango_yaml_tools\.main module
+tango\_simlib\.tango\_yaml\_tools\.main module
 --------------------------------------------
 
 .. automodule:: tango_simlib.tango_yaml_tools.main
