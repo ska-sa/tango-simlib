@@ -31,7 +31,7 @@ Rationale
 ---------
 
 During the development of the control and monitoring (*CAM*) systems for the
-KAT-7_ (KAT-7-wiki_) and MeerKAT_ (MeerKAT-wiki_) at SKASA_ it was found that
+KAT-7_ (KAT-7-wiki_) and MeerKAT_ (MeerKAT-wiki_) at SARAO_ it was found that
 having control-interface simulators available for all hardware and subsystems
 that *CAM* needs to control and monitor is an incredibly valuable resource. In
 early *CAM* development it:
@@ -59,7 +59,7 @@ code a basic simulator, providing no-op command (*KATCP* request) handlers and
 randomly varying attribute (*KATCP* sensor) values along with the back-channel
 interface for "free".
 
-The planned SKA_ telescope project that the SKASA_ team is participating in has
+The planned SKA_ telescope project that the SARAO_ team is participating in has
 decided to standardise on the TANGO_ control systems framework. This library is
 an attempt to bring the same simulation approach used for the *KAT-7* and *MeerKAT*
 telescope to the *TANGO* world.
@@ -68,11 +68,11 @@ telescope to the *TANGO* world.
 .. _TANGO: http://www.tango-controls.org/
 .. _POGO: http://www.esrf.eu/computing/cs/tango/tango_doc/tools_doc/pogo_doc/
 .. _SimDD: https://docs.google.com/document/d/1tkRGnKu5g8AHxVjK7UkEiukvqtqgZDzptphVCHemcIs/edit?usp=sharing
-.. _KAT-7: https://www.ska.ac.za/science-engineering/kat-7/
+.. _KAT-7: https://www.sarao.ac.za/gallery/kat-7/
 .. _KAT-7-wiki: https://en.wikipedia.org/wiki/KAT-7
-.. _MeerKAT: https://www.ska.ac.za/science-engineering/meerkat/
+.. _MeerKAT: https://www.sarao.ac.za/gallery/meerkat/
 .. _MeerKAT-wiki: https://en.wikipedia.org/wiki/MeerKAT
-.. _SKASA: http://www.ska.ac.za/
+.. _SARAO: https://www.sarao.ac.za/
 .. _KATCP: http://pythonhosted.org/katcp/
 .. _SKA: https://www.skatelescope.org/
 .. _CAM_Style_guide: https://docs.google.com/document/d/1aZoIyR9tz5rCWr2qJKuMTmKp2IzHlFjrCFrpDDHFypM/edit?usp=sharing
@@ -258,7 +258,8 @@ Example
       - class: Weather
         meta:
           attributes:
-          - data_format: SCALAR
+          - name: integer2
+            data_format: SCALAR
             data_type: DevULong
             delta_t: ''
             delta_val: ''
@@ -275,19 +276,18 @@ Example
             min_alarm: ''
             min_value: ''
             min_warning: ''
-            name: integer2
             period: '1000'
             standard_unit: ''
             unit: ''
             writable: READ
           ...
           commands:
-          - doc_in: none
+          - name: State
+            doc_in: none
             doc_out: Device state
             dtype_in: DevVoid
             dtype_out: DevState
             inherited: 'true'
-            name: State
           ...
           properties:
           - name: sim_xmi_description_file
@@ -316,7 +316,8 @@ Example
       - class: DataBase
         meta:
           attributes:
-          - data_format: SCALAR
+          - name: Status
+            data_format: SCALAR
             data_type: DevString
             description: ''
             display_unit: No display unit
@@ -328,17 +329,16 @@ Example
             max_value: Not specified
             min_alarm: Not specified
             min_value: Not specified
-            name: Status
             standard_unit: No standard unit
             unit: ''
             writable: READ
           ...
           commands:
-          - doc_in: Class name
+          - name: DbGetExportdDeviceListForClass
+            doc_in: Class name
             doc_out: Device exported list
             dtype_in: DevString
             dtype_out: DevVarStringArray
-            name: DbGetExportdDeviceListForClass
           ...
           properties: []
 
@@ -368,7 +368,8 @@ Example
       - class: SubarrayNode
         meta:
           attributes:
-          - data_format: SCALAR
+          - name: buildState
+            data_format: SCALAR
             data_type: DevString
             description: Build state of this device
             disp_level: OPERATOR
@@ -381,19 +382,18 @@ Example
             max_value: Not specified
             min_alarm: Not specified
             min_value: Not specified
-            name: buildState
             standard_unit: No standard unit
             unit: ''
             writable: READ
             writable_attr_name: None
           ...
           commands:
-          - disp_level: OPERATOR
+          - name: Abort
+            disp_level: OPERATOR
             doc_in: Uninitialised
             doc_out: Uninitialised
             dtype_in: DevVoid
             dtype_out: DevVoid
-            name: Abort
           ...
           properties:
           - name: CspSubarrayFQDN

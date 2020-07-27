@@ -12,6 +12,12 @@
 .. _119: https://github.com/ska-sa/tango-simlib/pull/119
 .. _121: https://github.com/ska-sa/tango-simlib/pull/121
 .. _122: https://github.com/ska-sa/tango-simlib/pull/122
+.. _123: https://github.com/ska-sa/tango-simlib/pull/123
+
+0.7.1
+-----
+- Include enum labels in YAML spec document and sort labels 123_.
+- Arranged the `- name` as the top value and have the keys sorted alphabetically 123_.
 
 0.7.0
 -----
