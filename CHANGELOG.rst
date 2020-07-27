@@ -17,6 +17,7 @@
 0.7.1
 -----
 - Include enum labels in YAML spec document and sort labels 123_.
+- Arranged the `- name` as the top value and have the keys sorted alphabetically 123_.
 
 0.7.0
 -----
