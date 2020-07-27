@@ -258,7 +258,8 @@ Example
       - class: Weather
         meta:
           attributes:
-          - data_format: SCALAR
+          - name: integer2
+            data_format: SCALAR
             data_type: DevULong
             delta_t: ''
             delta_val: ''
@@ -275,19 +276,18 @@ Example
             min_alarm: ''
             min_value: ''
             min_warning: ''
-            name: integer2
             period: '1000'
             standard_unit: ''
             unit: ''
             writable: READ
           ...
           commands:
-          - doc_in: none
+          - name: State
+            doc_in: none
             doc_out: Device state
             dtype_in: DevVoid
             dtype_out: DevState
             inherited: 'true'
-            name: State
           ...
           properties:
           - name: sim_xmi_description_file
@@ -316,7 +316,8 @@ Example
       - class: DataBase
         meta:
           attributes:
-          - data_format: SCALAR
+          - name: Status
+            data_format: SCALAR
             data_type: DevString
             description: ''
             display_unit: No display unit
@@ -328,17 +329,16 @@ Example
             max_value: Not specified
             min_alarm: Not specified
             min_value: Not specified
-            name: Status
             standard_unit: No standard unit
             unit: ''
             writable: READ
           ...
           commands:
-          - doc_in: Class name
+          - name: DbGetExportdDeviceListForClass
+            doc_in: Class name
             doc_out: Device exported list
             dtype_in: DevString
             dtype_out: DevVarStringArray
-            name: DbGetExportdDeviceListForClass
           ...
           properties: []
 
@@ -368,7 +368,8 @@ Example
       - class: SubarrayNode
         meta:
           attributes:
-          - data_format: SCALAR
+          - name: buildState
+            data_format: SCALAR
             data_type: DevString
             description: Build state of this device
             disp_level: OPERATOR
@@ -381,19 +382,18 @@ Example
             max_value: Not specified
             min_alarm: Not specified
             min_value: Not specified
-            name: buildState
             standard_unit: No standard unit
             unit: ''
             writable: READ
             writable_attr_name: None
           ...
           commands:
-          - disp_level: OPERATOR
+          - name: Abort
+            disp_level: OPERATOR
             doc_in: Uninitialised
             doc_out: Uninitialised
             dtype_in: DevVoid
             dtype_out: DevVoid
-            name: Abort
           ...
           properties:
           - name: CspSubarrayFQDN
