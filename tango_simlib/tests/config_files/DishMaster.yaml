@@ -1,1350 +1,160 @@
 - class: DishMaster
   meta:
+    commands:
+    - name: Configure
+      disp_level: OPERATOR
+      doc_in: Pointing parameter of Dish.
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: GetVersionInfo
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Version strings
+      dtype_in: DevVoid
+      dtype_out: DevVarStringArray
+    - name: Init
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: Reset
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: Scan
+      disp_level: OPERATOR
+      doc_in: The timestamp indicates the time, in UTC, at which command execution
+        should start.
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: SetMaintenanceMode
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: SetOperateMode
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: SetStandbyFPMode
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: SetStandbyLPMode
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: SetStowMode
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: Slew
+      disp_level: OPERATOR
+      doc_in: Timestamp at which command should be executed.
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: StartCapture
+      disp_level: OPERATOR
+      doc_in: The timestamp indicates the time, in UTC, at which command execution
+        should start.
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: State
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Device state
+      dtype_in: DevVoid
+      dtype_out: DevState
+    - name: Status
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Device status
+      dtype_in: DevVoid
+      dtype_out: DevString
+    - name: StopCapture
+      disp_level: OPERATOR
+      doc_in: The timestamp indicates the time, in UTC, at which command execution
+        should start
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: StopTrack
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: Track
+      disp_level: OPERATOR
+      doc_in: Timestamp at which command should be executed.
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: isCapabilityAchievable
+      disp_level: OPERATOR
+      doc_in: '[nrInstances][Capability types]'
+      doc_out: Uninitialised
+      dtype_in: DevVarLongStringArray
+      dtype_out: DevBoolean
     attributes:
-    - data_format: SCALAR
-      data_type: DevLong
-      description: Current  logging level to Central logging target for this device
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%d'
-      label: loggingLevelCentral
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: loggingLevelCentral
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: logginglevelcentral
-    - data_format: SCALAR
-      data_type: DevLong
-      description: Current  logging level to Element logging target for this device
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%d'
-      label: loggingLevelElement
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: loggingLevelElement
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: logginglevelelement
-    - data_format: SCALAR
-      data_type: DevLong
-      description: Current  logging level to Syslog for this device
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%d'
-      label: loggingLevelStorage
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: loggingLevelStorage
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: logginglevelstorage
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: 'Central logging target status. Possible values are:
-
-
-        UNKNOWN: Typically set at device startup
-
-        DISABLED: When central logging target is disabled (see device properties)
-
-        OK: When central logging target is initialized with success
-
-        FAILED: When central logging target initialization fails, e.g. logger is offline
-        or proxy name invalid '
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: centralLoggerStatus
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: centralLoggerStatus
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: 'Element logging target status. Possible values are:
-
-
-        UNKNOWN: Typically set at device startup
-
-        DISABLED: When element logging target is disabled (see device properties)
-
-        OK: When element logging target is initialized with success
-
-        FAILED: When element logging target initialization fails, e.g. logger is offline
-        or proxy name invalid '
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: elementLoggerStatus
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: elementLoggerStatus
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: 'Storage logging target status. Possible values are:
-
-
-        UNKNOWN: Typically set at device startup
-
-        DISABLED: When storage logging target is disabled (see device properties)
-
-        OK: When storage logging target is initialized with success
-
-        FAILED: When storage logging target initialization fails, e.g. logger is offline
-        or proxy name invalid '
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: storageLoggerStatus
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: storageLoggerStatus
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: 'Enable/disable the central logger in device.
-
-        NB: Attribute is not persisted after device restart.'
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: Not specified
-      label: centralLoggerEnabled
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: centralLoggerEnabled
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: centralloggerenabled
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: 'Enable/disable the central logger in device.
-
-        NB: Attribute is not persisted after device restart.'
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: Not specified
-      label: elementLoggerEnabled
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: elementLoggerEnabled
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: elementloggerenabled
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: 'Enable/disable the storage logger in device.
-
-        NB: Attribute is not persisted after device restart.'
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: Not specified
-      label: storageLoggerEnabled
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: storageLoggerEnabled
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: storageloggerenabled
-    - data_format: SCALAR
-      data_type: DevString
-      description: Current Central logging target
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: loggingTargetCentral
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: loggingTargetCentral
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: loggingtargetcentral
-    - data_format: SCALAR
-      data_type: DevString
-      description: Current Element logging target
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: loggingTargetElement
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: loggingTargetElement
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: loggingtargetelement
-    - data_format: SCALAR
-      data_type: DevString
-      description: Current storage logging target
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: loggingTargetStorage
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: loggingTargetStorage
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: loggingtargetstorage
-    - data_format: SCALAR
-      data_type: DevFloat
-      description: Rate of events received from the device in Hz.
-      disp_level: OPERATOR
-      display_unit: Hz
-      format: '%6.2f'
-      label: eventRate
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: eventRate
-      standard_unit: Hz
-      unit: Hz
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevString
-      description: LMC version id (from git tag)
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: versionId
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: versionId
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevString
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: revisionId
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: revisionId
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: dishMode
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: dishMode
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: dishmode
-    - data_format: SCALAR
-      data_type: DevState
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: Not specified
-      label: dishState
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: dishState
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: powerState
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: powerState
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: observingState
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: observingState
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: elementType
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: elementType
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: adminMode
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: adminMode
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: adminmode
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: healthState
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: healthState
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: healthstate
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: Not specified
-      label: simulationMode
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: simulationMode
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: Not specified
-      label: testMode
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: testMode
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: testmode
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: b1CapabilityState
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: b1CapabilityState
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: b2CapabilityState
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: b2CapabilityState
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: b3CapabilityState
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: b3CapabilityState
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: b4CapabilityState
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: b4CapabilityState
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: b5aCapabilityState
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: b5aCapabilityState
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: b5bCapabilityState
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: b5bCapabilityState
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: requestedBand
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: requestedBand
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: requestedband
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: configuredBand
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: configuredBand
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: seCtrlPowerStatus
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: seCtrlPowerStatus
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: controlMode
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: controlMode
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: controlmode
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: Enable/disable handling of band error event
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: Not specified
-      label: enableBandErrorEventHandler
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: enableBandErrorEventHandler
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: enablebanderroreventhandler
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: Enable/disable handling of ESTOP event
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: Not specified
-      label: enableESTOPEventHandler
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: enableESTOPEventHandler
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: enableestopeventhandler
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: Enable/disable handling of power cut event
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: Not specified
-      label: enablePowerCutEventHandler
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: enablePowerCutEventHandler
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: enablepowercuteventhandler
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: Not specified
-      label: enablePowerRestoreEventHandler
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: enablePowerRestoreEventHandler
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: enablepowerrestoreeventhandler
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: Not specified
-      label: enableBandInFocusEventHandler
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: enableBandInFocusEventHandler
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: enablebandinfocuseventhandler
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: Sub-Element run status (0=UNKNOWN, 1=ONLINE, 2=SOFT-OFFLINE, 3=HARD-OFFLINE
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: seRunStatus
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: seRunStatus
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevString
-      description: Set device proxy address of TM device to be monitored
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: tmProxyAddress
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: tmProxyAddress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: tmproxyaddress
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: Enable/disable handling of TM proxy monitoring handler
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: Not specified
-      label: enableTMProxyMoniHandler
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: enableTMProxyMoniHandler
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: enabletmproxymonihandler
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: usageStatus
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: usageStatus
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: elementLogLevel
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: elementLogLevel
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: centralLogLevel
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: centralLogLevel
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
-      data_type: DevEnum
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: storageLogLevel
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: storageLogLevel
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
+    - name: AzElOffset
+      data_format: SPECTRUM
       data_type: DevDouble
-      description: "Configures the Max Short Term Average Power (5sec?10min) in kilowatt\
-        \ that the \nDSH instance is curtailed to while dshPowerCurtailment is [TRUE].\
-        \ \nThe default value is 13.5. "
+      description: No description
       disp_level: OPERATOR
-      display_unit: kW
+      display_unit: No display unit
       format: '%6.2f'
-      label: dshMaxShortTermPower
+      label: AzElOffset
       max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
-      max_value: '20'
-      min_alarm: Not specified
-      min_value: '12.5'
-      name: dshMaxShortTermPower
-      standard_unit: kW
-      unit: kW
-      writable: READ_WRITE
-      writable_attr_name: dshmaxshorttermpower
-    - data_format: SCALAR
-      data_type: DevBoolean
-      description: "The Max Short Term Average Power (5sec?10min) of each DSH instance\
-        \ is curtailed \nto the value configured in dshMaxShortTermPower.  \nThe default\
-        \ condition is [TRUE] ? power curtailment is on.  \nWith power curtailment\
-        \ [TRUE], all DSH functionality is available but at reduced \nperformance\
-        \ (for example reduced slew rates). \nWith power curtailment [FALSE], all\
-        \ DSH functionality is available at full performance \n(for example maximum\
-        \ slew rates). "
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: Not specified
-      label: dshPowerCurtailment
-      max_alarm: Not specified
-      max_dim_x: 1
-      max_dim_y: 0
+      max_dim_x: 2
       max_value: Not specified
       min_alarm: Not specified
       min_value: Not specified
-      name: dshPowerCurtailment
       standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: dshpowercurtailment
-    - data_format: SCALAR
+      writable: READ
+      writable_attr_name: None
+    - name: ConfiguredBand
+      data_format: SCALAR
       data_type: DevEnum
-      description: 'Do not set this as forwarded attr and event otherwise you cannot
-        read event (DeviceAttribute
-
-        returning FMT_UNKNOWN as attr format). This is probably a Tango bug.'
+      description: Configured band of the dish
       disp_level: OPERATOR
       display_unit: No display unit
+      enum_labels:
+      - BAND1
+      - BAND2
+      - BAND3
+      - BAND4
+      - BAND5a
+      - BAND5b
+      - NONE
       format: '%s'
-      label: pointingState
+      label: ConfiguredBand
       max_alarm: Not specified
       max_dim_x: 1
-      max_dim_y: 0
       max_value: Not specified
       min_alarm: Not specified
       min_value: Not specified
-      name: pointingState
       standard_unit: No standard unit
-      unit: ''
       writable: READ
       writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: setStowModeProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: setStowModeProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: setstowmodeprogress
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: setStandbyLPModeProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: setStandbyLPModeProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: setstandbylpmodeprogress
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: setStandbyFPModeProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: setStandbyFPModeProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: setstandbyfpmodeprogress
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: setMaintenanceModeProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: setMaintenanceModeProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: setmaintenancemodeprogress
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: setOperateModeProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: setOperateModeProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: setoperatemodeprogress
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: configureBandProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: configureBandProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ_WRITE
-      writable_attr_name: configurebandprogress
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: SPF set standby LP mode status progress
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: spfSetStandbyLPModeProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: spfSetStandbyLPModeProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: dsSetStandbyLPModeProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: dsSetStandbyLPModeProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: spfSetOperateModeProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: spfSetOperateModeProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: dsSetStandbyFPModeProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: dsSetStandbyFPModeProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: dsSetPointModeProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: dsSetPointModeProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: dsIndexingProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: dsIndexingProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: spfSetMaintenanceModeProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: spfSetMaintenanceModeProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: dsStowProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: dsStowProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: setStandbyFPOnBandErrorProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: setStandbyFPOnBandErrorProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: setStandbyFPOnESTOPProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: setStandbyFPOnESTOPProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: shutdownOnPowerCutProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: shutdownOnPowerCutProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: OPERATOR
-      display_unit: No display unit
-      format: '%s'
-      label: startupOnPowerRestoreProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: startupOnPowerRestoreProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: dsManagerRunStatus
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: dsManagerRunStatus
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: spfControllerRunStatus
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: spfControllerRunStatus
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: rxControllerRunStatus
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: rxControllerRunStatus
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: spfGoOperationalProgress
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: spfGoOperationalProgress
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SPECTRUM
-      data_type: DevString
-      description: No description
-      disp_level: EXPERT
-      display_unit: No display unit
-      format: '%s'
-      label: tmProxyRunStatus
-      max_alarm: Not specified
-      max_dim_x: 2
-      max_dim_y: 0
-      max_value: Not specified
-      min_alarm: Not specified
-      min_value: Not specified
-      name: tmProxyRunStatus
-      standard_unit: No standard unit
-      unit: ''
-      writable: READ
-      writable_attr_name: None
-    - data_format: SCALAR
+    - name: State
+      data_format: SCALAR
       data_type: DevState
       description: No description
       disp_level: OPERATOR
@@ -1353,16 +163,14 @@
       label: State
       max_alarm: Not specified
       max_dim_x: 1
-      max_dim_y: 0
       max_value: Not specified
       min_alarm: Not specified
       min_value: Not specified
-      name: State
       standard_unit: No standard unit
-      unit: ''
       writable: READ
       writable_attr_name: None
-    - data_format: SCALAR
+    - name: Status
+      data_format: SCALAR
       data_type: DevString
       description: No description
       disp_level: OPERATOR
@@ -1371,1130 +179,536 @@
       label: Status
       max_alarm: Not specified
       max_dim_x: 1
-      max_dim_y: 0
       max_value: Not specified
       min_alarm: Not specified
       min_value: Not specified
-      name: Status
       standard_unit: No standard unit
-      unit: ''
       writable: READ
       writable_attr_name: None
-    commands:
-    - disp_level: OPERATOR
-      doc_in: ON/OFF
-      doc_out: Uninitialised
-      dtype_in: DevBoolean
-      dtype_out: DevVoid
-      name: Capture
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: ClearOldTasks
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: ClearTaskHistory
-    - disp_level: OPERATOR
-      doc_in: Band id {1=B1,2=B2,3=B3,4=B4,5=B5a,6=B5b}
-      doc_out: Uninitialised
-      dtype_in: DevShort
-      dtype_out: DevVoid
-      name: ConfigureAndSynchroniseRxBand
-    - disp_level: OPERATOR
-      doc_in: '[timestamp]'
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: ConfigureBand1
-    - disp_level: OPERATOR
-      doc_in: '[timestamp]'
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: ConfigureBand2
-    - disp_level: OPERATOR
-      doc_in: '[timestamp]'
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: ConfigureBand3
-    - disp_level: OPERATOR
-      doc_in: '[timestamp]'
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: ConfigureBand4
-    - disp_level: OPERATOR
-      doc_in: '[timestamp]'
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: ConfigureBand5a
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: ConfigureBand5b
-    - disp_level: OPERATOR
-      doc_in: Attenuation par in DB
-      doc_out: Uninitialised
-      dtype_in: DevFloat
-      dtype_out: DevVoid
-      name: ConfigureRxAttenuation
-    - disp_level: OPERATOR
-      doc_in: Band id
-      doc_out: Uninitialised
-      dtype_in: DevShort
-      dtype_out: DevVoid
-      name: ConfigureRxBand
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: ConfigureRxBandTask
-    - disp_level: OPERATOR
-      doc_in: enable/disable
-      doc_out: Uninitialised
-      dtype_in: DevBoolean
-      dtype_out: DevVoid
-      name: EnableRxEngineeringMode
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: FlushCommandQueue
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: FlushTaskQueue
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: GetLogAppenderInfo
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevLong
-      name: GetNFailedTaskSequences
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevLong
-      name: GetNIdleTaskSequences
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: The number of queued tasks
-      dtype_in: DevVoid
-      dtype_out: DevLong
-      name: GetNQueuedTasks
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: The number of running task sequences
-      dtype_in: DevVoid
-      dtype_out: DevLong
-      name: GetNRunningTaskSequences
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Number of tasks
-      dtype_in: DevVoid
-      dtype_out: DevLong
-      name: GetNTaskSequences
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarStringArray
-      name: GetQueuedTaskInfo
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarStringArray
-      name: GetRegisteredEventHandlers
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarStringArray
-      name: GetRegisteredEvents
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarStringArray
-      name: GetRegisteredProxies
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarStringArray
-      name: GetTaskSequenceInfo
-    - disp_level: EXPERT
-      doc_in: 'Task sequence name.
-
-        If empty returns all task sequences'
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVarStringArray
-      name: GetTaskSequenceSummary
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevString
-      name: GetVersionInfo
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleBandFunctionalErrorEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleBandInFocusEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleDSHealthStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleDSIndexerPositionEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleDSIndexingProgressEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleDSInterfaceTypeEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleDSModeEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleDSPointProgressEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleDSPointingStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleDSPowerStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleDSStandbyFPProgressEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleDSStandbyLPProgressEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleDSStowProgressEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleEStopEvent
-    - disp_level: EXPERT
-      doc_in: Task encoded string including event data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandlePowerCutEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandlePowerRestoreEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxB1CapabilityStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxB2CapabilityStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxB3CapabilityStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxB4CapabilityStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxB5aCapabilityStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxB5bCapabilityStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxConfiguredBandEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxEngModeEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxHealthStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxInterfaceTypeEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxModeEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleRxPowerStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFB1CapabilityStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFB2CapabilityStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFB3CapabilityStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFB4CapabilityStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFB5CapabilityStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFCOutletStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFHealthStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFInterfaceTypeEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFMaintenanceProgressEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFModeEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFOperateProgressEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFPowerStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFRxOutletStateEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: HandleSPFStandbyLPProgressEvent
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: HandleTMCommLossEvent
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: Init
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: InitializeDevProxies
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: InitializeLoggers
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: The task quota flag
-      dtype_in: DevVoid
-      dtype_out: DevBoolean
-      name: IsTaskQuotaReached
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: MonitorProxies
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerCyclingDDBH
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerCyclingLMC
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerCyclingNSDN
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerCyclingRXPU
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerCyclingSPFC
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerCyclingSTFRRx
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerCyclingSTFRWR
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerCyclingSpare
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOffDDBH
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOffLMC
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOffNSDN
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOffRXPU
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: PowerOffRXPUTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOffSPFC
-    - disp_level: EXPERT
-      doc_in: Encoded task data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: PowerOffSPFCTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOffSTFRRx
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOffSTFRWR
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOffSpare
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOnDDBH
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOnLMC
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOnNSDN
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOnRXPU
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: PowerOnRXPUTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOnSPFC
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: PowerOnSPFCTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOnSTFRRx
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOnSTFRWR
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: PowerOnSpare
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: ResetDishMode
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: ResetDishTasks
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: ResetTrackTable
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: ResetTrackTableBuffer
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: RestartSPFComponents
-    - disp_level: EXPERT
-      doc_in: Name of task to be canceled
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: RevokeTask
-    - disp_level: EXPERT
-      doc_in: Name of task sequence to be revoked.
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: RevokeTaskSequence
-    - disp_level: OPERATOR
-      doc_in: '[timestamp]'
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: Scan
-    - disp_level: OPERATOR
-      doc_in: '[0]: mcBand
-
-        [1]: feedCommand {0=REGENERATE,1=CLEAR-ERRORS}'
-      doc_out: Uninitialised
-      dtype_in: DevVarShortArray
-      dtype_out: DevVoid
-      name: SendSPFFeedCommand
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: SetDSMaintenanceMode
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetDSMaintenanceModeTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetDSPointMode
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetDSPointModeTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetDSStandbyFPMode
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetDSStandbyFPModeTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetDSStandbyLPMode
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetDSStandbyLPModeTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetDSStowMode
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetDSStowModeTask
-    - disp_level: OPERATOR
-      doc_in: bandId position
-      doc_out: Uninitialised
-      dtype_in: DevShort
-      dtype_out: DevVoid
-      name: SetIndexerPosition
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetIndexerPositionTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: '== Long field ==
-
-        [0]: ack code (0=OK, 1=QUEUED, 2=FAILED)
-
-
-        == String field ==
-
-        [0]: Informative message or error/fault description'
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetMaintenanceMode
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: '0]: ack code (0=OK, 1=QUEUED, 2=FAILED)
-
-
-        == String field ==
-
-        [0]: Informative message or error/fault description'
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetOperateMode
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: SetRxMaintenanceMode
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetRxMaintenanceModeTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: SetRxStandbyFPMode
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetRxStandbyFPModeTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: SetRxStandbyLPMode
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetRxStandbyLPModeTask
-    - disp_level: OPERATOR
-      doc_in: Band id
-      doc_out: Uninitialised
-      dtype_in: DevShort
-      dtype_out: DevVoid
-      name: SetSPFBandInFocus
-    - disp_level: EXPERT
-      doc_in: Encoded task data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetSPFBandInFocusTask
-    - disp_level: OPERATOR
-      doc_in: '[0]: bandId [1-5]
-
-        [1]: mode
-
-
-        Allowed modes are:
-
-
-        0= STANDBY-LP
-
-        1= OPERATE
-
-        2= MAINTENANCE'
-      doc_out: Uninitialised
-      dtype_in: DevVarShortArray
-      dtype_out: DevVarLongStringArray
-      name: SetSPFFeedMode
-    - disp_level: OPERATOR
-      doc_in: "bandId: [1-5]\n\nIf bandId=-1 turns on all bands\nIf bandId=0 turns\
-        \ on only active band. \nIf no band is active (was not configured) an exception\
-        \ \nis thrown."
-      doc_out: Uninitialised
-      dtype_in: DevShort
-      dtype_out: DevVoid
-      name: SetSPFLnaPowerOff
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetSPFLnaPowerOffTask
-    - disp_level: OPERATOR
-      doc_in: "bandId: [1-5]\n\nIf bandId=-1 turns on all bands\nIf bandId=0 turns\
-        \ on only active band. \nIf no band is active (was not configured) an exception\
-        \ \nis thrown."
-      doc_out: Uninitialised
-      dtype_in: DevShort
-      dtype_out: DevVoid
-      name: SetSPFLnaPowerOn
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetSPFLnaPowerOnTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetSPFMaintenanceMode
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetSPFMaintenanceModeTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: '== Long field ==
-
-        [0]: ack code (0=OK, 1=QUEUED, 2=FAILED)
-
-
-        == String field ==
-
-        [0]: Informative message or error/fault description'
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetSPFOperateMode
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetSPFOperateModeTask
-    - disp_level: OPERATOR
-      doc_in: 'Band id
-
-
-        - bandId=-1 all bands
-
-        - bandId=0 active band
-
-        - band=[1-5] selected band'
-      doc_out: '== Long field ==
-
-        [0]: ack code (0=OK, 1=QUEUED, 2=FAILED)
-
-
-        == String field ==
-
-        [0]: Informative message or error/fault description'
-      dtype_in: DevShort
-      dtype_out: DevVarLongStringArray
-      name: SetSPFOperational
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetSPFStandbyLPMode
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetSPFStandbyLPModeTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetStandbyFPMode
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: SetStandbyFPModeOnBandError
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetStandbyLPMode
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: '== Long field ==
-
-        [0]: ack code (0=OK, 1=QUEUED, 2=FAILED)
-
-
-        == String field ==
-
-        [0]: Informative message or error/fault description'
-      dtype_in: DevVoid
-      dtype_out: DevVarLongStringArray
-      name: SetStowMode
-    - disp_level: EXPERT
-      doc_in: Name of TM proxy device to be monitored
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SetTMProxyAddress
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: ShutdownRXPU
-    - disp_level: EXPERT
-      doc_in: Task data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: ShutdownRXPUTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: ShutdownSPFC
-    - disp_level: EXPERT
-      doc_in: Task data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: ShutdownSPFCTask
-    - disp_level: OPERATOR
-      doc_in: '[0]: Azimuth
-
-        [1]: Elevation'
-      doc_out: Uninitialised
-      dtype_in: DevVarDoubleArray
-      dtype_out: DevVoid
-      name: Slew
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: StartCapture
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: StartRxCaptureTask
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Device state
-      dtype_in: DevVoid
-      dtype_out: DevState
-      name: State
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Device status
-      dtype_in: DevVoid
-      dtype_out: DevString
-      name: Status
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: StopCapture
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: Synchronise
-    - disp_level: EXPERT
-      doc_in: Task encoded data
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: SynchroniseRxBandTask
-    - disp_level: OPERATOR
-      doc_in: "Time when to start tracking\n\nNB: Specified in the ICD TM-Dish Rev\
-        \ 3a but \nIgnored at present"
-      doc_out: Uninitialised
-      dtype_in: DevString
-      dtype_out: DevVoid
-      name: Track
-    - disp_level: OPERATOR
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: TrackStop
-    - disp_level: EXPERT
-      doc_in: Uninitialised
-      doc_out: Uninitialised
-      dtype_in: DevVoid
-      dtype_out: DevVoid
-      name: UpdateProgressAttrs
+    - name: WindSpeed
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Wind speed of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: WindSpeed
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      unit: km/h
+      writable: READ_WRITE
+      writable_attr_name: windspeed
+    - name: achievedPointing
+      data_format: SPECTRUM
+      data_type: DevDouble
+      description: Achieved pointing coordinates of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: achievedPointing
+      max_alarm: Not specified
+      max_dim_x: 7
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: adminMode
+      data_format: SCALAR
+      data_type: DevEnum
+      description: The admin mode reported for this device. It may interpret the current
+        device condition and condition of all managed devices to set this. Most possibly
+        an aggregate attribute.
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - ONLINE
+      - OFFLINE
+      - MAINTENANCE
+      - NOT_FITTED
+      - RESERVED
+      format: '%s'
+      label: adminMode
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: adminmode
+    - name: availableCapabilities
+      data_format: SPECTRUM
+      data_type: DevString
+      description: A list of available number of instances of each capability type,
+        e.g. 'CORRELATOR:512', 'PSS-BEAMS:4'.
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: availableCapabilities
+      max_alarm: Not specified
+      max_dim_x: 20
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: azimuthOverWrap
+      data_format: SCALAR
+      data_type: DevBoolean
+      description: No description
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: Not specified
+      label: azimuthOverWrap
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: band1SamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band1 Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band1SamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: band2SamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band2 Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band2SamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: band3SamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band3 Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band3SamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: band4SamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band4 Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band4SamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: band5aSamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band5a Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band5aSamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: band5bSamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band5b Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band5bSamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: buildState
+      data_format: SCALAR
+      data_type: DevString
+      description: Build state of this device
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: buildState
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: capturing
+      data_format: SCALAR
+      data_type: DevBoolean
+      description: Data Capturing of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: Not specified
+      label: capturing
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: controlMode
+      data_format: SCALAR
+      data_type: DevEnum
+      description: "The control mode of the device. REMOTE, LOCAL\nTANGO Device accepts\
+        \ only from a \u2018local\u2019 client and ignores commands and queries received\
+        \ from TM or any other \u2018remote\u2019 clients. The Local clients has to\
+        \ release LOCAL control before REMOTE clients can take control again."
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - REMOTE
+      - LOCAL
+      format: '%s'
+      label: controlMode
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: controlmode
+    - name: desiredPointing
+      data_format: SPECTRUM
+      data_type: DevDouble
+      description: Desired pointing coordinates of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: desiredPointing
+      max_alarm: Not specified
+      max_dim_x: 7
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: desiredpointing
+    - name: dishMode
+      data_format: SCALAR
+      data_type: DevEnum
+      description: Mode of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - 'OFF'
+      - STARTUP
+      - SHUTDOWN
+      - STANDBY-LP
+      - STANDBY-FP
+      - MAINTENANCE
+      - STOW
+      - CONFIG
+      - OPERATE
+      format: '%s'
+      label: dishMode
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: elementAlarmAddress
+      data_format: SCALAR
+      data_type: DevString
+      description: FQDN of Element Alarm Handlers
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: elementAlarmAddress
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: elementDatabaseAddress
+      data_format: SCALAR
+      data_type: DevString
+      description: FQDN of Element Database device
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: elementDatabaseAddress
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: elementLoggerAddress
+      data_format: SCALAR
+      data_type: DevString
+      description: FQDN of Element Logger
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: elementLoggerAddress
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: elementTelStateAddress
+      data_format: SCALAR
+      data_type: DevString
+      description: FQDN of Element TelState device
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: elementTelStateAddress
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: healthState
+      data_format: SCALAR
+      data_type: DevEnum
+      description: The health state reported for this device. It interprets the current
+        device condition and condition of all managed devices to set this. Most possibly
+        an aggregate attribute.
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - OK
+      - DEGRADED
+      - FAILED
+      - UNKNOWN
+      format: '%s'
+      label: healthState
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: loggingLevel
+      data_format: SCALAR
+      data_type: DevEnum
+      description: Current logging level for this device - initialises to LoggingLevelDefault
+        on startup
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - 'OFF'
+      - FATAL
+      - ERROR
+      - WARNING
+      - INFO
+      - DEBUG
+      format: '%s'
+      label: loggingLevel
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: logginglevel
+    - name: loggingTargets
+      data_format: SPECTRUM
+      data_type: DevString
+      description: Logging targets for this device, excluding ska_logging defaults
+        - initialises to LoggingTargetsDefault on startup
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: loggingTargets
+      max_alarm: Not specified
+      max_dim_x: 4
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: loggingtargets
+    - name: maxCapabilities
+      data_format: SPECTRUM
+      data_type: DevString
+      description: Maximum number of instances of each capability type, e.g. 'CORRELATOR:512',
+        'PSS-BEAMS:4'.
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: maxCapabilities
+      max_alarm: Not specified
+      max_dim_x: 20
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: pointingState
+      data_format: SCALAR
+      data_type: DevEnum
+      description: No description
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - READY
+      - SLEW
+      - TRACK
+      - SCAN
+      format: '%s'
+      label: pointingState
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: simulationMode
+      data_format: SCALAR
+      data_type: DevEnum
+      description: "Reports the simulation mode of the device. \nSome devices may\
+        \ implement both modes, while others will have simulators that set simulationMode\
+        \ to True while the real devices always set simulationMode to False."
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - 'FALSE'
+      - 'TRUE'
+      format: '%s'
+      label: simulationMode
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: simulationmode
+    - name: testMode
+      data_format: SCALAR
+      data_type: DevEnum
+      description: "The test mode of the device. \nEither no test mode or an indication\
+        \ of the test mode."
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - NONE
+      - TEST
+      format: '%s'
+      label: testMode
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: testmode
+    - name: toggleFault
+      data_format: SCALAR
+      data_type: DevBoolean
+      description: No description
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: Not specified
+      label: toggleFault
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: togglefault
+    - name: versionId
+      data_format: SCALAR
+      data_type: DevString
+      description: Version Id of this device
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: versionId
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
     properties:
-    - name: AdminModeDefault
-    - name: AsynchCmdReplyNRetries
-    - name: AsynchCmdReplyTimeout
-    - name: CentralLoggerEnabledDefault
-    - name: ConfigureTaskTimeout
-    - name: ControlModeDefault
-    - name: DefaultTaskTimeout
-    - name: DsManagerAddress
-    - name: ElementAlarmsAddress
-    - name: ElementDatabaseDSAddress
-    - name: ElementLoggerAddress
-    - name: ElementLoggerEnabledDefault
-    - name: ElementTelModelAddress
-    - name: EnableAutoAdminProxyRegistration
-    - name: EnableLoggerInitPolling
-    - name: LoggerInitPollPeriod
-    - name: LoggingLevelCentralDefault
-    - name: LoggingLevelElementDefault
-    - name: LoggingLevelStorageDefault
-    - name: LoggingTargetCentralDefault
-    - name: LoggingTargetElementDefault
-    - name: LoggingTargetStorageDefault
-    - name: MaxQueueableTask
-    - name: MaxTrackableTasks
-    - name: OperateTaskTimeout
-    - name: PduManagerAddress
-    - name: polled_attr
-    - name: polled_cmd
-    - name: ProcessEventsInQueueThread
-    - name: ProxyTimeout
-    - name: RequestedBandDefault
-    - name: RxControllerAddress
-    - name: RxShutdownTimeDelay
-    - name: ShutdownTaskTimeout
+    - name: LoggingLevelDefault
+    - name: LoggingTargetsDefault
     - name: SkaLevel
-    - name: SpfControllerAddress
-    - name: SPFStartupTimeout
-    - name: StandbyFPTaskTimeout
-    - name: StorageLoggerEnabledDefault
-    - name: StowTaskTimeout
-    - name: SynchCmdReplyTimeout
-    - name: SyslogFacility
-    - name: SyslogHost
-    - name: TaskHistoryTimeDepth
-    - name: TmProxyAddressDefault
+    - name: polled_attr
+
