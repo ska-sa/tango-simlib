@@ -50,6 +50,8 @@ setup(
     install_requires=[
         "future",
         "futures; python_version<'3'",
+        "pyrsistent==0.16.0; python_version<'3'",
+        "pyrsistent; python_version>='3'",
         "jsonschema",
         "numpy",
         "PyTango>=9.2.2",
