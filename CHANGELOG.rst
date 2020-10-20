@@ -17,6 +17,7 @@
 .. _127: https://github.com/ska-sa/tango-simlib/pull/127
 .. _128: https://github.com/ska-sa/tango-simlib/pull/128
 .. _129: https://github.com/ska-sa/tango-simlib/pull/129
+.. _131: https://github.com/ska-sa/tango-simlib/pull/131
 
 0.8.0
 -----
@@ -24,6 +25,7 @@
 - Pinned last known compatible Py2 version of `pyrsistent` 127_.
 - Added ability to override min_update_period 128_.
 - Added the ability to pass a custom logger to model 129_.
+- Reduced logging verbosity 131_.
 
 0.7.1
 -----
