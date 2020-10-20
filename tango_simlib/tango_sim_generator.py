@@ -32,7 +32,7 @@ from tango import (
     DevState,
     UserDefaultAttrProp,
 )
-from tango.server import Device, DeviceMeta, attribute, device_property
+from tango.server import Device, attribute, device_property
 from tango_simlib.model import (
     INITIAL_CONSTANT_VALUE_TYPES,
     Model,
