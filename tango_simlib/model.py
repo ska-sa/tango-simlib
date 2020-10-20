@@ -141,7 +141,7 @@ class Model(object):
         for override_update in self.override_pre_updates:
             override_update(self, sim_time, dt)
 
-        self.logger.info("Stepping at {}, dt: {}".format(sim_time, dt))
+        self.logger.debug("Stepping at {}, dt: {}".format(sim_time, dt))
         self.last_update_time = sim_time
         try:
             for var, quant in self.sim_quantities.items():
@@ -341,7 +341,7 @@ class PopulateModelQuantities(object):
             try:
                 model_attr_props = self.sim_model.sim_quantities[attr_name].meta
             except KeyError:
-                self.logger.info(
+                self.logger.debug(
                     "Initializing '{}' quantity meta information using config file:"
                     " '{}'.".format(
                         attr_name, self.parser_instance.data_description_file_name
