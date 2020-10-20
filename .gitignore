@@ -92,6 +92,9 @@ celerybeat-schedule
 .project
 .pydevproject
 
+# PyCharm
+.idea/
+
 # mkdocs documentation
 /site
 
