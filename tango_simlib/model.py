@@ -74,7 +74,12 @@ class Model(object):
     """
 
     def __init__(
-        self, name, start_time=None, min_update_period=0.99, time_func=time.time
+            self,
+            name,
+            start_time=None,
+            min_update_period=0.99,
+            time_func=time.time,
+            logger=None,
     ):
         self.name = name
         model_registry[self.name] = self
@@ -95,6 +100,7 @@ class Model(object):
         # Making a public reference to _sim_state. Allows us to hook read-only views
         # or updates or whatever the future requires of this humble public attribute.
         self.quantity_state = self._sim_state
+        self.logger = logger if logger else MODULE_LOGGER
 
     def setup_sim_quantities(self):
         """
@@ -125,7 +131,7 @@ class Model(object):
             # updated the quantities.
             for var, quant in self.sim_quantities.items():
                 self._sim_state[var] = (quant.last_val, quant.last_update_time)
-            MODULE_LOGGER.debug(
+            self.logger.debug(
                 "Sim {} skipping update at {}, dt {} < {} and pause {}".format(
                     self.name, sim_time, dt, self.min_update_period, self.paused
                 )
@@ -135,13 +141,13 @@ class Model(object):
         for override_update in self.override_pre_updates:
             override_update(self, sim_time, dt)
 
-        MODULE_LOGGER.info("Stepping at {}, dt: {}".format(sim_time, dt))
+        self.logger.info("Stepping at {}, dt: {}".format(sim_time, dt))
         self.last_update_time = sim_time
         try:
             for var, quant in self.sim_quantities.items():
                 self._sim_state[var] = (quant.next_val(sim_time), sim_time)
         except Exception:
-            MODULE_LOGGER.exception("Exception in update loop")
+            self.logger.exception("Exception in update loop")
 
         for override_update in self.override_post_updates:
             override_update(self, sim_time, dt)
@@ -309,6 +315,7 @@ class PopulateModelQuantities(object):
 
         else:
             self.sim_model = Model(tango_device_name)
+        self.logger = self.sim_model.logger
         self.setup_sim_quantities()
 
     def setup_sim_quantities(self):
@@ -334,7 +341,7 @@ class PopulateModelQuantities(object):
             try:
                 model_attr_props = self.sim_model.sim_quantities[attr_name].meta
             except KeyError:
-                MODULE_LOGGER.info(
+                self.logger.info(
                     "Initializing '{}' quantity meta information using config file:"
                     " '{}'.".format(
                         attr_name, self.parser_instance.data_description_file_name
@@ -363,7 +370,7 @@ class PopulateModelQuantities(object):
                         # default value of is assigned to the attribute
                         # quantity initial value
                         initial_value = None
-                        MODULE_LOGGER.info(
+                        self.logger.info(
                             "Parameter `initial_value` does not exist for"
                             "attribute {}. Default will be used".format(
                                 model_attr_props["name"]
@@ -528,6 +535,7 @@ class PopulateModelActions(object):
             self.sim_model = Model(tango_device_name)
         else:
             self.sim_model = model_instance
+        self.logger = self.sim_model.logger
         self.add_actions()
 
     def add_actions(self):
@@ -545,7 +553,7 @@ class PopulateModelActions(object):
             try:
                 pre_update_overwrite = getattr(inst, "pre_update")
             except AttributeError:
-                MODULE_LOGGER.info(
+                self.logger.info(
                     "No pre-update method defined in the '{}'"
                     " override class.".format(type(inst).__name__)
                 )
@@ -554,7 +562,7 @@ class PopulateModelActions(object):
             try:
                 post_update_overwrite = getattr(inst, "post_update")
             except AttributeError:
-                MODULE_LOGGER.info(
+                self.logger.info(
                     "No post-update method defined in the '{}'"
                     " override class.".format(type(inst).__name__)
                 )
@@ -772,6 +780,7 @@ class PopulateModelProperties(object):
                 )
         else:
             self.sim_model = Model(tango_device_name)
+        self.logger = self.sim_model.logger
         self.setup_sim_properties()
 
     def setup_sim_properties(self):

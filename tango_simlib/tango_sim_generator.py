@@ -426,8 +426,8 @@ def get_parser_instance(sim_datafile):
     return parser_instance
 
 
-def configure_device_model(sim_data_file=None, test_device_name=None):
-    models = configure_device_models(sim_data_file, test_device_name)
+def configure_device_model(sim_data_file=None, test_device_name=None, logger=None):
+    models = configure_device_models(sim_data_file, test_device_name, logger)
     if len(models) == 1:
         return models
     else:
@@ -440,7 +440,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         )
 
 
-def configure_device_models(sim_data_file=None, test_device_name=None):
+def configure_device_models(sim_data_file=None, test_device_name=None, logger=None):
     """
     In essence this function should get the data descriptor file, parse it,
     take the attribute and command information, populate the model(s) quantities and
@@ -489,9 +489,9 @@ def configure_device_models(sim_data_file=None, test_device_name=None):
     models = {}
     if dev_names:
         for dev_name in dev_names:
-            models[dev_name] = Model(dev_name)
+            models[dev_name] = Model(dev_name, logger=logger)
     else:
-        models[dev_name] = Model(dev_name)
+        models[dev_name] = Model(dev_name, logger=logger)
 
     # In case there is more than one parser instance for each file
     for model in models.values():
