@@ -32,7 +32,7 @@ from tango import (
     DevState,
     UserDefaultAttrProp,
 )
-from tango.server import Device, DeviceMeta, attribute
+from tango.server import Device, attribute, device_property
 from tango_simlib.model import (
     INITIAL_CONSTANT_VALUE_TYPES,
     Model,
@@ -254,12 +254,19 @@ def get_tango_device_server(models, sim_data_files):
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
         _models = models
 
+        min_update_period = device_property(
+            dtype=float,
+            default_value=0.99,
+            doc="Minimum time before model update method can be called again [seconds].",
+        )
+
         def init_device(self):
             super(TangoDeviceServer, self).init_device()
             self.model = self._models[self.get_name()]
             self._not_added_attributes = []
             write_device_properties_to_db(self.get_name(), self.model)
             self.model.reset_model_state()
+            self.model.min_update_period = self.min_update_period
             self.initialize_dynamic_commands()
 
         def initialize_dynamic_commands(self):

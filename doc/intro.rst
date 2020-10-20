@@ -130,9 +130,24 @@ in turn start up the device server process, all in one go.
     $ tango-simlib-launcher --name mkat_sim/weather/1 --class Weather\
                             --name mkat_simcontrol/weather/1\
                             --class WeatherSimControl\
-                            --server-command weather-DS --port 0\
+                            --server-command ./weather-DS --port 0\
                             --server-instance tango-launched\
                             --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
+
+The simulator limits the rate of calls to the internal model ``update`` method.  The default is
+0.99 seconds. This can be overridden via the ``min_update_period`` property on the main device.
+For example, we can reduce it to 0.5 seconds by adding the last argument below.
+
+.. code-block:: bash
+
+    $ tango-simlib-launcher --name mkat_sim/weather/1 --class Weather\
+                            --name mkat_simcontrol/weather/1\
+                            --class WeatherSimControl\
+                            --server-command ./weather-DS --port 0\
+                            --server-instance tango-launched\
+                            --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1\
+                            --put-device-property mkat_sim/weather/1:min_update_period:0.5
+
 
 Ready-made Simulators
 ---------------------
