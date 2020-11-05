@@ -85,6 +85,19 @@ class FandangoExportDeviceParser(Parser):
 
     def preprocess_attribute_types(self, attribute_data):
         """Convert the attribute data types from strings to the TANGO types."""
+        keys_to_pop = [
+            "color",
+            "string",
+            "format",
+            "dim_x",
+            "dim_y",
+            "device",
+            "database",
+            "time",
+            "model",
+            "alarms",
+            "events",
+        ]
         for attr, attr_config in attribute_data.items():
             # assign 'READ_WRITE' to all attributes with 'WT_UNKNOWN'
             attr_access = ["READ", "WRITE", "READ_WRITE", "READ_WITH_WRITE"]
@@ -95,6 +108,23 @@ class FandangoExportDeviceParser(Parser):
                     attr_config[attr_prop] = getattr(CmdArgType, attr_prop_value)
                 elif attr_prop == "data_format":
                     attr_config[attr_prop] = getattr(AttrDataFormat, attr_prop_value)
+                elif attr_prop == "events":
+                    attr_config["archive_abs_change"] = attr_prop_value["arch_event"]["archive_abs_change"]
+                    attr_config["archive_period"] = attr_prop_value["arch_event"]["archive_period"]
+                    attr_config["archive_rel_change"] = attr_prop_value["arch_event"]["archive_rel_change"]
+                    attr_config["abs_change"] = attr_prop_value["ch_event"]["abs_change"]
+                    attr_config["rel_change"] = attr_prop_value["ch_event"]["rel_change"]
+                    attr_config["event_period"] = attr_prop_value["per_event"]["period"]
+                elif attr_prop == "alarms":
+                    attr_config["delta_t"] = attr_prop_value["delta_t"]
+                    attr_config["delta_val"] = attr_prop_value["delta_val"]
+                    attr_config["max_alarm"] = attr_prop_value["max_alarm"]
+                    attr_config["max_warning"] = attr_prop_value["max_warning"]
+                    attr_config["min_alarm"] = attr_prop_value["min_alarm"]
+                    attr_config["min_warning"] = attr_prop_value["min_warning"]
+            # pop out keys for each attribute
+            for key in keys_to_pop:
+                attr_config.pop(key, None)
 
         self._device_attributes.update(attribute_data)
 
@@ -152,55 +182,33 @@ class FandangoExportDeviceParser(Parser):
             e.g.
                 {
                 'State': {
-                    'alarms': {
-                        'delta_t': 'Not specified',
-                        'delta_val': 'Not specified',
-                        'extensions': '[]',
-                        'max_alarm': 'Not specified',
-                        'max_warning': 'Not specified',
-                        'min_alarm': 'Not specified',
-                        'min_warning': 'Not specified'
-                    },
-                    'color': 'Lime',
+                    'abs_change': 'Not specified',
+                    'archive_abs_change': 'Not specified',
+                    'archive_period': 'Not specified',
+                    'archive_rel_change': 'Not specified',
                     'data_format': tango._tango.AttrDataFormat.SCALAR,
                     'data_type': tango._tango.CmdArgType.DevState,
-                    'database': 'monctl:10000',
                     'description': '',
-                    'device': 'tango/admin/monctl',
                     'display_unit': 'No display unit',
+                    'delta_t': 'Not specified',
+                    'delta_val': 'Not specified',
                     'enum_labels': [],
-                    'events': {
-                        'arch_event': {
-                            'archive_abs_change': 'Not specified',
-                            'archive_period': 'Not specified',
-                            'archive_rel_change': 'Not specified',
-                            'extensions': '[]'
-                        },
-                        'ch_event': {
-                            'abs_change': 'Not specified',
-                            'extensions': '[]',
-                            'rel_change': 'Not specified'
-                        },
-                        'per_event': {
-                            'extensions': '[]',
-                            'period': '1000'
-                        }
-                    },
+                    'event_period': '1000',
                     'format': 'Not specified',
                     'label': 'State',
                     'max_alarm': 'Not specified',
                     'max_dim_x': 1,
                     'max_dim_y': 0,
                     'max_value': 'Not specified',
+                    'max_warning': 'Not specified',
                     'min_alarm': 'Not specified',
                     'min_value': 'Not specified',
-                    'model': 'monctl:10000/tango/admin/monctl/State',
+                    'min_warning': 'Not specified',
                     'name': 'State',
                     'polling': 1000,
                     'quality': PyTango.AttrQuality.ATTR_VALID,
+                    'rel_change': 'Not specified',
                     'standard_unit': 'No standard unit',
-                    'string': 'ON',
-                    'time': 1519207194.715621,
                     'unit': '',
                     'value': 0,
                     'writable': 'READ'},
