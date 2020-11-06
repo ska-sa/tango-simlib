@@ -87,7 +87,6 @@ class FandangoExportDeviceParser(Parser):
             "time",
         ]
         for attribute_config in self._device_attributes.values():
-            # pop out keys not required to configure an attribute
             for key in keys_to_pop:
                 attribute_config.pop(key, None)
 
