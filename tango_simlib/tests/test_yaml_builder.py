@@ -125,6 +125,10 @@ def test_file_builders_fandango():
                 "standard_unit": "No standard unit",
                 "max_value": "Not specified",
                 "label": "Timing_info",
+                "delta_t": "Not specified",
+                "delta_val": "Not specified",
+                "min_warning": "Not specified",
+                "max_warning": "Not specified",
             }, "Attribute config mismatch. attr: {}".format(attr)
         if attr["name"] == "Timing_minimum":
             assert attr == {
@@ -140,6 +144,10 @@ def test_file_builders_fandango():
                 "standard_unit": "No standard unit",
                 "max_value": "Not specified",
                 "label": "Timing_minimum",
+                "delta_t": "Not specified",
+                "delta_val": "Not specified",
+                "min_warning": "Not specified",
+                "max_warning": "Not specified",
             }, "Attribute config mismatch. attr: {}".format(attr)
 
     comms = [i["name"] for i in parsed_yaml[0]["meta"]["commands"]]
