@@ -20,8 +20,7 @@ CONF_FILE_PATH = Path.joinpath(Path(__file__).parent, "config_files")
 
 
 def validate_basic_structure(yaml_dict):
-    """Do a basic check of the structure
-    """
+    """Do a basic check of the structure"""
     assert len(yaml_dict) == 1
     assert "meta" in yaml_dict[0]
     assert "class" in yaml_dict[0]
@@ -65,7 +64,7 @@ def test_file_builders_xmi():
                 "period": "0",
                 "inherited": "false",
                 "name": "band4CapabilityState",
-            }
+            }, "Attribute config mismatch. attr: {}".format(attr)
 
     comms = [i["name"] for i in parsed_yaml[0]["meta"]["commands"]]
     assert len(comms) == 22
@@ -80,7 +79,7 @@ def test_file_builders_xmi():
                 "dtype_out": "DevString",
                 "inherited": "true",
                 "name": "Status",
-            }
+            }, "Command config mismatch. comm: {}".format(comm)
         if comm["name"] == "SetOperateMode":
             assert comm == {
                 "doc_in": "N/A",
@@ -89,7 +88,7 @@ def test_file_builders_xmi():
                 "dtype_out": "DevVoid",
                 "inherited": "false",
                 "name": "SetOperateMode",
-            }
+            }, "Command config mismatch. comm: {}".format(comm)
 
     assert {"name": "SkaLevel"} in parsed_yaml[0]["meta"]["properties"]
 
@@ -117,7 +116,6 @@ def test_file_builders_fandango():
                 "min_alarm": "Not specified",
                 "name": "Timing_info",
                 "data_type": "DevString",
-                "format": "%s",
                 "max_alarm": "Not specified",
                 "min_value": "Not specified",
                 "data_format": "SPECTRUM",
@@ -127,13 +125,16 @@ def test_file_builders_fandango():
                 "standard_unit": "No standard unit",
                 "max_value": "Not specified",
                 "label": "Timing_info",
-            }
+                "delta_t": "Not specified",
+                "delta_val": "Not specified",
+                "min_warning": "Not specified",
+                "max_warning": "Not specified",
+            }, "Attribute config mismatch. attr: {}".format(attr)
         if attr["name"] == "Timing_minimum":
             assert attr == {
                 "min_alarm": "Not specified",
                 "name": "Timing_minimum",
                 "data_type": "DevDouble",
-                "format": "%6.2f",
                 "max_alarm": "Not specified",
                 "min_value": "Not specified",
                 "data_format": "SPECTRUM",
@@ -143,7 +144,11 @@ def test_file_builders_fandango():
                 "standard_unit": "No standard unit",
                 "max_value": "Not specified",
                 "label": "Timing_minimum",
-            }
+                "delta_t": "Not specified",
+                "delta_val": "Not specified",
+                "min_warning": "Not specified",
+                "max_warning": "Not specified",
+            }, "Attribute config mismatch. attr: {}".format(attr)
 
     comms = [i["name"] for i in parsed_yaml[0]["meta"]["commands"]]
     assert len(comms) == 100
@@ -160,7 +165,7 @@ def test_file_builders_fandango():
                 "dtype_in": "DevVarStringArray",
                 "dtype_out": "DevVarStringArray",
                 "name": "DbGetDataForServerCache",
-            }
+            }, "Command config mismatch. comm: {}".format(comm)
         if comm["name"] == "DbGetDeviceAttributeList":
             assert comm == {
                 "doc_in": "Str[0] = Device name\nStr[1] = Wildcard",
@@ -168,7 +173,7 @@ def test_file_builders_fandango():
                 "dtype_in": "DevVarStringArray",
                 "dtype_out": "DevVarStringArray",
                 "name": "DbGetDeviceAttributeList",
-            }
+            }, "Command config mismatch. comm: {}".format(comm)
 
 
 def test_tango_device_builder():
@@ -225,7 +230,8 @@ def test_tango_device_builder():
         mocked_device_proxy.attribute_list_query_ex.assert_called()
         mocked_device_proxy.get_property_list.assert_called()
 
-        assert parsed_yaml[0]["meta"]["attributes"] == [
+        attributes = parsed_yaml[0]["meta"]["attributes"]
+        assert attributes == [
             {
                 "disp_level": "OPERATOR",
                 "description": "description",
@@ -243,9 +249,11 @@ def test_tango_device_builder():
                 "max_value": "max_value",
                 "min_alarm": "min_alarm",
                 "writable_attr_name": "writable_attr_name",
-            }
-        ]
-        assert parsed_yaml[0]["meta"]["commands"] == [
+            },
+        ], "Attribute config mismatch. attr: {}".format(attributes)
+
+        commands = parsed_yaml[0]["meta"]["commands"]
+        assert commands == [
             {
                 "doc_out": "out_type_desc",
                 "disp_level": "OPERATOR",
@@ -254,8 +262,10 @@ def test_tango_device_builder():
                 "dtype_out": "DevVoid",
                 "dtype_in": "DevVoid",
             }
-        ]
-        assert parsed_yaml[0]["meta"]["properties"] == [
+        ], "Command config mismatch. commands: {}".format(commands)
+
+        properties = parsed_yaml[0]["meta"]["properties"]
+        assert properties == [
             {"name": "PropA"},
             {"name": "PropB"},
-        ]
+        ], "Properties config mismatch. properties: {}.".format(properties)
