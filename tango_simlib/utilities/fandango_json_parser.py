@@ -61,7 +61,7 @@ class FandangoExportDeviceParser(Parser):
                 self.device_class_name = elements
 
     def _flatten_device_attribute_dictionary(self):
-        for attribute_name, attribute_config in self._device_attributes.items():
+        for attribute_config in self._device_attributes.values():
             _events_properties = attribute_config["events"]
             events_properties = self._extract_attribute_events_properties(
                 _events_properties
@@ -86,7 +86,7 @@ class FandangoExportDeviceParser(Parser):
             "string",
             "time",
         ]
-        for attribute_name, attribute_config in self._device_attributes.items():
+        for attribute_config in self._device_attributes.values():
             # pop out keys not required to configure an attribute
             for key in keys_to_pop:
                 attribute_config.pop(key)
