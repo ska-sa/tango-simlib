@@ -167,7 +167,7 @@ class FandangoExportDeviceParser(Parser):
         """
         events_properties = {}
 
-        for event_props in attribute_event_configuration.values():
+        for event_props in attribute_events_configuration.values():
             events_properties.update(event_props)
 
         # Rename key 'period' to 'event_period'.
