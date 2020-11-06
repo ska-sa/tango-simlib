@@ -79,7 +79,7 @@ def test_file_builders_xmi():
                 "dtype_out": "DevString",
                 "inherited": "true",
                 "name": "Status",
-            }
+            }, "Command config mismatch. comm: {}".format(comm)
         if comm["name"] == "SetOperateMode":
             assert comm == {
                 "doc_in": "N/A",
@@ -88,7 +88,7 @@ def test_file_builders_xmi():
                 "dtype_out": "DevVoid",
                 "inherited": "false",
                 "name": "SetOperateMode",
-            }
+            }, "Command config mismatch. comm: {}".format(comm)
 
     assert {"name": "SkaLevel"} in parsed_yaml[0]["meta"]["properties"]
 
@@ -165,7 +165,7 @@ def test_file_builders_fandango():
                 "dtype_in": "DevVarStringArray",
                 "dtype_out": "DevVarStringArray",
                 "name": "DbGetDataForServerCache",
-            }
+            }, "Command config mismatch. comm: {}".format(comm)
         if comm["name"] == "DbGetDeviceAttributeList":
             assert comm == {
                 "doc_in": "Str[0] = Device name\nStr[1] = Wildcard",
@@ -173,7 +173,7 @@ def test_file_builders_fandango():
                 "dtype_in": "DevVarStringArray",
                 "dtype_out": "DevVarStringArray",
                 "name": "DbGetDeviceAttributeList",
-            }
+            }, "Command config mismatch. comm: {}".format(comm)
 
 
 def test_tango_device_builder():
@@ -236,6 +236,7 @@ def test_tango_device_builder():
                 "disp_level": "OPERATOR",
                 "description": "description",
                 "data_type": "DevString",
+                "format": "format",
                 "max_alarm": "max_alarm",
                 "min_value": "min_value",
                 "display_unit": "display_unit",
@@ -249,9 +250,10 @@ def test_tango_device_builder():
                 "min_alarm": "min_alarm",
                 "writable_attr_name": "writable_attr_name",
             },
-            "Attribute config mismatch. attributes: {}".format(attributes),
-        ]
-        assert parsed_yaml[0]["meta"]["commands"] == [
+        ], "Attribute config mismatch. attr: {}".format(attributes)
+
+        commands = parsed_yaml[0]["meta"]["commands"]
+        assert commands == [
             {
                 "doc_out": "out_type_desc",
                 "disp_level": "OPERATOR",
@@ -260,8 +262,10 @@ def test_tango_device_builder():
                 "dtype_out": "DevVoid",
                 "dtype_in": "DevVoid",
             }
-        ]
-        assert parsed_yaml[0]["meta"]["properties"] == [
+        ], "Command config mismatch. commands: {}".format(commands)
+
+        properties = parsed_yaml[0]["meta"]["properties"]
+        assert properties == [
             {"name": "PropA"},
             {"name": "PropB"},
-        ]
+        ], "Properties config mismatch. properties: {}.".format(properties)
