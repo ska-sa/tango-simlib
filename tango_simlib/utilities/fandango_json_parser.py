@@ -49,6 +49,8 @@ class FandangoExportDeviceParser(Parser):
         for data_component, elements in device_data.items():
             if data_component == "attributes":
                 self.preprocess_attribute_types(elements)
+                self._flatten_device_attribute_dictionary()
+                self._remove_unused_device_attributes_keys()
             elif data_component == "commands":
                 self.preprocess_command_types(elements)
             elif data_component == "class_properties":
@@ -57,6 +59,35 @@ class FandangoExportDeviceParser(Parser):
                 self.update_property_data(elements)
             elif data_component == "dev_class":
                 self.device_class_name = elements
+
+    def _flatten_device_attribute_dictionary(self):
+        for attribute_name, attribute_config in self._device_attributes.items():
+            _events_properties = attribute_config["events"]
+            events_properties = self._extract_attribute_events_properties(_events_properties)
+            attribute_config.update(events_properties)
+
+            alarms_properties = attribute_config["alarms"]
+            attribute_config.update(alarms_properties)
+
+    def _remove_unused_device_attributes_keys(self):
+        keys_to_pop = [
+            "alarms",
+            "color",
+            "database",
+            "device",
+            "dim_x",
+            "dim_y",
+            "events",
+            "extensions",
+            "format",
+            "model",
+            "string",
+            "time",
+        ]
+        for attribute_name, attribute_config in self._device_attributes.items():
+            # pop out keys not required to configure an attribute
+            for key in keys_to_pop:
+                attribute_config.pop(key)
 
     def preprocess_command_types(self, command_data):
         """
@@ -85,20 +116,6 @@ class FandangoExportDeviceParser(Parser):
 
     def preprocess_attribute_types(self, attribute_data):
         """Convert the attribute data types from strings to the TANGO types."""
-        keys_to_pop = [
-            "alarms",
-            "color",
-            "database",
-            "device",
-            "dim_x",
-            "dim_y",
-            "events",
-            "extensions",
-            "format",
-            "model",
-            "string",
-            "time",
-        ]
 
         for attr, attr_config in attribute_data.items():
             # assign 'READ_WRITE' to all attributes with 'WT_UNKNOWN'
@@ -110,18 +127,6 @@ class FandangoExportDeviceParser(Parser):
                     attr_config[attr_prop] = getattr(CmdArgType, attr_prop_value)
                 elif attr_prop == "data_format":
                     attr_config[attr_prop] = getattr(AttrDataFormat, attr_prop_value)
-                elif attr_prop == "events":
-                    events_properties = self._extract_attribute_events_properties(
-                        attr_prop_value
-                    )
-                    attr_config.update(events_properties)
-                elif attr_prop == "alarms":
-                    # Extract the alarms properties and put them in the nesting dict.
-                    attr_config.update(attr_prop_value)
-
-            # pop out keys not required to configure an attribute
-            for key in keys_to_pop:
-                attr_config.pop(key, None)
 
         self._device_attributes.update(attribute_data)
 
