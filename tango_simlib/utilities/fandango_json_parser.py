@@ -89,7 +89,7 @@ class FandangoExportDeviceParser(Parser):
         for attribute_config in self._device_attributes.values():
             # pop out keys not required to configure an attribute
             for key in keys_to_pop:
-                attribute_config.pop(key)
+                attribute_config.pop(key, None)
 
     def preprocess_command_types(self, command_data):
         """
@@ -249,7 +249,6 @@ class FandangoExportDeviceParser(Parser):
                     'delta_val': 'Not specified',
                     'enum_labels': [],
                     'event_period': '1000',
-                    'format': 'Not specified',
                     'label': 'State',
                     'max_alarm': 'Not specified',
                     'max_dim_x': 1,
