@@ -86,18 +86,20 @@ class FandangoExportDeviceParser(Parser):
     def preprocess_attribute_types(self, attribute_data):
         """Convert the attribute data types from strings to the TANGO types."""
         keys_to_pop = [
+            "alarms",
             "color",
-            "string",
-            "format",
+            "database",
+            "device",
             "dim_x",
             "dim_y",
-            "device",
-            "database",
-            "time",
-            "model",
-            "alarms",
             "events",
+            "extensions",
+            "format",
+            "model",
+            "string",
+            "time",
         ]
+
         for attr, attr_config in attribute_data.items():
             # assign 'READ_WRITE' to all attributes with 'WT_UNKNOWN'
             attr_access = ["READ", "WRITE", "READ_WRITE", "READ_WITH_WRITE"]
@@ -109,24 +111,70 @@ class FandangoExportDeviceParser(Parser):
                 elif attr_prop == "data_format":
                     attr_config[attr_prop] = getattr(AttrDataFormat, attr_prop_value)
                 elif attr_prop == "events":
-                    attr_config["archive_abs_change"] = attr_prop_value["arch_event"]["archive_abs_change"]
-                    attr_config["archive_period"] = attr_prop_value["arch_event"]["archive_period"]
-                    attr_config["archive_rel_change"] = attr_prop_value["arch_event"]["archive_rel_change"]
-                    attr_config["abs_change"] = attr_prop_value["ch_event"]["abs_change"]
-                    attr_config["rel_change"] = attr_prop_value["ch_event"]["rel_change"]
-                    attr_config["event_period"] = attr_prop_value["per_event"]["period"]
+                    events_properties = self._extract_attribute_events_properties(
+                        attr_prop_value
+                    )
+                    attr_config.update(events_properties)
                 elif attr_prop == "alarms":
-                    attr_config["delta_t"] = attr_prop_value["delta_t"]
-                    attr_config["delta_val"] = attr_prop_value["delta_val"]
-                    attr_config["max_alarm"] = attr_prop_value["max_alarm"]
-                    attr_config["max_warning"] = attr_prop_value["max_warning"]
-                    attr_config["min_alarm"] = attr_prop_value["min_alarm"]
-                    attr_config["min_warning"] = attr_prop_value["min_warning"]
-            # pop out keys for each attribute
+                    # Extract the alarms properties and put them in the nesting dict.
+                    attr_config.update(attr_prop_value)
+
+            # pop out keys not required to configure an attribute
             for key in keys_to_pop:
                 attr_config.pop(key, None)
 
         self._device_attributes.update(attribute_data)
+
+    def _extract_attribute_events_properties(self, attribute_events_configuration):
+        """Flattens the events' properties dictionary.
+
+        Parameters
+        ----------
+        attribute_events_configuration: dict
+        e.g.
+            {
+                'arch_event': {
+                    'archive_abs_change': 'Not specified',
+                    'archive_period': 'Not specified',
+                    'archive_rel_change': 'Not specified',
+                    'extensions': '[]'
+                },
+                'ch_event': {
+                    'abs_change': 'Not specified',
+                    'extensions': '[]',
+                    'rel_change': 'Not specified'
+                },
+                'per_event': {
+                    'extensions': '[]',
+                    'period': '1000'
+                }
+           }
+
+        Returns
+        -------
+        events_properties: dict
+        e.g.
+            {
+                'abs_change': 'Not specified',
+                'archive_abs_change': 'Not specified',
+                'archive_period': 'Not specified',
+                'archive_rel_change': 'Not specified',
+                'event_period': '1000'
+                'extensions': '[]'
+                'rel_change': 'Not specified'
+            }
+
+        """
+        events_properties = {}
+
+        for event_props in attribute_event_configuration.values():
+            events_properties.update(event_props)
+
+        # Rename key 'period' to 'event_period'.
+        events_properties["event_period"] = events_properties["period"]
+        events_properties.pop("period")
+
+        return events_properties
 
     def update_property_data(self, property_data):
         """
