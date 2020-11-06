@@ -20,8 +20,7 @@ CONF_FILE_PATH = Path.joinpath(Path(__file__).parent, "config_files")
 
 
 def validate_basic_structure(yaml_dict):
-    """Do a basic check of the structure
-    """
+    """Do a basic check of the structure"""
     assert len(yaml_dict) == 1
     assert "meta" in yaml_dict[0]
     assert "class" in yaml_dict[0]
@@ -126,7 +125,7 @@ def test_file_builders_fandango():
                 "standard_unit": "No standard unit",
                 "max_value": "Not specified",
                 "label": "Timing_info",
-            }
+            }, "Attribute config mismatch. attr: {}".format(attr)
         if attr["name"] == "Timing_minimum":
             assert attr == {
                 "min_alarm": "Not specified",
@@ -141,7 +140,7 @@ def test_file_builders_fandango():
                 "standard_unit": "No standard unit",
                 "max_value": "Not specified",
                 "label": "Timing_minimum",
-            }
+            }, "Attribute config mismatch. attr: {}".format(attr)
 
     comms = [i["name"] for i in parsed_yaml[0]["meta"]["commands"]]
     assert len(comms) == 100
