@@ -64,7 +64,7 @@ def test_file_builders_xmi():
                 "period": "0",
                 "inherited": "false",
                 "name": "band4CapabilityState",
-            }
+                }, "Attribute config mismatch. attr: {}".format(attr)
 
     comms = [i["name"] for i in parsed_yaml[0]["meta"]["commands"]]
     assert len(comms) == 22
@@ -230,7 +230,8 @@ def test_tango_device_builder():
         mocked_device_proxy.attribute_list_query_ex.assert_called()
         mocked_device_proxy.get_property_list.assert_called()
 
-        assert parsed_yaml[0]["meta"]["attributes"] == [
+        attributes = parsed_yaml[0]["meta"]["attributes"] 
+        assert attributes == [
             {
                 "disp_level": "OPERATOR",
                 "description": "description",
@@ -247,7 +248,7 @@ def test_tango_device_builder():
                 "max_value": "max_value",
                 "min_alarm": "min_alarm",
                 "writable_attr_name": "writable_attr_name",
-            }
+            }, "Attribute config mismatch. attributes: {}".format(attributes)
         ]
         assert parsed_yaml[0]["meta"]["commands"] == [
             {
