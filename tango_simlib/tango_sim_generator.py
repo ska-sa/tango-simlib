@@ -124,9 +124,9 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
         max_dim_x=attr_meta["max_dim_x"],
         max_dim_y=attr_meta["max_dim_y"],
         access=getattr(AttrWriteType, attr_meta["writable"]),
-        polling_period=int(attr_meta.get(
-            "period", "-1"
-        )),  # TODO (KM 9-11-2020) fandango parser uses 'polling', change it to period.
+        polling_period=int(
+            attr_meta.get("period", "-1")
+        ),  # TODO (KM 9-11-2020) fandango parser uses 'polling', change it to period.
         min_value=attr_meta["min_value"],
         max_value=attr_meta["max_value"],
         min_alarm=attr_meta["min_alarm"],
