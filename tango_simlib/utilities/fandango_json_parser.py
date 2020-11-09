@@ -176,9 +176,11 @@ class FandangoExportDeviceParser(Parser):
         for event_props in attribute_events_configuration.values():
             events_properties.update(event_props)
 
-        # Rename key 'period' to 'event_period'.
+        # Assign the value of 'period' to 'event_period' as it actually represents 'event_period' of the attribute.
         events_properties["event_period"] = events_properties["period"]
-        events_properties.pop("period")
+        # Assign 'polling' to 'period' as all other parsers use 'period' to represent the 'polling_period'.
+        events_properties["period"] = events_properties["polling"]
+        events_properties.pop("polling")
 
         return events_properties
 
