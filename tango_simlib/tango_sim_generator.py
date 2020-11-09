@@ -362,6 +362,9 @@ def get_tango_device_server(models, sim_data_files):
         def _configure_attribute_default_properties(self, attribute, quantity_meta_data):
             attribute_properties = UserDefaultAttrProp()
             for prop, prop_value in quantity_meta_data.items():
+                # NB: Calling 'set_enum_labels' or setting the 'enum_labels' results in a error,
+                # and we do not need to do anyway as DevEnum attributes are handled by the
+                # `add_static_attribute` method.
                 if prop == "enum_labels":
                     continue
                 if hasattr(attribute_properties, prop):
