@@ -140,7 +140,7 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
         event_period=attr_meta.get("event_period", None),
         archive_abs_change=attr_meta.get("archive_abs_change", None),
         archive_rel_change=attr_meta.get("archive_rel_change", None),
-        archive_period=aattr_meta.get("archive_period", None),
+        archive_period=attr_meta.get("archive_period", None),
     )
     attr.__name__ = attr_name
 
