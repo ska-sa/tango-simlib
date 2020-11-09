@@ -59,7 +59,7 @@ EXPECTED_STATUS_ATTR_INFO = {
     "min_value": "Not specified",
     "min_warning": "Not specified",
     "name": "Status",
-    "polling": 0,
+    "period": 0,
     "quality": "ATTR_VALID",
     "rel_change": "Not specified",
     "standard_unit": "No standard unit",
