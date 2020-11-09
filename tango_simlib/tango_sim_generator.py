@@ -116,10 +116,10 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
     """
     enum_labels = attr_meta.get("enum_labels", "")
     attr = attribute(
-        label=attr_meta["label"],
+        label=attr_meta.get("label", attr_name),
         dtype=attr_meta["data_type"],
         enum_labels=enum_labels,
-        doc=attr_meta["description"],
+        doc=attr_meta.get("description", ""),
         dformat=attr_meta["data_format"],
         max_dim_x=attr_meta["max_dim_x"],
         max_dim_y=attr_meta["max_dim_y"],
@@ -127,20 +127,20 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
         polling_period=int(
             attr_meta.get("period", "-1")
         ),  # TODO (KM 9-11-2020) fandango parser uses 'polling', change it to period.
-        min_value=attr_meta["min_value"],
-        max_value=attr_meta["max_value"],
-        min_alarm=attr_meta["min_alarm"],
-        max_alarm=attr_meta["max_alarm"],
-        min_warning=attr_meta["min_warning"],
-        max_warning=attr_meta["max_warning"],
-        delta_val=attr_meta["delta_val"],
-        delta_t=attr_meta["delta_t"],
-        abs_change=attr_meta["abs_change"],
-        rel_change=attr_meta["rel_change"],
-        event_period=attr_meta["event_period"],
-        archive_abs_change=attr_meta["archive_abs_change"],
-        archive_rel_change=attr_meta["archive_rel_change"],
-        archive_period=attr_meta["archive_period"],
+        min_value=attr_meta.get("min_value", None),
+        max_value=attr_meta.get("max_value", None),
+        min_alarm=attr_meta.get("min_alarm", None),
+        max_alarm=attr_meta.get("max_alarm", None),
+        min_warning=attr_meta.get("min_warning", None),
+        max_warning=attr_meta.get("max_warning", None),
+        delta_val=attr_meta.get("delta_val", None),
+        delta_t=attr_meta.get("delta_t", None),
+        abs_change=attr_meta.get("abs_change", None),
+        rel_change=attr_meta.get("rel_change", None),
+        event_period=attr_meta.get("event_period", None),
+        archive_abs_change=attr_meta.get("archive_abs_change", None),
+        archive_rel_change=attr_meta.get("archive_rel_change", None),
+        archive_period=aattr_meta.get("archive_period", None),
     )
     attr.__name__ = attr_name
 
