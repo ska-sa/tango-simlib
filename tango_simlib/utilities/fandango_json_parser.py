@@ -73,8 +73,8 @@ class FandangoExportDeviceParser(Parser):
 
             # Assign 'polling' to 'period' as all other parsers use 'period' to
             # represent the 'polling_period'.
-            attribute_config["period"] = attribute_config["polling"]
-            attribute_config.pop("polling")
+            attribute_config["period"] = str(attribute_config["polling"])
+            attribute_config.pop("polling", None)
 
     def _remove_unused_device_attributes_keys(self):
         keys_to_pop = [
