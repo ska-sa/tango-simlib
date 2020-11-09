@@ -313,7 +313,7 @@ def get_tango_device_server(models, sim_data_files):
                 attr = self._create_attribute(
                     attribute_name, meta_data["data_type"], rw_type
                 )
-                if attr == None:
+                if attr is None:
                     continue
 
                 self._configure_attribute_default_properties(attr, meta_data)
@@ -336,7 +336,7 @@ def get_tango_device_server(models, sim_data_files):
             if str(attr_dtype) == "DevEnum" or str(d_format) == "SPECTRUM":
                 return False
             elif str(d_format) == "IMAGE":
-                self._not_added_attributes.append(attribute_name)
+                self._not_added_attributes.append(quantity_meta_data["name"])
                 return False
 
             return True
