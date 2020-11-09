@@ -345,7 +345,6 @@ def get_tango_device_server(models, sim_data_files):
             # as PyTango may raise an error when things go wrong.
             try:
                 attribute = Attr(attribute_name, attr_dtype, rw_type)
-                return attribute
             except Exception as e:
                 self._not_added_attributes.append(attribute_name)
                 MODULE_LOGGER.info(
