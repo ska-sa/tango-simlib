@@ -364,10 +364,28 @@ def get_tango_device_server(models, sim_data_files):
                 # handled by the `add_static_attribute` method.
                 if prop == "enum_labels":
                     continue
+                
+                # UserDefaultAttrProp does not have the property 'event_period' but does
+                # have a setter method for it.
+                if prop == "event_period":
+                    attribute_properties.set_event_period(prop_value)
+                    continue
+
                 if hasattr(attribute_properties, prop):
-                    setattr(attribute_properties, prop, prop_value)
+                    try:
+                        setattr(attribute_properties, prop, prop_value)
+                    except Exception as e:
+                        attribute_name = quantity_meta_data["name"]
+                        MODULE_LOGGER.error(
+                            "The attribute '%s's property '%s' could not be set to "
+                            "value '%s' due to an error raised %s.",
+                            attribute_name,
+                            prop,
+                            prop_value,
+                            str(e),
+                        )
                 else:
-                    MODULE_LOGGER.info(
+                    MODULE_LOGGER.debug(
                         "UserDefaultAttrProp has no attribute named '%s'", prop
                     )
 
