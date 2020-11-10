@@ -71,6 +71,11 @@ class FandangoExportDeviceParser(Parser):
             alarms_properties = attribute_config["alarms"]
             attribute_config.update(alarms_properties)
 
+            # Assign 'polling' to 'period' as all other parsers use 'period' to
+            # represent the 'polling_period'.
+            attribute_config["period"] = str(attribute_config["polling"])
+            attribute_config.pop("polling", None)
+
     def _remove_unused_device_attributes_keys(self):
         keys_to_pop = [
             "alarms",
@@ -176,9 +181,9 @@ class FandangoExportDeviceParser(Parser):
         for event_props in attribute_events_configuration.values():
             events_properties.update(event_props)
 
-        # Rename key 'period' to 'event_period'.
+        # Assign the value of 'period' to 'event_period' as it actually
+        # represents 'event_period' of the attribute.
         events_properties["event_period"] = events_properties["period"]
-        events_properties.pop("period")
 
         return events_properties
 
