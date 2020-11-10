@@ -364,7 +364,7 @@ def get_tango_device_server(models, sim_data_files):
                 # handled by the `add_static_attribute` method.
                 if prop == "enum_labels":
                     continue
-                
+
                 # UserDefaultAttrProp does not have the property 'event_period' but does
                 # have a setter method for it.
                 if prop == "event_period":
