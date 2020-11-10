@@ -316,7 +316,7 @@ def get_tango_device_server(models, sim_data_files):
 
                 self._configure_attribute_default_properties(attr, meta_data)
                 self._add_dynamic_attribute(attr, rw_type)
-                MODULE_LOGGER.info("Added dynamic {} attribute".format(attribute_name))
+                MODULE_LOGGER.debug("Added dynamic {} attribute".format(attribute_name))
 
         def _add_dynamic_attribute(self, attribute, read_write_type):
             if read_write_type in (AttrWriteType.READ, AttrWriteType.READ_WITH_WRITE):
@@ -347,7 +347,7 @@ def get_tango_device_server(models, sim_data_files):
                 attribute = Attr(attribute_name, attr_dtype, rw_type)
             except Exception as e:
                 self._not_added_attributes.append(attribute_name)
-                MODULE_LOGGER.info(
+                MODULE_LOGGER.debug(
                     "Attribute %s could not be added dynamically"
                     " due to an error raised %s.",
                     attribute_name,
