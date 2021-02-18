@@ -284,6 +284,11 @@ def get_tango_device_server(models, sim_data_files):
             self.model.min_update_period = self.min_update_period
             self.initialize_dynamic_commands()
 
+            # Set default device state
+            state_quantity = self.model.sim_quantities["State"]
+            state_value = int(state_quantity["value"])
+            self.set_state(state_value)
+
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():
                 cmd_handler = helper_module.generate_cmd_handler(
