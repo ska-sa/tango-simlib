@@ -287,7 +287,7 @@ def get_tango_device_server(models, sim_data_files):
             # Set default device state
             state_quantity = self.model.sim_quantities["State"].meta
             state_value = int(state_quantity["value"])
-            self.set_state(state_value)
+            self.set_state(DevState.values[state_value])
 
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():
