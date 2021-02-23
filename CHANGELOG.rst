@@ -20,7 +20,7 @@
 .. _131: https://github.com/ska-sa/tango-simlib/pull/131
 .. _132: https://github.com/ska-sa/tango-simlib/pull/132
 .. _133: https://github.com/ska-sa/tango-simlib/pull/133
-.. _133: https://github.com/ska-sa/tango-simlib/pull/135
+.. _135: https://github.com/ska-sa/tango-simlib/pull/135
 
 0.9.1
 -----
