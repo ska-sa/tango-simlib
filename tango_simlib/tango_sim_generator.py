@@ -284,6 +284,15 @@ def get_tango_device_server(models, sim_data_files):
             self.model.min_update_period = self.min_update_period
             self.initialize_dynamic_commands()
 
+            # Only the .fgo file has the State as an attribute. The .xmi files has it as
+            # a command, so it won't have an initial value. And in some other data
+            # description files the State attribute is not specified.
+            if "State" in self.model.sim_quantities:
+                # Set default device state
+                state_quantity = self.model.sim_quantities["State"].meta
+                state_value = int(state_quantity["value"])
+                self.set_state(DevState.values[state_value])
+
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():
                 cmd_handler = helper_module.generate_cmd_handler(
