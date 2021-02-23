@@ -20,6 +20,11 @@
 .. _131: https://github.com/ska-sa/tango-simlib/pull/131
 .. _132: https://github.com/ska-sa/tango-simlib/pull/132
 .. _133: https://github.com/ska-sa/tango-simlib/pull/133
+.. _135: https://github.com/ska-sa/tango-simlib/pull/135
+
+0.9.1
+-----
+- Configure the device state from the simulator data description file(s) at device start up 135_.
 
 0.9.0
 -----
