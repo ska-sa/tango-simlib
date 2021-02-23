@@ -287,7 +287,7 @@ def get_tango_device_server(models, sim_data_files):
             # Only the .fgo file has the State as an attribute. The .xmi files has it as
             # a command, so it won't have an initial value. And in some other data
             # description files the State attribute is not specified.
-            if self.model.sim_quantities.has_key("State"):
+            if "State" in self.model.sim_quantities:
                 # Set default device state
                 state_quantity = self.model.sim_quantities["State"].meta
                 state_value = int(state_quantity["value"])
