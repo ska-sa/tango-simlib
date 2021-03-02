@@ -1,0 +1,11 @@
+name: Unit Tests
+on: push
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    container:
+      image: kmadisa47/tango_db:9.3.0
+    steps:
+      - name: test
+        run: echo 'Welcome to Github Actions'
