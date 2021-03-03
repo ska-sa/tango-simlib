@@ -14,6 +14,14 @@ jobs:
         run: service mysql start && service mysql status || exit 1
       - name: Check tango-db service
         run: service tango-db start && service tango-db status || exit 1
+      - name: Install dependencies
+        run: |
+          apt update -y && \
+          apt install python-pip python3-pip && \
+          pip install nose && \
+          pip3 install nose && \
+          pip install nose_xunitmp && \
+          pip3 install nose_xunitmp
       - name: Install and run tests for Python 2.7
         run: |
           python2 -m pip install -U . && \
