@@ -17,6 +17,10 @@ jobs:
       - name: Install dependencies
         run: |
           apt install -y python-pip python3-pip && \
+          pip install --upgrade pip && \
+          pip3 install --upgrade pip && \
+          pip install --upgrade setuptools && \
+          pip3 install --upgrade setuptools && \
           pip install nose && \
           pip3 install nose && \
           pip install nose_xunitmp && \
