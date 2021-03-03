@@ -9,3 +9,6 @@ jobs:
     steps:
       - name: test
         run: echo 'Welcome to Github Actions'
+      - uses: actions/checkout@v2   # Checks out the code
+      - run: ls -a
+      
