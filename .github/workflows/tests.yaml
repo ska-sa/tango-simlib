@@ -16,7 +16,6 @@ jobs:
         run: service tango-db start && service tango-db status || exit 1
       - name: Install dependencies
         run: |
-          apt update -y && \
           apt install python-pip python3-pip && \
           pip install nose && \
           pip3 install nose && \
