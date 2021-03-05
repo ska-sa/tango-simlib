@@ -9,6 +9,10 @@ jobs:
     steps:
       - name: test
         run: echo 'Welcome to Github Actions'
+      - name: Install git
+        run: |
+          apt-get update -y && \
+          apt install git
       - uses: actions/checkout@v2   # Checks out the code
       - name: Check mysql service
         run: service mysql start && service mysql status || exit 1
