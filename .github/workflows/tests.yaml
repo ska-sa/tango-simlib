@@ -33,7 +33,7 @@ jobs:
         run: |
           sudo pip3 install katcp mock numpy
       - name: Set TANGO_HOST
-        run: sudo echo "TANGO_HOST=databaseds-tango-base-test:10000" >> $GITHUB_ENV
+        run: export TANGO_HOST=databaseds-tango-base-test:10000 #sudo echo "TANGO_HOST=databaseds-tango-base-test:10000" >> $GITHUB_ENV
       - name: Install and run tests for Python 2.7
         run: |
           sudo python -m pip install -U . && \
