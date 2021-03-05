@@ -32,8 +32,9 @@ jobs:
       - name: Install test requirements
         run: |
           sudo pip3 install katcp mock numpy
+      - name: Set TANGO_HOST
+        run: echo "TANGO_HOST=databaseds-tango-base-test:10000" >> $GITHUB_ENV
       - name: Install and run tests for Python 2.7
         run: |
-          echo "TANGO_HOST=databaseds-tango-base-test:10000" >> $GITHUB_ENV && \ 
           sudo python -m pip install -U . && \
           sudo python -m nose --with-xunitmp
