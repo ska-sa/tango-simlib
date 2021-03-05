@@ -6,6 +6,11 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: nexus.engageska-portugal.pt/ska-docker/tango-example:0.3.1
+    services:
+      tango-db:
+        image: nexus.engageska-portugal.pt/ska-docker/tango-db:10.4.10
+        ports:
+          - 10000:10000
     steps:
       - name: test
         run: echo 'Welcome to Github Actions'
@@ -29,5 +34,6 @@ jobs:
           sudo pip3 install katcp mock numpy
       - name: Install and run tests for Python 2.7
         run: |
+          echo "TANGO_HOST=databaseds-tango-base-test:10000" >> $GITHUB_ENV && \ 
           sudo python -m pip install -U . && \
           sudo python -m nose --with-xunitmp
