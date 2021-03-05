@@ -20,10 +20,10 @@ jobs:
       #   run: service tango-db start && service tango-db status || exit 1
       - name: Install dependencies
         run: |
-          pip install nose && \
-          pip3 install nose && \
-          pip install nose_xunitmp && \
-          pip3 install nose_xunitmp
+          sudo pip install nose && \
+          sudo pip3 install nose && \
+          sudo pip install nose_xunitmp && \
+          sudo pip3 install nose_xunitmp
       - name: Install and run tests for Python 2.7
         run: |
           python2 -m pip install -U . && \
