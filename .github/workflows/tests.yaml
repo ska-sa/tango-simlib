@@ -24,6 +24,9 @@ jobs:
           sudo pip3 install nose && \
           sudo pip install nose_xunitmp && \
           sudo pip3 install nose_xunitmp
+      - name: Install test requirements
+        run: |
+          sudo pip3 install katcp mock numpy
       - name: Install and run tests for Python 2.7
         run: |
           sudo python -m pip install -U . && \
