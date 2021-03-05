@@ -5,7 +5,7 @@ jobs:
   testing:
     runs-on: ubuntu-latest
     container:
-      image: nexus.engageska-portugal.pt/ska-docker/tango-pytango:9.3.3.1
+      image: nexus.engageska-portugal.pt/ska-docker/tango-exampleo:0.3.1
     steps:
       - name: test
         run: echo 'Welcome to Github Actions'
