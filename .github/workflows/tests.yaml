@@ -39,4 +39,4 @@ jobs:
           sudo python -m pip install -U . && \
           sudo python -m nose --with-xunitmp
         env:
-          TANGO_HOST: databaseds-tango-base-test:1000
+          TANGO_HOST: databaseds-tango-base-test:10000
