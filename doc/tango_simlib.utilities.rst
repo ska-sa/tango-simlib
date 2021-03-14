@@ -64,3 +64,11 @@ tango\_simlib\.utilities\.testutils module
     :members:
     :undoc-members:
     :show-inheritance:
+
+tango\_simlib\.utilities\.validate\_device module
+----------------------------------------------------
+
+.. automodule:: tango_simlib.utilities.validate_device
+    :members:
+    :undoc-members:
+    :show-inheritance:

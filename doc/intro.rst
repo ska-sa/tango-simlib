@@ -31,7 +31,7 @@ Rationale
 ---------
 
 During the development of the control and monitoring (*CAM*) systems for the
-KAT-7_ (KAT-7-wiki_) and MeerKAT_ (MeerKAT-wiki_) at SKASA_ it was found that
+KAT-7_ (KAT-7-wiki_) and MeerKAT_ (MeerKAT-wiki_) at SARAO_ it was found that
 having control-interface simulators available for all hardware and subsystems
 that *CAM* needs to control and monitor is an incredibly valuable resource. In
 early *CAM* development it:
@@ -59,7 +59,7 @@ code a basic simulator, providing no-op command (*KATCP* request) handlers and
 randomly varying attribute (*KATCP* sensor) values along with the back-channel
 interface for "free".
 
-The planned SKA_ telescope project that the SKASA_ team is participating in has
+The planned SKA_ telescope project that the SARAO_ team is participating in has
 decided to standardise on the TANGO_ control systems framework. This library is
 an attempt to bring the same simulation approach used for the *KAT-7* and *MeerKAT*
 telescope to the *TANGO* world.
@@ -68,11 +68,11 @@ telescope to the *TANGO* world.
 .. _TANGO: http://www.tango-controls.org/
 .. _POGO: http://www.esrf.eu/computing/cs/tango/tango_doc/tools_doc/pogo_doc/
 .. _SimDD: https://docs.google.com/document/d/1tkRGnKu5g8AHxVjK7UkEiukvqtqgZDzptphVCHemcIs/edit?usp=sharing
-.. _KAT-7: https://www.ska.ac.za/science-engineering/kat-7/
+.. _KAT-7: https://www.sarao.ac.za/gallery/kat-7/
 .. _KAT-7-wiki: https://en.wikipedia.org/wiki/KAT-7
-.. _MeerKAT: https://www.ska.ac.za/science-engineering/meerkat/
+.. _MeerKAT: https://www.sarao.ac.za/gallery/meerkat/
 .. _MeerKAT-wiki: https://en.wikipedia.org/wiki/MeerKAT
-.. _SKASA: http://www.ska.ac.za/
+.. _SARAO: https://www.sarao.ac.za/
 .. _KATCP: http://pythonhosted.org/katcp/
 .. _SKA: https://www.skatelescope.org/
 .. _CAM_Style_guide: https://docs.google.com/document/d/1aZoIyR9tz5rCWr2qJKuMTmKp2IzHlFjrCFrpDDHFypM/edit?usp=sharing
@@ -130,9 +130,24 @@ in turn start up the device server process, all in one go.
     $ tango-simlib-launcher --name mkat_sim/weather/1 --class Weather\
                             --name mkat_simcontrol/weather/1\
                             --class WeatherSimControl\
-                            --server-command weather-DS --port 0\
+                            --server-command ./weather-DS --port 0\
                             --server-instance tango-launched\
                             --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1
+
+The simulator limits the rate of calls to the internal model ``update`` method.  The default is
+0.99 seconds. This can be overridden via the ``min_update_period`` property on the main device.
+For example, we can reduce it to 0.5 seconds by adding the last argument below.
+
+.. code-block:: bash
+
+    $ tango-simlib-launcher --name mkat_sim/weather/1 --class Weather\
+                            --name mkat_simcontrol/weather/1\
+                            --class WeatherSimControl\
+                            --server-command ./weather-DS --port 0\
+                            --server-instance tango-launched\
+                            --put-device-property mkat_simcontrol/weather/1:model_key:mkat_sim/weather/1\
+                            --put-device-property mkat_sim/weather/1:min_update_period:0.5
+
 
 Ready-made Simulators
 ---------------------
@@ -217,20 +232,22 @@ After installing tango_simlib, the ``tango-yaml`` script will be available to us
 
     $ tango-yaml -h
 
-    usage: tango_yaml [-h] {xmi,fandango,tango_device} ...
+      usage: tango_yaml [-h] {xmi,fandango,tango_device,validate} ...
 
-    This program translates various file formats that describe Tango devices to
-    YAML
+      This program translates various file formats that describe Tango devices to
+      YAML. Or validates the conformance of a device against a specification.
 
-    positional arguments:
-    {xmi,fandango,tango_device}
-                            sub command help
-        xmi                 Build YAML from a XMI file
-        fandango            Build YAML from a fandango file
-        tango_device        Build YAML from a running Tango device
+      positional arguments:
+        {xmi,fandango,tango_device,validate}
+                              sub command help
+          xmi                 Build YAML from a XMI file
+          fandango            Build YAML from a fandango file
+          tango_device        Build YAML from a running Tango device
+          validate            Check conformance of a Tango device against a
+                              specification in YAML format
 
-    optional arguments:
-    -h, --help            show this help message and exit
+      optional arguments:
+        -h, --help            show this help message and exit
 
 XMI
 ---
@@ -256,7 +273,8 @@ Example
       - class: Weather
         meta:
           attributes:
-          - data_format: SCALAR
+          - name: integer2
+            data_format: SCALAR
             data_type: DevULong
             delta_t: ''
             delta_val: ''
@@ -273,19 +291,18 @@ Example
             min_alarm: ''
             min_value: ''
             min_warning: ''
-            name: integer2
             period: '1000'
             standard_unit: ''
             unit: ''
             writable: READ
           ...
           commands:
-          - doc_in: none
+          - name: State
+            doc_in: none
             doc_out: Device state
             dtype_in: DevVoid
             dtype_out: DevState
             inherited: 'true'
-            name: State
           ...
           properties:
           - name: sim_xmi_description_file
@@ -314,7 +331,8 @@ Example
       - class: DataBase
         meta:
           attributes:
-          - data_format: SCALAR
+          - name: Status
+            data_format: SCALAR
             data_type: DevString
             description: ''
             display_unit: No display unit
@@ -326,17 +344,16 @@ Example
             max_value: Not specified
             min_alarm: Not specified
             min_value: Not specified
-            name: Status
             standard_unit: No standard unit
             unit: ''
             writable: READ
           ...
           commands:
-          - doc_in: Class name
+          - name: DbGetExportdDeviceListForClass
+            doc_in: Class name
             doc_out: Device exported list
             dtype_in: DevString
             dtype_out: DevVarStringArray
-            name: DbGetExportdDeviceListForClass
           ...
           properties: []
 
@@ -345,16 +362,17 @@ Tango device
 
 .. code-block:: bash
 
-    $ tango-yaml tango_device_name -h
+    $ tango-yaml tango_device -h
 
-    usage: tango_yaml tango_device [-h] tango_device_name
+      usage: tango_yaml tango_device [-h] tango_device_name
 
-    positional arguments:
-    tango_device_name  Tango device name in the format domain/family/member.
-                        TANGO_HOST env variable has to be set
+      positional arguments:
+        tango_device_name  Tango device name in the domain/family/member format or
+                          the FQDN
+                          tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
 
-    optional arguments:
-    -h, --help         show this help message and exit
+      optional arguments:
+        -h, --help         show this help message and exit
 
 Example
 
@@ -365,7 +383,8 @@ Example
       - class: SubarrayNode
         meta:
           attributes:
-          - data_format: SCALAR
+          - name: buildState
+            data_format: SCALAR
             data_type: DevString
             description: Build state of this device
             disp_level: OPERATOR
@@ -378,19 +397,18 @@ Example
             max_value: Not specified
             min_alarm: Not specified
             min_value: Not specified
-            name: buildState
             standard_unit: No standard unit
             unit: ''
             writable: READ
             writable_attr_name: None
           ...
           commands:
-          - disp_level: OPERATOR
+          - name: Abort
+            disp_level: OPERATOR
             doc_in: Uninitialised
             doc_out: Uninitialised
             dtype_in: DevVoid
             dtype_out: DevVoid
-            name: Abort
           ...
           properties:
           - name: CspSubarrayFQDN
@@ -399,3 +417,65 @@ Example
           - name: LoggingLevelDefault
           - name: LoggingTargetsDefault
           ...
+
+
+Validation
+----------
+
+A Tango device's conformance to an interface specification can be checked.
+By default check that the device provides a superset of the specification.
+When the optional `-bidirectional` flag is specified, the check is stricter -
+items on the device interface and not in the specification are also reported.
+
+.. code-block:: bash
+
+    $ tango-yaml validate -h
+
+      usage: tango_yaml validate [-h] (--url URL | --path PATH) [--bidirectional]
+                                tango_device_name
+
+      positional arguments:
+        tango_device_name  Tango device name in the domain/family/member format or
+                          the FQDN
+                          tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
+
+      optional arguments:
+        -h, --help         show this help message and exit
+        --url URL          The URL to a YAML specification file
+        --path PATH        The file path to a YAML specification file
+        --bidirectional    When bidirectional is included, any details on the device
+                          that is not in the spec is also listed.
+
+Example
+
+.. code-block:: bash
+
+    $ tango-yaml validate --path ./DishMaster.yaml  mid_d0001/elt/master
+
+      Command differs, [SetDSStandbyFPModeTask] specified but missing in device
+      Command [GetVersionInfo] differs:
+              doc_out:
+                      specification: Uninitialised
+                      device: Version strings
+      Command [GetVersionInfo] differs:
+              dtype_out:
+                      specification: DevString
+                      device: DevVarStringArray
+      Command [Scan] differs:
+              doc_in:
+                      specification: [timestamp]
+                      device: The timestamp indicates the time, in UTC
+      Attribute differs, [loggingLevelElement] specified but missing in device
+      Attribute [adminMode] differs:
+              description:
+                      specification: No description
+                      device: The admin mode reported for this device.
+      Attribute [controlMode] differs:
+              description:
+                      specification: No description
+                      device: The control mode of the device. REMOTE, LOCAL
+      Attribute [versionId] differs:
+              description:
+                      specification: LMC version id (from git tag)
+                      device: Version Id of this device
+      Property [LoggerInitPollPeriod] differs, specified but missing in device

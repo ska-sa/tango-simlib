@@ -94,7 +94,7 @@ class OverrideVds(object):
             try:
                 pan_position = float(data_input[1])
             except IndexError:
-                MODULE_LOGGER.debug("Optional argument 'pan_position' not provided.")
+                model.logger.debug("Optional argument 'pan_position' not provided.")
                 pan_position = 0
             except ValueError:
                 raise VdsSimError(
@@ -192,7 +192,7 @@ class OverrideVds(object):
             try:
                 focus_position = float(data_input[1])
             except IndexError:
-                MODULE_LOGGER.debug("Optional argument 'focus_position' not provided.")
+                model.logger.debug("Optional argument 'focus_position' not provided.")
                 focus_position = 0
             except ValueError:
                 raise VdsSimError(
@@ -252,7 +252,7 @@ class OverrideVds(object):
             try:
                 model_quant = model.sim_quantities["%s_position" % position]
             except KeyError:
-                MODULE_LOGGER.debug(
+                model.logger.debug(
                     "%s_position quantity is not found in the VDS model.", position
                 )
             else:
@@ -274,7 +274,7 @@ class OverrideVds(object):
             try:
                 quant_position = model.sim_quantities["%s_position" % position]
             except KeyError:
-                MODULE_LOGGER.debug(
+                model.logger.debug(
                     "%s_position quantity is not found in the VDS model.", position
                 )
             else:
@@ -314,7 +314,7 @@ class OverrideVds(object):
             try:
                 tilt_position = float(data_input[1])
             except IndexError:
-                MODULE_LOGGER.debug("Optional argument 'tilt_position' not provided")
+                model.logger.debug("Optional argument 'tilt_position' not provided")
                 tilt_position = 0.0
             except ValueError:
                 raise VdsSimError(
@@ -356,7 +356,7 @@ class OverrideVds(object):
             try:
                 zoom_position = float(data_input[1])
             except IndexError:
-                MODULE_LOGGER.debug("Optional argument 'zoom_position' not provided.")
+                model.logger.debug("Optional argument 'zoom_position' not provided.")
                 zoom_position = 0.0
             except ValueError:
                 raise VdsSimError(
@@ -534,15 +534,15 @@ class OverrideDish(object):
         if current_mode_str_val in _allowed_modes:
             set_mode = dish_mode_quant.meta["enum_labels"].index("CONFIG")
             model.sim_quantities["dishMode"].set_val(set_mode, float(timestamp))
-            MODULE_LOGGER.info(
+            model.logger.info(
                 "Configuring DISH to operate in frequency band {}.".format(band_number)
             )
-            MODULE_LOGGER.info(
+            model.logger.info(
                 "Done configuring DISH to operate in frequency band {}.".format(
                     band_number
                 )
             )
-            MODULE_LOGGER.info(
+            model.logger.info(
                 "Dish reverting back to '{}' mode.".format(current_mode_str_val)
             )
             model.sim_quantities["dishMode"].set_val(
@@ -635,7 +635,7 @@ class OverrideDish(object):
             power_state_quant = model.sim_quantities["powerState"]
             set_mode = power_state_quant.meta["enum_labels"].index("LOW")
             power_state_quant.set_val(set_mode, model.time_func())
-            MODULE_LOGGER.info("Dish transitioning to LOW power state.")
+            model.logger.info("Dish transitioning to LOW power state.")
         else:
             Except.throw_exception(
                 "DISH Command Failed",
@@ -664,7 +664,7 @@ class OverrideDish(object):
         if current_mode_str_val in _allowed_modes:
             set_mode = dish_mode_quant.meta["enum_labels"].index("MAINTENANCE")
             model.sim_quantities["dishMode"].set_val(set_mode, model.time_func())
-            MODULE_LOGGER.info("Dish transition to the OPERATE Dish Element mode.")
+            model.logger.info("Dish transition to the OPERATE Dish Element mode.")
         else:
             Except.throw_exception(
                 "DISH Command Failed",
@@ -690,7 +690,7 @@ class OverrideDish(object):
         if current_mode_str_val in _allowed_modes:
             set_mode = dish_mode_quant.meta["enum_labels"].index("OPERATE")
             model.sim_quantities["dishMode"].set_val(set_mode, model.time_func())
-            MODULE_LOGGER.info("Dish transition to the OPERATE Dish Element Mode.")
+            model.logger.info("Dish transition to the OPERATE Dish Element Mode.")
         else:
             Except.throw_exception(
                 "DISH Command Failed",
@@ -716,7 +716,7 @@ class OverrideDish(object):
         if current_mode_str_val in _allowed_modes:
             set_mode = dish_mode_quant.meta["enum_labels"].index("STANDBY-FP")
             model.sim_quantities["dishMode"].set_val(set_mode, model.time_func())
-            MODULE_LOGGER.info("Dish transition to the STANDBY-FP Dish Element Mode.")
+            model.logger.info("Dish transition to the STANDBY-FP Dish Element Mode.")
         else:
             Except.throw_exception(
                 "DISH Command Failed",
@@ -752,7 +752,7 @@ class OverrideDish(object):
         if current_mode_str_val in _allowed_modes:
             set_mode = dish_mode_quant.meta["enum_labels"].index("STANDBY-LP")
             model.sim_quantities["dishMode"].set_val(set_mode, model.time_func())
-            MODULE_LOGGER.info("Dish transition to the STANDBY-LP Dish Element Mode.")
+            model.logger.info("Dish transition to the STANDBY-LP Dish Element Mode.")
         else:
             Except.throw_exception(
                 "DISH Command Failed",
@@ -822,7 +822,7 @@ class OverrideDish(object):
         model.sim_quantities["desiredElevation"].set_val(90, model_time)
         set_mode = dish_mode_quant.meta["enum_labels"].index("STOW")
         model.sim_quantities["dishMode"].set_val(set_mode, model_time)
-        MODULE_LOGGER.info("Dish transition to the STOW Dish Element Mode.")
+        model.logger.info("Dish transition to the STOW Dish Element Mode.")
 
     def action_slew(self, model, tango_dev=None, data_input=None):
         """The Dish is tracking the commanded pointing positions within the
@@ -880,7 +880,7 @@ class OverrideDish(object):
         )
 
     def pre_update(self, sim_model, sim_time, dt):
-        MODULE_LOGGER.info("***Pre-updating from the override class***")
+        sim_model.logger.info("***Pre-updating from the override class***")
         pointing_state_quant = sim_model.sim_quantities["pointingState"]
         current_pnt_state_enum_val = pointing_state_quant.last_val
         current_pnt_state_str_val = pointing_state_quant.meta["enum_labels"][
@@ -888,7 +888,7 @@ class OverrideDish(object):
         ]
 
         if current_pnt_state_str_val == "READY":
-            MODULE_LOGGER.info(
+            sim_model.logger.info(
                 "Skipping quantity updates. Dish quantity state already in READY mode."
             )
             return

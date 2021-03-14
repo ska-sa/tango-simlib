@@ -32,7 +32,7 @@ from tango import (
     DevState,
     UserDefaultAttrProp,
 )
-from tango.server import Device, DeviceMeta, attribute
+from tango.server import Device, attribute, device_property
 from tango_simlib.model import (
     INITIAL_CONSTANT_VALUE_TYPES,
     Model,
@@ -116,14 +116,29 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
     """
     enum_labels = attr_meta.get("enum_labels", "")
     attr = attribute(
-        label=attr_meta["label"],
+        label=attr_meta.get("label", attr_name),
         dtype=attr_meta["data_type"],
         enum_labels=enum_labels,
-        doc=attr_meta["description"],
+        doc=attr_meta.get("description", ""),
         dformat=attr_meta["data_format"],
         max_dim_x=attr_meta["max_dim_x"],
         max_dim_y=attr_meta["max_dim_y"],
         access=getattr(AttrWriteType, attr_meta["writable"]),
+        polling_period=int(attr_meta.get("period", "-1")),
+        min_value=attr_meta.get("min_value", ""),
+        max_value=attr_meta.get("max_value", ""),
+        min_alarm=attr_meta.get("min_alarm", ""),
+        max_alarm=attr_meta.get("max_alarm", ""),
+        min_warning=attr_meta.get("min_warning", ""),
+        max_warning=attr_meta.get("max_warning", ""),
+        delta_val=attr_meta.get("delta_val", ""),
+        delta_t=attr_meta.get("delta_t", ""),
+        abs_change=attr_meta.get("abs_change", ""),
+        rel_change=attr_meta.get("rel_change", ""),
+        event_period=attr_meta.get("event_period", ""),
+        archive_abs_change=attr_meta.get("archive_abs_change", ""),
+        archive_rel_change=attr_meta.get("archive_rel_change", ""),
+        archive_period=attr_meta.get("archive_period", ""),
     )
     attr.__name__ = attr_name
 
@@ -254,13 +269,29 @@ def get_tango_device_server(models, sim_data_files):
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
         _models = models
 
+        min_update_period = device_property(
+            dtype=float,
+            default_value=0.99,
+            doc="Minimum time before model update method can be called again [seconds].",
+        )
+
         def init_device(self):
             super(TangoDeviceServer, self).init_device()
             self.model = self._models[self.get_name()]
             self._not_added_attributes = []
             write_device_properties_to_db(self.get_name(), self.model)
             self.model.reset_model_state()
+            self.model.min_update_period = self.min_update_period
             self.initialize_dynamic_commands()
+
+            # Only the .fgo file has the State as an attribute. The .xmi files has it as
+            # a command, so it won't have an initial value. And in some other data
+            # description files the State attribute is not specified.
+            if "State" in self.model.sim_quantities:
+                # Set default device state
+                state_quantity = self.model.sim_quantities["State"].meta
+                state_value = int(state_quantity["value"])
+                self.set_state(DevState.values[state_value])
 
         def initialize_dynamic_commands(self):
             for action_name, action_handler in self.model.sim_actions.items():
@@ -275,62 +306,99 @@ def get_tango_device_server(models, sim_data_files):
             attribute_list = set([attr for attr in model_sim_quants.keys()])
             for attribute_name in attribute_list:
                 meta_data = model_sim_quants[attribute_name].meta
-                attr_dtype = meta_data["data_type"]
-                d_format = meta_data["data_format"]
                 # Dynamically add all attributes except those with DevEnum data type,
                 # and SPECTRUM data format since they are added statically to the device
                 # class prior to start-up. Also exclude attributes with a data format
                 # 'IMAGE' as we currently do not handle them.
-                if str(attr_dtype) == "DevEnum":
+                if not self._is_attribute_addable_dynamically(meta_data):
                     continue
-                elif str(d_format) == "SPECTRUM":
+                # The return value of rwType is a string and it is required as a
+                # PyTango data type when passed to the Attr function.
+                # e.g. 'READ' -> tango._tango.AttrWriteType.READ
+                rw_type = meta_data["writable"]
+                rw_type = getattr(AttrWriteType, rw_type)
+                attr = self._create_attribute(
+                    attribute_name, meta_data["data_type"], rw_type
+                )
+                if attr is None:
                     continue
-                elif str(d_format) == "IMAGE":
-                    self._not_added_attributes.append(attribute_name)
+
+                self._configure_attribute_default_properties(attr, meta_data)
+                self._add_dynamic_attribute(attr, rw_type)
+                MODULE_LOGGER.debug("Added dynamic {} attribute".format(attribute_name))
+
+        def _add_dynamic_attribute(self, attribute, read_write_type):
+            if read_write_type in (AttrWriteType.READ, AttrWriteType.READ_WITH_WRITE):
+                self.add_attribute(attribute, r_meth=self.read_attributes)
+            elif read_write_type == AttrWriteType.WRITE:
+                self.add_attribute(attribute, w_meth=self.write_attributes)
+            elif read_write_type == AttrWriteType.READ_WRITE:
+                self.add_attribute(
+                    attribute, r_meth=self.read_attributes, w_meth=self.write_attributes
+                )
+
+        def _is_attribute_addable_dynamically(self, quantity_meta_data):
+            attr_dtype = quantity_meta_data["data_type"]
+            d_format = quantity_meta_data["data_format"]
+            if str(attr_dtype) == "DevEnum" or str(d_format) == "SPECTRUM":
+                return False
+            elif str(d_format) == "IMAGE":
+                self._not_added_attributes.append(quantity_meta_data["name"])
+                return False
+
+            return True
+
+        def _create_attribute(self, attribute_name, attr_dtype, rw_type):
+            attribute = None
+            # Add a try/except clause when creating an instance of Attr class
+            # as PyTango may raise an error when things go wrong.
+            try:
+                attribute = Attr(attribute_name, attr_dtype, rw_type)
+            except Exception as e:
+                self._not_added_attributes.append(attribute_name)
+                MODULE_LOGGER.debug(
+                    "Attribute %s could not be added dynamically"
+                    " due to an error raised %s.",
+                    attribute_name,
+                    str(e),
+                )
+
+            return attribute
+
+        def _configure_attribute_default_properties(self, attribute, quantity_meta_data):
+            attribute_properties = UserDefaultAttrProp()
+            for prop, prop_value in quantity_meta_data.items():
+                # NB: Calling 'set_enum_labels' or setting the 'enum_labels' results
+                # in a error, and we do not need to do anyway as DevEnum attributes are
+                # handled by the `add_static_attribute` method.
+                if prop == "enum_labels":
                     continue
-                else:
-                    # The return value of rwType is a string and it is required as a
-                    # PyTango data type when passed to the Attr function.
-                    # e.g. 'READ' -> tango._tango.AttrWriteType.READ
-                    rw_type = meta_data["writable"]
-                    rw_type = getattr(AttrWriteType, rw_type)
-                    # Add a try/except clause when creating an instance of Attr class
-                    # as PyTango may raise an error when things go wrong.
+
+                # UserDefaultAttrProp does not have the property 'event_period' but does
+                # have a setter method for it.
+                if prop == "event_period":
+                    attribute_properties.set_event_period(prop_value)
+                    continue
+
+                if hasattr(attribute_properties, prop):
                     try:
-                        attr = Attr(attribute_name, attr_dtype, rw_type)
+                        setattr(attribute_properties, prop, prop_value)
                     except Exception as e:
-                        self._not_added_attributes.append(attribute_name)
-                        MODULE_LOGGER.info(
-                            "Attribute %s could not be added dynamically"
-                            " due to an error raised %s.",
+                        attribute_name = quantity_meta_data["name"]
+                        MODULE_LOGGER.error(
+                            "The attribute '%s's property '%s' could not be set to "
+                            "value '%s' due to an error raised %s.",
                             attribute_name,
+                            prop,
+                            prop_value,
                             str(e),
                         )
-                        continue
-                    attr_props = UserDefaultAttrProp()
-                    for prop in meta_data.keys():
-                        attr_prop_setter = getattr(attr_props, "set_" + prop, None)
-                        # CAVEAT (MTO): breaks silently; take note when debugging
-                        if attr_prop_setter:
-                            attr_prop_setter(meta_data[prop])
-                        else:
-                            MODULE_LOGGER.info(
-                                "No setter function for " + prop + " property"
-                            )
-                    attr.set_default_properties(attr_props)
-
-                    if rw_type in (AttrWriteType.READ, AttrWriteType.READ_WITH_WRITE):
-                        self.add_attribute(attr, self.read_attributes)
-                    elif rw_type == AttrWriteType.WRITE:
-                        self.add_attribute(attr, w_meth=self.write_attributes)
-                    elif rw_type == AttrWriteType.READ_WRITE:
-                        self.add_attribute(
-                            attr, self.read_attributes, self.write_attributes
-                        )
-
-                    MODULE_LOGGER.info(
-                        "Added dynamic {} attribute".format(attribute_name)
+                else:
+                    MODULE_LOGGER.debug(
+                        "UserDefaultAttrProp has no attribute named '%s'", prop
                     )
+
+            attribute.set_default_properties(attribute_properties)
 
         @attribute(
             dtype=(str,),
@@ -419,8 +487,8 @@ def get_parser_instance(sim_datafile):
     return parser_instance
 
 
-def configure_device_model(sim_data_file=None, test_device_name=None):
-    models = configure_device_models(sim_data_file, test_device_name)
+def configure_device_model(sim_data_file=None, test_device_name=None, logger=None):
+    models = configure_device_models(sim_data_file, test_device_name, logger)
     if len(models) == 1:
         return models
     else:
@@ -433,7 +501,7 @@ def configure_device_model(sim_data_file=None, test_device_name=None):
         )
 
 
-def configure_device_models(sim_data_file=None, test_device_name=None):
+def configure_device_models(sim_data_file=None, test_device_name=None, logger=None):
     """
     In essence this function should get the data descriptor file, parse it,
     take the attribute and command information, populate the model(s) quantities and
@@ -482,9 +550,9 @@ def configure_device_models(sim_data_file=None, test_device_name=None):
     models = {}
     if dev_names:
         for dev_name in dev_names:
-            models[dev_name] = Model(dev_name)
+            models[dev_name] = Model(dev_name, logger=logger)
     else:
-        models[dev_name] = Model(dev_name)
+        models[dev_name] = Model(dev_name, logger=logger)
 
     # In case there is more than one parser instance for each file
     for model in models.values():

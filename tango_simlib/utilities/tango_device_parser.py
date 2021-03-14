@@ -32,13 +32,13 @@ class TangoDeviceParser(Parser):
         Parameters
         ----------
         tango_device_name: str
-            Tango device name in the domain/family/member format
+            Tango device name in the domain/family/member format or the
+            FQDN tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
         """
-        assert "TANGO_HOST" in os.environ, "TANGO_HOST env variable is not set"
         self.device_proxy = tango.DeviceProxy(tango_device_name)
         self.device_class_name = self.device_proxy.info().dev_class
 
-        for attribute in self.device_proxy.attribute_list_query():
+        for attribute in self.device_proxy.attribute_list_query_ex():
             attr_data = {
                 "name": attribute.name,
                 "data_type": tango.CmdArgType.values[attribute.data_type],
@@ -46,6 +46,7 @@ class TangoDeviceParser(Parser):
                 "description": attribute.description,
                 "disp_level": attribute.disp_level,
                 "display_unit": attribute.display_unit,
+                "enum_labels": list(attribute.enum_labels),
                 "format": attribute.format,
                 "label": attribute.label,
                 "max_alarm": attribute.max_alarm,
@@ -57,7 +58,7 @@ class TangoDeviceParser(Parser):
                 "standard_unit": attribute.standard_unit,
                 "unit": attribute.unit,
                 "writable": str(attribute.writable),
-                "writable_attr_name": attribute.writable_attr_name
+                "writable_attr_name": attribute.writable_attr_name,
             }
             self.data_dict["meta"]["attributes"][attribute.name] = attr_data
 
@@ -87,6 +88,7 @@ class TangoDeviceParser(Parser):
                         "data_type": "DevString",
                         "description": "",
                         "display_unit": "No display unit",
+                        "enum_labels": []
                         "format": "%s",
                         "label": "Timing_info",
                         "max_alarm": "Not specified",
@@ -148,3 +150,12 @@ class TangoDeviceParser(Parser):
     def get_device_cmd_override_metadata(self):
         """This method is not implemented"""
         raise NotImplementedError("get_device_cmd_override_metadata not implemented")
+
+    def get_parsed_data(self):
+        """Returns all the parsed data
+
+        Returns
+        -------
+        dict
+        """
+        return self.data_dict

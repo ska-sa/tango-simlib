@@ -11,7 +11,7 @@
       <archiveEvent fire="false" libCheckCriteria="false"/>
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="Report the current admin mode of the DSH Element. Factory defaut is MAINTENANCE." label="Admin Mode" unit="" standardUnit="" displayUnit="" format="" maxValue="4" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="Report the current admin mode of the DSH Element. Factory defaut is MAINTENANCE." label="Admin Mode" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <eventCriteria relChange="" absChange="1" period=""/>
       <evArchiveCriteria relChange="" absChange="1" period=""/>
       <enumLabels>ONLINE</enumLabels>

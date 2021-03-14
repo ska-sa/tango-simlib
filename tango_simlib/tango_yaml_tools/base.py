@@ -39,57 +39,63 @@ class TangoToYAML:
             }
         ]
 
-        for command in self.parser.get_device_command_metadata().values():
-            command_data = {
-                "name": command["name"],
-                "dtype_in": command["dtype_in"].name,
-                "dtype_out": command["dtype_out"].name,
-            }
-            for key in ["doc_out", "doc_in", "inherited", "disp_level"]:
-                if key in command:
+        command_values = self.parser.get_device_command_metadata().values()
+        command_values = sorted(command_values, key=lambda x: x["name"])
+        for command in command_values:
+            command_keys = sorted(command.keys())
+            command_keys.insert(0, command_keys.pop(command_keys.index("name")))
+            command_data = {}
+            for key in command_keys:
+                if key in ["dtype_in", "dtype_out"]:
+                    command_data[key] = command[key].name
+                else:
                     command_data[key] = command[key]
             data_dict[0]["meta"]["commands"].append(command_data)
 
-        for attr in self.parser.get_device_attribute_metadata().values():
-            attr_data = {"name": attr["name"]}
-            if "data_type" in attr:
-                attr_data["data_type"] = attr["data_type"].name
-            if "data_format" in attr:
-                attr_data["data_format"] = attr["data_format"].name
-            if "disp_level" in attr:
-                attr_data["disp_level"] = attr["disp_level"].name
-            # pylint insists on this spacing
-            for key in [
-                    "delta_val",
-                    "period",
-                    "display_unit",
-                    "standard_unit",
-                    "unit",
-                    "max_dim_y",
-                    "max_dim_x",
-                    "label",
-                    "max_value",
-                    "min_alarm",
-                    "max_warning",
-                    "description",
-                    "format",
-                    "delta_t",
-                    "max_alarm",
-                    "min_value",
-                    "inherited",
-                    "min_warning",
-                    "writable",
-                    "writable_attr_name",
-            ]:
-                if key in attr:
-                    attr_data[key] = attr[key]
+        attr_values = self.parser.get_device_attribute_metadata().values()
+        attr_values = sorted(attr_values, key=lambda x: x["name"])
+        for attr in attr_values:
+            attr_keys = sorted(attr.keys())
+            attr_keys.insert(0, attr_keys.pop(attr_keys.index("name")))
+            attr_data = {}
+            for key in attr_keys:
+                if key in ["data_format", "data_type", "disp_level"]:
+                    attr_data[key] = attr[key].name
+                elif key in [
+                        "name",
+                        "delta_val",
+                        "enum_labels",
+                        "period",
+                        "display_unit",
+                        "standard_unit",
+                        "unit",
+                        "max_dim_y",
+                        "max_dim_x",
+                        "label",
+                        "max_value",
+                        "min_alarm",
+                        "max_warning",
+                        "description",
+                        "format",
+                        "delta_t",
+                        "max_alarm",
+                        "min_value",
+                        "inherited",
+                        "min_warning",
+                        "writable",
+                        "writable_attr_name",
+                ]:
+                    if attr[key]:
+                        attr_data[key] = attr[key]
             data_dict[0]["meta"]["attributes"].append(attr_data)
 
-        for prop in self.parser.get_device_properties_metadata(
-                "deviceProperties"
-        ).values():
+        prop_values = self.parser.get_device_properties_metadata(
+            "deviceProperties"
+        ).values()
+        prop_values = sorted(prop_values, key=lambda x: x["name"])
+        for prop in prop_values:
             data_dict[0]["meta"]["properties"].append({"name": prop["name"]})
-        return yaml.dump(data_dict)
+        return yaml.dump(data_dict, sort_keys=False)
 
     def build_yaml_from_file(self, file_loc):
         """Builds YAML from a Tango specification file
@@ -116,7 +122,8 @@ class TangoToYAML:
         Parameters
         ----------
         device_name : str
-            Tango device name in the domain/family/member format
+            Tango device name in the domain/family/member format or the
+            FQDN tango://<TANGO_HOST>:<TANGO_PORT>/domain/family/member
         """
         self.parser.parse(device_name)
         return self._build_yaml()

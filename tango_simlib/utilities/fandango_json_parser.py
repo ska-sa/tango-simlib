@@ -49,6 +49,8 @@ class FandangoExportDeviceParser(Parser):
         for data_component, elements in device_data.items():
             if data_component == "attributes":
                 self.preprocess_attribute_types(elements)
+                self._flatten_device_attribute_dictionary()
+                self._remove_unused_device_attributes_keys()
             elif data_component == "commands":
                 self.preprocess_command_types(elements)
             elif data_component == "class_properties":
@@ -57,6 +59,41 @@ class FandangoExportDeviceParser(Parser):
                 self.update_property_data(elements)
             elif data_component == "dev_class":
                 self.device_class_name = elements
+
+    def _flatten_device_attribute_dictionary(self):
+        for attribute_config in self._device_attributes.values():
+            _events_properties = attribute_config["events"]
+            events_properties = self._extract_attribute_events_properties(
+                _events_properties
+            )
+            attribute_config.update(events_properties)
+
+            alarms_properties = attribute_config["alarms"]
+            attribute_config.update(alarms_properties)
+
+            # Assign 'polling' to 'period' as all other parsers use 'period' to
+            # represent the 'polling_period'.
+            attribute_config["period"] = str(attribute_config["polling"])
+            attribute_config.pop("polling", None)
+
+    def _remove_unused_device_attributes_keys(self):
+        keys_to_pop = [
+            "alarms",
+            "color",
+            "database",
+            "device",
+            "dim_x",
+            "dim_y",
+            "events",
+            "extensions",
+            "format",
+            "model",
+            "string",
+            "time",
+        ]
+        for attribute_config in self._device_attributes.values():
+            for key in keys_to_pop:
+                attribute_config.pop(key, None)
 
     def preprocess_command_types(self, command_data):
         """
@@ -85,6 +122,7 @@ class FandangoExportDeviceParser(Parser):
 
     def preprocess_attribute_types(self, attribute_data):
         """Convert the attribute data types from strings to the TANGO types."""
+
         for attr, attr_config in attribute_data.items():
             # assign 'READ_WRITE' to all attributes with 'WT_UNKNOWN'
             attr_access = ["READ", "WRITE", "READ_WRITE", "READ_WITH_WRITE"]
@@ -97,6 +135,57 @@ class FandangoExportDeviceParser(Parser):
                     attr_config[attr_prop] = getattr(AttrDataFormat, attr_prop_value)
 
         self._device_attributes.update(attribute_data)
+
+    def _extract_attribute_events_properties(self, attribute_events_configuration):
+        """Flattens the events' properties dictionary.
+
+        Parameters
+        ----------
+        attribute_events_configuration: dict
+        e.g.
+            {
+                'arch_event': {
+                    'archive_abs_change': 'Not specified',
+                    'archive_period': 'Not specified',
+                    'archive_rel_change': 'Not specified',
+                    'extensions': '[]'
+                },
+                'ch_event': {
+                    'abs_change': 'Not specified',
+                    'extensions': '[]',
+                    'rel_change': 'Not specified'
+                },
+                'per_event': {
+                    'extensions': '[]',
+                    'period': '1000'
+                }
+           }
+
+        Returns
+        -------
+        events_properties: dict
+        e.g.
+            {
+                'abs_change': 'Not specified',
+                'archive_abs_change': 'Not specified',
+                'archive_period': 'Not specified',
+                'archive_rel_change': 'Not specified',
+                'event_period': '1000'
+                'extensions': '[]'
+                'rel_change': 'Not specified'
+            }
+
+        """
+        events_properties = {}
+
+        for event_props in attribute_events_configuration.values():
+            events_properties.update(event_props)
+
+        # Assign the value of 'period' to 'event_period' as it actually
+        # represents 'event_period' of the attribute.
+        events_properties["event_period"] = events_properties["period"]
+
+        return events_properties
 
     def update_property_data(self, property_data):
         """
@@ -152,55 +241,32 @@ class FandangoExportDeviceParser(Parser):
             e.g.
                 {
                 'State': {
-                    'alarms': {
-                        'delta_t': 'Not specified',
-                        'delta_val': 'Not specified',
-                        'extensions': '[]',
-                        'max_alarm': 'Not specified',
-                        'max_warning': 'Not specified',
-                        'min_alarm': 'Not specified',
-                        'min_warning': 'Not specified'
-                    },
-                    'color': 'Lime',
+                    'abs_change': 'Not specified',
+                    'archive_abs_change': 'Not specified',
+                    'archive_period': 'Not specified',
+                    'archive_rel_change': 'Not specified',
                     'data_format': tango._tango.AttrDataFormat.SCALAR,
                     'data_type': tango._tango.CmdArgType.DevState,
-                    'database': 'monctl:10000',
                     'description': '',
-                    'device': 'tango/admin/monctl',
                     'display_unit': 'No display unit',
+                    'delta_t': 'Not specified',
+                    'delta_val': 'Not specified',
                     'enum_labels': [],
-                    'events': {
-                        'arch_event': {
-                            'archive_abs_change': 'Not specified',
-                            'archive_period': 'Not specified',
-                            'archive_rel_change': 'Not specified',
-                            'extensions': '[]'
-                        },
-                        'ch_event': {
-                            'abs_change': 'Not specified',
-                            'extensions': '[]',
-                            'rel_change': 'Not specified'
-                        },
-                        'per_event': {
-                            'extensions': '[]',
-                            'period': '1000'
-                        }
-                    },
-                    'format': 'Not specified',
+                    'event_period': '1000',
                     'label': 'State',
                     'max_alarm': 'Not specified',
                     'max_dim_x': 1,
                     'max_dim_y': 0,
                     'max_value': 'Not specified',
+                    'max_warning': 'Not specified',
                     'min_alarm': 'Not specified',
                     'min_value': 'Not specified',
-                    'model': 'monctl:10000/tango/admin/monctl/State',
+                    'min_warning': 'Not specified',
                     'name': 'State',
                     'polling': 1000,
                     'quality': PyTango.AttrQuality.ATTR_VALID,
+                    'rel_change': 'Not specified',
                     'standard_unit': 'No standard unit',
-                    'string': 'ON',
-                    'time': 1519207194.715621,
                     'unit': '',
                     'value': 0,
                     'writable': 'READ'},

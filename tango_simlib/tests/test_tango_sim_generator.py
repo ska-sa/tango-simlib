@@ -189,7 +189,7 @@ class test_XmiFile(BaseTest.TangoSimGenDeviceIntegration):
         super(test_XmiFile, self).setUp()
 
     def test_device_attribute_list(self):
-        """ Testing whether the attributes specified in the POGO generated XMI file
+        """Testing whether the attributes specified in the POGO generated XMI file
         are added to the TANGO device.
         """
         # First testing that the attribute with data format "IMAGE" is not in the device.
@@ -225,8 +225,7 @@ class test_XmiFile(BaseTest.TangoSimGenDeviceIntegration):
         )
 
     def test_device_command_list(self):
-        """Testing whether commands are defined on the device as expected
-        """
+        """Testing whether commands are defined on the device as expected"""
         actual_device_commands = set(self.sim_device.get_command_list()) - {"Init"}
         expected_command_list = set(
             self.sim_file_parser.get_device_command_metadata().keys()
@@ -250,7 +249,7 @@ class test_FandangoFile(BaseTest.TangoSimGenDeviceIntegration):
         super(test_FandangoFile, self).setUp()
 
     def test_device_attribute_list(self):
-        """ Testing whether the attributes specified in the fandango generated fgo file
+        """Testing whether the attributes specified in the fandango generated fgo file
         are added to the TANGO device.
         """
         # test that the attributes from the running simulated device match the attributes
@@ -271,7 +270,9 @@ class test_FandangoFile(BaseTest.TangoSimGenDeviceIntegration):
         self.assertEqual(
             set(expected_attributes),
             remaining_device_attrs,
-            "Actual tango device attribute list differs from expected " "list!",
+            "Actual tango device attribute list {} differs from expected list {}!".format(
+                remaining_device_attrs, expected_attributes
+            ),
         )
 
     def test_device_command_list(self):
@@ -302,7 +303,7 @@ class test_JsonFile(BaseTest.TangoSimGenDeviceIntegration):
         super(test_JsonFile, self).setUp()
 
     def test_device_attribute_list(self):
-        """ Testing whether the attributes specified in the simdd json
+        """Testing whether the attributes specified in the simdd json
         are added to the TANGO device.
         """
         # test that the attributes from the running simulated device match the attributes

@@ -1,0 +1,714 @@
+- class: DishMaster
+  meta:
+    commands:
+    - name: Configure
+      disp_level: OPERATOR
+      doc_in: Pointing parameter of Dish.
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: GetVersionInfo
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Version strings
+      dtype_in: DevVoid
+      dtype_out: DevVarStringArray
+    - name: Init
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: Reset
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: Scan
+      disp_level: OPERATOR
+      doc_in: The timestamp indicates the time, in UTC, at which command execution
+        should start.
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: SetMaintenanceMode
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: SetOperateMode
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: SetStandbyFPMode
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: SetStandbyLPMode
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: SetStowMode
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: Slew
+      disp_level: OPERATOR
+      doc_in: Timestamp at which command should be executed.
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: StartCapture
+      disp_level: OPERATOR
+      doc_in: The timestamp indicates the time, in UTC, at which command execution
+        should start.
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: State
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Device state
+      dtype_in: DevVoid
+      dtype_out: DevState
+    - name: Status
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Device status
+      dtype_in: DevVoid
+      dtype_out: DevString
+    - name: StopCapture
+      disp_level: OPERATOR
+      doc_in: The timestamp indicates the time, in UTC, at which command execution
+        should start
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: StopTrack
+      disp_level: OPERATOR
+      doc_in: Uninitialised
+      doc_out: Uninitialised
+      dtype_in: DevVoid
+      dtype_out: DevVoid
+    - name: Track
+      disp_level: OPERATOR
+      doc_in: Timestamp at which command should be executed.
+      doc_out: Uninitialised
+      dtype_in: DevString
+      dtype_out: DevVoid
+    - name: isCapabilityAchievable
+      disp_level: OPERATOR
+      doc_in: '[nrInstances][Capability types]'
+      doc_out: Uninitialised
+      dtype_in: DevVarLongStringArray
+      dtype_out: DevBoolean
+    attributes:
+    - name: AzElOffset
+      data_format: SPECTRUM
+      data_type: DevDouble
+      description: No description
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: AzElOffset
+      max_alarm: Not specified
+      max_dim_x: 2
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: ConfiguredBand
+      data_format: SCALAR
+      data_type: DevEnum
+      description: Configured band of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - BAND1
+      - BAND2
+      - BAND3
+      - BAND4
+      - BAND5a
+      - BAND5b
+      - NONE
+      format: '%s'
+      label: ConfiguredBand
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: State
+      data_format: SCALAR
+      data_type: DevState
+      description: No description
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: Not specified
+      label: State
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: Status
+      data_format: SCALAR
+      data_type: DevString
+      description: No description
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: Status
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: WindSpeed
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Wind speed of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: WindSpeed
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      unit: km/h
+      writable: READ_WRITE
+      writable_attr_name: windspeed
+    - name: achievedPointing
+      data_format: SPECTRUM
+      data_type: DevDouble
+      description: Achieved pointing coordinates of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: achievedPointing
+      max_alarm: Not specified
+      max_dim_x: 7
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: adminMode
+      data_format: SCALAR
+      data_type: DevEnum
+      description: The admin mode reported for this device. It may interpret the current
+        device condition and condition of all managed devices to set this. Most possibly
+        an aggregate attribute.
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - ONLINE
+      - OFFLINE
+      - MAINTENANCE
+      - NOT_FITTED
+      - RESERVED
+      format: '%s'
+      label: adminMode
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: adminmode
+    - name: availableCapabilities
+      data_format: SPECTRUM
+      data_type: DevString
+      description: A list of available number of instances of each capability type,
+        e.g. 'CORRELATOR:512', 'PSS-BEAMS:4'.
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: availableCapabilities
+      max_alarm: Not specified
+      max_dim_x: 20
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: azimuthOverWrap
+      data_format: SCALAR
+      data_type: DevBoolean
+      description: No description
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: Not specified
+      label: azimuthOverWrap
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: band1SamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band1 Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band1SamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: band2SamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band2 Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band2SamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: band3SamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band3 Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band3SamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: band4SamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band4 Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band4SamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: band5aSamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band5a Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band5aSamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: band5bSamplerFrequency
+      data_format: SCALAR
+      data_type: DevDouble
+      description: Band5b Sampler Frequency of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: band5bSamplerFrequency
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: WRITE
+      writable_attr_name: None
+    - name: buildState
+      data_format: SCALAR
+      data_type: DevString
+      description: Build state of this device
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: buildState
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: capturing
+      data_format: SCALAR
+      data_type: DevBoolean
+      description: Data Capturing of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: Not specified
+      label: capturing
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: controlMode
+      data_format: SCALAR
+      data_type: DevEnum
+      description: "The control mode of the device. REMOTE, LOCAL\nTANGO Device accepts\
+        \ only from a \u2018local\u2019 client and ignores commands and queries received\
+        \ from TM or any other \u2018remote\u2019 clients. The Local clients has to\
+        \ release LOCAL control before REMOTE clients can take control again."
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - REMOTE
+      - LOCAL
+      format: '%s'
+      label: controlMode
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: controlmode
+    - name: desiredPointing
+      data_format: SPECTRUM
+      data_type: DevDouble
+      description: Desired pointing coordinates of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%6.2f'
+      label: desiredPointing
+      max_alarm: Not specified
+      max_dim_x: 7
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: desiredpointing
+    - name: dishMode
+      data_format: SCALAR
+      data_type: DevEnum
+      description: Mode of the dish
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - 'OFF'
+      - STARTUP
+      - SHUTDOWN
+      - STANDBY-LP
+      - STANDBY-FP
+      - MAINTENANCE
+      - STOW
+      - CONFIG
+      - OPERATE
+      format: '%s'
+      label: dishMode
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: elementAlarmAddress
+      data_format: SCALAR
+      data_type: DevString
+      description: FQDN of Element Alarm Handlers
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: elementAlarmAddress
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: elementDatabaseAddress
+      data_format: SCALAR
+      data_type: DevString
+      description: FQDN of Element Database device
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: elementDatabaseAddress
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: elementLoggerAddress
+      data_format: SCALAR
+      data_type: DevString
+      description: FQDN of Element Logger
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: elementLoggerAddress
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: elementTelStateAddress
+      data_format: SCALAR
+      data_type: DevString
+      description: FQDN of Element TelState device
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: elementTelStateAddress
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: healthState
+      data_format: SCALAR
+      data_type: DevEnum
+      description: The health state reported for this device. It interprets the current
+        device condition and condition of all managed devices to set this. Most possibly
+        an aggregate attribute.
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - OK
+      - DEGRADED
+      - FAILED
+      - UNKNOWN
+      format: '%s'
+      label: healthState
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: loggingLevel
+      data_format: SCALAR
+      data_type: DevEnum
+      description: Current logging level for this device - initialises to LoggingLevelDefault
+        on startup
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - 'OFF'
+      - FATAL
+      - ERROR
+      - WARNING
+      - INFO
+      - DEBUG
+      format: '%s'
+      label: loggingLevel
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: logginglevel
+    - name: loggingTargets
+      data_format: SPECTRUM
+      data_type: DevString
+      description: Logging targets for this device, excluding ska_logging defaults
+        - initialises to LoggingTargetsDefault on startup
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: loggingTargets
+      max_alarm: Not specified
+      max_dim_x: 4
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: loggingtargets
+    - name: maxCapabilities
+      data_format: SPECTRUM
+      data_type: DevString
+      description: Maximum number of instances of each capability type, e.g. 'CORRELATOR:512',
+        'PSS-BEAMS:4'.
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: maxCapabilities
+      max_alarm: Not specified
+      max_dim_x: 20
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: pointingState
+      data_format: SCALAR
+      data_type: DevEnum
+      description: No description
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - READY
+      - SLEW
+      - TRACK
+      - SCAN
+      format: '%s'
+      label: pointingState
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    - name: simulationMode
+      data_format: SCALAR
+      data_type: DevEnum
+      description: "Reports the simulation mode of the device. \nSome devices may\
+        \ implement both modes, while others will have simulators that set simulationMode\
+        \ to True while the real devices always set simulationMode to False."
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - 'FALSE'
+      - 'TRUE'
+      format: '%s'
+      label: simulationMode
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: simulationmode
+    - name: testMode
+      data_format: SCALAR
+      data_type: DevEnum
+      description: "The test mode of the device. \nEither no test mode or an indication\
+        \ of the test mode."
+      disp_level: OPERATOR
+      display_unit: No display unit
+      enum_labels:
+      - NONE
+      - TEST
+      format: '%s'
+      label: testMode
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: testmode
+    - name: toggleFault
+      data_format: SCALAR
+      data_type: DevBoolean
+      description: No description
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: Not specified
+      label: toggleFault
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ_WRITE
+      writable_attr_name: togglefault
+    - name: versionId
+      data_format: SCALAR
+      data_type: DevString
+      description: Version Id of this device
+      disp_level: OPERATOR
+      display_unit: No display unit
+      format: '%s'
+      label: versionId
+      max_alarm: Not specified
+      max_dim_x: 1
+      max_value: Not specified
+      min_alarm: Not specified
+      min_value: Not specified
+      standard_unit: No standard unit
+      writable: READ
+      writable_attr_name: None
+    properties:
+    - name: LoggingLevelDefault
+    - name: LoggingTargetsDefault
+    - name: SkaLevel
+    - name: polled_attr
+
