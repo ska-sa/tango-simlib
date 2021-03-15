@@ -364,7 +364,10 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.device = self.tango_context.device
         self.instance = self.TangoDeviceServer.instances[self.device.name()]
         self.instance.model.paused = True
-        self.device.Init()
+        with patch(
+            "tango_simlib.utilities.helper_module.get_database"
+        ) as mock_get_database:
+            self.device.Init()
         self.simdd_json_parser = simdd_json_parser.SimddParser()
         self.simdd_json_parser.parse(self.data_descr_file[0])
 
