@@ -1,7 +1,7 @@
 pipeline {
 
     agent {
-        label 'camtango_db_bionic'
+        label 'camtango_nodb_bionic'
     }
 
     environment {
