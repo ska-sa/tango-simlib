@@ -143,9 +143,7 @@ class test_SimControl(unittest.TestCase):
             cls.device_klass, device_name=cls.device_name, properties=cls.properties
         )
 
-        with patch(
-            "tango_simlib.utilities.helper_module.get_database"
-        ) as mock_get_database:
+        with patch("tango_simlib.utilities.helper_module.get_database"):
             cls.tango_context.start()
 
     @classmethod
