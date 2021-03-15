@@ -281,7 +281,8 @@ class test_PopulateModelActions(GenericSetup):
         )
 
     def test_model_actions_metadata(self):
-        """Testing that the model action metadata has been added correctly to the model."""
+        """Testing that the model action metadata has been added correctly to the model.
+        """
         device_name = "tango/device/instance"
         pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
         sim_model = pmq.sim_model
@@ -354,9 +355,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
             cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
         )
 
-        with patch(
-            "tango_simlib.utilities.helper_module.get_database"
-        ):
+        with patch("tango_simlib.utilities.helper_module.get_database"):
             start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
@@ -364,9 +363,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         self.device = self.tango_context.device
         self.instance = self.TangoDeviceServer.instances[self.device.name()]
         self.instance.model.paused = True
-        with patch(
-            "tango_simlib.utilities.helper_module.get_database"
-        ):
+        with patch("tango_simlib.utilities.helper_module.get_database"):
             self.device.Init()
         self.simdd_json_parser = simdd_json_parser.SimddParser()
         self.simdd_json_parser.parse(self.data_descr_file[0])
@@ -575,9 +572,7 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
             cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
         )
 
-        with patch(
-            "tango_simlib.utilities.helper_module.get_database"
-        ) as mock_get_database:
+        with patch("tango_simlib.utilities.helper_module.get_database"):
             start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
@@ -783,9 +778,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(
             cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
         )
 
-        with patch(
-            "tango_simlib.utilities.helper_module.get_database"
-        ) as mock_get_database:
+        with patch("tango_simlib.utilities.helper_module.get_database"):
             start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
