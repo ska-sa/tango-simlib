@@ -13,6 +13,7 @@ import logging
 import unittest
 
 import pkg_resources
+from mock import patch
 
 import tango
 
@@ -269,7 +270,11 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         cls.tango_context = DeviceTestContext(
             cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
         )
-        start_thread_with_cleanup(cls, cls.tango_context)
+
+        with patch(
+            "tango_simlib.utilities.helper_module.get_database"
+        ) as mock_get_database:
+            start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
         super(test_SimXmiDeviceIntegration, self).setUp()
@@ -279,7 +284,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         self.xmi_parser.parse(self.xmi_file[0])
 
     def test_attribute_list(self):
-        """ Test whether the attributes specified in the POGO generated xmi file
+        """Test whether the attributes specified in the POGO generated xmi file
         are added to the TANGO device
         """
         # First testing that the attribute with data format "IMAGE" is not in the device.
@@ -648,8 +653,7 @@ class test_PopModelQuantities(GenericSetup):
 
 class test_PopModelActions(GenericSetup):
     def test_model_actions_populator(self):
-        """Test if actions are populated to the model.
-        """
+        """Test if actions are populated to the model."""
         device_name = "tango/device/instance"
         cmd_info = self.xmi_parser.get_device_command_metadata()
         override_info = self.xmi_parser.get_device_cmd_override_metadata()
@@ -698,7 +702,11 @@ class test_XmiStaticAttributes(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.tango_context = DeviceTestContext(
             cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
         )
-        start_thread_with_cleanup(cls, cls.tango_context)
+
+        with patch(
+            "tango_simlib.utilities.helper_module.get_database"
+        ) as mock_get_database:
+            start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
         super(test_XmiStaticAttributes, self).setUp()
