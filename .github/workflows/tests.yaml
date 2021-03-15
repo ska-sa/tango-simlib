@@ -5,24 +5,13 @@ jobs:
   testing:
     runs-on: ubuntu-latest
     container:
-      image: nexus.engageska-portugal.pt/ska-docker/tango-example:0.3.1
-    services:
-      tango-db:
-        image: nexus.engageska-portugal.pt/ska-docker/tango-db:10.4.10
-        ports:
-          - 10000:10000
+      image: nexus.engageska-portugal.pt/ska-docker/ska-python-buildenv:latest
     steps:
-      - name: test
-        run: echo 'Welcome to Github Actions'
       - name: Install git
         run: |
           sudo apt-get update -y && \
           sudo apt install git -y
-      - uses: actions/checkout@v1   # Checks out the code
-      # - name: Check mysql service
-      #   run: service mysql start && service mysql status || exit 1
-      # - name: Check tango-db service
-      #   run: service tango-db start && service tango-db status || exit 1
+      - uses: actions/checkout@v1   # Checks out the code into the container
       - name: Install dependencies
         run: |
           sudo pip install nose && \
@@ -32,11 +21,11 @@ jobs:
       - name: Install test requirements
         run: |
           sudo pip3 install katcp mock numpy
-      - name: Set TANGO_HOST
-        run: export TANGO_HOST=databaseds-tango-base-test:10000 #sudo echo "TANGO_HOST=databaseds-tango-base-test:10000" >> $GITHUB_ENV
       - name: Install and run tests for Python 2.7
         run: |
-          sudo python -m pip install -U . && \
-          sudo python -m nose --with-xunitmp
-        env:
-          TANGO_HOST: databaseds-tango-base-test:10000
+          sudo python2 -m pip install -U . && \
+          sudo python2 -m nose --with-xunitmp
+      - name: Install and run tests for Python 3.7
+        run: |
+          sudo python3 -m pip install -U . && \
+          sudo python3 -m nose --with-xunitmp
