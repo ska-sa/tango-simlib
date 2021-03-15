@@ -29,14 +29,6 @@ pipeline {
             }
         }
 
-        stage ('Check running services.') {
-            // Fail stage if services are not running.
-            steps {
-                sh 'service mysql status || exit 1'
-                sh 'service tango-db status || exit 1'
-            }
-        }
-
         stage ('Install & Unit Tests') {
             options {
                 timestamps()
