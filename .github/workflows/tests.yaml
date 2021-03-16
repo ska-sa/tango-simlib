@@ -21,10 +21,10 @@ jobs:
       - name: Install test requirements
         run: |
           sudo pip3 install katcp mock numpy
-      - name: Install and run tests for Python 2.7
-        run: |
-          sudo python2 -m pip install -U . && \
-          sudo python2 -m nose --with-xunitmp
+      # - name: Install and run tests for Python 2.7
+      #   run: |
+      #     sudo python2 -m pip install -U . && \
+      #     sudo python2 -m nose --with-xunitmp
       - name: Install and run tests for Python 3.7
         run: |
           sudo python3 -m pip install -U . && \
