@@ -1,0 +1,31 @@
+name: Unit Tests
+on: push
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    container:
+      image: nexus.engageska-portugal.pt/ska-docker/ska-python-buildenv:9.3.3.1
+    steps:
+      - name: Install git
+        run: |
+          sudo apt-get update -y && \
+          sudo apt install git -y
+      - uses: actions/checkout@v1   # Checks out the code into the container
+      - name: Install dependencies
+        run: |
+          sudo pip install nose && \
+          sudo pip3 install nose && \
+          sudo pip install nose_xunitmp && \
+          sudo pip3 install nose_xunitmp
+      - name: Install test requirements
+        run: |
+          sudo pip3 install katcp mock numpy
+      - name: Install and run tests for Python 2.7
+        run: |
+          sudo python2 -m pip install -U . && \
+          sudo python2 -m nose --with-xunitmp
+      - name: Install and run tests for Python 3.7
+        run: |
+          sudo python3 -m pip install -U . && \
+          sudo python3 -m nose --with-xunitmp
