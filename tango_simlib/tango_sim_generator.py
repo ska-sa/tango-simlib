@@ -92,7 +92,6 @@ class TangoDeviceServerBase(Device):
         if self.get_state() != DevState.OFF:
             name = attr.get_name()
             data = attr.get_write_value()
-            MODULE_LOGGER.info("Writing value %s to attribute '%s'." % (data, name))
             self.model.sim_quantities[name].set_val(data, self.model.time_func())
 
 
@@ -164,9 +163,6 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
             # to return the string value corresponding to the respective enum value
             # since an integer value is returned by device server when
             # attribute value is read
-            MODULE_LOGGER.info(
-                "Writing value {} to attribute '{}'.".format(new_val, attr_name)
-            )
             _sim_quantities = tango_device_instance.model.sim_quantities
             tango_device_instance.model_quantity = _sim_quantities[attr_name]
             tango_device_instance.model_quantity.set_val(
@@ -411,7 +407,7 @@ def get_tango_device_server(models, sim_data_files):
 
         @attribute(
             dtype=int,
-            doc="Number of attributes not added to the device due " "to an error.",
+            doc="Number of attributes not added to the device due to an error.",
         )
         def NumAttributesNotAdded(self):
             return len(self._not_added_attributes)
