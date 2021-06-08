@@ -12,6 +12,7 @@ jobs:
         run: sudo pip3 install flake8
       - name: Get and tailor the sardana linting script
         run: |
+          sudo apt-get install wget && \
           wget -O lint_diff.sh https://raw.githubusercontent.com/sardana-org/sardana/develop/ci/flake8_diff.sh && \
           sed -i 's+=sardana-org/sardana+=ska-sa/tango-simlib+g' lint_diff.sh
           sed -i 's+--show-source "$@"+--show-source "$@" --config=setup.cfg+g' lint_diff.sh
