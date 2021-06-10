@@ -1,0 +1,34 @@
+name: Static Analysis & Unit Tests
+on: push
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    container:
+      image: nexus.engageska-portugal.pt/ska-docker/ska-python-buildenv:9.3.3.1
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install flake8
+        run: sudo pip3 install flake8
+      - name: Get and tailor the sardana linting script
+        run: |
+          sudo apt-get install -y wget && \
+          wget -O lint_diff.sh https://raw.githubusercontent.com/sardana-org/sardana/develop/ci/flake8_diff.sh && \
+          sed -i 's+=sardana-org/sardana+=ska-sa/tango-simlib+g' lint_diff.sh && \
+          sed -i 's+develop+master+g' lint_diff.sh && \
+          sed -i 's+--show-source "$@"+--show-source "$@" --config=setup.cfg+g' lint_diff.sh && \
+          chmod +x lint_diff.sh
+      - name: Static analysis
+        run: |
+          pylint ./tango_simlib --output-format=parseable --exit-zero > pylint.out && \
+          ./lint_diff.sh
+      - name: Install dependencies
+        run: |
+          sudo pip3 install nose nose_xunitmp
+      - name: Install test requirements
+        run: |
+          sudo pip3 install katcp mock numpy
+      - name: Install and run tests for Python 3.7
+        run: |
+          sudo python3 -m pip install -U . && \
+          sudo python3 -m nose --with-xunitmp

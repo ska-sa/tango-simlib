@@ -13,6 +13,7 @@ standard_library.install_aliases()  # noqa: E402
 import logging
 import pkg_resources
 import unittest
+from mock import patch
 
 import tango
 
@@ -353,14 +354,17 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.tango_context = DeviceTestContext(
             cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
         )
-        start_thread_with_cleanup(cls, cls.tango_context)
+
+        with patch("tango_simlib.utilities.helper_module.get_database"):
+            start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
         super(test_SimddDeviceIntegration, self).setUp()
         self.device = self.tango_context.device
         self.instance = self.TangoDeviceServer.instances[self.device.name()]
         self.instance.model.paused = True
-        self.device.Init()
+        with patch("tango_simlib.utilities.helper_module.get_database"):
+            self.device.Init()
         self.simdd_json_parser = simdd_json_parser.SimddParser()
         self.simdd_json_parser.parse(self.data_descr_file[0])
 
@@ -381,7 +385,7 @@ class test_SimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase):
                 ].max_bound = default_metadata_values[quantity]
 
     def test_attribute_list(self):
-        """ Testing whether the attributes specified in the POGO generated xmi file
+        """Testing whether the attributes specified in the POGO generated xmi file
         are added to the TANGO device
         """
         attributes = set(self.device.get_attribute_list())
@@ -567,7 +571,9 @@ class test_XmiSimddDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCas
         cls.tango_context = DeviceTestContext(
             cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
         )
-        start_thread_with_cleanup(cls, cls.tango_context)
+
+        with patch("tango_simlib.utilities.helper_module.get_database"):
+            start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
         super(test_XmiSimddDeviceIntegration, self).setUp()
@@ -771,7 +777,9 @@ class test_XmiSimddSupplementaryDeviceIntegration(
         cls.tango_context = DeviceTestContext(
             cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
         )
-        start_thread_with_cleanup(cls, cls.tango_context)
+
+        with patch("tango_simlib.utilities.helper_module.get_database"):
+            start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
         super(test_XmiSimddSupplementaryDeviceIntegration, self).setUp()

@@ -571,7 +571,9 @@ class test_Device(ClassCleanupUnittestMixin, unittest.TestCase):
         cls.tango_context = DeviceTestContext(
             cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
         )
-        start_thread_with_cleanup(cls, cls.tango_context)
+
+        with patch("tango_simlib.utilities.helper_module.get_database"):
+            start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
         super(test_Device, self).setUp()

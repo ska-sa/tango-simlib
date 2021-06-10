@@ -1,0 +1,25 @@
+name: pypi release
+on:
+  create:
+    tags:
+      - 'v*.*.*'
+jobs:
+  build_and_publish_to_pypi:
+    name: Publish python package to PyPI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install wheel package
+        run: pip3 install wheel
+      - name: Build Python wheel
+        run: python3 setup.py bdist_wheel
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          verbose: true

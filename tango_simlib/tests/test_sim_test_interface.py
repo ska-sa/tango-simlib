@@ -17,13 +17,14 @@ from functools import partial
 
 import pkg_resources
 
-from mock import Mock
+from mock import Mock, patch
 from tango import AttrDataFormat, DeviceProxy, DevState
 from tango.test_context import DeviceTestContext
 from tango_simlib import model, quantities, tango_sim_generator
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.testutils import ClassCleanupUnittestMixin, cleanup_tempdir
 from tango_simlib.compat import PYTHON_SYS_VERSION
+
 
 class FixtureModel(model.Model):
     def setup_sim_quantities(self):
@@ -141,7 +142,9 @@ class test_SimControl(unittest.TestCase):
         cls.tango_context = DeviceTestContext(
             cls.device_klass, device_name=cls.device_name, properties=cls.properties
         )
-        cls.tango_context.start()
+
+        with patch("tango_simlib.utilities.helper_module.get_database"):
+            cls.tango_context.start()
 
     @classmethod
     def tearDownClass(cls):

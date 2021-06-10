@@ -1,7 +1,7 @@
 pipeline {
 
     agent {
-        label 'camtango_db_bionic'
+        label 'camtango_nodb_bionic'
     }
 
     environment {
@@ -26,14 +26,6 @@ pipeline {
             steps {
                 sh "pylint ./${KATPACKAGE} --output-format=parseable --exit-zero > pylint.out"
                 sh "lint_diff.sh -r ${KATPACKAGE}"
-            }
-        }
-
-        stage ('Check running services.') {
-            // Fail stage if services are not running.
-            steps {
-                sh 'service mysql status || exit 1'
-                sh 'service tango-db status || exit 1'
             }
         }
 
