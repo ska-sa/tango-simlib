@@ -21,6 +21,11 @@
 .. _132: https://github.com/ska-sa/tango-simlib/pull/132
 .. _133: https://github.com/ska-sa/tango-simlib/pull/133
 .. _135: https://github.com/ska-sa/tango-simlib/pull/135
+.. _138: https://github.com/ska-sa/tango-simlib/pull/138
+
+0.9.2
+-----
+- Reduce the noisy logging in the tango device 138_.
 
 0.9.1
 -----
