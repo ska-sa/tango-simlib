@@ -174,7 +174,6 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
     setattr(tango_device_class, read_meth.__name__, read_meth)
     setattr(tango_device_class, attr.__name__, attr)
     MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
-    self.set_change_event(attr_name, True, True)
 
 
 def _create_sim_test_interface_atttribute(models, class_instance):
@@ -308,6 +307,8 @@ def get_tango_device_server(models, sim_data_files):
                 # class prior to start-up. Also exclude attributes with a data format
                 # 'IMAGE' as we currently do not handle them.
                 if not self._is_attribute_addable_dynamically(meta_data):
+                    # Enable server to push events without polling started
+                    self.set_change_event(attribute_name, True, False)
                     continue
                 # The return value of rwType is a string and it is required as a
                 # PyTango data type when passed to the Attr function.
@@ -323,7 +324,7 @@ def get_tango_device_server(models, sim_data_files):
                 self._configure_attribute_default_properties(attr, meta_data)
                 self._add_dynamic_attribute(attr, rw_type)
                 MODULE_LOGGER.debug("Added dynamic {} attribute".format(attribute_name))
-                self.set_change_event(attribute_name, True, True)
+                self.set_change_event(attribute_name, True, False)
 
         def _add_dynamic_attribute(self, attribute, read_write_type):
             if read_write_type in (AttrWriteType.READ, AttrWriteType.READ_WITH_WRITE):
