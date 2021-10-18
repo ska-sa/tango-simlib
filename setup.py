@@ -52,7 +52,7 @@ setup(
         "futures; python_version<'3'",
         "pyrsistent==0.16.0; python_version<'3'",
         "pyrsistent; python_version>='3'",
-        "jsonschema==3.2.0",
+        "jsonschema==3.2.0; python_version<'3'",
         "jsonschema; python_version>='3'",
         "numpy",
         "PyTango>=9.2.2",
