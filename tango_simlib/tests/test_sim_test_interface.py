@@ -394,7 +394,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
             set(),
             "The device has commands meant for the test sim control device.",
         )
- 
+
     def test_sim_device_Add_command(self):
         command_name = "Add"
         expected_value = 5
