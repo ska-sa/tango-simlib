@@ -546,7 +546,7 @@ class PopulateModelActions(object):
         # Need to override the model's update method if the override class provides one.
         instance = []
         for instance_ in instances:
-            if instance_.startswith("Sim"):
+            if instance_.startswith("Sim_"):
                 instance.append(instances[instance_])
 
         for inst in instance:
