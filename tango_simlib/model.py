@@ -338,6 +338,7 @@ class PopulateModelQuantities(object):
             # When using more than one config file, the attribute meta data can be
             # overwritten, so we need to update it instead of reassigning a different
             # object.
+            model_attr_props = self._get_attribute_properties(attr_name, attr_props)
             try:
                 model_attr_props = self.sim_model.sim_quantities[attr_name].meta
             except KeyError:
@@ -362,6 +363,7 @@ class PopulateModelQuantities(object):
 
             if "quantity_simulation_type" in model_attr_props:
                 if model_attr_props["quantity_simulation_type"] == "ConstantQuantity":
+                    # create a constant quantiy
                     try:
                         initial_value = model_attr_props["initial_value"]
                     except KeyError:
@@ -392,6 +394,7 @@ class PopulateModelQuantities(object):
                         start_value=start_val,
                     )
                 else:
+                    # create a gaussian slew limited quantity
                     try:
                         sim_attr_quantities = self.sim_attribute_quantities(
                             float(model_attr_props["min_bound"]),
@@ -431,6 +434,7 @@ class PopulateModelQuantities(object):
                 # (maxX, maxY) keys. If none of these keys are found in them or in the
                 # xml file, we use default values of 1 for x and 2 for y - same applies
                 # for files where the keys have empty values.
+                # get dimensions
                 if any(key_val in expected_key_vals for key_val in key_vals):
                     try:
                         max_dim_x = model_attr_props["max_dim_x"]
@@ -446,6 +450,7 @@ class PopulateModelQuantities(object):
 
                 val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
                 expected_key_vals = ["value", "possiblevalues"]
+                # set default value
                 if any(key_val in expected_key_vals for key_val in key_vals):
                     try:
                         default_val = model_attr_props["value"]
@@ -472,6 +477,31 @@ class PopulateModelQuantities(object):
                 )
 
         self.sim_model.setup_sim_quantities()
+
+    def _get_attribute_properties(self, attr_name, attr_props):
+        try:
+            model_attr_props = self.sim_model.sim_quantities[attr_name].meta
+        except KeyError:
+            self.logger.debug(
+                "Initializing '{}' quantity meta information using config file:"
+                " '{}'.".format(
+                    attr_name, self.parser_instance.data_description_file_name
+                )
+            )
+            model_attr_props = attr_props
+        else:
+            # Before the model attribute props dict is updated, the
+            # parameter keys with no values specified from the attribute
+            # props template are removed.
+            # i.e. All optional parameters not provided in the SimDD
+            attr_props = dict(
+                (param_key, param_val)
+                for param_key, param_val in iteritems(attr_props)
+                if param_val
+            )
+            model_attr_props.update(attr_props)
+        
+        return model_attr_props
 
     def sim_attribute_quantities(
         self, min_bound, max_bound, max_slew_rate, mean, std_dev
@@ -544,6 +574,36 @@ class PopulateModelActions(object):
             instances = self._get_class_instances(self.override_info)
 
         # Need to override the model's update method if the override class provides one.
+        self._override_model_update_methods(instances)
+
+        for cmd_name, cmd_meta in self.cmd_info.items():
+            # Exclude the TANGO default commands as they have their own built in handlers
+            # provided.
+            if cmd_name in DEFAULT_TANGO_COMMANDS:
+                continue
+            # Every command is to be declared to have one or more  action behaviour.
+            # Example of a list of actions handle at this moment is as follows
+            # [{'behaviour': 'input_transform',
+            # 'destination_variable': 'temporary_variable'},
+            # {'behaviour': 'side_effect',
+            # 'destination_quantity': 'temperature',
+            # 'source_variable': 'temporary_variable'},
+            # {'behaviour': 'output_return',
+            # 'source_variable': 'temporary_variable'}]
+            actions = cmd_meta.get("actions", [])
+            instance = None
+            if cmd_name.startswith("test_"):
+                self._add_test_sim_actions(cmd_name, cmd_meta, actions, instances)
+            else:
+                self._add_sim_actions(cmd_name, cmd_meta, actions, instances)
+            # Might store the action's metadata in the sim_actions dictionary
+            # instead of creating a separate dict.
+            try:
+                self.sim_model.sim_actions_meta[cmd_name.split("test_")[1]] = cmd_meta
+            except IndexError:
+                self.sim_model.sim_actions_meta[cmd_name] = cmd_meta
+
+    def _override_model_update_methods(self, instances):
         instance = []
         for instance_ in instances:
             if instance_.startswith("Sim"):
@@ -569,56 +629,37 @@ class PopulateModelActions(object):
             else:
                 self.sim_model.override_post_updates.append(post_update_overwrite)
 
-        for cmd_name, cmd_meta in self.cmd_info.items():
-            # Exclude the TANGO default commands as they have their own built in handlers
-            # provided.
-            if cmd_name in DEFAULT_TANGO_COMMANDS:
-                continue
-            # Every command is to be declared to have one or more  action behaviour.
-            # Example of a list of actions handle at this moment is as follows
-            # [{'behaviour': 'input_transform',
-            # 'destination_variable': 'temporary_variable'},
-            # {'behaviour': 'side_effect',
-            # 'destination_quantity': 'temperature',
-            # 'source_variable': 'temporary_variable'},
-            # {'behaviour': 'output_return',
-            # 'source_variable': 'temporary_variable'}]
-            actions = cmd_meta.get("actions", [])
-            instance = None
-            if cmd_name.startswith("test_"):
-                cmd_name = cmd_name.split("test_")[1]
-                for instance_ in instances:
-                    if instance_.startswith("SimControl"):
-                        instance = instances[instance_]
-                self._check_override_action_presence(cmd_name, instance, "test_action_{}")
-                handler = getattr(
-                    instance,
-                    "test_action_{}".format(cmd_name.lower()),
-                    self.generate_action_handler(
-                        cmd_name, cmd_meta["dtype_out"], actions
-                    ),
-                )
-                self.sim_model.set_test_sim_action(cmd_name, handler)
-            else:
-                for instance_ in instances:
-                    if instance_.startswith("Sim"):
-                        instance = instances[instance_]
-                self._check_override_action_presence(cmd_name, instance, "action_{}")
-                handler = getattr(
-                    instance,
-                    "action_{}".format(cmd_name.lower()),
-                    self.generate_action_handler(
-                        cmd_name, cmd_meta["dtype_out"], actions
-                    ),
-                )
+    def _add_sim_actions(self, cmd_name, cmd_meta, actions, instances):
+        instance = None
+        for instance_ in instances:
+            if instance_.startswith("Sim"):
+                instance = instances[instance_]
+        self._check_override_action_presence(cmd_name, instance, "action_{}")
+        handler = getattr(
+            instance,
+            "action_{}".format(cmd_name.lower()),
+            self.generate_action_handler(
+                cmd_name, cmd_meta["dtype_out"], actions
+            ),
+        )
 
-                self.sim_model.set_sim_action(cmd_name, handler)
-            # Might store the action's metadata in the sim_actions dictionary
-            # instead of creating a separate dict.
-            try:
-                self.sim_model.sim_actions_meta[cmd_name.split("test_")[1]] = cmd_meta
-            except IndexError:
-                self.sim_model.sim_actions_meta[cmd_name] = cmd_meta
+        self.sim_model.set_sim_action(cmd_name, handler)
+
+    def _add_test_sim_actions(self, cmd_name, cmd_meta, actions, instances):
+        cmd_name = cmd_name.split("test_")[1]
+        instance = None
+        for instance_ in instances:
+            if instance_.startswith("SimControl"):
+                instance = instances[instance_]
+        self._check_override_action_presence(cmd_name, instance, "test_action_{}")
+        handler = getattr(
+            instance,
+            "test_action_{}".format(cmd_name.lower()),
+            self.generate_action_handler(
+                cmd_name, cmd_meta["dtype_out"], actions
+            ),
+        )
+        self.sim_model.set_test_sim_action(cmd_name, handler)
 
     def _get_class_instances(self, override_class_info):
         instances = {}
