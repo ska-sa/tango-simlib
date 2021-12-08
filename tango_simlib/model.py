@@ -500,7 +500,7 @@ class PopulateModelQuantities(object):
                 if param_val
             )
             model_attr_props.update(attr_props)
-        
+
         return model_attr_props
 
     def sim_attribute_quantities(
@@ -591,7 +591,6 @@ class PopulateModelActions(object):
             # {'behaviour': 'output_return',
             # 'source_variable': 'temporary_variable'}]
             actions = cmd_meta.get("actions", [])
-            instance = None
             if cmd_name.startswith("test_"):
                 self._add_test_sim_actions(cmd_name, cmd_meta, actions, instances)
             else:
