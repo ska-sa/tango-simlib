@@ -473,11 +473,11 @@ class PopulateModelQuantities(object):
             # parameter keys with no values specified from the attribute
             # props template are removed.
             # i.e. All optional parameters not provided in the SimDD
-            attr_props = dict(
+            attr_props = {
                 (param_key, param_val)
                 for param_key, param_val in iteritems(attr_props)
                 if param_val
-            )
+            }
             model_attr_props.update(attr_props)
 
         return model_attr_props
@@ -527,10 +527,8 @@ class PopulateModelActions(object):
     cmd_info : dict
         A dictionary of all the device commands together with their
         metadata specified in the xmi, json or fgo file(s).
-
     override_info : dict
         A dictionary of device override info in specified the xmi, json or fgo file(s).
-
     sim_model :  Model instance
         An instance of the Model class which is used for simulation of simple attributes
         and/or commands.
@@ -582,9 +580,17 @@ class PopulateModelActions(object):
                 self.sim_model.sim_actions_meta[cmd_name] = cmd_meta
 
     def _override_model_update_methods(self, instances):
+        """Override the pre-update and post-update methods in the tango_simlib.Model
+        object.
+
+        Parameters
+        ----------
+        class_instances : dict
+            A dictionary of class instances, {'<class-name>': '<class-instance>'}
+        """
         instance = []
         for instance_ in instances:
-            if instance_.startswith("Sim"):
+            if instance_.startswith("Sim_"):
                 instance.append(instances[instance_])
 
         for inst in instance:
@@ -597,6 +603,7 @@ class PopulateModelActions(object):
                 )
             else:
                 self.sim_model.override_pre_updates.append(pre_update_overwrite)
+
             try:
                 post_update_overwrite = getattr(inst, "post_update")
             except AttributeError:
@@ -607,40 +614,140 @@ class PopulateModelActions(object):
             else:
                 self.sim_model.override_post_updates.append(post_update_overwrite)
 
-    def _add_sim_actions(self, cmd_name, cmd_meta, actions, instances):
+    def _add_sim_actions(self, command_name, command_metadata, actions, class_instances):
+        """Update the sim_actions dictionary in the tango_simlib.Model object.
+
+        Parameters
+        ----------
+        command_name : str
+            The name of the command
+        command_metadata : dict
+            The commmand properties
+        actions : list
+            List of actions that the handler will provide
+            E.g.
+            [
+                {
+                    "behaviour": "input_transform",
+                    "destination_variable": "temporary_variable"
+                },
+                {
+                    "behaviour": "side_effect",
+                    "source_variable": "temporary_variable",
+                    "destination_quantity": "temperature"
+                },
+                {"behaviour": "output_return",
+                    "source_variable": "temporary_variable"
+                }
+            ]
+        class_instances : dict
+            A dictionary of class instances, {'<class-name>': '<class-instance>'}
+        """
         instance = None
-        for instance_ in instances:
-            if instance_.startswith("Sim"):
-                instance = instances[instance_]
-        self._check_override_action_presence(cmd_name, instance, "action_{}")
+        for instance_ in class_instances:
+            if instance_.startswith("Sim_"):
+                instance = class_instances[instance_]
+        self._check_override_action_presence(command_name, instance, "action_{}")
         handler = getattr(
             instance,
-            "action_{}".format(cmd_name.lower()),
+            "action_{}".format(command_name.lower()),
             self.generate_action_handler(
-                cmd_name, cmd_meta["dtype_out"], actions
+                command_name, command_metadata["dtype_out"], actions
             ),
         )
 
-        self.sim_model.set_sim_action(cmd_name, handler)
+        self.sim_model.set_sim_action(command_name, handler)
 
-    def _add_test_sim_actions(self, cmd_name, cmd_meta, actions, instances):
-        cmd_name = cmd_name.split("test_")[1]
+    def _add_test_sim_actions(self, command_name, command_metadata, actions, class_instances):
+        """Update the test_sim_actions dictionary in the tango_simlib.Model object.
+
+        Parameters
+        ----------
+        command_name : str
+            The name of the command
+        command_metadata : dict
+            The commmand properties
+            E.g.
+            {
+                'test_Command1': {
+                    'name': 'test_Command1',
+                    'description': 'Runs command1',
+                    'dtype_in': tango._tango.CmdArgType.DevVoid,
+                    'doc_in': 'No input parameter',
+                    'dformat_in': tango._tango.AttrDataFormat.SCALAR,
+                    'dtype_out': tango._tango.CmdArgType.DevVoid,
+                    'doc_out': 'Command responds',
+                    'dformat_out': tango._tango.AttrDataFormat.SCALAR
+                }
+            }
+        actions : list
+            List of actions that the handler will provide
+            E.g.
+            [
+                {
+                    "behaviour": "input_transform",
+                    "destination_variable": "temporary_variable"
+                },
+                {
+                    "behaviour": "side_effect",
+                    "source_variable": "temporary_variable",
+                    "destination_quantity": "temperature"
+                },
+                {
+                    "behaviour": "output_return",
+                    "source_variable": "temporary_variable"
+                }
+            ]
+        class_instances : dict
+            A dictionary of class instances, {'<class-name>': '<class-instance>'}
+        """
+        command_name = command_name.split("test_")[1]
         instance = None
-        for instance_ in instances:
-            if instance_.startswith("SimControl"):
-                instance = instances[instance_]
-        self._check_override_action_presence(cmd_name, instance, "test_action_{}")
+        for instance_ in class_instances:
+            if instance_.startswith("SimControl_"):
+                instance = class_instances[instance_]
+        self._check_override_action_presence(command_name, instance, "test_action_{}")
         handler = getattr(
             instance,
-            "test_action_{}".format(cmd_name.lower()),
+            "test_action_{}".format(command_name.lower()),
             self.generate_action_handler(
-                cmd_name, cmd_meta["dtype_out"], actions
+                command_name, command_metadata["dtype_out"], actions
             ),
         )
-        self.sim_model.set_test_sim_action(cmd_name, handler)
+        self.sim_model.set_test_sim_action(command_name, handler)
 
     def _get_class_instances(self, override_class_info):
-        instances = {}
+        """Instantiates the classes provided by override_class_info.
+
+        Parameters
+        ----------
+        override_classs_info : dict
+            E.g.
+            {
+                'Sim_Test': {
+                    'name': 'Sim_Test',
+                    'module_directory': '/tango_simlib/scripts/',
+                    'module_name': 'test_module',
+                    'class_name': 'TestSim'
+                },
+                'SimControl_Test': {
+                    'name': 'SimControl_Test',
+                    'module_directory': '/tango_simlib/scripts/',
+                    'module_name': 'test_module',
+                    'class_name': 'TestSimControl'
+                }
+            }
+
+        Returns
+        -------
+        class_instances: dict
+            E.g.
+            {
+                'Sim_Test': <class-instance>,
+                'SimControl_Test': <class-instance>
+            }
+        """
+        class_instances = {}
         for klass_info in override_class_info.values():
             if klass_info["module_directory"] == "None":
                 module = importlib.import_module(klass_info["module_name"])
@@ -650,27 +757,38 @@ class PopulateModelActions(object):
                 sys.path.remove(klass_info["module_directory"])
             klass = getattr(module, klass_info["class_name"])
             instance = klass()
-            instances[klass_info["name"]] = instance
+            class_instances[klass_info["name"]] = instance
 
-        return instances
+        return class_instances
 
-    def _check_override_action_presence(self, cmd_name, instance, action_type):
-        instance_attributes = dir(instance)
+    def _check_override_action_presence(self, command_name, class_instance, action_type):
+        """Checks that the method given by the command_name is defined in the class instance.
+
+        Parameters
+        ----------
+        command_name : str
+            The name of the command
+        class_instance : class
+            The class instance
+        action_type : str
+            A action of type `action_` or `test_action_`
+        """
+        instance_attributes = dir(class_instance)
         instance_attributes_list = [attr.lower() for attr in instance_attributes]
         attr_occurences = instance_attributes_list.count(
-            action_type.format(cmd_name.lower())
+            action_type.format(command_name.lower())
         )
         # Check if there is only one override class method defined for each command
         if attr_occurences > MAX_NUM_OF_CLASS_ATTR_OCCURENCE:
             raise Exception(
                 "The command '{}' has multiple override methods defined"
-                " in the override class".format(cmd_name)
+                " in the override class".format(command_name)
             )
         # Assuming that there is only one override method defined, now we check if it
         # is in the correct letter case.
         elif attr_occurences == MAX_NUM_OF_CLASS_ATTR_OCCURENCE:
             try:
-                instance_attributes.index(action_type.format(cmd_name.lower()))
+                instance_attributes.index(action_type.format(command_name.lower()))
             except ValueError:
                 raise Exception("Only lower-case override method names are supported.")
 
@@ -703,7 +821,7 @@ class PopulateModelActions(object):
             ----------
             model : model.Model
                 Model instance
-            data_in : float, string, int, etc.
+            data_input : float, string, int, etc.
                 Input arguments of tango command
 
             Returns
