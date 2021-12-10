@@ -74,12 +74,12 @@ class Model(object):
     """
 
     def __init__(
-            self,
-            name,
-            start_time=None,
-            min_update_period=0.99,
-            time_func=time.time,
-            logger=None,
+        self,
+        name,
+        start_time=None,
+        min_update_period=0.99,
+        time_func=time.time,
+        logger=None,
     ):
         self.name = name
         model_registry[self.name] = self
@@ -229,9 +229,7 @@ class Model(object):
                             adjustable_val = val_type(adjustable_val)
                     else:
                         if attribute == "last_val":
-                            quantity.last_val = float(
-                                quantity_metadata["mean"]
-                            )
+                            quantity.last_val = float(quantity_metadata["mean"])
                             continue
                         else:
                             adjustable_val = float(quantity_metadata[attribute])
@@ -658,7 +656,9 @@ class PopulateModelActions(object):
 
         self.sim_model.set_sim_action(command_name, handler)
 
-    def _add_test_sim_actions(self, command_name, command_metadata, actions, class_instances):
+    def _add_test_sim_actions(
+        self, command_name, command_metadata, actions, class_instances
+    ):
         """Update the test_sim_actions dictionary in the tango_simlib.Model object.
 
         Parameters
@@ -762,7 +762,8 @@ class PopulateModelActions(object):
         return class_instances
 
     def _check_override_action_presence(self, command_name, class_instance, action_type):
-        """Checks that the method given by the command_name is defined in the class instance.
+        """Checks that the method given by the command_name is defined in the class
+        instance.
 
         Parameters
         ----------

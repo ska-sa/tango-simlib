@@ -416,8 +416,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         )
 
     def test_StopQuantitySimulation_command(self):
-        """Testing that the Tango device weather simulation of quantities can be halted.
-        """
+        """Testing that the Tango device weather simulation of quantities can be halted."""
         command_name = "StopQuantitySimulation"
         expected_result = {"temperature": 0.0, "insolation": 0.0}
         device_attributes = self.sim_device.get_attribute_list()

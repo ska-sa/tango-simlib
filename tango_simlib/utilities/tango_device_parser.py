@@ -15,8 +15,7 @@ from tango_simlib.utilities.base_parser import Parser
 
 
 class TangoDeviceParser(Parser):
-    """Parses a running TANGO device to YAML.
-    """
+    """Parses a running TANGO device to YAML."""
 
     def __init__(self):
         super(TangoDeviceParser, self).__init__()
