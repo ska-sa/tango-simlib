@@ -2,6 +2,12 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
+    "push_archive_events": {
+      "type": "boolean"
+    },
+    "push_change_events": {
+      "type": "boolean"
+    },
     "class_name": {
       "type": "string"
     },
@@ -151,6 +157,9 @@
                           },
                           "archive_rel_change": {
                             "type": "number"
+                          },
+                          "push_archive_events": {
+                            "type": "boolean"
                           }
                         },
                         "required": [
@@ -170,6 +179,9 @@
                           },
                           "rel_change": {
                             "type": "number"
+                          },
+                          "push_change_events": {
+                            "type": "boolean"
                           }
                         },
                         "required": [
