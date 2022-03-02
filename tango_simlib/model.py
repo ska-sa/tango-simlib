@@ -546,7 +546,7 @@ class PopulateModelActions(object):
         # Need to override the model's update method if the override class provides one.
         instance = []
         for instance_ in instances:
-            if instance_.startswith("Sim"):
+            if instance_.startswith("Sim_"):
                 instance.append(instances[instance_])
 
         for inst in instance:
@@ -588,7 +588,7 @@ class PopulateModelActions(object):
             if cmd_name.startswith("test_"):
                 cmd_name = cmd_name.split("test_")[1]
                 for instance_ in instances:
-                    if instance_.startswith("SimControl"):
+                    if instance_.startswith("SimControl_"):
                         instance = instances[instance_]
                 self._check_override_action_presence(cmd_name, instance, "test_action_{}")
                 handler = getattr(
@@ -601,7 +601,7 @@ class PopulateModelActions(object):
                 self.sim_model.set_test_sim_action(cmd_name, handler)
             else:
                 for instance_ in instances:
-                    if instance_.startswith("Sim"):
+                    if instance_.startswith("Sim_"):
                         instance = instances[instance_]
                 self._check_override_action_presence(cmd_name, instance, "action_{}")
                 handler = getattr(
