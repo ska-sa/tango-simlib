@@ -1,0 +1,67 @@
+{
+    "class_name": "TestDevice",
+    "push_archive_events": true,
+    "push_change_events": true,
+    "dynamicAttributes": [
+        {
+            "basicAttributeData": {
+                "name": "attribute1",
+                "data_type": "Double",
+                "data_format": "Scalar",
+                "attributeInterlocks": {
+                    "writable": "WRITE"
+                },
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "ConstantQuantity",
+                    "initial_value": 1
+                }
+            }
+        },
+        {
+            "basicAttributeData": {
+                "name": "attribute2",
+                "data_type": "Double",
+                "data_format": "Scalar",
+                "attributeInterlocks": {
+                    "writable": "WRITE"
+                },
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "ConstantQuantity",
+                    "initial_value": 2
+                },
+                "push_change_events": false
+            }
+        },
+        {
+            "basicAttributeData": {
+                "name": "attribute3",
+                "data_type": "Double",
+                "data_format": "Scalar",
+                "attributeInterlocks": {
+                    "writable": "WRITE"
+                },
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "ConstantQuantity",
+                    "initial_value": 3
+                },
+                "push_archive_events": false
+            }
+        },
+        {
+            "basicAttributeData": {
+                "name": "attribute4",
+                "data_type": "Double",
+                "data_format": "Scalar",
+                "attributeInterlocks": {
+                    "writable": "WRITE"
+                },
+                "dataSimulationParameters": {
+                    "quantity_simulation_type": "ConstantQuantity",
+                    "initial_value": 4
+                },
+                "push_archive_events": false,
+                "push_change_events": false
+            }
+        }
+    ]
+}
