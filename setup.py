@@ -57,7 +57,7 @@ setup(
         "numpy",
         "PyTango>=9.2.2",
         "pathlib",
-        "pyyaml"
+        "pyyaml",
     ],
     tests_require=["katcp", "numpy", "mock", "nose-xunitmp", "coverage", "nose"],
     extras_require={"docs": ["sphinx-pypi-upload", "numpydoc", "Sphinx", "mock"]},

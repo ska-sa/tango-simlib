@@ -78,8 +78,7 @@ def _build_yaml(args):
 
 
 def main():
-    """Entrypoint for the script
-    """
+    """Entrypoint for the script"""
     parser = argparse.ArgumentParser(
         prog="tango_yaml",
         description=(
@@ -135,10 +134,14 @@ def main():
     )
     source_group = validate_parser.add_mutually_exclusive_group(required=True)
     source_group.add_argument(
-        "--url", type=str, help="The URL to a YAML specification file",
+        "--url",
+        type=str,
+        help="The URL to a YAML specification file",
     )
     source_group.add_argument(
-        "--path", type=str, help="The file path to a YAML specification file",
+        "--path",
+        type=str,
+        help="The file path to a YAML specification file",
     )
 
     validate_parser.add_argument(

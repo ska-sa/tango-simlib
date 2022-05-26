@@ -400,9 +400,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         expected_value = 5
         actual_value = self.sim_device.command_inout(command_name, [3, 2])
         time.sleep(1)
-        self.assertEqual(
-            expected_value,
-            actual_value)
+        self.assertEqual(expected_value, actual_value)
 
     def test_StopRainfall_command(self):
         command_name = "StopRainfall"
@@ -425,8 +423,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         )
 
     def test_StopQuantitySimulation_command(self):
-        """Testing that the Tango device weather simulation of quantities can be halted.
-        """
+        """Testing that the Tango device weather simulation of quantities can be halted."""
         command_name = "StopQuantitySimulation"
         expected_result = {"temperature": 0.0, "insolation": 0.0}
         device_attributes = self.sim_device.get_attribute_list()

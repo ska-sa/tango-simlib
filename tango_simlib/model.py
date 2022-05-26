@@ -74,12 +74,12 @@ class Model(object):
     """
 
     def __init__(
-            self,
-            name,
-            start_time=None,
-            min_update_period=0.99,
-            time_func=time.time,
-            logger=None,
+        self,
+        name,
+        start_time=None,
+        min_update_period=0.99,
+        time_func=time.time,
+        logger=None,
     ):
         self.name = name
         model_registry[self.name] = self
@@ -229,9 +229,7 @@ class Model(object):
                             adjustable_val = val_type(adjustable_val)
                     else:
                         if attribute == "last_val":
-                            quantity.last_val = float(
-                                quantity_metadata["mean"]
-                            )
+                            quantity.last_val = float(quantity_metadata["mean"])
                             continue
                         else:
                             adjustable_val = float(quantity_metadata[attribute])
@@ -413,7 +411,7 @@ class PopulateModelQuantities(object):
                     self.sim_model.sim_quantities[attr_name] = quantity_factory(
                         start_time=start_time,
                         meta=model_attr_props,
-                        **sim_attr_quantities
+                        **sim_attr_quantities,
                     )
             else:
                 key_vals = model_attr_props.keys()

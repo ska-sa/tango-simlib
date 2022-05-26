@@ -442,7 +442,9 @@ class XmiParser(Parser):
             try:
                 arg_type = INT_TYPE_MAP[arg_type]
             except KeyError:
-                MODULE_LOGGER.debug("arg_type {} is not an integer type.".format(arg_type))
+                MODULE_LOGGER.debug(
+                    "arg_type {} is not an integer type.".format(arg_type)
+                )
 
             # The DevVarTypeArray data type specified in pogo writes
             # TypeArray in xmi file instead.
@@ -651,7 +653,7 @@ class XmiParser(Parser):
                     )
                 except KeyError:
                     invalid_command_properties.add(cmd_prop_name)
-                    
+
             commands[cmd_name] = commands_metadata
         MODULE_LOGGER.debug(
             "The properties '%s' cannot be translated to "
