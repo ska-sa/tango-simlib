@@ -337,7 +337,7 @@ class XmiParser(Parser):
                 "eventCriteria"
             ).attrib
         except AttributeError:
-            MODULE_LOGGER.info(
+            MODULE_LOGGER.debug(
                 "No periodic/change event(s) information was captured in the XMI file"
             )
 
@@ -346,7 +346,7 @@ class XmiParser(Parser):
                 "evArchiveCriteria"
             ).attrib
         except AttributeError:
-            MODULE_LOGGER.info(
+            MODULE_LOGGER.debug(
                 "No archive event(s) information was captured in the XMI file."
             )
 
@@ -394,9 +394,9 @@ class XmiParser(Parser):
                 default_values if default_values else ""
             )
         except KeyError:
-            MODULE_LOGGER.info("%s has no default value(s) specified", property_group)
+            MODULE_LOGGER.debug("%s has no default value(s) specified", property_group)
         except AttributeError:
-            MODULE_LOGGER.info(
+            MODULE_LOGGER.debug(
                 "The 'DefaultPropValue' element is not specified in the"
                 " description file for the %s tag",
                 property_group,
@@ -442,7 +442,7 @@ class XmiParser(Parser):
             try:
                 arg_type = INT_TYPE_MAP[arg_type]
             except KeyError:
-                MODULE_LOGGER.info("arg_type {} is not an integer type.".format(arg_type))
+                MODULE_LOGGER.debug("arg_type {} is not an integer type.".format(arg_type))
 
             # The DevVarTypeArray data type specified in pogo writes
             # TypeArray in xmi file instead.
@@ -641,6 +641,7 @@ class XmiParser(Parser):
 
         commands = {}
         # Need to convert the POGO parameter names to the TANGO names
+        invalid_command_properties = set()
         for cmd_name, cmd_metadata in temp_commands.items():
             commands_metadata = {}
             for cmd_prop_name, cmd_prop_value in cmd_metadata.items():
@@ -649,12 +650,14 @@ class XmiParser(Parser):
                         {POGO_USER_DEFAULT_CMD_PROP_MAP[cmd_prop_name]: cmd_prop_value}
                     )
                 except KeyError:
-                    MODULE_LOGGER.info(
-                        "The property '%s' cannot be translated to a "
-                        "corresponding parameter in the TANGO library",
-                        cmd_prop_name,
-                    )
+                    invalid_command_properties.add(cmd_prop_name)
+                    
             commands[cmd_name] = commands_metadata
+        MODULE_LOGGER.debug(
+            "The properties '%s' cannot be translated to "
+            "corresponding parameters in the TANGO library",
+            invalid_command_properties,
+        )
         return commands
 
     def get_device_properties_metadata(self, property_group):
