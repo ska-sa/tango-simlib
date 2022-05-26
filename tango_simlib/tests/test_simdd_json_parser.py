@@ -281,7 +281,8 @@ class test_PopulateModelActions(GenericSetup):
         )
 
     def test_model_actions_metadata(self):
-        """Testing that the model action metadata has been added correctly to the model."""
+        """Testing that the model action metadata has been added correctly to the model.
+        """
         device_name = "tango/device/instance"
         pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
         sim_model = pmq.sim_model
