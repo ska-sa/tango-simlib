@@ -411,7 +411,7 @@ class PopulateModelQuantities(object):
                     self.sim_model.sim_quantities[attr_name] = quantity_factory(
                         start_time=start_time,
                         meta=model_attr_props,
-                        **sim_attr_quantities,
+                        **sim_attr_quantities
                     )
             else:
                 key_vals = model_attr_props.keys()
