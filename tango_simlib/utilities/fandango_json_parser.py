@@ -118,7 +118,7 @@ class FandangoExportDeviceParser(Parser):
                     invalid_command_properties.add(cmd_prop)
 
         MODULE_LOGGER.debug(
-            "The propertiest '%s' cannot be translated to a corresponding "
+            "The properties '%s' cannot be translated to a corresponding "
             "parameters in the TANGO library",
             invalid_command_properties,
         )
