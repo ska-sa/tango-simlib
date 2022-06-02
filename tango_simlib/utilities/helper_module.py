@@ -154,9 +154,12 @@ def generate_cmd_handler(model, action_name, action_handler):
         if prop_key not in DEFAULT_CMD_PROPS:
             invalid_command_properties.append(prop_key)
             cmd_info_copy.pop(prop_key)
-    MODULE_LOGGER.debug(
-        "Properties %s are not valid tango command properties", invalid_command_properties
-    )
+
+    if invalid_command_properties:
+        MODULE_LOGGER.debug(
+            "Properties %s are not valid tango command properties",
+            invalid_command_properties
+        )
     """
         The command method signature:
         command(f=None, dtype_in=None, dformat_in=None, doc_in="",

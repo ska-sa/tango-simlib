@@ -655,11 +655,13 @@ class XmiParser(Parser):
                     invalid_command_properties.add(cmd_prop_name)
 
             commands[cmd_name] = commands_metadata
-        MODULE_LOGGER.debug(
-            "The properties '%s' cannot be translated to "
-            "corresponding parameters in the TANGO library",
-            invalid_command_properties,
-        )
+
+        if invalid_command_properties:
+            MODULE_LOGGER.debug(
+                "The properties '%s' cannot be translated to "
+                "corresponding parameters in the TANGO library",
+                invalid_command_properties,
+            )
         return commands
 
     def get_device_properties_metadata(self, property_group):
