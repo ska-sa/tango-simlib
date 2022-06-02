@@ -657,7 +657,7 @@ class XmiParser(Parser):
             commands[cmd_name] = commands_metadata
         MODULE_LOGGER.debug(
             "The properties '%s' cannot be translated to "
-            "corresponding parameters in the TANGO library",
+            "corresponding command parameters in the TANGO library",
             invalid_command_properties,
         )
         return commands
