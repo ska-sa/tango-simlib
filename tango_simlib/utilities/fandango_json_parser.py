@@ -117,11 +117,12 @@ class FandangoExportDeviceParser(Parser):
                 except KeyError:
                     invalid_command_properties.add(cmd_prop)
 
-        MODULE_LOGGER.debug(
-            "The properties '%s' cannot be translated to a corresponding "
-            "parameters in the TANGO library",
-            invalid_command_properties,
-        )
+        if invalid_command_properties:
+            MODULE_LOGGER.debug(
+                "The properties '%s' cannot be translated to a corresponding "
+                "parameters in the TANGO library",
+                invalid_command_properties,
+            )
 
     def preprocess_attribute_types(self, attribute_data):
         """Convert the attribute data types from strings to the TANGO types."""
