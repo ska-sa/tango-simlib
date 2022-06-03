@@ -12,7 +12,7 @@ import yaml
 
 class TangoToYAML:
     """Class that translates a Tango specification file or a running Tango device to
-       YAML."""
+    YAML."""
 
     def __init__(self, parser_class):
         """Initialise TangoToYAML with a parser class
@@ -30,8 +30,7 @@ class TangoToYAML:
         self.parser = parser_class()
 
     def _build_yaml(self):
-        """Build YAML from the parser
-        """
+        """Build YAML from the parser"""
         data_dict = [
             {
                 "class": self.parser.device_class_name,
@@ -62,28 +61,28 @@ class TangoToYAML:
                 if key in ["data_format", "data_type", "disp_level"]:
                     attr_data[key] = attr[key].name
                 elif key in [
-                        "name",
-                        "delta_val",
-                        "enum_labels",
-                        "period",
-                        "display_unit",
-                        "standard_unit",
-                        "unit",
-                        "max_dim_y",
-                        "max_dim_x",
-                        "label",
-                        "max_value",
-                        "min_alarm",
-                        "max_warning",
-                        "description",
-                        "format",
-                        "delta_t",
-                        "max_alarm",
-                        "min_value",
-                        "inherited",
-                        "min_warning",
-                        "writable",
-                        "writable_attr_name",
+                    "name",
+                    "delta_val",
+                    "enum_labels",
+                    "period",
+                    "display_unit",
+                    "standard_unit",
+                    "unit",
+                    "max_dim_y",
+                    "max_dim_x",
+                    "label",
+                    "max_value",
+                    "min_alarm",
+                    "max_warning",
+                    "description",
+                    "format",
+                    "delta_t",
+                    "max_alarm",
+                    "min_value",
+                    "inherited",
+                    "min_warning",
+                    "writable",
+                    "writable_attr_name",
                 ]:
                     if attr[key]:
                         attr_data[key] = attr[key]

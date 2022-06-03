@@ -74,12 +74,12 @@ class Model(object):
     """
 
     def __init__(
-            self,
-            name,
-            start_time=None,
-            min_update_period=0.99,
-            time_func=time.time,
-            logger=None,
+        self,
+        name,
+        start_time=None,
+        min_update_period=0.99,
+        time_func=time.time,
+        logger=None,
     ):
         self.name = name
         model_registry[self.name] = self
@@ -229,9 +229,7 @@ class Model(object):
                             adjustable_val = val_type(adjustable_val)
                     else:
                         if attribute == "last_val":
-                            quantity.last_val = float(
-                                quantity_metadata["mean"]
-                            )
+                            quantity.last_val = float(quantity_metadata["mean"])
                             continue
                         else:
                             adjustable_val = float(quantity_metadata[attribute])
@@ -370,7 +368,7 @@ class PopulateModelQuantities(object):
                         # default value of is assigned to the attribute
                         # quantity initial value
                         initial_value = None
-                        self.logger.info(
+                        self.logger.debug(
                             "Parameter `initial_value` does not exist for"
                             "attribute {}. Default will be used".format(
                                 model_attr_props["name"]

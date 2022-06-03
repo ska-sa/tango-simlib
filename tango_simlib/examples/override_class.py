@@ -19,18 +19,15 @@ MODULE_LOGGER = logging.getLogger(__name__)
 
 
 class WeatherSimError(Exception):
-    """Raised when a Weather simulator action could not be executed.
-    """
+    """Raised when a Weather simulator action could not be executed."""
 
 
 class VdsSimError(Exception):
-    """Raised when a Video Display System simulator action could not be executed.
-    """
+    """Raised when a Video Display System simulator action could not be executed."""
 
 
 class DishSimError(Exception):
-    """Raised when a Dish simulator action could not be executed.
-    """
+    """Raised when a Dish simulator action could not be executed."""
 
 
 class OverrideWeather(object):
@@ -40,24 +37,20 @@ class OverrideWeather(object):
     """
 
     def action_on(self, model, tango_dev=None, data_input=None):
-        """Changes the State of the device to ON.
-        """
+        """Changes the State of the device to ON."""
         tango_dev.set_state(DevState.ON)
 
     def action_off(self, model, tango_dev=None, data_input=None):
-        """Changes the State of the device to OFF.
-        """
+        """Changes the State of the device to OFF."""
         tango_dev.set_state(DevState.OFF)
 
     def action_add(self, model, tango_dev=None, data_input=None):
-        """Add two or more numbers together and return their sum.
-        """
+        """Add two or more numbers together and return their sum."""
         total = sum(data_input)
         return total
 
     def action_multiplystringby3(self, model, tango_dev=None, data_input=None):
-        """Takes a string and multiplies it by a constant integer value of 3.
-        """
+        """Takes a string and multiplies it by a constant integer value of 3."""
         return 3 * data_input
 
 

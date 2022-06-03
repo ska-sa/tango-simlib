@@ -400,9 +400,7 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
         expected_value = 5
         actual_value = self.sim_device.command_inout(command_name, [3, 2])
         time.sleep(1)
-        self.assertEqual(
-            expected_value,
-            actual_value)
+        self.assertEqual(expected_value, actual_value)
 
     def test_StopRainfall_command(self):
         command_name = "StopRainfall"

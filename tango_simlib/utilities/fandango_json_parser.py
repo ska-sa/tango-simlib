@@ -101,6 +101,7 @@ class FandangoExportDeviceParser(Parser):
         types and rename the command properties to match with the keyword arguments of
         the command signature.
         """
+        invalid_command_properties = set()
         for cmd_name, cmd_config in command_data.items():
             self._device_commands[cmd_name] = {}
 
@@ -114,11 +115,14 @@ class FandangoExportDeviceParser(Parser):
                         {CMD_PROP_MAP[cmd_prop]: cmd_prop_value}
                     )
                 except KeyError:
-                    MODULE_LOGGER.info(
-                        "The property '%s' cannot be translated to a corresponding "
-                        "parameter in the TANGO library",
-                        cmd_prop,
-                    )
+                    invalid_command_properties.add(cmd_prop)
+
+        if invalid_command_properties:
+            MODULE_LOGGER.debug(
+                "The properties '%s' cannot be translated to a corresponding "
+                "parameters in the TANGO library",
+                invalid_command_properties,
+            )
 
     def preprocess_attribute_types(self, attribute_data):
         """Convert the attribute data types from strings to the TANGO types."""
