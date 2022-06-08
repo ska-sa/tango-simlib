@@ -173,7 +173,7 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
     # Add the read method and the attribute to the class object
     setattr(tango_device_class, read_meth.__name__, read_meth)
     setattr(tango_device_class, attr.__name__, attr)
-    MODULE_LOGGER.info("Adding static attribute {} to the device.".format(attr_name))
+    MODULE_LOGGER.debug("Adding static attribute {} to the device.".format(attr_name))
 
 
 def _create_sim_test_interface_atttribute(models, class_instance):
