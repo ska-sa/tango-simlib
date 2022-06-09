@@ -25,6 +25,11 @@
 .. _143: https://github.com/ska-sa/tango-simlib/pull/143
 .. _146: https://github.com/ska-sa/tango-simlib/pull/146
 .. _148: https://github.com/ska-sa/tango-simlib/pull/148
+.. _150: https://github.com/ska-sa/tango-simlib/pull/150
+
+0.9.4
+-----
+- Reduce more logs spewed by device servers 150_.
 
 0.9.3
 -----
