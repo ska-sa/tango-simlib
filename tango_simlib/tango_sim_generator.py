@@ -173,7 +173,6 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
     # Add the read method and the attribute to the class object
     setattr(tango_device_class, read_meth.__name__, read_meth)
     setattr(tango_device_class, attr.__name__, attr)
-    MODULE_LOGGER.debug("Adding static attribute {} to the device.".format(attr_name))
 
 
 def _create_sim_test_interface_atttribute(models, class_instance):
@@ -254,6 +253,7 @@ def get_tango_device_server(models, sim_data_files):
     # TODO(AR 02-03-2017): Ask the tango community on the upcoming Stack
     # Exchange community (AskTango) and also make follow ups on the next tango
     # releases.
+    static_attributes_added = []
     for quantity_name, quantity in list(itervalues(models))[0].sim_quantities.items():
         d_type = str(quantity.meta["data_type"])
         d_format = str(quantity.meta["data_format"])
@@ -261,6 +261,11 @@ def get_tango_device_server(models, sim_data_files):
             add_static_attribute(
                 TangoDeviceServerStaticAttrs, quantity_name, quantity.meta
             )
+            static_attributes_added.append(quantity_name)
+
+    MODULE_LOGGER.info(
+        "Static attributes addded to the device: [{}]".format(static_attributes_added)
+    )
 
     class TangoDeviceServer(TangoDeviceServerBase, TangoDeviceServerStaticAttrs):
         _models = models
@@ -290,16 +295,23 @@ def get_tango_device_server(models, sim_data_files):
                 self.set_state(DevState.values[state_value])
 
         def initialize_dynamic_commands(self):
+            commands_added = []
             for action_name, action_handler in self.model.sim_actions.items():
                 cmd_handler = helper_module.generate_cmd_handler(
                     self.model, action_name, action_handler
                 )
                 setattr(TangoDeviceServer, action_name, cmd_handler)
                 self.add_command(cmd_handler, device_level=True)
+                commands_added.append(action_name)
+
+            MODULE_LOGGER.info(
+                "Dynamic commands added to the device: [{}]".format(commands_added)
+            )
 
         def initialize_dynamic_attributes(self):
             model_sim_quants = self.model.sim_quantities
             attribute_list = set([attr for attr in model_sim_quants.keys()])
+            attributes_added = []
             for attribute_name in attribute_list:
                 meta_data = model_sim_quants[attribute_name].meta
                 # Dynamically add all attributes except those with DevEnum data type,
@@ -321,7 +333,10 @@ def get_tango_device_server(models, sim_data_files):
 
                 self._configure_attribute_default_properties(attr, meta_data)
                 self._add_dynamic_attribute(attr, rw_type)
-                MODULE_LOGGER.debug("Added dynamic {} attribute".format(attribute_name))
+
+            MODULE_LOGGER.info(
+                "Dynamic attributes added to the device: [{}]".format(attributes_added)
+            )
 
         def _add_dynamic_attribute(self, attribute, read_write_type):
             if read_write_type in (AttrWriteType.READ, AttrWriteType.READ_WITH_WRITE):
@@ -352,7 +367,7 @@ def get_tango_device_server(models, sim_data_files):
                 attribute = Attr(attribute_name, attr_dtype, rw_type)
             except Exception as e:
                 self._not_added_attributes.append(attribute_name)
-                MODULE_LOGGER.debug(
+                MODULE_LOGGER.error(
                     "Attribute %s could not be added dynamically"
                     " due to an error raised %s.",
                     attribute_name,
@@ -376,11 +391,11 @@ def get_tango_device_server(models, sim_data_files):
                     attribute_properties.set_event_period(prop_value)
                     continue
 
+                attribute_name = quantity_meta_data["name"]
                 if hasattr(attribute_properties, prop):
                     try:
                         setattr(attribute_properties, prop, prop_value)
                     except Exception as e:
-                        attribute_name = quantity_meta_data["name"]
                         MODULE_LOGGER.error(
                             "The attribute '%s's property '%s' could not be set to "
                             "value '%s' due to an error raised %s.",
@@ -391,7 +406,8 @@ def get_tango_device_server(models, sim_data_files):
                         )
                 else:
                     MODULE_LOGGER.debug(
-                        "UserDefaultAttrProp has no attribute named '%s'", prop
+                        "UserDefaultAttrProp has no attribute named '%s' "
+                        "for the device attribute '%s'.", prop, attribute_name,
                     )
 
             attribute.set_default_properties(attribute_properties)
