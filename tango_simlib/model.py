@@ -772,7 +772,7 @@ class PopulateModelActions(object):
         class_instance : class
             The class instance
         action_type : str
-            A action of type `action_` or `test_action_`
+            An action of type `action_` or `test_action_`
         """
         instance_attributes = dir(class_instance)
         instance_attributes_list = [attr.lower() for attr in instance_attributes]
