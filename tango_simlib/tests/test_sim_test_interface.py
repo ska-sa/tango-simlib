@@ -395,6 +395,13 @@ class test_TangoSimGenDeviceIntegration(ClassCleanupUnittestMixin, unittest.Test
             "The device has commands meant for the test sim control device.",
         )
 
+    def test_sim_device_Add_command(self):
+        command_name = "Add"
+        expected_value = 5
+        actual_value = self.sim_device.command_inout(command_name, [3, 2])
+        time.sleep(1)
+        self.assertEqual(expected_value, actual_value)
+
     def test_StopRainfall_command(self):
         command_name = "StopRainfall"
         expected_rainfall_value = 0.0

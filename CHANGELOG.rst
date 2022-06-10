@@ -22,6 +22,20 @@
 .. _133: https://github.com/ska-sa/tango-simlib/pull/133
 .. _135: https://github.com/ska-sa/tango-simlib/pull/135
 .. _138: https://github.com/ska-sa/tango-simlib/pull/138
+.. _143: https://github.com/ska-sa/tango-simlib/pull/143
+.. _146: https://github.com/ska-sa/tango-simlib/pull/146
+.. _148: https://github.com/ska-sa/tango-simlib/pull/148
+.. _150: https://github.com/ska-sa/tango-simlib/pull/150
+
+0.9.4
+-----
+- Reduce more logs spewed by device servers 150_.
+
+0.9.3
+-----
+- Reduce logs spewed by device servers 148_.
+- Updated class instance prefix to be more definitive 146_.
+- Pinned jsonschema package to py2 compatible version 143_.
 
 0.9.2
 -----

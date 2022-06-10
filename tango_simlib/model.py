@@ -347,7 +347,7 @@ class PopulateModelQuantities(object):
                         # default value of is assigned to the attribute
                         # quantity initial value
                         initial_value = None
-                        self.logger.info(
+                        self.logger.debug(
                             "Parameter `initial_value` does not exist for"
                             "attribute {}. Default will be used".format(
                                 model_attr_props["name"]

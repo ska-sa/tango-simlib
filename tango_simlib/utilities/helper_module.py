@@ -149,17 +149,22 @@ def generate_cmd_handler(model, action_name, action_handler):
     cmd_info_copy = model.sim_actions_meta[action_name].copy()
     # Delete all the keys that are not part of the Tango command parameters.
     cmd_info_copy.pop("name")
+    invalid_command_properties = []
     for prop_key in model.sim_actions_meta[action_name]:
         if prop_key not in DEFAULT_CMD_PROPS:
-            MODULE_LOGGER.warning(
-                "Warning! Property %s is not a tango command prop", prop_key
-            )
+            invalid_command_properties.append(prop_key)
             cmd_info_copy.pop(prop_key)
+
+    if invalid_command_properties:
+        MODULE_LOGGER.debug(
+            "Properties %s are not valid tango command properties",
+            invalid_command_properties
+        )
     """
         The command method signature:
         command(f=None, dtype_in=None, dformat_in=None, doc_in="",
                 dtype_out=None, dformat_out=None, doc_out="", green_mode=None)
-        """
+    """
     return command(f=cmd_handler, **cmd_info_copy)
 
 
