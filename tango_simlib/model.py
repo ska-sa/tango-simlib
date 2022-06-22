@@ -336,28 +336,7 @@ class PopulateModelQuantities(object):
             # When using more than one config file, the attribute meta data can be
             # overwritten, so we need to update it instead of reassigning a different
             # object.
-            try:
-                model_attr_props = self.sim_model.sim_quantities[attr_name].meta
-            except KeyError:
-                self.logger.debug(
-                    "Initializing '{}' quantity meta information using config file:"
-                    " '{}'.".format(
-                        attr_name, self.parser_instance.data_description_file_name
-                    )
-                )
-                model_attr_props = attr_props
-            else:
-                # Before the model attribute props dict is updated, the
-                # parameter keys with no values specified from the attribute
-                # props template are removed.
-                # i.e. All optional parameters not provided in the SimDD
-                attr_props = dict(
-                    (param_key, param_val)
-                    for param_key, param_val in iteritems(attr_props)
-                    if param_val
-                )
-                model_attr_props.update(attr_props)
-
+            model_attr_props = self._get_attribute_properties(attr_name, attr_props)
             if "quantity_simulation_type" in model_attr_props:
                 if model_attr_props["quantity_simulation_type"] == "ConstantQuantity":
                     try:
@@ -406,7 +385,7 @@ class PopulateModelQuantities(object):
                             )
                         )
                     quantity_factory = quantities.registry[
-                        attr_props["quantity_simulation_type"]
+                        model_attr_props["quantity_simulation_type"]
                     ]
                     self.sim_model.sim_quantities[attr_name] = quantity_factory(
                         start_time=start_time,
@@ -414,62 +393,92 @@ class PopulateModelQuantities(object):
                         **sim_attr_quantities
                     )
             else:
-                key_vals = model_attr_props.keys()
-                attr_data_type = model_attr_props["data_type"]
-                # the xmi, json and fgo files have data_format attributes indicating
-                # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
-                # key in its attribute list. It has a key labelled possible values which
-                # is a list. Hence, SPECTRUM is no data_format is found.
-                try:
-                    attr_data_format = str(model_attr_props["data_format"])
-                except KeyError:
-                    attr_data_format = "SPECTRUM"
-                expected_key_vals = ["max_dim_x", "max_dim_y", "maxX", "maxY"]
-                # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
-                # (maxX, maxY) keys. If none of these keys are found in them or in the
-                # xml file, we use default values of 1 for x and 2 for y - same applies
-                # for files where the keys have empty values.
-                if any(key_val in expected_key_vals for key_val in key_vals):
-                    try:
-                        max_dim_x = model_attr_props["max_dim_x"]
-                        max_dim_y = model_attr_props["max_dim_y"]
-                    except KeyError:
-                        max_dim_x = model_attr_props.get("maxX", 1)
-                        max_dim_y = model_attr_props.get("maxY", 2)
-                    # just in case the keys exist but have no values
-                    if not max_dim_x:
-                        max_dim_x = 1
-                    if not max_dim_y:
-                        max_dim_y = 2
-
-                val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
-                expected_key_vals = ["value", "possiblevalues"]
-                if any(key_val in expected_key_vals for key_val in key_vals):
-                    try:
-                        default_val = model_attr_props["value"]
-                    except KeyError:
-                        default_val = model_attr_props["possiblevalues"]
-                    if attr_data_format == "SCALAR":
-                        default_val = val_type(default_val)
-                    elif attr_data_format == "SPECTRUM":
-                        default_val = list(map(val_type, default_val))
-                    else:
-                        default_val = [
-                            [val_type(curr_val) for curr_val in sublist]
-                            for sublist in default_val
-                        ]
-                else:
-                    if attr_data_format == "SCALAR":
-                        default_val = val
-                    elif attr_data_format == "SPECTRUM":
-                        default_val = [val] * max_dim_x
-                    else:
-                        default_val = [[val] * max_dim_x for i in range(max_dim_y)]
-                self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
-                    start_time=start_time, meta=model_attr_props, start_value=default_val
-                )
+                self._create_constant_quantity(start_time, attr_name, model_attr_props)
 
         self.sim_model.setup_sim_quantities()
+
+    def _create_constant_quantity(self, start_time, attr_name, model_attr_props):
+        key_vals = model_attr_props.keys()
+        attr_data_type = model_attr_props["data_type"]
+        # The xmi, json and fgo files have data_format attributes indicating
+        # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
+        # key in its attribute list. It has a key labelled possible values which
+        # is a list. Hence, SPECTRUM is no data_format is found.
+        try:
+            attr_data_format = str(model_attr_props["data_format"])
+        except KeyError:
+            attr_data_format = "SPECTRUM"
+        expected_key_vals = ["max_dim_x", "max_dim_y", "maxX", "maxY"]
+        # The xmi, json and fgo files have either (max_dim_x, max_dim_y) or
+        # (maxX, maxY) keys. If none of these keys are found in them or in the
+        # xml file, we use default values of 1 for x and 2 for y - same applies
+        # for files where the keys have empty values.
+        # get dimensions
+        if any(key_val in expected_key_vals for key_val in key_vals):
+            try:
+                max_dim_x = model_attr_props["max_dim_x"]
+                max_dim_y = model_attr_props["max_dim_y"]
+            except KeyError:
+                max_dim_x = model_attr_props.get("maxX", 1)
+                max_dim_y = model_attr_props.get("maxY", 2)
+            # Just in case the keys exist but have no values
+            if not max_dim_x:
+                max_dim_x = 1
+            if not max_dim_y:
+                max_dim_y = 2
+
+        val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
+        expected_key_vals = ["value", "possiblevalues"]
+        # Set default value
+        if any(key_val in expected_key_vals for key_val in key_vals):
+            try:
+                default_val = model_attr_props["value"]
+            except KeyError:
+                default_val = model_attr_props["possiblevalues"]
+            if attr_data_format == "SCALAR":
+                default_val = val_type(default_val)
+            elif attr_data_format == "SPECTRUM":
+                default_val = list(map(val_type, default_val))
+            else:
+                default_val = [
+                    [val_type(curr_val) for curr_val in sublist]
+                    for sublist in default_val
+                ]
+        else:
+            if attr_data_format == "SCALAR":
+                default_val = val
+            elif attr_data_format == "SPECTRUM":
+                default_val = [val] * max_dim_x
+            else:
+                default_val = [[val] * max_dim_x for i in range(max_dim_y)]
+        self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
+            start_time=start_time, meta=model_attr_props, start_value=default_val
+        )
+
+    def _get_attribute_properties(self, attr_name, attr_props):
+        try:
+            model_attr_props = self.sim_model.sim_quantities[attr_name].meta
+        except KeyError:
+            self.logger.debug(
+                "Initializing '{}' quantity meta information using config file:"
+                " '{}'.".format(
+                    attr_name, self.parser_instance.data_description_file_name
+                )
+            )
+            model_attr_props = attr_props
+        else:
+            # Before the model attribute props dict is updated, the
+            # parameter keys with no values specified from the attribute
+            # props template are removed.
+            # i.e. All optional parameters not provided in the SimDD
+            attr_props = {
+                (param_key, param_val)
+                for param_key, param_val in iteritems(attr_props)
+                if param_val
+            }
+            model_attr_props.update(attr_props)
+
+        return model_attr_props
 
     def sim_attribute_quantities(
         self, min_bound, max_bound, max_slew_rate, mean, std_dev
@@ -516,10 +525,8 @@ class PopulateModelActions(object):
     cmd_info : dict
         A dictionary of all the device commands together with their
         metadata specified in the xmi, json or fgo file(s).
-
     override_info : dict
         A dictionary of device override info in specified the xmi, json or fgo file(s).
-
     sim_model :  Model instance
         An instance of the Model class which is used for simulation of simple attributes
         and/or commands.
@@ -542,30 +549,7 @@ class PopulateModelActions(object):
             instances = self._get_class_instances(self.override_info)
 
         # Need to override the model's update method if the override class provides one.
-        instance = []
-        for instance_ in instances:
-            if instance_.startswith("Sim_"):
-                instance.append(instances[instance_])
-
-        for inst in instance:
-            try:
-                pre_update_overwrite = getattr(inst, "pre_update")
-            except AttributeError:
-                self.logger.info(
-                    "No pre-update method defined in the '{}'"
-                    " override class.".format(type(inst).__name__)
-                )
-            else:
-                self.sim_model.override_pre_updates.append(pre_update_overwrite)
-            try:
-                post_update_overwrite = getattr(inst, "post_update")
-            except AttributeError:
-                self.logger.info(
-                    "No post-update method defined in the '{}'"
-                    " override class.".format(type(inst).__name__)
-                )
-            else:
-                self.sim_model.override_post_updates.append(post_update_overwrite)
+        self._override_model_update_methods(instances)
 
         for cmd_name, cmd_meta in self.cmd_info.items():
             # Exclude the TANGO default commands as they have their own built in handlers
@@ -582,35 +566,10 @@ class PopulateModelActions(object):
             # {'behaviour': 'output_return',
             # 'source_variable': 'temporary_variable'}]
             actions = cmd_meta.get("actions", [])
-            instance = None
             if cmd_name.startswith("test_"):
-                cmd_name = cmd_name.split("test_")[1]
-                for instance_ in instances:
-                    if instance_.startswith("SimControl_"):
-                        instance = instances[instance_]
-                self._check_override_action_presence(cmd_name, instance, "test_action_{}")
-                handler = getattr(
-                    instance,
-                    "test_action_{}".format(cmd_name.lower()),
-                    self.generate_action_handler(
-                        cmd_name, cmd_meta["dtype_out"], actions
-                    ),
-                )
-                self.sim_model.set_test_sim_action(cmd_name, handler)
+                self._add_test_sim_actions(cmd_name, cmd_meta, actions, instances)
             else:
-                for instance_ in instances:
-                    if instance_.startswith("Sim_"):
-                        instance = instances[instance_]
-                self._check_override_action_presence(cmd_name, instance, "action_{}")
-                handler = getattr(
-                    instance,
-                    "action_{}".format(cmd_name.lower()),
-                    self.generate_action_handler(
-                        cmd_name, cmd_meta["dtype_out"], actions
-                    ),
-                )
-
-                self.sim_model.set_sim_action(cmd_name, handler)
+                self._add_sim_actions(cmd_name, cmd_meta, actions, instances)
             # Might store the action's metadata in the sim_actions dictionary
             # instead of creating a separate dict.
             try:
@@ -618,8 +577,177 @@ class PopulateModelActions(object):
             except IndexError:
                 self.sim_model.sim_actions_meta[cmd_name] = cmd_meta
 
+    def _override_model_update_methods(self, instances):
+        """Override the pre-update and post-update methods in the tango_simlib.Model
+        object.
+
+        Parameters
+        ----------
+        class_instances : dict
+            A dictionary of class instances, {'<class-name>': '<class-instance>'}
+        """
+        instance = []
+        for instance_ in instances:
+            if instance_.startswith("Sim_"):
+                instance.append(instances[instance_])
+
+        for inst in instance:
+            try:
+                pre_update_overwrite = getattr(inst, "pre_update")
+            except AttributeError:
+                self.logger.info(
+                    "No pre-update method defined in the '{}'"
+                    " override class.".format(type(inst).__name__)
+                )
+            else:
+                self.sim_model.override_pre_updates.append(pre_update_overwrite)
+
+            try:
+                post_update_overwrite = getattr(inst, "post_update")
+            except AttributeError:
+                self.logger.info(
+                    "No post-update method defined in the '{}'"
+                    " override class.".format(type(inst).__name__)
+                )
+            else:
+                self.sim_model.override_post_updates.append(post_update_overwrite)
+
+    def _add_sim_actions(self, command_name, command_metadata, actions, class_instances):
+        """Update the sim_actions dictionary in the tango_simlib.Model object.
+
+        Parameters
+        ----------
+        command_name : str
+            The name of the command
+        command_metadata : dict
+            The commmand properties
+        actions : list
+            List of actions that the handler will provide
+            E.g.
+            [
+                {
+                    "behaviour": "input_transform",
+                    "destination_variable": "temporary_variable"
+                },
+                {
+                    "behaviour": "side_effect",
+                    "source_variable": "temporary_variable",
+                    "destination_quantity": "temperature"
+                },
+                {"behaviour": "output_return",
+                    "source_variable": "temporary_variable"
+                }
+            ]
+        class_instances : dict
+            A dictionary of class instances, {'<class-name>': '<class-instance>'}
+        """
+        instance = None
+        for instance_ in class_instances:
+            if instance_.startswith("Sim_"):
+                instance = class_instances[instance_]
+        self._check_override_action_presence(command_name, instance, "action_{}")
+        handler = getattr(
+            instance,
+            "action_{}".format(command_name.lower()),
+            self.generate_action_handler(
+                command_name, command_metadata["dtype_out"], actions
+            ),
+        )
+
+        self.sim_model.set_sim_action(command_name, handler)
+
+    def _add_test_sim_actions(
+        self, command_name, command_metadata, actions, class_instances
+    ):
+        """Update the test_sim_actions dictionary in the tango_simlib.Model object.
+
+        Parameters
+        ----------
+        command_name : str
+            The name of the command
+        command_metadata : dict
+            The commmand properties
+            E.g.
+            {
+                'test_Command1': {
+                    'name': 'test_Command1',
+                    'description': 'Runs command1',
+                    'dtype_in': tango._tango.CmdArgType.DevVoid,
+                    'doc_in': 'No input parameter',
+                    'dformat_in': tango._tango.AttrDataFormat.SCALAR,
+                    'dtype_out': tango._tango.CmdArgType.DevVoid,
+                    'doc_out': 'Command responds',
+                    'dformat_out': tango._tango.AttrDataFormat.SCALAR
+                }
+            }
+        actions : list
+            List of actions that the handler will provide
+            E.g.
+            [
+                {
+                    "behaviour": "input_transform",
+                    "destination_variable": "temporary_variable"
+                },
+                {
+                    "behaviour": "side_effect",
+                    "source_variable": "temporary_variable",
+                    "destination_quantity": "temperature"
+                },
+                {
+                    "behaviour": "output_return",
+                    "source_variable": "temporary_variable"
+                }
+            ]
+        class_instances : dict
+            A dictionary of class instances, {'<class-name>': '<class-instance>'}
+        """
+        command_name = command_name.split("test_")[1]
+        instance = None
+        for instance_ in class_instances:
+            if instance_.startswith("SimControl_"):
+                instance = class_instances[instance_]
+        self._check_override_action_presence(command_name, instance, "test_action_{}")
+        handler = getattr(
+            instance,
+            "test_action_{}".format(command_name.lower()),
+            self.generate_action_handler(
+                command_name, command_metadata["dtype_out"], actions
+            ),
+        )
+        self.sim_model.set_test_sim_action(command_name, handler)
+
     def _get_class_instances(self, override_class_info):
-        instances = {}
+        """Instantiates the classes provided by override_class_info.
+
+        Parameters
+        ----------
+        override_classs_info : dict
+            E.g.
+            {
+                'Sim_Test': {
+                    'name': 'Sim_Test',
+                    'module_directory': '/tango_simlib/scripts/',
+                    'module_name': 'test_module',
+                    'class_name': 'TestSim'
+                },
+                'SimControl_Test': {
+                    'name': 'SimControl_Test',
+                    'module_directory': '/tango_simlib/scripts/',
+                    'module_name': 'test_module',
+                    'class_name': 'TestSimControl'
+                }
+            }
+
+        Returns
+        -------
+        class_instances: dict
+            E.g.
+            {
+                'Sim_Test': <class-instance>,
+                'SimControl_Test': <class-instance>
+            }
+        """
+        class_instances = {}
         for klass_info in override_class_info.values():
             if klass_info["module_directory"] == "None":
                 module = importlib.import_module(klass_info["module_name"])
@@ -629,27 +757,39 @@ class PopulateModelActions(object):
                 sys.path.remove(klass_info["module_directory"])
             klass = getattr(module, klass_info["class_name"])
             instance = klass()
-            instances[klass_info["name"]] = instance
+            class_instances[klass_info["name"]] = instance
 
-        return instances
+        return class_instances
 
-    def _check_override_action_presence(self, cmd_name, instance, action_type):
-        instance_attributes = dir(instance)
+    def _check_override_action_presence(self, command_name, class_instance, action_type):
+        """Checks that the method given by the command_name is defined in the class
+        instance.
+
+        Parameters
+        ----------
+        command_name : str
+            The name of the command
+        class_instance : class
+            The class instance
+        action_type : str
+            An action of type `action_` or `test_action_`
+        """
+        instance_attributes = dir(class_instance)
         instance_attributes_list = [attr.lower() for attr in instance_attributes]
         attr_occurences = instance_attributes_list.count(
-            action_type.format(cmd_name.lower())
+            action_type.format(command_name.lower())
         )
         # Check if there is only one override class method defined for each command
         if attr_occurences > MAX_NUM_OF_CLASS_ATTR_OCCURENCE:
             raise Exception(
                 "The command '{}' has multiple override methods defined"
-                " in the override class".format(cmd_name)
+                " in the override class".format(command_name)
             )
         # Assuming that there is only one override method defined, now we check if it
         # is in the correct letter case.
         elif attr_occurences == MAX_NUM_OF_CLASS_ATTR_OCCURENCE:
             try:
-                instance_attributes.index(action_type.format(cmd_name.lower()))
+                instance_attributes.index(action_type.format(command_name.lower()))
             except ValueError:
                 raise Exception("Only lower-case override method names are supported.")
 
@@ -682,7 +822,7 @@ class PopulateModelActions(object):
             ----------
             model : model.Model
                 Model instance
-            data_in : float, string, int, etc.
+            data_input : float, string, int, etc.
                 Input arguments of tango command
 
             Returns
