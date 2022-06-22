@@ -55,7 +55,7 @@ setup(
         "jsonschema==3.2.0; python_version<'3'",
         "jsonschema; python_version>='3'",
         "numpy",
-        "PyTango>=9.2.2",
+        "PyTango==9.3.3",
         "pathlib",
         "pyyaml",
     ],
