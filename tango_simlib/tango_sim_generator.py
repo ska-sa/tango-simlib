@@ -123,7 +123,7 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
         max_dim_x=int(attr_meta["max_dim_x"]),
         max_dim_y=int(attr_meta["max_dim_y"]),
         access=getattr(AttrWriteType, attr_meta["writable"], AttrWriteType.READ),
-        polling_period=int(polling_period) if polling_period else -1 ,
+        polling_period=int(polling_period) if polling_period else -1,
         min_value=attr_meta.get("min_value", ""),
         max_value=attr_meta.get("max_value", ""),
         min_alarm=attr_meta.get("min_alarm", ""),
