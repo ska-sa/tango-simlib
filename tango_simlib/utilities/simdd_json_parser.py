@@ -348,6 +348,8 @@ class SimddParser(Parser):
                     # Here we extract the CmdArgType object since for later when creating
                     # a Tango attibute, data type is required in this format.
                     val = getattr(CmdArgType, "Dev%s" % str(param_val))
+                elif str(param_name) in ["data_format"]:
+                    val = getattr(AttrDataFormat, str(param_val).upper())
                 elif str(param_name) in ["DefaultPropValue"]:
                     # Default property value can be an string, number and array
                     # NB: It is also an optional parameter

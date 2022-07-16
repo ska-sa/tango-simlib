@@ -52,7 +52,7 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
     "archive_abs_change": "0.5",
     "archive_period": "1000",
     "archive_rel_change": "10",
-    "data_format": "Scalar",
+    "data_format": tango._tango.AttrDataFormat.SCALAR,
     "data_type": tango._tango.CmdArgType.DevDouble,
     "format": "6.2f",
     "delta_t": "1000",
@@ -907,3 +907,45 @@ class test_XmiSimddSupplementaryDeviceIntegration(
                         "parameter '{}' does not match with the actual value "
                         "in the device model".format(expected_action, prop),
                     )
+
+
+class test_SimdddSpectrumAttributeDevice(
+    ClassCleanupUnittestMixin, unittest.TestCase
+):
+    """A test class that tests the simdd file for SPECTRUM attribute.
+
+    """
+
+    longMessage = True
+
+    @classmethod
+    def setUpClassWithCleanup(cls):
+        cls.tango_db = cleanup_tempfile(cls, prefix="tango", suffix=".db")
+        cls.data_descr_files = []
+        cls.data_descr_files.append(
+            pkg_resources.resource_filename(
+                "tango_simlib.tests.config_files", "Spectrum_SimDD.json"
+            )
+        )
+        cls.device_name = "test/nodb/tangodeviceserver"
+        model = tango_sim_generator.configure_device_models(
+            cls.data_descr_files, cls.device_name
+        )
+        cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
+            model, cls.data_descr_files
+        )[0]
+        cls.tango_context = DeviceTestContext(
+            cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
+        )
+
+        with patch("tango_simlib.utilities.helper_module.get_database"):
+            start_thread_with_cleanup(cls, cls.tango_context)
+
+    def setUp(self):
+        super(test_SimdddSpectrumAttributeDevice, self).setUp()
+        self.device = self.tango_context.device
+
+    def test_attribute_is_spectrum(self):
+        attribute_config = self.device.get_attribute_config("doubleSpectrum")
+        self.assertEqual(attribute_config.data_type, tango.DevDouble)
+        self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.SPECTRUM)

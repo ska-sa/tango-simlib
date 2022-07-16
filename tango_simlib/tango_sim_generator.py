@@ -113,17 +113,17 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
     This is needed for DevEnum and spectrum type attributes
 
     """
-    enum_labels = attr_meta.get("enum_labels", "")
+    polling_period = attr_meta["period"]
     attr = attribute(
         label=attr_meta.get("label", attr_name),
         dtype=attr_meta["data_type"],
-        enum_labels=enum_labels,
+        enum_labels=attr_meta.get("enum_labels", []),
         doc=attr_meta.get("description", ""),
         dformat=attr_meta["data_format"],
-        max_dim_x=attr_meta["max_dim_x"],
-        max_dim_y=attr_meta["max_dim_y"],
-        access=getattr(AttrWriteType, attr_meta["writable"]),
-        polling_period=int(attr_meta.get("period", "-1")),
+        max_dim_x=int(attr_meta["max_dim_x"]),
+        max_dim_y=int(attr_meta["max_dim_y"]),
+        access=getattr(AttrWriteType, attr_meta["writable"], AttrWriteType.READ),
+        polling_period=int(polling_period) if polling_period else -1 ,
         min_value=attr_meta.get("min_value", ""),
         max_value=attr_meta.get("max_value", ""),
         min_alarm=attr_meta.get("min_alarm", ""),
