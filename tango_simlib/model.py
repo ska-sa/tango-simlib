@@ -276,7 +276,7 @@ class Model(object):
                     )
 
                 setattr(quantity, adjustable_attr, adjustable_val)
-    
+
 
 class PopulateModelQuantities(object):
     """Used to populate/update model quantities.
