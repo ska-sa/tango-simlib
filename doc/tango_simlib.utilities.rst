@@ -25,14 +25,6 @@ tango\_simlib\.utilities\.helper\_module module
     :undoc-members:
     :show-inheritance:
 
-tango\_simlib\.utilities\.sim\sdd\_xml\_json\_parser module
------------------------------------------------------------
-
-.. automodule:: tango_simlib.utilities.sim_sdd_xml_parser
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 tango\_simlib\.utilities\.sim\_xmi\_parser module
 -------------------------------------------------
 
