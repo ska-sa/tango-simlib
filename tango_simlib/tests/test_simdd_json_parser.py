@@ -202,7 +202,7 @@ class test_PopulateModelQuantities(GenericSetup):
 
     def test_model_quantities_metadata(self):
         """Testing that the metadata of the quantities matches with the metadata
-        data of the parsed attribute data captured in the SDD xml file.
+        data of the parsed attribute data captured in the SimDD json file.
         """
         device_name = "tango/device/instance"
         pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
@@ -225,7 +225,7 @@ class test_PopulateModelQuantities(GenericSetup):
                     sim_quantity_metadata[attr_param_name],
                     attr_param_val,
                     "The value of the param '%s' in the model quantity '%s' is "
-                    "not the same with the one captured in the SDD xml file "
+                    "not the same with the one captured in the SimDD json file "
                     "for the monitoring point '%s'."
                     % (attr_param_name, sim_quantity_name, attr_param_name),
                 )
@@ -281,8 +281,7 @@ class test_PopulateModelActions(GenericSetup):
         )
 
     def test_model_actions_metadata(self):
-        """Testing that the model action metadata has been added correctly to the model.
-        """
+        """Testing that the model action metadata has been added correctly to the model."""
         device_name = "tango/device/instance"
         pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
         sim_model = pmq.sim_model
@@ -807,7 +806,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(
         expected_device_attr_xmi_info = xmi_parser.get_device_attribute_metadata()
         expected_device_temperature_attr_overridden_info = dict(
             expected_device_attr_xmi_info[attr_with_overrriden_info],
-            **simdd_specified_temperature_attr_params
+            **simdd_specified_temperature_attr_params,
         )
         # Creating a copy of the attribute info as specified in the xmi and
         # overriding it with that specified in the simdd then create a
@@ -867,7 +866,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(
         expected_device_cmd_xmi_info = xmi_parser.get_device_command_metadata()
         expected_device_on_cmd_overridden_info = dict(
             expected_device_cmd_xmi_info[cmd_with_overrriden_info],
-            **simdd_specified_on_cmd_params
+            **simdd_specified_on_cmd_params,
         )
         # Creating a copy of the command info as specified in the xmi and
         # overriding it with that specified in the simdd then create a
@@ -909,12 +908,8 @@ class test_XmiSimddSupplementaryDeviceIntegration(
                     )
 
 
-class test_SimdddSpectrumAttributeDevice(
-    ClassCleanupUnittestMixin, unittest.TestCase
-):
-    """A test class that tests the simdd file for SPECTRUM attribute.
-
-    """
+class test_SimdddSpectrumAttributeDevice(ClassCleanupUnittestMixin, unittest.TestCase):
+    """A test class that tests the simdd file for SPECTRUM attribute."""
 
     longMessage = True
 
@@ -949,3 +944,6 @@ class test_SimdddSpectrumAttributeDevice(
         attribute_config = self.device.get_attribute_config("doubleSpectrum")
         self.assertEqual(attribute_config.data_type, tango.DevDouble)
         self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.SPECTRUM)
+        self.assertIsInstance(
+            self.device.read_attribute("doubleSpectrum"), tango.DeviceAttribute
+        )

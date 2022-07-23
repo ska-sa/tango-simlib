@@ -54,7 +54,70 @@ INITIAL_CONSTANT_VALUE_TYPES = {
     CmdArgType.DevVoid: (None, None),
     CmdArgType.DevState: (int, 0),
     CmdArgType.DevEncoded: (bytearray, 0),
+    CmdArgType.DevVarBooleanArray: (list, [False]),
+    CmdArgType.DevVarCharArray: (list, [""]),
+    CmdArgType.DevVarDoubleArray: (list, [0.0]),
+    CmdArgType.DevVarShortArray: (list, [0]),
+    CmdArgType.DevVarLongArray: (list, [0]),
+    CmdArgType.DevVarFloatArray: (list, [0.0]),
+    CmdArgType.DevVarDoubleArray: (list, [0.0]),
+    CmdArgType.DevVarUShortArray: (list, [0.0]),
+    CmdArgType.DevVarULongArray: (list, [0]),
+    CmdArgType.DevVarStringArray: (list, [""]),
+    CmdArgType.DevVarLongStringArray: (list, [[0], [""]]),
+    CmdArgType.DevVarDoubleStringArray: (list, [[0.0], [""]]),
+    CmdArgType.DevVarLong64Array: (list, [0]),
+    CmdArgType.DevVarULong64Array: (list, [0]),
+    CmdArgType.DevVarLong64Array: (list, [0]),
+    CmdArgType.DevVarULong64Array: (list, [0]),
 }
+
+
+def get_quantity_dimensions(quantity_metadata):
+    max_dim_x = quantity_metadata["max_dim_x"]
+    max_dim_y = quantity_metadata["max_dim_y"]
+
+    if not max_dim_x:
+        max_dim_x = 1
+
+    if not max_dim_y:
+        max_dim_y = 0
+
+    return int(max_dim_x), int(max_dim_y)
+
+
+def get_default_quantity_value(attribute_properties):
+    max_dim_x, max_dim_y = get_quantity_dimensions(
+        attribute_properties
+    )
+    data_format = str(attribute_properties["data_format"])
+    data_type = attribute_properties["data_type"]
+    val_type, val = INITIAL_CONSTANT_VALUE_TYPES[data_type]
+    default_value = attribute_properties.get("value", None)
+
+    if data_format == "SCALAR":
+        if not default_value:
+            default_value = val
+        else:
+            default_value = val_type(default_value)
+    elif data_format == "SPECTRUM":
+        if not default_value:
+            default_value = (
+                val * max_dim_x if isinstance(val, list) else [val] * max_dim_x
+            )
+        else:
+            default_value = list(map(val_type, default_value))
+    elif data_format == "IMAGE":
+        if not default_value:
+            default_value = [[val] * max_dim_x for i in range(max_dim_y)]
+        else:
+            default_value = [
+                [val_type(current_value) for current_value in sublist]
+                for sublist in default_value
+            ]
+
+    return default_value
+
 
 
 class Model(object):
@@ -193,96 +256,29 @@ class Model(object):
 
     def _reset_quantity_adjustable_attributes_values(self, quantity):
         quantity_metadata = quantity.meta
-        key_vals = quantity_metadata.keys()
-        attr_data_type = quantity_metadata["data_type"]
-        # the xmi, json and fgo files have data_format attributes indicating
-        # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
-        # key in its attribute list. It has a key labelled possible values which
-        # is a list. Hence, SPECTRUM is no data_format is found.
-        try:
-            attr_data_format = str(quantity_metadata["data_format"])
-        except KeyError:
-            attr_data_format = "SPECTRUM"
-
-        max_dim_x, max_dim_y = self._get_quantity_dimensions(quantity_metadata)
-        val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
-        expected_key_vals = ["value", "possiblevalues"]
         adjustable_attrs = quantity.adjustable_attributes
-
-        for attribute in adjustable_attrs:
-            if attribute == "last_update_time":
+        for adjustable_attr in adjustable_attrs:
+            if adjustable_attr == "last_update_time":
                 quantity.last_update_time = self.start_time
                 continue
             else:
                 if "quantity_simulation_type" in quantity_metadata:
                     simulation_type = quantity_metadata["quantity_simulation_type"]
                     if simulation_type == "ConstantQuantity":
-                        initial_value = quantity_metadata.get("initial_value", None)
-                        if initial_value not in [None, ""]:
-                            adjustable_val = initial_value
-                        else:
-                            adjustable_val = val
-
-                        if val_type is None:
-                            adjustable_val = None
-                        else:
-                            adjustable_val = val_type(adjustable_val)
+                        adjustable_val = get_default_quantity_value(quantity_metadata)
                     else:
-                        if attribute == "last_val":
+                        if adjustable_attr == "last_val":
                             quantity.last_val = float(quantity_metadata["mean"])
                             continue
                         else:
-                            adjustable_val = float(quantity_metadata[attribute])
+                            adjustable_val = float(quantity_metadata[adjustable_attr])
                 else:
-                    if any(key_val in expected_key_vals for key_val in key_vals):
+                    adjustable_val = get_default_quantity_value(
+                        quantity_metadata
+                    )
 
-                        if "value" in quantity_metadata:
-                            adjustable_val = quantity_metadata["value"]
-                        elif "possiblevalues" in quantity_metadata:
-                            adjustable_val = quantity_metadata["possiblevalues"]
-
-                        if attr_data_format == "SCALAR":
-                            adjustable_val = val_type(adjustable_val)
-                        elif attr_data_format == "SPECTRUM":
-                            adjustable_val = list(map(val_type, adjustable_val))
-                        else:
-                            adjustable_val = [
-                                [val_type(curr_val) for curr_val in sublist]
-                                for sublist in adjustable_val
-                            ]
-
-                    else:
-                        if attr_data_format == "SCALAR":
-                            adjustable_val = val
-                        elif attr_data_format == "SPECTRUM":
-                            adjustable_val = [val] * max_dim_x
-                        else:
-                            adjustable_val = [[val] * max_dim_x for i in range(max_dim_y)]
-
-                setattr(quantity, attribute, adjustable_val)
-
-    def _get_quantity_dimensions(self, quantity_metadata):
-        key_vals = quantity_metadata.keys()
-        expected_key_vals = ["max_dim_x", "max_dim_y", "maxX", "maxY"]
-        # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
-        # (maxX, maxY) keys. If none of these keys are found in them or in the
-        # xml file, we use default values of 1 for x and 2 for y - same applies
-        # for files where the keys have empty values.
-        if any(key_val in expected_key_vals for key_val in key_vals):
-            try:
-                max_dim_x = quantity_metadata["max_dim_x"]
-                max_dim_y = quantity_metadata["max_dim_y"]
-            except KeyError:
-                max_dim_x = quantity_metadata.get("maxX", 1)
-                max_dim_y = quantity_metadata.get("maxY", 2)
-            # just in case the keys exist but have no values
-            if not max_dim_x:
-                max_dim_x = 1
-            if not max_dim_y:
-                max_dim_y = 2
-
-        return max_dim_x, max_dim_y
-
+                setattr(quantity, adjustable_attr, adjustable_val)
+    
 
 class PopulateModelQuantities(object):
     """Used to populate/update model quantities.
@@ -293,7 +289,7 @@ class PopulateModelQuantities(object):
     Attributes
     ----------
     parser_instance : Parser instance
-        The Parser object which reads an xmi/xml/json file and parses it into device
+        The Parser object which reads an xmi/fgo/json file and parses it into device
         attributes, commands, and properties.
     sim_model :  Model instance
         An instance of the Model class which is used for simulation of simple attributes.
@@ -360,36 +356,20 @@ class PopulateModelQuantities(object):
 
             if "quantity_simulation_type" in model_attr_props:
                 if model_attr_props["quantity_simulation_type"] == "ConstantQuantity":
-                    try:
-                        initial_value = model_attr_props["initial_value"]
-                    except KeyError:
-                        # `initial_value` is an optional parameter, thus if not
-                        # specified in the SimDD datafile, an initial value of
-                        # default value of is assigned to the attribute
-                        # quantity initial value
-                        initial_value = None
-                        self.logger.debug(
-                            "Parameter `initial_value` does not exist for"
-                            "attribute {}. Default will be used".format(
-                                model_attr_props["name"]
-                            )
-                        )
-                    attr_data_type = model_attr_props["data_type"]
-                    val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
-                    init_val = initial_value if initial_value not in [None, ""] else val
-                    if val_type is None:
-                        start_val = None
-                    else:
-                        start_val = val_type(init_val)
                     quantity_factory = quantities.registry[
                         attr_props["quantity_simulation_type"]
                     ]
+                    start_val = get_default_quantity_value(
+                        model_attr_props
+                    )
                     self.sim_model.sim_quantities[attr_name] = quantity_factory(
                         start_time=start_time,
                         meta=model_attr_props,
                         start_value=start_val,
                     )
-                else:
+                elif (
+                    model_attr_props["quantity_simulation_type"] == "GaussianSlewLimited"
+                ):
                     try:
                         sim_attr_quantities = self.sim_attribute_quantities(
                             float(model_attr_props["min_bound"]),
@@ -411,60 +391,12 @@ class PopulateModelQuantities(object):
                     self.sim_model.sim_quantities[attr_name] = quantity_factory(
                         start_time=start_time,
                         meta=model_attr_props,
-                        **sim_attr_quantities
+                        **sim_attr_quantities,
                     )
             else:
-                key_vals = model_attr_props.keys()
-                attr_data_type = model_attr_props["data_type"]
-                # the xmi, json and fgo files have data_format attributes indicating
-                # SPECTRUM, SCALAR OR IMAGE data formats. The xml file does not have this
-                # key in its attribute list. It has a key labelled possible values which
-                # is a list. Hence, SPECTRUM is no data_format is found.
-                try:
-                    attr_data_format = str(model_attr_props["data_format"])
-                except KeyError:
-                    attr_data_format = "SPECTRUM"
-                expected_key_vals = ["max_dim_x", "max_dim_y", "maxX", "maxY"]
-                # the xmi, json and fgo files have either (max_dim_x, max_dim_y) or
-                # (maxX, maxY) keys. If none of these keys are found in them or in the
-                # xml file, we use default values of 1 for x and 2 for y - same applies
-                # for files where the keys have empty values.
-                if any(key_val in expected_key_vals for key_val in key_vals):
-                    try:
-                        max_dim_x = model_attr_props["max_dim_x"]
-                        max_dim_y = model_attr_props["max_dim_y"]
-                    except KeyError:
-                        max_dim_x = model_attr_props.get("maxX", 1)
-                        max_dim_y = model_attr_props.get("maxY", 2)
-                    # just in case the keys exist but have no values
-                    if not max_dim_x:
-                        max_dim_x = 1
-                    if not max_dim_y:
-                        max_dim_y = 2
-
-                val_type, val = INITIAL_CONSTANT_VALUE_TYPES[attr_data_type]
-                expected_key_vals = ["value", "possiblevalues"]
-                if any(key_val in expected_key_vals for key_val in key_vals):
-                    try:
-                        default_val = model_attr_props["value"]
-                    except KeyError:
-                        default_val = model_attr_props["possiblevalues"]
-                    if attr_data_format == "SCALAR":
-                        default_val = val_type(default_val)
-                    elif attr_data_format == "SPECTRUM":
-                        default_val = list(map(val_type, default_val))
-                    else:
-                        default_val = [
-                            [val_type(curr_val) for curr_val in sublist]
-                            for sublist in default_val
-                        ]
-                else:
-                    if attr_data_format == "SCALAR":
-                        default_val = val
-                    elif attr_data_format == "SPECTRUM":
-                        default_val = [val] * max_dim_x
-                    else:
-                        default_val = [[val] * max_dim_x for i in range(max_dim_y)]
+                default_val = get_default_quantity_value(
+                    model_attr_props
+                )
                 self.sim_model.sim_quantities[attr_name] = quantities.ConstantQuantity(
                     start_time=start_time, meta=model_attr_props, start_value=default_val
                 )

@@ -34,7 +34,6 @@ from tango import (
 )
 from tango.server import Device, attribute, device_property
 from tango_simlib.model import (
-    INITIAL_CONSTANT_VALUE_TYPES,
     Model,
     PopulateModelActions,
     PopulateModelProperties,
