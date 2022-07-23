@@ -64,8 +64,6 @@ INITIAL_CONSTANT_VALUE_TYPES = {
     CmdArgType.DevVarUShortArray: (list, [0.0]),
     CmdArgType.DevVarULongArray: (list, [0]),
     CmdArgType.DevVarStringArray: (list, [""]),
-    CmdArgType.DevVarLongStringArray: (list, [[0], [""]]),
-    CmdArgType.DevVarDoubleStringArray: (list, [[0.0], [""]]),
     CmdArgType.DevVarLong64Array: (list, [0]),
     CmdArgType.DevVarULong64Array: (list, [0]),
     CmdArgType.DevVarLong64Array: (list, [0]),
