@@ -942,23 +942,15 @@ class test_SimdddSpectrumAttributeDevice(ClassCleanupUnittestMixin, unittest.Tes
         self.device = self.tango_context.device
 
     def test_spectrum_attributes_are_readable(self):
-        attribute_config = self.device.get_attribute_config("doubleSpectrum")
-        self.assertEqual(attribute_config.data_type, tango.DevDouble)
-        self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.SPECTRUM)
-        self.assertIsInstance(
-            self.device.read_attribute("doubleSpectrum"), tango.DeviceAttribute
+        attribute_names_data_types = (
+            ("doubleSpectrum", tango.DevDouble),
+            ("booleanSpectrum", tango.DevBoolean),
+            ("stringSpectrum", tango.DevString)
         )
-
-        attribute_config = self.device.get_attribute_config("booleanSpectrum")
-        self.assertEqual(attribute_config.data_type, tango.DevBoolean)
-        self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.SPECTRUM)
-        self.assertIsInstance(
-            self.device.read_attribute("booleanSpectrum"), tango.DeviceAttribute
-        )
-
-        attribute_config = self.device.get_attribute_config("stringSpectrum")
-        self.assertEqual(attribute_config.data_type, tango.DevString)
-        self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.SPECTRUM)
-        self.assertIsInstance(
-            self.device.read_attribute("stringSpectrum"), tango.DeviceAttribute
-        )
+        for attribute_name, data_type in attribute_names_data_types:
+            attribute_config = self.device.get_attribute_config(attribute_name)
+            self.assertEqual(attribute_config.data_type, data_type)
+            self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.SPECTRUM)
+            self.assertIsInstance(
+                self.device.read_attribute(attribute_name), tango.DeviceAttribute
+            )
