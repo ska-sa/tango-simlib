@@ -867,7 +867,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(
         expected_device_cmd_xmi_info = xmi_parser.get_device_command_metadata()
         expected_device_on_cmd_overridden_info = dict(
             expected_device_cmd_xmi_info[cmd_with_overrriden_info],
-            **simdd_specified_on_cmd_params,
+            **simdd_specified_on_cmd_params
         )
         # Creating a copy of the command info as specified in the xmi and
         # overriding it with that specified in the simdd then create a
