@@ -807,7 +807,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(
         expected_device_attr_xmi_info = xmi_parser.get_device_attribute_metadata()
         expected_device_temperature_attr_overridden_info = dict(
             expected_device_attr_xmi_info[attr_with_overrriden_info],
-            **simdd_specified_temperature_attr_params,
+            **simdd_specified_temperature_attr_params
         )
         # Creating a copy of the attribute info as specified in the xmi and
         # overriding it with that specified in the simdd then create a
