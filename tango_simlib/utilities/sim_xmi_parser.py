@@ -558,6 +558,8 @@ class XmiParser(Parser):
                 'format': '',
                 'label': '',
                 'max_alarm': '',
+                'max_dim_x': <int>,
+                'max_dim_y': <int>,
                 'max_value': '',
                 'max_warning': '',
                 'min_alarm': '',

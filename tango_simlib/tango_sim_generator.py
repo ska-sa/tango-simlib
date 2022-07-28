@@ -34,7 +34,6 @@ from tango import (
 )
 from tango.server import Device, attribute, device_property
 from tango_simlib.model import (
-    INITIAL_CONSTANT_VALUE_TYPES,
     Model,
     PopulateModelActions,
     PopulateModelProperties,
@@ -45,7 +44,6 @@ from future.utils import itervalues
 from tango_simlib.sim_test_interface import TangoTestDeviceServerBase
 from tango_simlib.utilities import helper_module
 from tango_simlib.utilities.fandango_json_parser import FandangoExportDeviceParser
-from tango_simlib.utilities.sim_sdd_xml_parser import SDDParser
 from tango_simlib.utilities.sim_xmi_parser import XmiParser
 from tango_simlib.utilities.simdd_json_parser import SimddParser
 
@@ -113,17 +111,17 @@ def add_static_attribute(tango_device_class, attr_name, attr_meta):
     This is needed for DevEnum and spectrum type attributes
 
     """
-    enum_labels = attr_meta.get("enum_labels", "")
+    polling_period = attr_meta["period"]
     attr = attribute(
         label=attr_meta.get("label", attr_name),
         dtype=attr_meta["data_type"],
-        enum_labels=enum_labels,
+        enum_labels=attr_meta.get("enum_labels", []),
         doc=attr_meta.get("description", ""),
         dformat=attr_meta["data_format"],
-        max_dim_x=attr_meta["max_dim_x"],
-        max_dim_y=attr_meta["max_dim_y"],
-        access=getattr(AttrWriteType, attr_meta["writable"]),
-        polling_period=int(attr_meta.get("period", "-1")),
+        max_dim_x=int(attr_meta["max_dim_x"]),
+        max_dim_y=int(attr_meta["max_dim_y"]),
+        access=getattr(AttrWriteType, attr_meta["writable"], AttrWriteType.READ),
+        polling_period=int(polling_period) if polling_period else -1,
         min_value=attr_meta.get("min_value", ""),
         max_value=attr_meta.get("max_value", ""),
         min_alarm=attr_meta.get("min_alarm", ""),
@@ -215,7 +213,7 @@ def get_tango_device_server(models, sim_data_files):
         A dictionary of model.Model instances.
         e.g. {'model-name': model.Model}
     sim_data_files: list
-        A list of direct paths to either xmi/xml/json data files.
+        A list of direct paths to either xmi/fgo/json data files.
 
     Returns
     -------
@@ -472,12 +470,12 @@ def get_parser_instance(sim_datafile):
     Parameters
     ----------
     sim_datafile : str
-        A direct path to the xmi/xml/json/fgo file.
+        A direct path to the xmi/json/fgo file.
 
     Returns
     ------
     parser_instance: Parser instance
-        The Parser object which reads an xmi/xml/json/fgo file and parses it into device
+        The Parser object which reads an xmi/json/fgo file and parses it into device
         attributes, commands, and properties.
 
     """
@@ -489,9 +487,6 @@ def get_parser_instance(sim_datafile):
         parser_instance.parse(sim_datafile)
     elif extension in [".json"]:
         parser_instance = SimddParser()
-        parser_instance.parse(sim_datafile)
-    elif extension in [".xml"]:
-        parser_instance = SDDParser()
         parser_instance.parse(sim_datafile)
     elif extension in [".fgo"]:
         parser_instance = FandangoExportDeviceParser()
@@ -522,7 +517,7 @@ def configure_device_models(sim_data_file=None, test_device_name=None, logger=No
     Parameters
     ----------
     sim_datafile : list
-        A list of direct paths to either xmi/xml/json/fgo files.
+        A list of direct paths to either xmi/json/fgo files.
     test_device_name : str
         A TANGO device name. This is used for running tests as we want the model
         instance and the device name to have the same name.
@@ -591,7 +586,7 @@ def generate_device_server(server_name, sim_data_files, directory=""):
     server_name: str
         Tango device server name
     sim_data_files: list
-        A list of direct paths to either xmi/xml/json data files.
+        A list of direct paths to either xmi/fgo/json data files.
 
     """
     lines = [
@@ -622,7 +617,7 @@ def get_device_class(sim_data_files):
     Parameters
     ----------
     sim_data_files: list
-        A list of direct paths to either xmi/xml/json/fgo data files.
+        A list of direct paths to either xmi/json/fgo data files.
 
     Returns
     -------

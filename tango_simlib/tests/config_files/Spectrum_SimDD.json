@@ -1,0 +1,65 @@
+{
+    "class_name": "Spectrum",
+    "dynamicAttributes": [
+      {
+        "basicAttributeData": {
+          "name": "doubleSpectrum",
+          "label": "double_spectrum",
+          "description": "double spectrum",
+          "data_type": "Double",
+          "data_format": "Spectrum",
+          "data_shape": {
+            "max_dim_x": 8,
+            "max_dim_y": 0
+          },
+          "dataSimulationParameters": {
+            "quantity_simulation_type": "ConstantQuantity"
+          },
+          "attributeControlSystem": {
+            "display_level": "OPERATOR",
+            "period": 1000
+          }
+        }
+      },
+      {
+        "basicAttributeData": {
+          "name": "booleanSpectrum",
+          "label": "boolean_spectrum",
+          "description": "boolean spectrum",
+          "data_type": "Boolean",
+          "data_format": "Spectrum",
+          "data_shape": {
+            "max_dim_x": 8,
+            "max_dim_y": 0
+          },
+          "dataSimulationParameters": {
+            "quantity_simulation_type": "ConstantQuantity"
+          },
+          "attributeControlSystem": {
+            "display_level": "OPERATOR",
+            "period": 1000
+          }
+        }
+      },
+      {
+        "basicAttributeData": {
+          "name": "stringSpectrum",
+          "label": "string_spectrum",
+          "description": "string spectrum",
+          "data_type": "String",
+          "data_format": "Spectrum",
+          "data_shape": {
+            "max_dim_x": 8,
+            "max_dim_y": 0
+          },
+          "dataSimulationParameters": {
+            "quantity_simulation_type": "ConstantQuantity"
+          },
+          "attributeControlSystem": {
+            "display_level": "OPERATOR",
+            "period": 1000
+          }
+        }
+      }
+    ]
+}

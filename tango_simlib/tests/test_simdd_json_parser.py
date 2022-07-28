@@ -52,7 +52,7 @@ EXPECTED_TEMPERATURE_ATTR_INFO = {
     "archive_abs_change": "0.5",
     "archive_period": "1000",
     "archive_rel_change": "10",
-    "data_format": "Scalar",
+    "data_format": tango._tango.AttrDataFormat.SCALAR,
     "data_type": tango._tango.CmdArgType.DevDouble,
     "format": "6.2f",
     "delta_t": "1000",
@@ -202,7 +202,7 @@ class test_PopulateModelQuantities(GenericSetup):
 
     def test_model_quantities_metadata(self):
         """Testing that the metadata of the quantities matches with the metadata
-        data of the parsed attribute data captured in the SDD xml file.
+        data of the parsed attribute data captured in the SimDD json file.
         """
         device_name = "tango/device/instance"
         pmq = model.PopulateModelQuantities(self.simdd_parser, device_name)
@@ -225,7 +225,7 @@ class test_PopulateModelQuantities(GenericSetup):
                     sim_quantity_metadata[attr_param_name],
                     attr_param_val,
                     "The value of the param '%s' in the model quantity '%s' is "
-                    "not the same with the one captured in the SDD xml file "
+                    "not the same with the one captured in the SimDD json file "
                     "for the monitoring point '%s'."
                     % (attr_param_name, sim_quantity_name, attr_param_name),
                 )
@@ -907,3 +907,50 @@ class test_XmiSimddSupplementaryDeviceIntegration(
                         "parameter '{}' does not match with the actual value "
                         "in the device model".format(expected_action, prop),
                     )
+
+
+class test_SimdddSpectrumAttributeDevice(ClassCleanupUnittestMixin, unittest.TestCase):
+    """A test class that tests the simdd file for SPECTRUM attribute."""
+
+    longMessage = True
+
+    @classmethod
+    def setUpClassWithCleanup(cls):
+        cls.tango_db = cleanup_tempfile(cls, prefix="tango", suffix=".db")
+        cls.data_descr_files = []
+        cls.data_descr_files.append(
+            pkg_resources.resource_filename(
+                "tango_simlib.tests.config_files", "Spectrum_SimDD.json"
+            )
+        )
+        cls.device_name = "test/nodb/tangodeviceserver"
+        model = tango_sim_generator.configure_device_models(
+            cls.data_descr_files, cls.device_name
+        )
+        cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
+            model, cls.data_descr_files
+        )[0]
+        cls.tango_context = DeviceTestContext(
+            cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
+        )
+
+        with patch("tango_simlib.utilities.helper_module.get_database"):
+            start_thread_with_cleanup(cls, cls.tango_context)
+
+    def setUp(self):
+        super(test_SimdddSpectrumAttributeDevice, self).setUp()
+        self.device = self.tango_context.device
+
+    def test_spectrum_attributes_are_readable(self):
+        attribute_names_data_types = (
+            ("doubleSpectrum", tango.DevDouble),
+            ("booleanSpectrum", tango.DevBoolean),
+            ("stringSpectrum", tango.DevString)
+        )
+        for attribute_name, data_type in attribute_names_data_types:
+            attribute_config = self.device.get_attribute_config(attribute_name)
+            self.assertEqual(attribute_config.data_type, data_type)
+            self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.SPECTRUM)
+            self.assertIsInstance(
+                self.device.read_attribute(attribute_name), tango.DeviceAttribute
+            )
