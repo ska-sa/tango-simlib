@@ -255,7 +255,7 @@ def get_tango_device_server(models, sim_data_files):
     for quantity_name, quantity in list(itervalues(models))[0].sim_quantities.items():
         d_type = str(quantity.meta["data_type"])
         d_format = str(quantity.meta["data_format"])
-        if d_type == "DevEnum" or d_format == "SPECTRUM":
+        if d_type == "DevEnum" or d_format in ("SPECTRUM", "IMAGE"):
             add_static_attribute(
                 TangoDeviceServerStaticAttrs, quantity_name, quantity.meta
             )
@@ -349,10 +349,7 @@ def get_tango_device_server(models, sim_data_files):
         def _is_attribute_addable_dynamically(self, quantity_meta_data):
             attr_dtype = quantity_meta_data["data_type"]
             d_format = quantity_meta_data["data_format"]
-            if str(attr_dtype) == "DevEnum" or str(d_format) == "SPECTRUM":
-                return False
-            elif str(d_format) == "IMAGE":
-                self._not_added_attributes.append(quantity_meta_data["name"])
+            if str(attr_dtype) == "DevEnum" or str(d_format) in ("SPECTRUM", "IMAGE"):
                 return False
 
             return True
@@ -405,7 +402,9 @@ def get_tango_device_server(models, sim_data_files):
                 else:
                     MODULE_LOGGER.debug(
                         "UserDefaultAttrProp has no attribute named '%s' "
-                        "for the device attribute '%s'.", prop, attribute_name,
+                        "for the device attribute '%s'.",
+                        prop,
+                        attribute_name,
                     )
 
             attribute.set_default_properties(attribute_properties)
