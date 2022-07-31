@@ -192,17 +192,17 @@ class test_XmiFile(BaseTest.TangoSimGenDeviceIntegration):
         """Testing whether the attributes specified in the POGO generated XMI file
         are added to the TANGO device.
         """
-        # First testing that the attribute with data format "IMAGE" is not in the device.
+        # First testing that the attribute with data format "IMAGE" is in the device.
         attribute_name = "image1"
         device_attributes = set(self.sim_device.get_attribute_list())
-        self.assertNotIn(
+        self.assertIn(
             attribute_name,
             device_attributes,
             "The attribute {} has been added to the device.".format(attribute_name),
         )
         not_added_attr = self.sim_device.read_attribute("AttributesNotAdded")
-        not_added_attr_names = not_added_attr.value
-        self.assertIn(
+        not_added_attr_names = not_added_attr.value if not_added_attr.value else []
+        self.assertNotIn(
             attribute_name,
             not_added_attr_names,
             "The attribute {} was not added to the list of attributes that"
@@ -356,7 +356,7 @@ class test_TangoSimGenerator(BaseTest.TangoSimGenDeviceIntegration):
         """Test that the TANGO device Init command works correctly."""
         default_val = 0
         self.assertEqual(self.sim_device.integer1, default_val)
-        # Write to the attribute desiredPointing
+        # Write to the attribute integer1
         self.sim_device.integer1 = 45
         self.assertEqual(self.sim_device.integer1, 45)
         # Reset the values of the device attributes to default.

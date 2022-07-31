@@ -11,12 +11,18 @@ standard_library.install_aliases()  # noqa: E402
 
 import logging
 import unittest
+from mock import patch
 
 import pkg_resources
 
 import tango
 
+from katcp.testutils import start_thread_with_cleanup
+from tango.test_context import DeviceTestContext
+from tango_simlib import model, tango_sim_generator
+
 from tango_simlib.utilities import fandango_json_parser
+from tango_simlib.utilities.testutils import cleanup_tempfile, ClassCleanupUnittestMixin
 
 MODULE_LOGGER = logging.getLogger(__name__)
 
@@ -184,3 +190,57 @@ class test_FandangoJsonParser(GenericSetup):
                 "The expected value for the parameter '%s' does not match with the actual"
                 "value" % (prop),
             )
+
+
+class test_FgoComplexAttributeDevice(ClassCleanupUnittestMixin, unittest.TestCase):
+    longMessage = True
+
+    @classmethod
+    def setUpClassWithCleanup(cls):
+        cls.tango_db = cleanup_tempfile(cls, prefix="tango", suffix=".db")
+        cls.data_descr_files = []
+        cls.data_descr_files.append(
+            pkg_resources.resource_filename(
+                "tango_simlib.tests.config_files", "Spectrum_Image.fgo"
+            )
+        )
+        cls.device_name = "test/nodb/tangodeviceserver"
+        model = tango_sim_generator.configure_device_models(
+            cls.data_descr_files, cls.device_name
+        )
+        cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
+            model, cls.data_descr_files
+        )[0]
+        cls.tango_context = DeviceTestContext(
+            cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
+        )
+
+        with patch("tango_simlib.utilities.helper_module.get_database"):
+            start_thread_with_cleanup(cls, cls.tango_context)
+
+    def setUp(self):
+        super(test_FgoComplexAttributeDevice, self).setUp()
+        self.device = self.tango_context.device
+
+    def test_spectrum_attributes_are_readable(self):
+        attribute_names_data_types = (
+            ("doubleSpectrum", tango.DevDouble),
+            ("booleanSpectrum", tango.DevBoolean),
+            ("stringSpectrum", tango.DevString)
+        )
+        for attribute_name, data_type in attribute_names_data_types:
+            attribute_config = self.device.get_attribute_config(attribute_name)
+            self.assertEqual(attribute_config.data_type, data_type)
+            self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.SPECTRUM)
+            self.assertIsInstance(
+                self.device.read_attribute(attribute_name), tango.DeviceAttribute
+            )
+
+    def test_image_attribute_readable(self):
+        attribute_name = "image1"
+        attribute_config = self.device.get_attribute_config(attribute_name)
+        self.assertEqual(attribute_config.data_type, tango.DevDouble)
+        self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.IMAGE)
+        self.assertIsInstance(
+            self.device.read_attribute(attribute_name), tango.DeviceAttribute
+        )

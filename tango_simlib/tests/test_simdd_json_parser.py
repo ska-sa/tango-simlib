@@ -909,7 +909,7 @@ class test_XmiSimddSupplementaryDeviceIntegration(
                     )
 
 
-class test_SimdddSpectrumAttributeDevice(ClassCleanupUnittestMixin, unittest.TestCase):
+class test_SimdddComplexAttributeDevice(ClassCleanupUnittestMixin, unittest.TestCase):
     """A test class that tests the simdd file for SPECTRUM attribute."""
 
     longMessage = True
@@ -938,7 +938,7 @@ class test_SimdddSpectrumAttributeDevice(ClassCleanupUnittestMixin, unittest.Tes
             start_thread_with_cleanup(cls, cls.tango_context)
 
     def setUp(self):
-        super(test_SimdddSpectrumAttributeDevice, self).setUp()
+        super(test_SimdddComplexAttributeDevice, self).setUp()
         self.device = self.tango_context.device
 
     def test_spectrum_attributes_are_readable(self):
@@ -954,3 +954,12 @@ class test_SimdddSpectrumAttributeDevice(ClassCleanupUnittestMixin, unittest.Tes
             self.assertIsInstance(
                 self.device.read_attribute(attribute_name), tango.DeviceAttribute
             )
+
+    def test_image_attribute_readable(self):
+        attribute_name = "image1"
+        attribute_config = self.device.get_attribute_config(attribute_name)
+        self.assertEqual(attribute_config.data_type, tango.DevDouble)
+        self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.IMAGE)
+        self.assertIsInstance(
+            self.device.read_attribute(attribute_name), tango.DeviceAttribute
+        )
