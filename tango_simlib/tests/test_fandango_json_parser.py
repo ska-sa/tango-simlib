@@ -19,7 +19,7 @@ import tango
 
 from katcp.testutils import start_thread_with_cleanup
 from tango.test_context import DeviceTestContext
-from tango_simlib import model, tango_sim_generator
+from tango_simlib import tango_sim_generator
 
 from tango_simlib.utilities import fandango_json_parser
 from tango_simlib.utilities.testutils import cleanup_tempfile, ClassCleanupUnittestMixin

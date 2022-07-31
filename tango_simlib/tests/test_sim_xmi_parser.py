@@ -312,7 +312,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
             attributes - default_attributes,
             "Actual tango device attribute list differs from expected " "list!",
         )
-    
+
     def test_image_attribute_readable(self):
         attribute_name = "image1"
         attribute_config = self.device.get_attribute_config(attribute_name)
@@ -393,7 +393,7 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
 
                 # Period for image type attribute seems be initialiezed to 1000 even
                 # when the value in the config is different.
-                if attr_name == "image1"  and attr_parameter == "period":
+                if attr_name == "image1" and attr_parameter == "period":
                     continue
 
                 self.assertEqual(
