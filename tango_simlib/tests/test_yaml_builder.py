@@ -52,7 +52,7 @@ def test_file_builders_xmi():
     for attr in parsed_yaml[0]["meta"]["attributes"]:
         if attr["name"] == "band4CapabilityState":
             assert attr == {
-                "enum_labels": ["INIT", "OFF", "ON"],
+                "enum_labels": ["INIT", "ON", "OFF"],
                 "description": "The band 4 capability state of the DSH Element.",
                 "data_type": "DevEnum",
                 "max_value": "2",

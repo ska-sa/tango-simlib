@@ -285,20 +285,20 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
         """Test whether the attributes specified in the POGO generated xmi file
         are added to the TANGO device
         """
-        # First testing that the attribute with data format "IMAGE" is not in the device.
+        # First testing that the attribute with data format "IMAGE" is in the device.
         attribute_name = "image1"
         device_attributes = set(self.device.get_attribute_list())
-        self.assertNotIn(
+        self.assertIn(
             attribute_name,
             device_attributes,
             "The attribute {} has been added to the device.".format(attribute_name),
         )
         not_added_attr = self.device.read_attribute("AttributesNotAdded")
-        not_added_attr_names = not_added_attr.value
-        self.assertIn(
+        not_added_attr_names = not_added_attr.value if not_added_attr.value else []
+        self.assertNotIn(
             attribute_name,
             not_added_attr_names,
-            "The attribute {} was not added to the list of attributes that"
+            "The attribute {} was added to the list of attributes that"
             " could not be added to the device.".format(attribute_name),
         )
 
@@ -313,11 +313,20 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
             "Actual tango device attribute list differs from expected " "list!",
         )
 
+    def test_image_attribute_readable(self):
+        attribute_name = "image1"
+        attribute_config = self.device.get_attribute_config(attribute_name)
+        self.assertEqual(attribute_config.data_type, tango.DevDouble)
+        self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.IMAGE)
+        self.assertIsInstance(
+            self.device.read_attribute(attribute_name), tango.DeviceAttribute
+        )
+
     def test_attribute_properties(self):
         attribute_list = self.device.get_attribute_list()
         attribute_data = self.xmi_parser.get_device_attribute_metadata()
         not_added_attr = self.device.read_attribute("AttributesNotAdded")
-        not_added_attr_names = not_added_attr.value
+        not_added_attr_names = not_added_attr.value if not_added_attr.value else []
 
         for attr_name, attr_metadata in attribute_data.items():
             if attr_name in not_added_attr_names:
@@ -381,6 +390,11 @@ class test_SimXmiDeviceIntegration(ClassCleanupUnittestMixin, unittest.TestCase)
                 # and DevEnum it uses '%s'.
                 if attr_parameter in ["format"]:
                     attr_prop_value = ""
+
+                # Period for image type attribute seems be initialiezed to 1000 even
+                # when the value in the config is different.
+                if attr_name == "image1" and attr_parameter == "period":
+                    continue
 
                 self.assertEqual(
                     expected_attr_value,

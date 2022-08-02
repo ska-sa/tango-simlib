@@ -9,4 +9,6 @@ include tango_simlib/tests/config_files/devenum_test_case.xmi
 include tango_simlib/tests/config_files/DishElementMaster.xmi
 include tango_simlib/tests/config_files/DishElementMaster_SimDD.json
 include tango_simlib/tests/config_files/database2.fgo
+include tango_simlib/tests/config_files/Spectrum_Image.fgo
+include tango_simlib/tests/config_files/Spectrum_Simdd.json
 include CHANGELOG.rst

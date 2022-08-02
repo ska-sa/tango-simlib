@@ -325,7 +325,7 @@ class XmiParser(Parser):
             for child in description_data.getchildren():
                 if child.tag == "enumLabels":
                     enum_labels.append(child.text)
-            attribute_data["dynamicAttributes"]["enum_labels"] = sorted(enum_labels)
+            attribute_data["dynamicAttributes"]["enum_labels"] = enum_labels
 
         attribute_data["properties"] = description_data.find("properties").attrib
         attribute_data["properties"]["inherited"] = description_data.find(

@@ -60,6 +60,26 @@
             "period": 1000
           }
         }
+      },
+      {
+        "basicAttributeData": {
+          "name": "image1",
+          "label": "image",
+          "description": "image",
+          "data_type": "Double",
+          "data_format": "Image",
+          "data_shape": {
+            "max_dim_x": 8,
+            "max_dim_y": 4
+          },
+          "dataSimulationParameters": {
+            "quantity_simulation_type": "ConstantQuantity"
+          },
+          "attributeControlSystem": {
+            "display_level": "OPERATOR",
+            "period": 1000
+          }
+        }
       }
     ]
 }

@@ -1,0 +1,195 @@
+{
+    "attributes": {
+        "image1": {
+            "alarms": {
+                "delta_t": "Not specified",
+                "delta_val": "Not specified",
+                "extensions": "[]",
+                "max_alarm": "Not specified",
+                "max_warning": "Not specified",
+                "min_alarm": "Not specified",
+                "min_warning": "Not specified"
+            },
+            "data_format": "IMAGE",
+            "data_type": "DevDouble",
+            "description": "",
+            "display_unit": "No display unit",
+            "enum_labels": [],
+            "events": {
+                "arch_event": {
+                    "archive_abs_change": "Not specified",
+                    "archive_period": "Not specified",
+                    "archive_rel_change": "Not specified",
+                    "extensions": "[]"
+                },
+                "ch_event": {
+                    "abs_change": "Not specified",
+                    "extensions": "[]",
+                    "rel_change": "Not specified"
+                },
+                "per_event": {
+                    "extensions": "[]",
+                    "period": "100"
+                }
+            },
+            "label": "image1",
+            "max_alarm": "Not specified",
+            "max_dim_x": 6,
+            "max_dim_y": 6,
+            "max_value": "Not specified",
+            "min_alarm": "Not specified",
+            "min_value": "Not specified",
+            "name": "image1",
+            "polling": 1000,
+            "quality": "ATTR_VALID",
+            "standard_unit": "No standard unit",
+            "unit": "",
+            "writable": "READ"
+        },
+        "doubleSpectrum": {
+            "alarms": {
+                "delta_t": "Not specified",
+                "delta_val": "Not specified",
+                "extensions": "[]",
+                "max_alarm": "Not specified",
+                "max_warning": "Not specified",
+                "min_alarm": "Not specified",
+                "min_warning": "Not specified"
+            },
+            "data_format": "SPECTRUM",
+            "data_type": "DevDouble",
+            "description": "",
+            "display_unit": "No display unit",
+            "enum_labels": [],
+            "events": {
+                "arch_event": {
+                    "archive_abs_change": "Not specified",
+                    "archive_period": "Not specified",
+                    "archive_rel_change": "Not specified",
+                    "extensions": "[]"
+                },
+                "ch_event": {
+                    "abs_change": "Not specified",
+                    "extensions": "[]",
+                    "rel_change": "Not specified"
+                },
+                "per_event": {
+                    "extensions": "[]",
+                    "period": "100"
+                }
+            },
+            "label": "doubleSpectrum",
+            "max_alarm": "Not specified",
+            "max_dim_x": 6,
+            "max_dim_y": 0,
+            "max_value": "Not specified",
+            "min_alarm": "Not specified",
+            "min_value": "Not specified",
+            "name": "doubleSpectrum",
+            "polling": 1000,
+            "quality": "ATTR_VALID",
+            "standard_unit": "No standard unit",
+            "unit": "",
+            "writable": "READ"
+        },
+        "booleanSpectrum": {
+            "alarms": {
+                "delta_t": "Not specified",
+                "delta_val": "Not specified",
+                "extensions": "[]",
+                "max_alarm": "Not specified",
+                "max_warning": "Not specified",
+                "min_alarm": "Not specified",
+                "min_warning": "Not specified"
+            },
+            "data_format": "SPECTRUM",
+            "data_type": "DevBoolean",
+            "description": "",
+            "display_unit": "No display unit",
+            "enum_labels": [],
+            "events": {
+                "arch_event": {
+                    "archive_abs_change": "Not specified",
+                    "archive_period": "Not specified",
+                    "archive_rel_change": "Not specified",
+                    "extensions": "[]"
+                },
+                "ch_event": {
+                    "abs_change": "Not specified",
+                    "extensions": "[]",
+                    "rel_change": "Not specified"
+                },
+                "per_event": {
+                    "extensions": "[]",
+                    "period": "100"
+                }
+            },
+            "label": "booleanSpectrum",
+            "max_alarm": "Not specified",
+            "max_dim_x": 6,
+            "max_dim_y": 0,
+            "max_value": "Not specified",
+            "min_alarm": "Not specified",
+            "min_value": "Not specified",
+            "name": "booleanSpectrum",
+            "polling": 1000,
+            "quality": "ATTR_VALID",
+            "standard_unit": "No standard unit",
+            "unit": "",
+            "writable": "READ"
+        },
+        "stringSpectrum": {
+            "alarms": {
+                "delta_t": "Not specified",
+                "delta_val": "Not specified",
+                "extensions": "[]",
+                "max_alarm": "Not specified",
+                "max_warning": "Not specified",
+                "min_alarm": "Not specified",
+                "min_warning": "Not specified"
+            },
+            "data_format": "SPECTRUM",
+            "data_type": "DevString",
+            "description": "",
+            "display_unit": "No display unit",
+            "enum_labels": [],
+            "events": {
+                "arch_event": {
+                    "archive_abs_change": "Not specified",
+                    "archive_period": "Not specified",
+                    "archive_rel_change": "Not specified",
+                    "extensions": "[]"
+                },
+                "ch_event": {
+                    "abs_change": "Not specified",
+                    "extensions": "[]",
+                    "rel_change": "Not specified"
+                },
+                "per_event": {
+                    "extensions": "[]",
+                    "period": "100"
+                }
+            },
+            "label": "stringSpectrum",
+            "max_alarm": "Not specified",
+            "max_dim_x": 6,
+            "max_dim_y": 0,
+            "max_value": "Not specified",
+            "min_alarm": "Not specified",
+            "min_value": "Not specified",
+            "name": "stringSpectrum",
+            "polling": 1000,
+            "quality": "ATTR_VALID",
+            "standard_unit": "No standard unit",
+            "unit": "",
+            "writable": "READ"
+        }
+    },
+    "class_properties": {
+    },
+    "commands": {
+    },
+    "dev_class": "FgoDevice",
+    "properties": {
+    }
+}
