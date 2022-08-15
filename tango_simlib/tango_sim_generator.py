@@ -72,11 +72,10 @@ class TangoDeviceServerBase(Device):
             The attribute to read from.
 
         """
-        if self.get_state() != DevState.OFF:
-            name = attr.get_name()
-            value, update_time = self.model.quantity_state[name]
-            quality = AttrQuality.ATTR_VALID
-            attr.set_value_date_quality(value, update_time, quality)
+        name = attr.get_name()
+        value, update_time = self.model.quantity_state[name]
+        quality = AttrQuality.ATTR_VALID
+        attr.set_value_date_quality(value, update_time, quality)
 
     def write_attributes(self, attr):
         """Method writing an attribute value.
@@ -87,10 +86,9 @@ class TangoDeviceServerBase(Device):
             The attribute to write to.
 
         """
-        if self.get_state() != DevState.OFF:
-            name = attr.get_name()
-            data = attr.get_write_value()
-            self.model.sim_quantities[name].set_val(data, self.model.time_func())
+        name = attr.get_name()
+        data = attr.get_write_value()
+        self.model.sim_quantities[name].set_val(data, self.model.time_func())
 
 
 def add_static_attribute(tango_device_class, attr_name, attr_meta):
