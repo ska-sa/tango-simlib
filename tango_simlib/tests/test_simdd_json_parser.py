@@ -996,7 +996,7 @@ class test_SimdddIntAttributeDevice(ClassCleanupUnittestMixin, unittest.TestCase
     def setUp(self):
         super(test_SimdddIntAttributeDevice, self).setUp()
         self.device = self.tango_context.device
-    
+
     def test_spectrum_attributes_are_readable(self):
         attribute_names_data_types = (
             ("scalarShort", tango.DevShort),
