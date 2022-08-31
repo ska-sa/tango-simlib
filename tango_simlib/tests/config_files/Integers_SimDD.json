@@ -1,0 +1,125 @@
+{
+    "class_name": "Ints",
+    "dynamicAttributes": [
+      {
+        "basicAttributeData": {
+          "name": "scalarShort",
+          "label": "scalar_short",
+          "description": "scalar short",
+          "data_type": "Short",
+          "data_format": "Scalar",
+          "data_shape": {
+            "max_dim_x": 1,
+            "max_dim_y": 0
+          },
+          "dataSimulationParameters": {
+            "quantity_simulation_type": "ConstantQuantity"
+          },
+          "attributeControlSystem": {
+            "display_level": "OPERATOR",
+            "period": 1000
+          }
+        }
+      },
+      {
+        "basicAttributeData": {
+          "name": "scalarUShort",
+          "label": "scalar_ushort",
+          "description": "scalar ushort",
+          "data_type": "UShort",
+          "data_format": "Scalar",
+          "data_shape": {
+            "max_dim_x": 1,
+            "max_dim_y": 0
+          },
+          "dataSimulationParameters": {
+            "quantity_simulation_type": "ConstantQuantity"
+          },
+          "attributeControlSystem": {
+            "display_level": "OPERATOR",
+            "period": 1000
+          }
+        }
+      },
+      {
+        "basicAttributeData": {
+          "name": "scalarLong",
+          "label": "scalar_long",
+          "description": "scalar long",
+          "data_type": "Long",
+          "data_format": "Scalar",
+          "data_shape": {
+            "max_dim_x": 1,
+            "max_dim_y": 0
+          },
+          "dataSimulationParameters": {
+            "quantity_simulation_type": "ConstantQuantity"
+          },
+          "attributeControlSystem": {
+            "display_level": "OPERATOR",
+            "period": 1000
+          }
+        }
+      },
+      {
+        "basicAttributeData": {
+          "name": "scalarLong64",
+          "label": "scalar_long64",
+          "description": "scalar long64",
+          "data_type": "Long64",
+          "data_format": "Scalar",
+          "data_shape": {
+            "max_dim_x": 1,
+            "max_dim_y": 0
+          },
+          "dataSimulationParameters": {
+            "quantity_simulation_type": "ConstantQuantity"
+          },
+          "attributeControlSystem": {
+            "display_level": "OPERATOR",
+            "period": 1000
+          }
+        }
+      },
+      {
+        "basicAttributeData": {
+          "name": "scalarULong",
+          "label": "scalar_ulong",
+          "description": "scalar ulong",
+          "data_type": "ULong",
+          "data_format": "Scalar",
+          "data_shape": {
+            "max_dim_x": 1,
+            "max_dim_y": 0
+          },
+          "dataSimulationParameters": {
+            "quantity_simulation_type": "ConstantQuantity"
+          },
+          "attributeControlSystem": {
+            "display_level": "OPERATOR",
+            "period": 1000
+          }
+        }
+      },
+      {
+        "basicAttributeData": {
+          "name": "scalarULong64",
+          "label": "scalar_ulong64",
+          "description": "scalar ulong64",
+          "data_type": "ULong64",
+          "data_format": "Scalar",
+          "data_shape": {
+            "max_dim_x": 1,
+            "max_dim_y": 0
+          },
+          "dataSimulationParameters": {
+            "quantity_simulation_type": "ConstantQuantity"
+          },
+          "attributeControlSystem": {
+            "display_level": "OPERATOR",
+            "period": 1000
+          }
+        }
+      }
+    ]
+}

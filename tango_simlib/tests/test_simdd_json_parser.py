@@ -963,3 +963,53 @@ class test_SimdddComplexAttributeDevice(ClassCleanupUnittestMixin, unittest.Test
         self.assertIsInstance(
             self.device.read_attribute(attribute_name), tango.DeviceAttribute
         )
+
+
+class test_SimdddIntAttributeDevice(ClassCleanupUnittestMixin, unittest.TestCase):
+    """A test class that tests the simdd file for integer attribute."""
+
+    longMessage = True
+
+    @classmethod
+    def setUpClassWithCleanup(cls):
+        cls.tango_db = cleanup_tempfile(cls, prefix="tango", suffix=".db")
+        cls.data_descr_files = []
+        cls.data_descr_files.append(
+            pkg_resources.resource_filename(
+                "tango_simlib.tests.config_files", "Integers_SimDD.json"
+            )
+        )
+        cls.device_name = "test/nodb/tangodeviceserver"
+        model = tango_sim_generator.configure_device_models(
+            cls.data_descr_files, cls.device_name
+        )
+        cls.TangoDeviceServer = tango_sim_generator.get_tango_device_server(
+            model, cls.data_descr_files
+        )[0]
+        cls.tango_context = DeviceTestContext(
+            cls.TangoDeviceServer, device_name=cls.device_name, db=cls.tango_db
+        )
+
+        with patch("tango_simlib.utilities.helper_module.get_database"):
+            start_thread_with_cleanup(cls, cls.tango_context)
+
+    def setUp(self):
+        super(test_SimdddIntAttributeDevice, self).setUp()
+        self.device = self.tango_context.device
+
+    def test_spectrum_attributes_are_readable(self):
+        attribute_names_data_types = (
+            ("scalarShort", tango.DevShort),
+            ("scalarUShort", tango.DevUShort),
+            ("scalarLong", tango.DevLong),
+            ("scalarLong64", tango.DevLong64),
+            ("scalarULong", tango.DevULong),
+            ("scalarULong64", tango.DevULong64),
+        )
+        for attribute_name, data_type in attribute_names_data_types:
+            attribute_config = self.device.get_attribute_config(attribute_name)
+            self.assertEqual(attribute_config.data_type, data_type)
+            self.assertEqual(attribute_config.data_format, tango.AttrDataFormat.SCALAR)
+            self.assertIsInstance(
+                self.device.read_attribute(attribute_name), tango.DeviceAttribute
+            )

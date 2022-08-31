@@ -322,7 +322,7 @@ def get_tango_device_server(models, sim_data_files):
                 # PyTango data type when passed to the Attr function.
                 # e.g. 'READ' -> tango._tango.AttrWriteType.READ
                 rw_type = meta_data["writable"]
-                rw_type = getattr(AttrWriteType, rw_type)
+                rw_type = getattr(AttrWriteType, rw_type, AttrWriteType.READ)
                 attr = self._create_attribute(
                     attribute_name, meta_data["data_type"], rw_type
                 )

@@ -28,7 +28,19 @@
               },
               "data_type": {
                 "type": "string",
-                "enum": ["Boolean", "String", "Double", "VarStringArray", "VarDoubleArray"]
+                "enum": [
+                  "Boolean",
+                  "Double",
+                  "Float",
+                  "Long",
+                  "Long64",
+                  "Short",
+                  "String",
+                  "ULong",
+                  "ULong64",
+                  "UShort",
+                  "VarStringArray"
+                ]
               },
               "data_format": {
                 "type": "string"
