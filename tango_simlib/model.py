@@ -266,7 +266,10 @@ class Model(object):
                         adjustable_val = get_default_quantity_value(quantity_metadata)
                     else:
                         if adjustable_attr == "last_val":
-                            quantity.last_val = float(quantity_metadata["mean"])
+                            mean = float(quantity_metadata["mean"])
+                            quantity.last_val = (
+                                quantity.compute_initial_value(quantity_metadata, mean)
+                            )
                             continue
                         else:
                             adjustable_val = float(quantity_metadata[adjustable_attr])
