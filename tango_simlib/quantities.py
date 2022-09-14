@@ -146,7 +146,8 @@ class GaussianSlewLimited(Quantity):
         start_value=None,
         start_time=None,
     ):
-        start_value = start_value if start_value is not None else mean
+        if not start_value:
+            start_value = self.compute_initial_value(meta, mean)
         super(GaussianSlewLimited, self).__init__(
             start_value=start_value, start_time=start_time, meta=meta
         )
@@ -156,7 +157,20 @@ class GaussianSlewLimited(Quantity):
         self.max_slew_rate = max_slew_rate
         self.min_bound = min_bound
         self.max_bound = max_bound
-        self.last_val = mean
+        self.last_val = start_value
+
+    def compute_initial_value(self, meta, mean):
+        data_format = str(meta["data_format"])
+        max_dim_x = int(meta.get("max_dim_x", 1))
+        max_dim_y = int(meta.get("max_dim_y", 0))
+        initial_value = None
+        if data_format == "SCALAR":
+            initial_value = mean
+        elif data_format == "SPECTRUM":
+            initial_value = [mean] * max_dim_x
+        elif data_format == "IMAGE":
+            initial_value = [[mean] * max_dim_x for i in range(max_dim_y)]
+        return initial_value
 
     def next_val(self, t):
         """Returns the next value of the simulation.
@@ -167,16 +181,36 @@ class GaussianSlewLimited(Quantity):
             Time to update quantity
 
         """
-        dt = t - self.last_update_time
+        delta_time = t - self.last_update_time
+        self.last_val = self._generate_simulation_data(delta_time)
+        self.last_update_time = t
+        return self.last_val
+
+    def compute_next_value(self, dt, value):
         max_slew = self.max_slew_rate * dt
-        new_val = gauss(self.mean, self.std_dev)
-        delta = new_val - self.last_val
+        new_value = gauss(self.mean, self.std_dev)
+        delta = new_value - value
         val = self.last_val + cmp(delta, 0) * min(abs(delta), max_slew)
         val = min(val, self.max_bound)
         val = max(val, self.min_bound)
-        self.last_val = val
-        self.last_update_time = t
         return val
+
+    def _generate_simulation_data(self, delta_time):
+        data_format = str(self.meta["data_format"])
+        max_dim_x = int(self.meta.get("max_dim_x", 1))
+        max_dim_y = int(self.meta.get("max_dim_y", 0))
+        value = self.last_val
+        if data_format == "SCALAR":
+            value = self.compute_next_value(delta_time, value)
+        elif data_format == "SPECTRUM":
+            for i in range(max_dim_x):
+                value[i] = self.compute_next_value(delta_time, value[i])
+        elif data_format == "IMAGE":
+            for i in range(max_dim_x):
+                for j in range(max_dim_y):
+                    value[i][j] = self.compute_next_value(delta_time, value[i][j])
+
+        return value
 
 
 register_quantity_class(GaussianSlewLimited)

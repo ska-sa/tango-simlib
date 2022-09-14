@@ -13,7 +13,13 @@
             "max_dim_y": 0
           },
           "dataSimulationParameters": {
-            "quantity_simulation_type": "ConstantQuantity"
+            "quantity_simulation_type": "GaussianSlewLimited",
+            "min_bound": -10,
+            "max_bound": 50,
+            "mean": 2500,
+            "max_slew_rate": 1,
+            "update_period": 1000,
+            "std_dev": 5
           },
           "attributeControlSystem": {
             "display_level": "OPERATOR",
