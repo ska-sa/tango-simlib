@@ -161,8 +161,8 @@ class GaussianSlewLimited(Quantity):
 
     def compute_initial_value(self, meta, mean):
         data_format = str(meta["data_format"])
-        max_dim_x = int(meta["max_dim_x"])
-        max_dim_y = int(meta["max_dim_y"])
+        max_dim_x = int(meta.get("max_dim_x", 1))
+        max_dim_y = int(meta.get("max_dim_y", 0))
         initial_value = None
         if data_format == "SCALAR":
             initial_value = mean
@@ -197,8 +197,8 @@ class GaussianSlewLimited(Quantity):
 
     def _generate_simulation_data(self, delta_time):
         data_format = str(self.meta["data_format"])
-        max_dim_x = int(self.meta["max_dim_x"])
-        max_dim_y = int(self.meta["max_dim_y"])
+        max_dim_x = int(self.meta.get("max_dim_x", 1))
+        max_dim_y = int(self.meta.get("max_dim_y", 0))
         value = self.last_val
         if data_format == "SCALAR":
             value = self.compute_next_value(delta_time, value)
